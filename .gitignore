@@ -1,0 +1,252 @@
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Microsoft Office临时文件
+~$*
+
+# Python缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Python虚拟环境
+backend-env/
+ai_visual_differential_geometry/venv/
+ai_visual_physics/venv/
+ai_visual_math/venv/
+*/venv/
+**/.venv/
+
+# MATLAB临时文件
+*.asv
+
+# 大文件 - 视频
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+
+# 大文件 - 音频
+*.m4a
+*.mp3
+*.wav
+*.flac
+
+# 压缩文件
+*.zip
+*.rar
+*.7z
+*.tar.gz
+
+# IDE和编辑器
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 临时文件
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*_orig/
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 大型数据文件
+*.bsp
+*.bsp.zip
+*.dat
+*.bin
+*.exe
+*.dll
+*.so
+*.dylib
+*.tif
+*.tiff
+
+# 大型图片文件
+*.gif
+*.jpg
+*.jpeg
+*.png
+!frontend/public/*.png
+!frontend/public/favicon.png
+
+# 大型JS库文件
+**/plotly.min.js
+**/plotly-latest.min.js
+**/mathjax*.js
+**/tex-mml-chtml.js
+
+# 大型HTML文件
+**/*_plotly.html
+**/sun_earth_moon*.html
+
+# 超大PDF文件（超过100MB）
+时轮历推算/参考资料/西藏历算/图解星学大成.第1部星曜神煞.pdf
+时轮历推算/参考资料/西藏历算/藏医药历算词典 藏文 40363123.pdf
+
+# 大型视频文件
+时轮历推算/参考资料/西藏历算/西藏天文历算的起源与发展2024-02-27 下午2.04.24.mov
+
+# 大型音频文件
+时轮历推算/程序-时轮历/时轮历/上课笔记/2024年2月上课笔记/2024.2.15 下午.m4a
+时轮历推算/程序-时轮历/时轮历/上课笔记/2024年2月上课笔记/2024.2.15晚1.m4a
+
+# Vite缓存
+.vite/
+
+# Logs
+*.log
+logs/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory
+coverage/
+.nyc_output
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Temporary folders
+tmp/
+temp/
+
+# Claude AI files
+.claude/
+dist/
+build/
+.out/
+.turbo/
+*.psd
+
+# 万物可视化 v2.0 specific
+backend-v2/logs/
+backend-v2/static/visualizations/
+backend-v2/.env
+frontend-v2/.env
+
+# Generated visualizations and data files
+visualization_*.html
+viz_*.html
+*.csv
+*.xlsx
+*.json
+*.xml
+
+# Original backup directories
+GeneralVisulization.bak/
+GeneralVisualization._orig/
+ai_visual_astronomy._orig/
+
+# PDF files (academic papers)
+**/*.pdf
+
+# Cleanup files
+cleanup_paths.txt
+
+# Large HTML files (generated visualizations)
+**/fast.html
+**/triangle.html
+*.html
+
+# 例外：允许期末速通目录的HTML文件
+!期末速通/*.html
+!期末速通/概率统计可视化/*.html
+
+# 大型虚拟环境和编译产物
+**/build/
+**/dist/
+
+# PDF 章节分割工具输出
+output/test_split/
+output/**/metadata.json
+
+# OCR 生成的图片和文本
+书籍/**/images/
+书籍/**/*.md
+书籍/**/full.md

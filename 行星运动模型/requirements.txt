@@ -1,0 +1,13 @@
+# 数值计算
+numpy>=1.20.0
+scipy>=1.7.0
+
+# 可视化
+matplotlib>=3.4.0
+
+# 天文计算和星历数据
+skyfield>=1.40
+astropy>=5.0
+
+# 测试
+pytest>=7.0.0

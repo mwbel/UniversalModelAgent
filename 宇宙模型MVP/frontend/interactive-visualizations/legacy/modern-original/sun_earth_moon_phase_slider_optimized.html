@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日月地相位系统 - 优化版本</title>
+    <link rel="stylesheet" href="./assets/styles.css">
+    <script src="./assets/lib/plotly.min.js"></script>
+    <style>
+        .visualization-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            background: rgba(20, 25, 35, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .control-group label {
+            color: #fff;
+            font-size: 14px;
+        }
+        .control-group input, .control-group select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        .plot-container {
+            background: #0a0d12;
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 500px;
+        }
+        .loading {
+            color: #fff;
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+        }
+        .info-panel {
+            background: rgba(20, 25, 35, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body class="theme-dark">
+    <header class="app-header">
+        <h1>🌍🌙 日月地相位系统</h1>
+        <div class="header-actions">
+            <a class="btn" href="./index.html">返回工具集首页</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="visualization-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label>年份:</label>
+                    <select id="yearSelect">
+                        <option value="2024">2024</option>
+                        <option value="2025" selected>2025</option>
+                        <option value="2026">2026</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>月相进度:</label>
+                    <input type="range" id="phaseSlider" min="0" max="360" value="0" step="1">
+                    <span id="phaseValue">0°</span>
+                </div>
+
+                <div class="control-group">
+                    <button id="playBtn" class="btn btn-primary">播放动画</button>
+                    <button id="pauseBtn" class="btn btn-secondary">暂停</button>
+                </div>
+            </div>
+
+            <div id="plot" class="plot-container">
+                <div class="loading">正在加载可视化系统...</div>
+            </div>
+
+            <div class="info-panel">
+                <h3>系统说明</h3>
+                <p>此系统展示太阳、地球、月球三者的相对位置关系和相位变化。</p>
+                <ul>
+                    <li><strong>新月 (0°)</strong>: 月球在地球和太阳之间</li>
+                    <li><strong>上弦月 (90°)</strong>: 月球在地球右侧</li>
+                    <li><strong>满月 (180°)</strong>: 地球在太阳和月球之间</li>
+                    <li><strong>下弦月 (270°)</strong>: 月球在地球左侧</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <div style="text-align: center; padding: 16px;">
+        <a class="btn" href="./index.html">返回工具集首页</a>
+    </div>
+
+    <script>
+        let isPlaying = false;
+        let animationInterval;
+
+        // 创建简化的可视化
+        function createVisualization() {
+            const plotDiv = document.getElementById('plot');
+            const year = document.getElementById('yearSelect').value;
+            const phase = parseFloat(document.getElementById('phaseSlider').value);
+
+            // 计算日月地位置
+            const sunPos = { x: 0, y: 0, z: 0 };
+            const earthPos = { x: 10, y: 0, z: 0 };
+            const moonAngle = phase * Math.PI / 180;
+            const moonPos = {
+                x: earthPos.x + 3 * Math.cos(moonAngle),
+                y: earthPos.y + 3 * Math.sin(moonAngle),
+                z: earthPos.z
+            };
+
+            // 创建轨迹数据
+            const moonOrbit = [];
+            for (let i = 0; i <= 360; i += 10) {
+                const angle = i * Math.PI / 180;
+                moonOrbit.push({
+                    x: earthPos.x + 3 * Math.cos(angle),
+                    y: earthPos.y + 3 * Math.sin(angle),
+                    z: 0
+                });
+            }
+
+            // Plotly配置
+            const data = [
+                // 太阳
+                {
+                    type: 'scatter3d',
+                    mode: 'markers+text',
+                    x: [sunPos.x],
+                    y: [sunPos.y],
+                    z: [sunPos.z],
+                    text: ['☀️ 太阳'],
+                    textfont: { size: 14 },
+                    marker: {
+                        size: 20,
+                        color: 'yellow',
+                        symbol: 'circle'
+                    },
+                    name: '太阳'
+                },
+                // 地球
+                {
+                    type: 'scatter3d',
+                    mode: 'markers+text',
+                    x: [earthPos.x],
+                    y: [earthPos.y],
+                    z: [earthPos.z],
+                    text: ['🌍 地球'],
+                    textfont: { size: 14 },
+                    marker: {
+                        size: 15,
+                        color: 'blue',
+                        symbol: 'circle'
+                    },
+                    name: '地球'
+                },
+                // 月球
+                {
+                    type: 'scatter3d',
+                    mode: 'markers+text',
+                    x: [moonPos.x],
+                    y: [moonPos.y],
+                    z: [moonPos.z],
+                    text: ['🌙 月球'],
+                    textfont: { size: 14 },
+                    marker: {
+                        size: 12,
+                        color: 'lightgray',
+                        symbol: 'circle'
+                    },
+                    name: '月球'
+                },
+                // 月球轨道
+                {
+                    type: 'scatter3d',
+                    mode: 'lines',
+                    x: moonOrbit.map(p => p.x),
+                    y: moonOrbit.map(p => p.y),
+                    z: moonOrbit.map(p => p.z),
+                    line: {
+                        color: 'rgba(255, 255, 255, 0.3)',
+                        width: 2
+                    },
+                    name: '月球轨道'
+                }
+            ];
+
+            const layout = {
+                title: `${year}年 日月地相位系统 (相位: ${Math.round(phase)}°)`,
+                scene: {
+                    xaxis: { title: 'X (AU)', range: [-5, 15] },
+                    yaxis: { title: 'Y (AU)', range: [-5, 5] },
+                    zaxis: { title: 'Z (AU)', range: [-5, 5] },
+                    camera: {
+                        eye: { x: 10, y: 10, z: 10 }
+                    },
+                    bgcolor: '#0a0d12'
+                },
+                paper_bgcolor: '#0a0d12',
+                plot_bgcolor: '#0a0d12',
+                font: { color: '#fff' },
+                height: 500
+            };
+
+            Plotly.newPlot('plot', data, layout, {responsive: true});
+        }
+
+        // 更新月相显示
+        function updatePhase() {
+            const phase = document.getElementById('phaseSlider').value;
+            document.getElementById('phaseValue').textContent = phase + '°';
+
+            // 更新月相名称
+            const phaseName = document.getElementById('phaseName');
+            let name = '';
+            if (phase < 22.5 || phase >= 337.5) name = '新月 🌑';
+            else if (phase < 67.5) name = '娥眉月 🌒';
+            else if (phase < 112.5) name = '上弦月 🌓';
+            else if (phase < 157.5) name = '盈凸月 🌔';
+            else if (phase < 202.5) name = '满月 🌕';
+            else if (phase < 247.5) name = '亏凸月 🌖';
+            else if (phase < 292.5) name = '下弦月 🌗';
+            else name = '残月 🌘';
+
+            if (phaseName) {
+                phaseName.textContent = name;
+            }
+        }
+
+        // 播放动画
+        function playAnimation() {
+            if (isPlaying) return;
+
+            isPlaying = true;
+            document.getElementById('playBtn').disabled = true;
+
+            animationInterval = setInterval(() => {
+                const slider = document.getElementById('phaseSlider');
+                let value = parseInt(slider.value);
+                value = (value + 2) % 360;
+                slider.value = value;
+                updatePhase();
+                createVisualization();
+            }, 50);
+        }
+
+        // 暂停动画
+        function pauseAnimation() {
+            isPlaying = false;
+            document.getElementById('playBtn').disabled = false;
+            if (animationInterval) {
+                clearInterval(animationInterval);
+            }
+        }
+
+        // 事件监听器
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化可视化
+            createVisualization();
+            updatePhase();
+
+            // 绑定控件事件
+            document.getElementById('phaseSlider').addEventListener('input', updatePhase);
+            document.getElementById('phaseSlider').addEventListener('change', createVisualization);
+            document.getElementById('yearSelect').addEventListener('change', createVisualization);
+            document.getElementById('playBtn').addEventListener('click', playAnimation);
+            document.getElementById('pauseBtn').addEventListener('click', pauseAnimation);
+        });
+    </script>
+</body>
+</html>

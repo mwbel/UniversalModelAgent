@@ -1,0 +1,15 @@
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+*.log
+.env
+.env.local
+backend/.runtime/
+frontend/.runtime/
+
+# Parent repo ignores `*.html`; we need these legacy/demo pages tracked for Epic F.
+!frontend/interactive-visualizations/**/*.html
+!frontend/interactive-visualizations/**/*.css
+!frontend/interactive-visualizations/**/*.js
+!frontend/interactive-visualizations/legacy/**

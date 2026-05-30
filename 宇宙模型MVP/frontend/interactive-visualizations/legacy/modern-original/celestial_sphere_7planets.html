@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地心天球 (3D交互版)</title>
+    <!-- Load Plotly.js -->
+    <script src="assets/lib/plotly.min.js"></script>
+    <!-- Load Astronomy Engine -->
+    <script src="assets/lib/astronomy.min.js"></script>
+    <script>
+        // Global Error Handler
+        window.onerror = function(msg, url, line, col, error) {
+            const loadingEl = document.getElementById('loading');
+            if (loadingEl) {
+                loadingEl.innerHTML = `⚠️ 初始化失败: ${msg}<br><small>Line: ${line}</small>`;
+                loadingEl.style.color = '#ff6b6b';
+            }
+            console.error('Global Error:', msg, error);
+            return false;
+        };
+    </script>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --text-color: #e0e0e0;
+            --panel-bg: #1a1a1a;
+            --accent-color: #3b82f6;
+            --border-color: #333;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background-color: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            z-index: 10;
+        }
+        .sidebar h2 {
+            margin: 0 0 20px 0;
+            font-size: 1.2rem;
+            color: #fff;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+        .control-group {
+            margin-bottom: 20px;
+        }
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        .row {
+            display: flex;
+            gap: 10px;
+        }
+        .row > div {
+            flex: 1;
+        }
+        input[type="number"], input[type="date"], input[type="time"] {
+            width: 100%;
+            background: #333;
+            border: 1px solid #444;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 5px;
+        }
+        button:hover {
+            background: #444;
+        }
+        button.primary {
+            background: var(--accent-color);
+        }
+        button.primary:hover {
+            background: #2563eb;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+        .checkbox-label input {
+            cursor: pointer;
+        }
+        .info-panel {
+            background: #252525;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #ccc;
+            margin-top: auto;
+        }
+        .info-panel h4 {
+            margin: 0 0 8px 0;
+            color: white;
+        }
+        .back-link {
+            display: block;
+            margin-top: 15px;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Main Area */
+        .main-content {
+            flex: 1;
+            position: relative;
+        }
+        #plot-container {
+            width: 100%;
+            height: 100%;
+        }
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2rem;
+            color: #666;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>控制面板</h2>
+    
+    <div class="control-group">
+        <label>观测地点</label>
+        
+        <!-- Presets -->
+        <div class="row" style="margin-bottom: 10px;">
+            <select id="countrySelect" style="flex:1; background:#333; color:white; border:1px solid #444; padding:5px; border-radius:4px;">
+                <option value="">-- 国家/区域 --</option>
+            </select>
+            <select id="citySelect" style="flex:1; background:#333; color:white; border:1px solid #444; padding:5px; border-radius:4px;">
+                <option value="">-- 城市 --</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <div>
+                <label style="font-size:0.8em">纬度 (°)</label>
+                <div style="display:flex; gap:5px;">
+                    <select id="latHemisphere" style="width: 50px; background: #333; color: white; border: 1px solid #444; border-radius: 4px;">
+                        <option value="1">N</option>
+                        <option value="-1">S</option>
+                    </select>
+                    <input type="number" id="lat" value="31.23" step="0.01" min="0" max="90" style="flex:1;">
+                </div>
+            </div>
+            <div>
+                <label style="font-size:0.8em">经度 (°)</label>
+                <div style="display:flex; gap:5px;">
+                     <select id="lonHemisphere" style="width: 50px; background: #333; color: white; border: 1px solid #444; border-radius: 4px;">
+                        <option value="1">E</option>
+                        <option value="-1">W</option>
+                    </select>
+                    <input type="number" id="lon" value="121.47" step="0.01" min="0" max="180" style="flex:1;">
+                </div>
+            </div>
+        </div>
+        
+        <div class="row" style="margin-top: 10px;">
+             <div>
+                <label style="font-size:0.8em">海拔 (米)</label>
+                <input type="number" id="altitude" value="0" step="10" min="0">
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label>日期与时间</label>
+        <input type="date" id="date">
+        <input type="time" id="time" step="1">
+        <button id="btn-now">重置为当前时间</button>
+    </div>
+
+    <div class="control-group">
+        <label>显示选项</label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="showTrails" checked> 显示周日视运动轨迹
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="showGrid" checked> 显示地平网格
+        </label>
+        <label class="checkbox-label">
+            <input type="checkbox" id="showEquatorial" checked> 显示天球经纬网 (赤道坐标)
+        </label>
+    </div>
+    
+    <div class="control-group">
+        <label>交互控制</label>
+         <label class="checkbox-label">
+            <input type="checkbox" id="autoRotate"> 自动旋转视图
+        </label>
+    </div>
+
+    <div class="info-panel">
+        <h4>说明:</h4>
+        • 红色点: 当前实时位置<br>
+        • 实线: 地平线上轨迹<br>
+        • 虚线: 地平线下轨迹<br>
+        • 灰色网格: 赤道坐标系(随时间旋转)<br>
+        • 基于 Astronomy Engine 算法<br>
+        • X轴=东, Y轴=北, Z轴=天顶
+    </div>
+    
+    
+</div>
+
+<div class="main-content">
+    <a href="index.html" class="back-link" style="position: absolute; top: 20px; right: 20px; z-index: 1000; background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 4px; color: white; text-decoration: none; border: 1px solid rgba(255,255,255,0.2);">← 返回工具集首页</a>
+    <div id="plot-container"></div>
+    <div id="loading" class="loading">正在初始化天球模型...</div>
+</div>
+
+<script>
+    // Configuration
+    const CONFIG = {
+        sphereRadius: 1.0,
+        trailSteps: 100, // steps for 24h path
+        bodies: [
+            { name: 'Sun', label: '太阳', color: '#FF8C00', size: 10, width: 6, dash: 'solid' },     // 暖橙色，实线 (Size: 10)
+            { name: 'Moon', label: '月亮', color: '#E0E0E0', size: 5, width: 4, dash: 'dot' },       // 银灰色，点线 (Size: 5)
+            { name: 'Mercury', label: '水星', color: '#DCDCDC', size: 3, width: 3, dash: 'dash' },   // 灰白色，短划线 (Size: 3)
+            { name: 'Venus', label: '金星', color: '#FFD700', size: 6, width: 3, dash: 'longdash' }, // 金黄色，长划线 (Size: 6)
+            { name: 'Mars', label: '火星', color: '#FF4500', size: 4, width: 3, dash: 'dashdot' },   // 橙红色，双短划线 (Size: 4)
+            { name: 'Jupiter', label: '木星', color: '#DEB887', size: 8, width: 5, dash: 'solid' },    // 褐白相间，粗实线 (Size: 8)
+            { name: 'Saturn', label: '土星', color: '#F0E68C', size: 7, width: 5, dash: 'longdashdot' },// 淡金色，实线+圆点 (Size: 7)
+            { name: 'Uranus', label: '天王星', color: '#87CEFA', size: 5, width: 2, dash: 'dashdot' },  // 淡蓝色，细点划线 (Size: 5)
+            { name: 'Neptune', label: '海王星', color: '#1E90FF', size: 5, width: 2, dash: 'longdash' } // 亮蓝色 (DodgerBlue)，长点划线 (Size: 5)
+        ]
+    };
+
+    const LOCATIONS = {
+        "中国": {
+            "北京": { lat: 39.90, lon: 116.40 },
+            "上海": { lat: 31.23, lon: 121.47 },
+            "广州": { lat: 23.13, lon: 113.26 },
+            "深圳": { lat: 22.54, lon: 114.05 },
+            "成都": { lat: 30.57, lon: 104.06 },
+            "杭州": { lat: 30.27, lon: 120.15 },
+            "武汉": { lat: 30.59, lon: 114.30 },
+            "西安": { lat: 34.34, lon: 108.94 },
+            "香港": { lat: 22.32, lon: 114.17 },
+            "台北": { lat: 25.03, lon: 121.56 },
+            "漠河": { lat: 53.48, lon: 122.37 },
+            "三亚": { lat: 18.25, lon: 109.50 },
+            "拉萨": { lat: 29.65, lon: 91.12 }
+        },
+        "亚洲其他": {
+            "东京 (日本)": { lat: 35.68, lon: 139.65 },
+            "首尔 (韩国)": { lat: 37.56, lon: 126.97 },
+            "新加坡": { lat: 1.35, lon: 103.82 },
+            "曼谷 (泰国)": { lat: 13.75, lon: 100.50 },
+            "新德里 (印度)": { lat: 28.61, lon: 77.20 },
+            "迪拜 (阿联酋)": { lat: 25.20, lon: 55.27 }
+        },
+        "欧洲": {
+            "伦敦 (英国)": { lat: 51.50, lon: -0.12 },
+            "巴黎 (法国)": { lat: 48.85, lon: 2.35 },
+            "柏林 (德国)": { lat: 52.52, lon: 13.40 },
+            "罗马 (意大利)": { lat: 41.90, lon: 12.49 },
+            "莫斯科 (俄罗斯)": { lat: 55.75, lon: 37.61 },
+            "雷克雅未克 (冰岛)": { lat: 64.14, lon: -21.90 }
+        },
+        "北美洲": {
+            "纽约 (美国)": { lat: 40.71, lon: -74.00 },
+            "洛杉矶 (美国)": { lat: 34.05, lon: -118.24 },
+            "旧金山 (美国)": { lat: 37.77, lon: -122.42 },
+            "多伦多 (加拿大)": { lat: 43.65, lon: -79.38 }
+        },
+        "南半球": {
+            "悉尼 (澳大利亚)": { lat: -33.86, lon: 151.20 },
+            "墨尔本 (澳大利亚)": { lat: -37.81, lon: 144.96 },
+            "惠灵顿 (新西兰)": { lat: -41.28, lon: 174.77 },
+            "开普敦 (南非)": { lat: -33.92, lon: 18.42 },
+            "里约热内卢 (巴西)": { lat: -22.90, lon: -43.17 },
+            "圣地亚哥 (智利)": { lat: -33.44, lon: -70.66 },
+            "南极点": { lat: -90.00, lon: 0.00 }
+        }
+    };
+
+    let plotDiv = document.getElementById('plot-container');
+    let autoRotateInterval = null;
+    let currentCameraEye = { x: 1.5, y: 1.5, z: 0.5 };
+    let cameraAngle = 0;
+
+    // Helper: Spherical (Az/Alt) to Cartesian (x,y,z)
+    // Az: 0=North, 90=East. Alt: 0=Horizon, 90=Zenith.
+    // Python Logic: x=East, y=North, z=Up.
+    // X = r * cos(alt) * sin(az)
+    // Y = r * cos(alt) * cos(az)
+    // Z = r * sin(alt)
+    function sph2cart(az, alt, r = 1.0) {
+        const azRad = az * Math.PI / 180;
+        const altRad = alt * Math.PI / 180;
+        return {
+            x: r * Math.cos(altRad) * Math.sin(azRad),
+            y: r * Math.cos(altRad) * Math.cos(azRad),
+            z: r * Math.sin(altRad)
+        };
+    }
+
+    // Initialize UI
+    function initUI() {
+        const now = new Date();
+        document.getElementById('date').value = now.toISOString().split('T')[0];
+        document.getElementById('time').value = now.toTimeString().split(' ')[0];
+        
+        // Populate Country Dropdown
+        const countrySelect = document.getElementById('countrySelect');
+        const citySelect = document.getElementById('citySelect');
+        
+        Object.keys(LOCATIONS).forEach(country => {
+            const opt = document.createElement('option');
+            opt.value = country;
+            opt.textContent = country;
+            countrySelect.appendChild(opt);
+        });
+        
+        // Country Change Handler
+        countrySelect.addEventListener('change', () => {
+            citySelect.innerHTML = '<option value="">-- 城市 --</option>';
+            const country = countrySelect.value;
+            if (country && LOCATIONS[country]) {
+                Object.keys(LOCATIONS[country]).forEach(city => {
+                    const opt = document.createElement('option');
+                    opt.value = city;
+                    opt.textContent = city;
+                    citySelect.appendChild(opt);
+                });
+            }
+        });
+        
+        // City Change Handler
+        citySelect.addEventListener('change', () => {
+            const country = countrySelect.value;
+            const city = citySelect.value;
+            if (country && city && LOCATIONS[country][city]) {
+                const loc = LOCATIONS[country][city];
+                
+                // Set Hemisphere
+                document.getElementById('latHemisphere').value = loc.lat >= 0 ? "1" : "-1";
+                document.getElementById('lonHemisphere').value = loc.lon >= 0 ? "1" : "-1";
+                
+                // Set Values (Absolute)
+                document.getElementById('lat').value = Math.abs(loc.lat);
+                document.getElementById('lon').value = Math.abs(loc.lon);
+                
+                updatePlot();
+            }
+        });
+
+        ['lat', 'lon', 'latHemisphere', 'lonHemisphere', 'altitude', 'date', 'time', 'showTrails', 'showGrid', 'showEquatorial'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('change', updatePlot);
+                if (el.tagName === 'INPUT') {
+                     el.addEventListener('input', () => {
+                        if(id === 'lat' || id === 'lon' || id === 'altitude') updatePlot();
+                    });
+                }
+            }
+        });
+        
+        document.getElementById('btn-now').addEventListener('click', () => {
+            const n = new Date();
+            document.getElementById('date').value = n.toISOString().split('T')[0];
+            document.getElementById('time').value = n.toTimeString().split(' ')[0];
+            updatePlot();
+        });
+
+        document.getElementById('autoRotate').addEventListener('change', (e) => {
+            if (e.target.checked) {
+                startRotation();
+            } else {
+                stopRotation();
+            }
+        });
+    }
+
+    function startRotation() {
+        if (autoRotateInterval) return;
+        autoRotateInterval = setInterval(() => {
+            cameraAngle += 0.005;
+            const r = Math.sqrt(currentCameraEye.x**2 + currentCameraEye.y**2); // Maintain distance radius
+            // Simple rotation around Z axis
+            const newX = 2.0 * Math.cos(cameraAngle);
+            const newY = 2.0 * Math.sin(cameraAngle);
+            
+            Plotly.relayout(plotDiv, {
+                'scene.camera.eye': { x: newX, y: newY, z: currentCameraEye.z }
+            });
+        }, 20);
+    }
+
+    function stopRotation() {
+        if (autoRotateInterval) {
+            clearInterval(autoRotateInterval);
+            autoRotateInterval = null;
+        }
+    }
+
+    // Main Plot Function
+    function updatePlot() {
+        if (typeof Astronomy === 'undefined') {
+            const msg = "Astronomy Engine library not loaded.";
+            console.error(msg);
+            document.getElementById('loading').innerHTML = `⚠️ ${msg}`;
+            return;
+        }
+
+        try {
+            const latInput = document.getElementById('lat');
+            const lonInput = document.getElementById('lon');
+            const latHemisphere = document.getElementById('latHemisphere');
+            const lonHemisphere = document.getElementById('lonHemisphere');
+            const altInput = document.getElementById('altitude');
+
+            if (!latInput || !lonInput) return; // UI not ready
+
+            let latVal = parseFloat(latInput.value);
+            let lonVal = parseFloat(lonInput.value);
+            let height = altInput ? parseFloat(altInput.value) : 0;
+            if (isNaN(height)) height = 0;
+            
+            // Apply hemisphere sign
+            const latSign = latHemisphere ? parseInt(latHemisphere.value) : 1;
+            const lonSign = lonHemisphere ? parseInt(lonHemisphere.value) : 1;
+            
+            const lat = latVal * latSign;
+            const lon = lonVal * lonSign;
+
+            const dateStr = document.getElementById('date').value;
+            const timeStr = document.getElementById('time').value;
+            const showTrails = document.getElementById('showTrails').checked;
+            const showGrid = document.getElementById('showGrid').checked;
+            const showEquatorial = document.getElementById('showEquatorial').checked;
+
+            if (!dateStr || !timeStr) {
+                 console.warn("Date/Time input empty");
+                 return;
+            }
+            const date = new Date(dateStr + 'T' + timeStr);
+            if (isNaN(date.getTime())) {
+                console.warn("Invalid Date:", dateStr, timeStr);
+                return;
+            }
+        
+            if (isNaN(lat) || isNaN(lon)) {
+                console.warn("Invalid lat/lon:", lat, lon);
+                return; // Skip update
+            }
+
+            let observer;
+            try {
+                // Explicitly pass non-zero height to avoid potential 0/NaN issues
+                observer = new Astronomy.Observer(lat, lon, height);
+            } catch(e) {
+                console.error("Observer creation failed:", e, lat, lon);
+                throw new Error("Observer creation failed: " + (e.message || e));
+            }
+
+            const traces = [];
+
+        // 1. Horizon & Cardinal Points (Fixed Frame)
+        if (showGrid) {
+            // Horizon Fill (Gray, semi-transparent)
+            // Use a Mesh3D to create a filled circle at Z=0
+            const meshX = [0], meshY = [0], meshZ = [0]; // Center point
+            const meshI = [], meshJ = [], meshK = [];
+            const steps = 72;
+            for (let i = 0; i < steps; i++) {
+                const ang = (i / steps) * 2 * Math.PI;
+                meshX.push(CONFIG.sphereRadius * Math.cos(ang));
+                meshY.push(CONFIG.sphereRadius * Math.sin(ang));
+                meshZ.push(0);
+                if (i > 0) {
+                    meshI.push(0);
+                    meshJ.push(i);
+                    meshK.push(i + 1);
+                }
+            }
+            // Close the loop
+            meshI.push(0);
+            meshJ.push(steps);
+            meshK.push(1);
+
+            traces.push({
+                type: 'mesh3d',
+                x: meshX, y: meshY, z: meshZ,
+                i: meshI, j: meshJ, k: meshK,
+                color: '#808080',
+                opacity: 0.5,
+                hoverinfo: 'none',
+                name: '地平面'
+            });
+
+            // Horizon Circle (White Line)
+            const horX=[], horY=[], horZ=[];
+            for(let i=0; i<=360; i+=5) {
+                const p = sph2cart(i, 0, CONFIG.sphereRadius);
+                horX.push(p.x); horY.push(p.y); horZ.push(p.z);
+            }
+            traces.push({
+                type: 'scatter3d', mode: 'lines',
+                x: horX, y: horY, z: horZ,
+                line: { color: '#ffffff', width: 4 },
+                name: '地平圈', hoverinfo: 'none'
+            });
+
+            // Cardinal Lines (N-S, E-W)
+            traces.push({
+                type: 'scatter3d', mode: 'lines',
+                x: [0, 0], y: [-1, 1], z: [0, 0],
+                line: { color: '#888', width: 2, dash: 'dash' },
+                name: '南北线', hoverinfo: 'none'
+            });
+            traces.push({
+                type: 'scatter3d', mode: 'lines',
+                x: [-1, 1], y: [0, 0], z: [0, 0],
+                line: { color: '#888', width: 2, dash: 'dash' },
+                name: '东西线', hoverinfo: 'none'
+            });
+            
+            // Labels (N, S, E, W, Zenith, Nadir)
+            const labels = [
+                {t: '北', az: 0, alt: 0}, {t: '南', az: 180, alt: 0},
+                {t: '东', az: 90, alt: 0}, {t: '西', az: 270, alt: 0},
+                {t: '天顶', az: 0, alt: 90}, {t: '天底', az: 0, alt: -90}
+            ];
+            const lx=[], ly=[], lz=[], lt=[];
+            labels.forEach(l => {
+                const p = sph2cart(l.az, l.alt, 1.1);
+                lx.push(p.x); ly.push(p.y); lz.push(p.z);
+                lt.push(l.t);
+            });
+            traces.push({
+                type: 'scatter3d', mode: 'text',
+                x: lx, y: ly, z: lz,
+                text: lt,
+                textfont: { color: '#fff', size: 12 },
+                showlegend: false
+            });
+        }
+
+        // 2. Celestial Sphere Wireframe (Equatorial Grid rotated to Horizon)
+        // This visualizes how the "sky" (RA/Dec) is oriented relative to the observer.
+        if (showEquatorial) {
+            const gridColor = '#444';
+            
+            // Meridians (RA lines) - every 2h (30 deg)
+            for(let ra=0; ra<24; ra+=2) {
+                const raX=[], raY=[], raZ=[];
+                for(let dec=-90; dec<=90; dec+=5) {
+                    const hor = Astronomy.Horizon(date, observer, ra, dec, 'normal');
+                    const p = sph2cart(hor.azimuth, hor.altitude, CONFIG.sphereRadius);
+                    raX.push(p.x); raY.push(p.y); raZ.push(p.z);
+                }
+                traces.push({
+                    type: 'scatter3d', mode: 'lines',
+                    x: raX, y: raY, z: raZ,
+                    line: { color: gridColor, width: 1 },
+                    showlegend: false, hoverinfo: 'none'
+                });
+            }
+            
+            // Parallels (Dec lines) - every 30 deg
+            for(let dec=-60; dec<=60; dec+=30) {
+                const decX=[], decY=[], decZ=[];
+                for(let ra=0; ra<=24; ra+=0.5) { // 0 to 24h
+                    const hor = Astronomy.Horizon(date, observer, ra, dec, 'normal');
+                    const p = sph2cart(hor.azimuth, hor.altitude, CONFIG.sphereRadius);
+                    decX.push(p.x); decY.push(p.y); decZ.push(p.z);
+                }
+                traces.push({
+                    type: 'scatter3d', mode: 'lines',
+                    x: decX, y: decY, z: decZ,
+                    line: { color: gridColor, width: 1 },
+                    showlegend: false, hoverinfo: 'none'
+                });
+            }
+
+            // Celestial Poles (NCP, SCP)
+            // NCP is at Dec=90. SCP is at Dec=-90.
+            const ncpHor = Astronomy.Horizon(date, observer, 0, 90, 'normal');
+            const ncp = sph2cart(ncpHor.azimuth, ncpHor.altitude, 1.1);
+            
+            traces.push({
+                type: 'scatter3d', mode: 'text',
+                x: [ncp.x], y: [ncp.y], z: [ncp.z],
+                text: ['北天极'],
+                textfont: { color: 'red', size: 12 },
+                showlegend: false
+            });
+            
+            // Celestial Axis Line
+            traces.push({
+                type: 'scatter3d', mode: 'lines',
+                x: [-ncp.x, ncp.x], y: [-ncp.y, ncp.y], z: [-ncp.z, ncp.z],
+                line: { color: 'red', width: 2, dash: 'dot' },
+                name: '地轴', hoverinfo: 'none'
+            });
+        }
+
+        // 3. Planets & Trails
+        CONFIG.bodies.forEach(body => {
+            // Current Position
+            const equ = Astronomy.Equator(body.name, date, observer, false, true);
+            const hor = Astronomy.Horizon(date, observer, equ.ra, equ.dec, 'normal');
+            const pos = sph2cart(hor.azimuth, hor.altitude, CONFIG.sphereRadius);
+            
+            // Marker
+            traces.push({
+                type: 'scatter3d', mode: 'markers+text',
+                x: [pos.x], y: [pos.y], z: [pos.z],
+                marker: { size: body.size, color: body.color },
+                text: [body.label],
+                textposition: 'top center',
+                textfont: { color: 'white' },
+                name: body.label,
+                hoverinfo: 'text',
+                hovertext: `${body.label}<br>方位: ${hor.azimuth.toFixed(1)}°<br>高度: ${hor.altitude.toFixed(1)}°`
+            });
+
+            // Trail (Daily Motion)
+            if (showTrails) {
+                // Split trails into "Above Horizon" (Solid) and "Below Horizon" (Dash)
+                const trailAbove = { x:[], y:[], z:[] };
+                const trailBelow = { x:[], y:[], z:[] };
+                
+                const start = new Date(date.getTime());
+                start.setHours(0,0,0,0); // Start from midnight
+                
+                // Helper to add point to arrays
+                const addP = (arr, p) => { arr.x.push(p.x); arr.y.push(p.y); arr.z.push(p.z); };
+                const addNull = (arr) => { arr.x.push(null); arr.y.push(null); arr.z.push(null); };
+                
+                // We'll calculate positions finely
+                const steps = 144; // Every 10 mins
+                let prevP = null;
+                let prevAlt = null;
+
+                for(let i=0; i<=steps; i++) {
+                    const t = new Date(start.getTime() + i * (24*60*60*1000)/steps);
+                    const t_equ = Astronomy.Equator(body.name, t, observer, false, true);
+                    const t_hor = Astronomy.Horizon(t, observer, t_equ.ra, t_equ.dec, 'normal');
+                    const p = sph2cart(t_hor.azimuth, t_hor.altitude, CONFIG.sphereRadius);
+                    const alt = t_hor.altitude;
+
+                    if (prevP !== null) {
+                        // Check for crossing
+                        if ((prevAlt >= 0 && alt < 0) || (prevAlt < 0 && alt >= 0)) {
+                            // Calculate approximate crossing point (linear interpolation where alt=0)
+                            // ratio = (0 - prevAlt) / (alt - prevAlt)
+                            const ratio = -prevAlt / (alt - prevAlt);
+                            const crossP = {
+                                x: prevP.x + (p.x - prevP.x) * ratio,
+                                y: prevP.y + (p.y - prevP.y) * ratio,
+                                z: 0 // Explicitly 0
+                            };
+                            
+                            // Add crossing point to BOTH segments to close gap
+                            if (prevAlt >= 0) { // Going down
+                                addP(trailAbove, crossP); addNull(trailAbove);
+                                addNull(trailBelow); addP(trailBelow, crossP);
+                            } else { // Going up
+                                addP(trailBelow, crossP); addNull(trailBelow);
+                                addNull(trailAbove); addP(trailAbove, crossP);
+                            }
+                        }
+                    }
+
+                    if (alt >= 0) {
+                        addP(trailAbove, p);
+                    } else {
+                        addP(trailBelow, p);
+                    }
+                    
+                    prevP = p;
+                    prevAlt = alt;
+                }
+                
+                // Add Above Trace (Solid/Custom)
+                traces.push({
+                    type: 'scatter3d', mode: 'lines',
+                    x: trailAbove.x, y: trailAbove.y, z: trailAbove.z,
+                    line: { color: body.color, width: body.width || 3, dash: body.dash || 'solid' },
+                    connectgaps: false,
+                    showlegend: false,
+                    hoverinfo: 'none'
+                });
+
+                // Add Below Trace (Dash/Faint)
+                // For below horizon, we use the same style but with reduced opacity to indicate "hidden"
+                traces.push({
+                    type: 'scatter3d', mode: 'lines',
+                    x: trailBelow.x, y: trailBelow.y, z: trailBelow.z,
+                    line: { color: body.color, width: body.width || 3, dash: body.dash || 'solid' }, 
+                    opacity: 0.3,
+                    connectgaps: false,
+                    showlegend: false,
+                    hoverinfo: 'none'
+                });
+
+                // 24 Hour Markers (Integer Hours)
+                const hourX=[], hourY=[], hourZ=[], hourText=[];
+                for(let h=0; h<24; h++){
+                    const t = new Date(start.getTime());
+                    t.setHours(h, 0, 0, 0);
+                    const t_equ = Astronomy.Equator(body.name, t, observer, false, true);
+                    const t_hor = Astronomy.Horizon(t, observer, t_equ.ra, t_equ.dec, 'normal');
+                    // Only if above horizon? User said "整24小时点", maybe all? Let's show all.
+                    const p = sph2cart(t_hor.azimuth, t_hor.altitude, CONFIG.sphereRadius);
+                    hourX.push(p.x); hourY.push(p.y); hourZ.push(p.z);
+                    hourText.push(`${h}h`);
+                }
+                traces.push({
+                    type: 'scatter3d', mode: 'markers+text',
+                    x: hourX, y: hourY, z: hourZ,
+                    marker: { size: 2, color: body.color },
+                    text: hourText,
+                    textfont: { color: body.color, size: 10 },
+                    textposition: 'top right',
+                    showlegend: false,
+                    hoverinfo: 'text'
+                });
+
+                // Rise/Set Points
+                try {
+                    if (typeof Astronomy.SearchRiseSet === 'function') {
+                        const rise = Astronomy.SearchRiseSet(body.name, date, observer, +1);
+                        const set = Astronomy.SearchRiseSet(body.name, date, observer, -1);
+                        
+                        [
+                            { evt: rise, label: '日升' }, 
+                            { evt: set, label: '日落' }
+                        ].forEach(item => {
+                            if (item.evt && item.evt.date) {
+                                // Calculate position at rise/set time
+                                // By definition Altitude is 0 (approx, depending on refraction)
+                                // We use the exact time to get Azimuth
+                                const t_evt = item.evt.date;
+                                const t_equ = Astronomy.Equator(body.name, t_evt, observer, false, true);
+                                const t_hor = Astronomy.Horizon(t_evt, observer, t_equ.ra, t_equ.dec, 'normal');
+                                const p = sph2cart(t_hor.azimuth, 0, CONFIG.sphereRadius); // Force Alt=0 for visual cleaniness on horizon
+                                
+                                traces.push({
+                                    type: 'scatter3d', mode: 'markers+text',
+                                    x: [p.x], y: [p.y], z: [p.z],
+                                    marker: { size: 5, color: body.color, symbol: 'diamond' },
+                                    text: [item.label], // "日升" / "日落" - maybe customize based on body name?
+                                    textfont: { color: 'white', size: 12 },
+                                    showlegend: false,
+                                    hoverinfo: 'text',
+                                    hovertext: `${body.label} ${item.label}: ${t_evt.toLocaleTimeString()}`
+                                });
+                            }
+                        });
+                    } else {
+                        console.warn("Astronomy.SearchRiseSet not found");
+                    }
+                } catch(e) {
+                    console.warn(`Failed to calc rise/set for ${body.name}:`, e);
+                }
+            }
+        });
+
+        // Layout
+        const layout = {
+            scene: {
+                xaxis: { title: '', showgrid: false, zeroline: false, showticklabels: false, visible: false },
+                yaxis: { title: '', showgrid: false, zeroline: false, showticklabels: false, visible: false },
+                zaxis: { title: '', showgrid: false, zeroline: false, showticklabels: false, visible: false },
+                aspectmode: 'cube',
+                dragmode: 'orbit', // Enable rotation!
+                bgcolor: 'black',
+                camera: {
+                    eye: currentCameraEye // Preserve camera pos if set
+                }
+            },
+            paper_bgcolor: 'black',
+            plot_bgcolor: 'black',
+            margin: { l: 0, r: 0, t: 30, b: 0 },
+            showlegend: true,
+            legend: { x: 0, y: 1, font: { color: 'white' } },
+            title: {
+                text: `地心天球 (${dateStr} ${timeStr})<br><span style="font-size:12px">${Math.abs(lat).toFixed(2)}°${lat>=0?'N':'S'}, ${Math.abs(lon).toFixed(2)}°${lon>=0?'E':'W'}, Alt: ${height}m</span>`,
+                font: { color: 'white', size: 16 },
+                y: 0.98
+            }
+        };
+
+        Plotly.react('plot-container', traces, layout).then(gd => {
+            document.getElementById('loading').style.display = 'none';
+            // Capture camera updates to preserve view during refresh
+            gd.on('plotly_relayout', (eventData) => {
+                if (eventData['scene.camera.eye']) {
+                    currentCameraEye = eventData['scene.camera.eye'];
+                }
+            });
+        }).catch(err => {
+             console.error("Plotly.react failed:", err);
+             document.getElementById('loading').style.display = 'block';
+             document.getElementById('loading').innerHTML = `Plotly 渲染失败: ${err.message || err}`;
+        });
+        } catch (err) {
+            console.error("UpdatePlot Error:", err);
+            const loadingEl = document.getElementById('loading');
+            loadingEl.style.display = 'block';
+            loadingEl.style.color = 'red';
+            const msg = err.message || JSON.stringify(err) || "Unknown Error";
+            loadingEl.innerHTML = `绘图出错: ${msg}<br><small>See console for details</small>`;
+        }
+    }
+
+    // Start
+    initUI();
+    updatePlot();
+
+</script>
+</body>
+</html>

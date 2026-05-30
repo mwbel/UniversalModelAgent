@@ -1,0 +1,129 @@
+from __future__ import annotations
+
+import json
+import mimetypes
+from http import HTTPStatus
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from urllib.parse import urlparse
+
+from backend.catalog import VISUALIZATIONS
+from backend.config import SETTINGS
+from backend.services.chat_service import CHAT_SERVICE
+from backend.services.mineru_client import MINERU_CLIENT
+from backend.services.rag_client import RAG_CLIENT
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = ROOT_DIR / "frontend"
+
+
+class AppHandler(BaseHTTPRequestHandler):
+    server_version = "UniverseModelHTTP/0.1"
+
+    def do_HEAD(self) -> None:  # noqa: N802
+        parsed = urlparse(self.path)
+        if parsed.path.startswith("/api/"):
+          self.send_response(HTTPStatus.OK)
+          self.end_headers()
+          return
+        self._serve_static(parsed.path, head_only=True)
+
+    def do_GET(self) -> None:  # noqa: N802
+        parsed = urlparse(self.path)
+        if parsed.path == "/api/health":
+            self._send_json(
+                {
+                    "ok": True,
+                    "appName": SETTINGS.app_name,
+                    "mineruBaseUrl": SETTINGS.mineru_base_url,
+                    "ragBaseUrl": SETTINGS.rag_base_url,
+                }
+            )
+            return
+        if parsed.path == "/api/config":
+            self._send_json(SETTINGS.public_dict())
+            return
+        if parsed.path == "/api/visualizations":
+            self._send_json({"items": VISUALIZATIONS})
+            return
+        if parsed.path == "/api/rag/strategies":
+            self._send_json(RAG_CLIENT.get_strategies())
+            return
+        if parsed.path == "/api/rag/kbs":
+            self._send_json(RAG_CLIENT.get_knowledge_bases())
+            return
+        self._serve_static(parsed.path)
+
+    def do_POST(self) -> None:  # noqa: N802
+        parsed = urlparse(self.path)
+        payload = self._read_json()
+        if parsed.path == "/api/chat":
+            result = CHAT_SERVICE.ask(
+                question=str(payload.get("question", "")).strip(),
+                history=payload.get("history", []),
+                variant=payload.get("ragVariant"),
+                kb_id=payload.get("kbId"),
+            )
+            self._send_json(result)
+            return
+        if parsed.path == "/api/ocr/convert":
+            self._send_json(MINERU_CLIENT.convert_markdown(payload))
+            return
+        self._send_json({"ok": False, "error": "Not found"}, status=HTTPStatus.NOT_FOUND)
+
+    def log_message(self, format: str, *args: object) -> None:  # noqa: A003
+        return
+
+    def _read_json(self) -> dict:
+        content_length = int(self.headers.get("Content-Length", "0"))
+        if content_length <= 0:
+            return {}
+        raw = self.rfile.read(content_length).decode("utf-8")
+        if not raw.strip():
+            return {}
+        return json.loads(raw)
+
+    def _send_json(self, payload: dict, status: HTTPStatus = HTTPStatus.OK) -> None:
+        body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _serve_static(self, path: str, head_only: bool = False) -> None:
+        relative_path = "index.html" if path in {"", "/"} else path.lstrip("/")
+        file_path = (FRONTEND_DIR / relative_path).resolve()
+        if FRONTEND_DIR not in file_path.parents and file_path != FRONTEND_DIR:
+            self._send_json({"ok": False, "error": "Forbidden"}, status=HTTPStatus.FORBIDDEN)
+            return
+        if file_path.is_dir():
+            file_path = file_path / "index.html"
+        if not file_path.exists():
+            self._send_json({"ok": False, "error": "Not found"}, status=HTTPStatus.NOT_FOUND)
+            return
+
+        content = file_path.read_bytes()
+        content_type = mimetypes.guess_type(str(file_path))[0] or "application/octet-stream"
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", f"{content_type}; charset=utf-8")
+        self.send_header("Content-Length", str(len(content)))
+        self.end_headers()
+        if not head_only:
+            self.wfile.write(content)
+
+
+def run() -> None:
+    server = ThreadingHTTPServer((SETTINGS.host, SETTINGS.port), AppHandler)
+    print(f"Universe Model Agent server running at http://{SETTINGS.host}:{SETTINGS.port}")
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        server.server_close()
+
+
+if __name__ == "__main__":
+    run()

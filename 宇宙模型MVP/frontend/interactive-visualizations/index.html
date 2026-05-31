@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Epic F · 已实现交互式可视化页面展厅</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Epic F · 前端效果联调</p>
+        <h1>交互式可视化页面展厅</h1>
+        <p class="hero-copy">
+          先把之前已经实现过的现代天文学与藏历天文学可视化页面接入到同一个前端展厅里，
+          直接做页面级测试、切换和预览，而不是停留在文件清单层面。
+        </p>
+      </div>
+      <div class="hero-card">
+        <div class="hero-stat">
+          <span class="hero-stat-value" id="pageCount">0</span>
+          <span class="hero-stat-label">已接入页面</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value">Iframe</span>
+          <span class="hero-stat-label">支持原页面内联预览</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value">URL</span>
+          <span class="hero-stat-label">支持按页面参数直达</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="section-block">
+        <div class="section-heading">
+          <div>
+            <p class="section-label">页面目录</p>
+            <h2>已实现交互页</h2>
+          </div>
+          <p class="section-copy">优先接入依赖清晰、可直接跑起来的页面，先验证展示链路。</p>
+        </div>
+        <nav class="page-rail" id="pageRail" aria-label="页面切换"></nav>
+      </section>
+
+      <section class="preview-shell">
+        <div class="preview-card">
+          <div class="preview-header">
+            <div>
+              <p class="section-label">实时预览</p>
+              <h2 id="pageTitle"></h2>
+            </div>
+            <div class="preview-actions">
+              <a id="openPageButton" class="action-button" href="#" target="_blank" rel="noreferrer">新窗口打开</a>
+              <button id="reloadFrameButton" class="action-button action-button-muted" type="button">刷新预览</button>
+            </div>
+          </div>
+
+          <div class="preview-frame-wrap">
+            <iframe id="previewFrame" title="交互式可视化页面预览" loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <aside class="info-card">
+          <div class="control-section">
+            <p class="section-label">页面简介</p>
+            <p id="pageSummary" class="body-copy"></p>
+          </div>
+
+          <div class="control-section">
+            <p class="section-label">来源信息</p>
+            <dl class="meta-list">
+              <div>
+                <dt>来源项目</dt>
+                <dd id="pageSource"></dd>
+              </div>
+              <div>
+                <dt>页面类型</dt>
+                <dd id="pageCategory"></dd>
+              </div>
+              <div>
+                <dt>技术要点</dt>
+                <dd id="pageStack"></dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="control-section">
+            <p class="section-label">测试提示</p>
+            <ul id="pageNotes" class="insight-list"></ul>
+          </div>
+
+          <div class="control-section">
+            <p class="section-label">当前直达链接</p>
+            <div class="context-box">
+              <p id="deepLinkSummary" class="body-copy compact"></p>
+              <button id="copyLinkButton" class="link-button" type="button">复制当前页面链接</button>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

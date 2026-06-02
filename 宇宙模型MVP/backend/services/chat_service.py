@@ -7,8 +7,60 @@ from backend.services.rag_client import RAG_CLIENT
 from backend.services.visualization_planner import VISUALIZATION_PLANNER
 
 
-def _recommend_visualizations(question: str) -> list[dict[str, Any]]:
+def _recommend_visualizations(question: str, answer: str = "") -> list[dict[str, Any]]:
+    # Keep visualization routing anchored to the user's request. Retrieved context can mention
+    # adjacent concepts and otherwise pull the UI toward the wrong component.
     return VISUALIZATION_PLANNER.plan(question=question)
+
+
+def _orchestration_steps(
+    *,
+    question: str,
+    rag_result: dict[str, Any],
+    visualizations: list[dict[str, Any]],
+    service: str,
+) -> list[dict[str, Any]]:
+    contexts = rag_result.get("contexts") or []
+    visual_component_ids = [
+        item.get("componentId")
+        or ((item.get("a2uiInstruction") or {}).get("componentId"))
+        for item in visualizations
+    ]
+    visual_component_ids = [str(item) for item in visual_component_ids if item]
+    wants_visual = any(marker in question for marker in ("可视化", "展示", "画", "图", "演示", "模拟"))
+
+    return [
+        {
+            "id": "intent",
+            "label": "确定任务意图",
+            "status": "completed",
+            "detail": "可视化问答" if wants_visual or visualizations else "知识库问答",
+        },
+        {
+            "id": "retrieval",
+            "label": "检索本地知识库",
+            "status": "completed" if contexts else "skipped",
+            "detail": f"命中 {len(contexts)} 段上下文" if contexts else "未使用知识库上下文",
+        },
+        {
+            "id": "visualizer",
+            "label": "匹配 A2UI 能力",
+            "status": "completed" if visualizations else "skipped",
+            "detail": "、".join(visual_component_ids) if visual_component_ids else "未命中可视化能力",
+        },
+        {
+            "id": "generation",
+            "label": "生成文字解释",
+            "status": "completed",
+            "detail": "DeepSeek + RAG" if service == "knowledge" else "本地兜底回答",
+        },
+        {
+            "id": "validation",
+            "label": "校验并交给前端渲染",
+            "status": "completed" if visualizations else "skipped",
+            "detail": "A2UI 指令已生成" if visualizations else "纯文本回答",
+        },
+    ]
 
 
 def _fallback_answer(question: str) -> str:
@@ -102,11 +154,18 @@ class ChatService:
     ) -> dict[str, Any]:
         rag_result = RAG_CLIENT.ask(question=question, history=history, variant=variant, kb_id=kb_id)
         if not _is_bad_rag_result(rag_result):
+            visualizations = _recommend_visualizations(question, rag_result["answer"])
             return {
                 "answer": rag_result["answer"],
                 "citations": rag_result["citations"],
                 "contexts": rag_result["contexts"],
-                "recommendedVisualizations": _recommend_visualizations(question),
+                "recommendedVisualizations": visualizations,
+                "orchestration": _orchestration_steps(
+                    question=question,
+                    rag_result=rag_result,
+                    visualizations=visualizations,
+                    service="knowledge",
+                ),
                 "service": "knowledge",
                 "strategy": rag_result.get("strategy") or variant,
                 "resolvedStrategy": rag_result.get("resolvedStrategy"),
@@ -115,11 +174,19 @@ class ChatService:
                 "raw": rag_result["raw"],
             }
 
+        answer = _fallback_answer(question)
+        visualizations = _recommend_visualizations(question, answer)
         return {
-            "answer": _fallback_answer(question),
+            "answer": answer,
             "citations": [],
             "contexts": [],
-            "recommendedVisualizations": _recommend_visualizations(question),
+            "recommendedVisualizations": visualizations,
+            "orchestration": _orchestration_steps(
+                question=question,
+                rag_result=rag_result,
+                visualizations=visualizations,
+                service="assistant",
+            ),
             "service": "assistant",
             "strategy": variant,
             "raw": rag_result.get("raw"),

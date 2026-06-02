@@ -325,6 +325,9 @@ class RagClient:
                                 "content": (
                                     "你是一个基于本地知识库回答问题的助手。"
                                     "请优先依据给定上下文作答，不要编造没有出现的信息。"
+                                    "如果用户要求可视化，请只给简洁文字解释；"
+                                    "不要输出 ASCII 字符画、Markdown 代码块图、Mermaid 或伪图，"
+                                    "交互式图形会由 A2UI 组件单独渲染。"
                                 ),
                             },
                             *recent_history,
@@ -334,6 +337,7 @@ class RagClient:
                                     f"问题：{question}\n\n"
                                     f"知识库上下文：\n{joined_context}\n\n"
                                     "请给出简洁、直接的中文回答。"
+                                    "不要用字符画模拟图形。"
                                 ),
                             },
                         ],

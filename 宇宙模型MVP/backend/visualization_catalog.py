@@ -70,7 +70,7 @@ VISUALIZATION_CAPABILITIES: list[VisualizationCapability] = [
         title="黄道与白道关系示意",
         description="展示黄道、白道、约 5.145 度夹角，以及升交点和降交点的空间关系。",
         page_id="ecliptic-lunar-path",
-        concepts=["ecliptic_lunar_path", "eclipse_geometry"],
+        concepts=["ecliptic_lunar_path"],
         keywords=[
             "黄道",
             "白道",

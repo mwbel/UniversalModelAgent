@@ -15,10 +15,10 @@ export function GenericVisualization({ componentId, node }: GenericVisualization
   const numericEntries = Object.entries(node).filter(([, value]) => isNumber(value))
   const booleanEntries = Object.entries(node).filter(([, value]) => typeof value === 'boolean')
   const [values, setValues] = useState<Record<string, number>>(
-    Object.fromEntries(numericEntries.map(([key, value]) => [key, value])),
+    () => Object.fromEntries(numericEntries.map(([key, value]) => [key, Number(value)])),
   )
   const [toggles, setToggles] = useState<Record<string, boolean>>(
-    Object.fromEntries(booleanEntries.map(([key, value]) => [key, Boolean(value)])),
+    () => Object.fromEntries(booleanEntries.map(([key, value]) => [key, Boolean(value)])),
   )
 
   return (

@@ -267,6 +267,58 @@ button:disabled {
   color: white;
 }
 
+.pipeline-card {
+  width: min(760px, 92%);
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(248, 250, 255, 0.78);
+  border: 1px solid rgba(77, 98, 165, 0.1);
+}
+
+.pipeline-steps {
+  display: grid;
+  gap: 10px;
+}
+
+.pipeline-step {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  color: #64708f;
+}
+
+.pipeline-step > span {
+  width: 10px;
+  height: 10px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: #d5dcef;
+}
+
+.pipeline-step strong {
+  display: block;
+  color: #253251;
+  font-size: 14px;
+}
+
+.pipeline-step small {
+  color: #6c7897;
+}
+
+.pipeline-step.completed > span {
+  background: #2d62ff;
+}
+
+.pipeline-step.running > span {
+  background: #f5b331;
+  box-shadow: 0 0 0 6px rgba(245, 179, 49, 0.16);
+}
+
+.pipeline-step.skipped > span {
+  background: #aeb8cf;
+}
+
 .bottom-input {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -462,6 +514,82 @@ button:disabled {
 .astro-note {
   margin: 0;
   color: #596783;
+}
+
+.eclipse-card,
+.generic-viz {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(239, 244, 255, 0.95));
+  border: 1px solid rgba(77, 98, 165, 0.14);
+}
+
+.eclipse-card svg {
+  display: block;
+  width: 100%;
+  min-height: 260px;
+}
+
+.eclipse-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 5px;
+  border-radius: 16px;
+  background: rgba(226, 233, 249, 0.74);
+}
+
+.eclipse-tabs button {
+  min-height: 38px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #52617f;
+}
+
+.eclipse-tabs button.active {
+  background: white;
+  color: #2d55d8;
+  box-shadow: 0 8px 18px rgba(77, 98, 165, 0.12);
+}
+
+.generic-viz header {
+  display: grid;
+  gap: 10px;
+}
+
+.generic-viz h3,
+.generic-viz p {
+  margin: 0;
+}
+
+.generic-viz code {
+  width: fit-content;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: rgba(45, 98, 255, 0.08);
+  color: #3158cc;
+  white-space: normal;
+}
+
+.generic-controls {
+  display: grid;
+  gap: 12px;
+}
+
+.generic-controls label {
+  display: grid;
+  grid-template-columns: minmax(80px, auto) minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  color: #31405f;
+}
+
+.generic-toggle {
+  grid-template-columns: minmax(80px, auto) auto !important;
+  justify-content: start;
 }
 
 .evidence {

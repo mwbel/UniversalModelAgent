@@ -18,6 +18,14 @@ export type ChatResponse = {
   citations?: Array<{ title: string; snippet: string; url?: string }>
   contexts?: Array<{ content: string; score?: number; source?: string; metadata?: Record<string, unknown> }>
   recommendedVisualizations?: VisualizationInstruction[]
+  orchestration?: OrchestrationStep[]
+}
+
+export type OrchestrationStep = {
+  id: string
+  label: string
+  status: 'pending' | 'running' | 'completed' | 'skipped'
+  detail?: string
 }
 
 export type VisualizationInstruction = {

@@ -8,6 +8,7 @@ import {
   fetchStrategies,
   uploadDocument,
   type KnowledgeBase,
+  type OrchestrationStep,
   type RagStrategy,
   type VisualizationInstruction,
 } from './services/api'
@@ -17,6 +18,14 @@ const starterQuestions = [
   '请可视化展示黄道和白道的关系',
   '为什么会发生月食？',
   '行星为什么会逆行？',
+]
+
+const runtimeStages: OrchestrationStep[] = [
+  { id: 'intent', label: '确定任务意图', status: 'pending' },
+  { id: 'retrieval', label: '检索本地知识库', status: 'pending' },
+  { id: 'visualizer', label: '匹配 A2UI 能力', status: 'pending' },
+  { id: 'generation', label: '生成文字解释', status: 'pending' },
+  { id: 'validation', label: '校验并交给前端渲染', status: 'pending' },
 ]
 
 function suggestKbId(filename: string): string {
@@ -34,6 +43,51 @@ function buildSurfaceFromVisualizations(items: VisualizationInstruction[]) {
   return surface
 }
 
+function stageLabel(status: OrchestrationStep['status']) {
+  if (status === 'completed') return '完成'
+  if (status === 'running') return '进行中'
+  if (status === 'skipped') return '跳过'
+  return '等待'
+}
+
+function PipelineStatus({
+  steps,
+  activeIndex,
+  loading,
+}: {
+  steps: OrchestrationStep[]
+  activeIndex?: number
+  loading?: boolean
+}) {
+  const resolved = loading
+    ? steps.map((step, index) => ({
+        ...step,
+        status: (index < (activeIndex ?? 0)
+          ? 'completed'
+          : index === activeIndex
+            ? 'running'
+            : 'pending') as OrchestrationStep['status'],
+      }))
+    : steps
+
+  return (
+    <div className="pipeline-card">
+      <p className="eyebrow">Orchestration</p>
+      <div className="pipeline-steps">
+        {resolved.map((step) => (
+          <div className={`pipeline-step ${step.status}`} key={step.id}>
+            <span />
+            <div>
+              <strong>{step.label}</strong>
+              <small>{step.detail || stageLabel(step.status)}</small>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function App() {
   const isGallery = new URLSearchParams(window.location.search).get('gallery') === '1'
   const [health, setHealth] = useState<string>('Checking')
@@ -45,6 +99,7 @@ export function App() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [activeStage, setActiveStage] = useState(0)
   const [status, setStatus] = useState('')
 
   const currentStrategy = strategies.find((item) => item.id === selectedStrategy)
@@ -68,6 +123,18 @@ export function App() {
   useEffect(() => {
     refresh().catch((error) => setStatus(error instanceof Error ? error.message : String(error)))
   }, [])
+
+  useEffect(() => {
+    if (!isLoading) {
+      setActiveStage(0)
+      return
+    }
+
+    const interval = window.setInterval(() => {
+      setActiveStage((stage) => Math.min(stage + 1, runtimeStages.length - 1))
+    }, 750)
+    return () => window.clearInterval(interval)
+  }, [isLoading])
 
   async function handleUpload(file: File | null) {
     if (!file) return
@@ -113,6 +180,7 @@ export function App() {
           citations: response.citations,
           contexts: response.contexts,
           recommendedVisualizations: response.recommendedVisualizations,
+          orchestration: response.orchestration,
         },
       ])
     } catch (error) {
@@ -237,8 +305,17 @@ export function App() {
                 <article key={message.id} className={`message ${message.role}`}>
                   <p className="message-role">{message.role === 'user' ? 'USER' : 'ASSISTANT'}</p>
                   <div className="message-bubble">{message.content}</div>
+                  {message.role === 'assistant' && message.orchestration?.length ? (
+                    <PipelineStatus steps={message.orchestration} />
+                  ) : null}
                 </article>
               ))
+            )}
+            {isLoading && (
+              <article className="message assistant">
+                <p className="message-role">ASSISTANT</p>
+                <PipelineStatus steps={runtimeStages} activeIndex={activeStage} loading />
+              </article>
             )}
           </div>
 

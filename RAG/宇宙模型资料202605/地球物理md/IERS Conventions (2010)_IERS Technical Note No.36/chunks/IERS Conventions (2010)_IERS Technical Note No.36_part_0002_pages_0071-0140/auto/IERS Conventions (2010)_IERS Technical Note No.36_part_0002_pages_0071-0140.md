@@ -1,0 +1,1546 @@
+namely (a) the transformation based on the Celestial Intermediate Origin and the Earth Rotation Angle (i.e. the CIO based procedure described in Sections 5.4.1, 5.4.2 and 5.4.4, using parameters described in Section 5.5) and (b) the classical transformation based on the equinox and Greenwich Sidereal Time (i.e. the equinox based procedure described in Sections 5.4.1, 5.4.3 and 5.4.5, with the use of classical precession and nutation angles). The quantity that links the two systems is the “equation of the origins”, $\alpha _ { \mathrm { C I O } } - \alpha _ { \Upsilon }$ (difference between right ascensions, $\alpha _ { \mathrm { { C I O } } }$ and $\alpha \Upsilon$ , referred to the CIO and the equinox, respectively), or equivalently ERA−GST. For both transformations, the procedure is to form the various components of expression (5.1), choosing for the $Q ( t )$ and $R ( t )$ pair either the CIO based or classical forms, and then to combine these components into the complete terrestrial-to-celestial matrix.
+
+In all cases, the polar motion matrix, $W ( t )$ in expression (5.1), is needed, using the polar coordinates $x _ { p } , y _ { p }$ . This can be accomplished by calling the SOFA routine POM00 and then transposing the result (e.g. using the support routine TR). Also required is the quantity $s ^ { \prime }$ , modeled by the routine SP00.
+
+SOFA routines that support the IAU 2006/2000A models include the following (among others):
+
+<table><tr><td>BP06</td><td>celestial-to-true matrix (etc.),given △ and △e</td></tr><tr><td>C2I06A</td><td>celestial-to-intermediate matrix,IAU 2006/2000A</td></tr><tr><td>C2IXYS</td><td>celestial-to-intermediate matrix,given X,Y and s</td></tr><tr><td>C2T06A</td><td>celestial-to-terrestrial matrix,IAU 2006/2000A</td></tr><tr><td>C2TCIO</td><td>CIO based celestial-to-terrestrial matrix</td></tr><tr><td>EORS</td><td>equation of the origins,given celestial-to-true matrix and s</td></tr><tr><td>ERA00</td><td>Earth Rotation Angle</td></tr><tr><td>GMST06</td><td>Greenwich Mean Sidereal Time,IAU 2006</td></tr><tr><td>GST06A</td><td>Greenwich (apparent） Sidereal Time,IAU 2Oo6/2000A</td></tr><tr><td>NUM06A</td><td>nutation matrix,IAU 2006/2000A</td></tr><tr><td>NUT06A</td><td>nutation components,IAU 20o6/2000A</td></tr><tr><td>PNM06A</td><td>celestial-to-true matrix,IAU 2006/2000A</td></tr><tr><td>POMOO</td><td>polar motion matrix</td></tr><tr><td>SP00</td><td>the quantity s&#x27;</td></tr><tr><td>XY06</td><td>X,Y from semi-analytical series,IAU 20o6/2000A</td></tr><tr><td>XYS06A</td><td>X,Y,s,IAU 2006/2000A</td></tr></table>
+
+The matrix for the combined effects of nutation, precession and frame bias is $Q ( t )$ in expression (5.1). For the CIO based transformation, this is the intermediateto-celestial matrix, it can be obtained (as the transpose) using the SOFA routine C2IXYS, starting from the CIP position $X , Y$ and the quantity $s$ that defines the position of the CIO. The IAU 2006/2000A $X , Y , s$ are available by calling the SOFA routine XYS06A. In the case of the equinox based transformation, the counterpart to matrix $Q ( t )$ is the true-to-celestial matrix. To obtain this matrix requires the nutation components $\Delta \psi$ and $\Delta \epsilon$ ; these can be predicted using the IAU 2000A model, with adjustments to match IAU 2006 precession, by means of the SOFA routine NUT06A. Faster, but less accurate, predictions are available from the NUT00B routine, which implements the IAU 2000B truncated model. Once $\Delta \psi$ and $\Delta \epsilon$ are known, the true-to-celestial matrix can be obtained by calling the routine PN06 and taking the transpose with TR.
+
+The intermediate component is the angle for Earth rotation that defines matrix $R ( t )$ in expression (5.1). For the CIO based transformation, the angle in question is the Earth Rotation Angle, ERA, which can be obtained by calling the SOFA routine ERA00. The counterpart in the case of the equinox based transformation is the Greenwich (apparent) Sidereal Time. This can be obtained by calling the
+
+SOFA routine GST06, given the celestial-to-true matrix that was obtained earlier. The three components – the precession-nutation matrix, the Earth rotation quantity and the polar motion matrix – are then assembled into the final terrestrialto-celestial matrix by means of the SOFA routine C2TCIO (CIO based) or C2TEQX (equinox based), followed by TR as required.
+
+Two methods to generate the terrestrial-to-celestial (i.e. ITRS-to-GCRS) matrix $Q ( t ) R ( t ) W ( t )$ , given TT and UT1, are set out below. In each case it is assumed that observed small corrections to the IAU 2006/2000A model, either as $\Delta X , \Delta Y$ or as $d \Delta \psi , d \Delta \epsilon$ , are available and need to be included.
+
+Method (1): the CIO based transformation
+
+The CIO based transformation is a function of the CIP coordinates $X , Y$ and the quantity $s$ .
+
+For the given TT, call the SOFA routine XY06 to obtain the IAU 2006/2000A $X , Y$ from series (see Section 5.5.4) and then the routine S06 to obtain $s$ . Any CIP corrections $\Delta X , \Delta Y$ can now be applied, and the corrected $X , Y , s$ can be used to call the routine C2IXYS, giving the GCRS-to-CIRS matrix. Next call the routine ERA00 to obtain the ERA corresponding to the current UT1, and apply it as an $R _ { 3 }$ rotation using the routine RZ, to form the CIRS-to-TIRS matrix. Given $x _ { p } , y _ { p }$ , and obtaining $s ^ { \prime }$ by calling the routine SP00, the polar motion matrix (i.e. TIRS-to-ITRS) is then produced by the routine POM00. The product of the two matrices (GCRS-to-TIRS and TIRS-to-ITRS), obtained by calling the routine RXR, is the GCRS-to-ITRS matrix, which can be inverted by calling the routine TR to give the final result.
+
+# Method (2): the equinox based transformation
+
+The classical transformation, based on angles and using sidereal time is also available.
+
+Given TT, the IAU 2006/2000A nutation components $\Delta \psi , \Delta \epsilon$ are obtained by calling the SOFA routine NUT06A. Any corrections $d \Delta \psi , d \Delta \epsilon$ can now be applied. Next, the GCRS-to-true matrix is obtained using the routine PN06 (which employs the 4-rotation Fukushima-Williams method described in Section 5.3.4, final paragraph). The classical GCRS-to-true matrix can also be generated by combining separate frame bias, precession and nutation matrices. The SOFA routine BI00 can be called to obtain the frame bias components, the routine P06E to obtain various precession angles, and the routine NUM06A to generate the nutation matrix. The product N $\times$ P $\times$ B is formed by using the routine RXR. Next call the routine GST06 to obtain the GST corresponding to the current UT1, and apply it as an $R _ { 3 }$ rotation using the routine RZ to form the true matrix-to-TIRS. Given $x _ { p } , y _ { p }$ and obtaining $s ^ { \prime }$ with the routine SP00, the polar motion matrix (i.e. TIRS-to-ITRS) is then obtained using the routine POM00. The product of the two matrices (GCRS-to-TIRS and TIRS-to-ITRS), obtained by calling the routine RXR, is the GCRS-to-ITRS matrix, which can be inverted by calling the routine TR to give the final result.
+
+Methods (1) and (2) agree to microarcsecond precision.
+
+Both methods can be abridged to trade off speed and accuracy (see Capitaine and Wallace, 2008). The abridged nutation model IAU 2000B (see Section 5.5.1) can be substituted in Method (2) by calling NUT00B instead of NUT06A. Depending on the application, the best compromise between speed and accuracy may be to evaluate the full series to obtain sample values for interpolation.
+
+# 5.10 Notes on the new procedure to transform from ICRS to ITRS
+
+The transformation between the GCRS and the ITRS, which is provided in detail in this chapter for use in the IERS Conventions, is also part of the more general transformation for computing directions of celestial objects in intermediate systems or terrestrial systems.
+
+The procedure to be followed in transforming from the celestial (ICRS) to the terrestrial (ITRS) systems has been clarified to be consistent with the improving observational accuracy. See Figure 5.1 in the IAU NFA Working Group documents (Capitaine et al., 2007) for a diagram of the CIO based and equinox based procedures to be followed.
+
+The purpose of this chart is to show the ICRS-to-BCRS-to-GCRS-to-ITRS transformation in general relativity (IAU 2000 Resolution B1.3) and the parallel CIO and equinox based processes (IAU 2000 Resolution B1.8).
+
+As before, we make use of celestial and terrestrial intermediate reference systems in transforming to a terrestrial reference system (See also Seidelmann and Kovalevsky (2002).)
+
+The Celestial Intermediate Pole (CIP) that is realized by the IAU 2006/2000A precession-nutation model defines its equator and the Conventional Intermediate Origin replaces the equinox.
+
+The position in this reference system is called the intermediate right ascension and declination and is analogous to the previous designation of “apparent right ascension and declination.”
+
+![](images/04c06c5a4405f0587584c9c2b9932fbb8de13777b751dbe46f0d10c3d7cf61f3.jpg)  
+Figure 5.1: Process to transform from celestial to terrestrial reference systems (Chart from the IAU Working Group on Nomenclature for Fundamental Astronomy (2006)). The chart summarizes the system, and the elements that are associated with that system, i.e. the name for the positions (place), the processes/corrections, the origin to which the coordinates are referred, and the time scale to use. In particular the blue type in the box in the “Process” column is the operation/correction to be applied, and the purple type indicates the quantities required for that process. CIO and equinox based processes are indicated using grey and yellow shading, respectively.
+
+Aoki, S., Guinot, B., Kaplan, G. H., Kinoshita, H., McCarthy, D. D., and Seidelmann, P. K., 1982, “The New Definition of Universal Time,” Astron. Astrophys., 105(2), pp. 359–361.   
+Aoki, S. and Kinoshita, H., 1983, “Note on the relation between the equinox and Guinot’s non-rotating origin,” Celest. Mech., 29(4), pp. 335–360, doi:10.1007/BF01228528.   
+Bizouard, Ch., Brzezi´nski, A., and Petrov, S., 1998, “Diurnal atmospheric forcing and temporal variations of the nutation amplitudes,” J. Geod., 72(10), pp. 561–577, doi:10.1007/s001900050195.   
+Bizouard, Ch., Folgueira, M., and Souchay, J., 2000, “Comparison of the short period rigid Earth nutation series,” in Proc. IAU Colloquium 178, Publications of the Astron. Soc. Pac. Conf. Ser., Vol. 208, Dick, S., McCarthy, D., and Luzum, B. (eds.), pp. 613–617.   
+Bizouard, Ch., Folgueira, M., and Souchay, J., 2001, “Short periodic nutations: comparison between series and influence on polar motion,” in Proc. of the Journ´ees 2000 - Syst\`emes de R´ef´erence Spatio-Temporels, Capitaine, N. (ed.), Observatoire de Paris, pp. 260–265.   
+Bretagnon, P., 1982, “Th´eorie du mouvement de l’ensemble des plan\`etes. solution VSOP82,” Astron. Astrophys., 114(2), pp. 278–288.   
+Bretagnon, P., Rocher, P., and Simon, J.-L., 1997, “Theory of the rotation of the rigid Earth,” Astron. Astrophys., 319(1), pp. 305–317.   
+Brumberg, V. A., 1991, Essential Relativistic Celestial Mechanics, Adam Hilger Pub.   
+Brzezi´nski, A., 2001, “Diurnal and sub-diurnal terms of nutation: a simple theoretical model for a nonrigid Earth,” in Proc. of the Journ´ees 2000 - Syst\`emes de R´ef´erence Spatio-temporels, N. Capitaine (ed.), Observatoire de Paris, pp. 243–251.   
+Brzezi´nski, A., July 2002, Circular 2, IAU Commission 19 WG “Precessionnutation”.   
+Brzezi´nski, A. and Capitaine N., 2003, “Lunisolar perturbations in Earth rotation due to the triaxial figure of the Earth: geophysical aspects,” in Proc. of the Journ´ees 2001 - Syst\`emes de R´ef´erence Spatio-temporels, N. Capitaine (ed.), Observatoire de Paris, pp. 51–58.   
+Brzezi´nski, A. and Mathews, P. M., 2003, “Recent advances in modeling the lunisolar perturbation in polar motion corresponding to high frequency nutation: report on the discussion of the IAU Commission 19 WG on Nutation,” in Proc. of the Journ´ees 2002 - Syst\`emes de R´ef´erence Spatio-temporels, N. Capitaine and M. Stavinschi (eds.), Observatoire de Paris, pp. 101–108.   
+Brzezi´nski, A. and Capitaine, N., 2010, “Semi-diurnal signal in UT1 due to the influence of tidal gravitation on the triaxial structure of the Earth,” in Highlights of Astronomy, 15, Ian F. Corbett (ed.).   
+Buffett, B. A., Mathews, P. M., and Herring, T., 2002, “Modeling of nutation and precession: Effects of electromagnetic coupling,” J. Geophys. Res., 107(B4), doi: 10.1029/2000JB000056.   
+Capitaine, N., 1990, “The celestial pole coordinates,” Celest. Mech. Dyn. Astr., 48(2), pp. 127–143, doi:10.1007/BF00049510   
+Capitaine, N., 2000, “Definition of the Celestial Ephemeris Pole and the Celestial Ephemeris Origin,” in Towards Models and Constants for Sub-Microarcsecond Astrometry, Johnston, K. J., McCarthy, D. D., Luzum, B. J., and Kaplan, G. H. (eds.), U.S. Naval Observatory, pp. 153–163.   
+Capitaine, N., Guinot, B., and Souchay, J., 1986, “A Non-rotating Origin on the Instantaneous Equator: Definition, Properties and Use,” Celest. Mech., 39(3), pp. 283–307, doi:10.1007/BF01234311.   
+Capitaine, N. and Gontier, A.-M., 1993, “Accurate procedure for deriving UT1 at a submilliarcsecond accuracy from Greenwich Sidereal Time or from the stellar angle,” Astron. Astrophys., 275, pp. 645–650.   
+Capitaine, N., Guinot, B., and McCarthy, D. D., 2000, “Definition of the Celestial Ephemeris origin and of UT1 in the International Celestial Reference Frame,” Astron. Astrophys., 355(1), pp. 398–405.   
+Capitaine, N., Gambis, D., McCarthy, D. D., Petit, G., Ray, J., Richter, B., Rothacher, M., Standish, M., and Vondr´ak, J., (eds.), 2002, IERS Technical Note, 29, Proceedings of the IERS Workshop on the Implementation of the New IAU Resolutions, 2002, Verlag des Bundesamts f¨ur Kartographie und Geod¨asie, Frankfurt am Main, available at http://www.iers.org/iers/publications/tn/tn29/   
+Capitaine, N., Chapront, J., Lambert, S., and Wallace, P., 2003a, “Expressions for the Celestial Intermediate Pole and Celestial Ephemeris Origin consistent with the IAU 2000A precession-nutation model,” Astron. Astrophys., 400(3), pp. 1145–1154, doi:10.1051/0004-6361:20030077   
+Capitaine, N., Wallace, P. T., and McCarthy, D. D., 2003b, “Expressions to implement the IAU 2000 definition of UT1,” Astron. Astrophys., 406(3), pp. 1135-1149, doi:10.1051/0004-6361:20030817   
+Capitaine, N., Wallace, P. T., and Chapront, J., 2003c, “Expressions for IAU 2000 precession quantities,” Astron. Astrophys., 412(2), pp. 567–586, doi:10.1051/0004-6361:20031539   
+Capitaine, N. and Wallace, P. T., 2006, “High precision methods for locating the celestial intermediate pole and origin,” Astron. Astrophys., 450, pp. 855– 872, doi:10.1051/0004-6361:20054550.   
+Capitaine, N., Andrei, A., Calabretta, M., Dehant, V., Fukushima, T., Guinot, B., Hohenkerk, C., Kaplan, G., Klioner, S., Kovalevsky, J., Kumkova, I., Ma, C., McCarthy, D., Seidelmann, K., and Wallace, P., 2007, “Proposed terminology in fundamental astronomy based on IAU 2000 resolutions,” in Transactions of the IAU XXVIB, van der Hucht, K.A. (ed), 14, pp. 474–475, doi:10.1017/S1743921307011490.   
+Capitaine, N. and Wallace, P. T., 2008, “Concise CIO based precession-nutation formulations,” Astron. Astrophys., 478(1), pp. 277–284. doi:10.1051/0004- 6361:20078811.   
+Capitaine, N., Mathews, P. M., Dehant, V., Wallace, P. T. and Lambert, S. B., 2009, “On the IAU 2000/2006 precession-nutation and comparison with other models and VLBI observations,” Celest. Mech. Dyn. Astr., 103, 2, pp. 179–190, doi:10.1007/s10569-008-9179-9.   
+Cartwright, D. E. and Tayler, R. J., 1971, “New Computations of the Tide-Generating Potential,” Geophys. J. Roy. astr. Soc., 23(1), pp. 45–74, doi:10.1111/j.1365-246X.1971.tb01803.x.   
+Chao, B. F., Dong, D. N., Liu, H. S., and Herring, T. A., 1991, “Libration in the Earth’s rotation,” Geophys. Res. Letters, 18, No. 11, 2007–2010, doi:10.1029/91GL02491.   
+Chao, B. F., Ray, R. D., Gipson, J. M., Egbert, G. D., and Ma, C., 1996, “Diurnal/semi-diurnal polar motion excited by oceanic tidal angular momentum,” J. Geophys. Res., 101(B9), 20151–20163, doi:10.1029/96JB01649.   
+Chapront-Touz´e, M. and Chapront, J., 1983, “The lunar ephemeris ELP 2000,” Astron. Astrophys., 124(1), pp. 50–62.   
+Chapront, J., Chapront-Touz´e, M., and Francou, G., 2002, “A new determination of lunar orbital parameters, precession constant and tidal acceleration from LLR measurements,” Astron. Astrophys., 387(2), pp. 700–709, doi:10.1051/0004-6361:20020420.   
+Defraigne, P., Dehant, V., and Pˆaquet, P., 1995, “Link between the retrogradeprograde nutations and nutations in obliquity and longitude,” Celest. Mech. Dyn. Astr., 62(4), pp. 363–376, doi:10.1007/BF00692286.
+
+Escapa, A., Getino, J., and Ferr´andiz, J. M., 2002, “Indirect effect of the triaxiality in the Hamiltonian theory for the rigid Earth nutations,” Astron. Astrophys., 389(3), pp. 1047–1054, doi: 10.1051/0004-6361:20020734.
+
+Escapa, A., Getino, J., and Ferr´andiz, J. M., 2003, “Influence of the triaxiality of the non-rigid Earth on the J2 forced nutations,” in Proc. of the Journ´ees 2001 - Syst\`emes de R´ef´erence Spatio-temporels, N. Capitaine (ed.), Observatoire de Paris, pp. 275–281.
+
+Folgueira, M., Souchay, J., and Kinoshita, H., 1998a, “Effects on the nutation of the non-zonal harmonics of third degree,” Celest. Mech. Dyn. Astr., 69(4), pp. 373–402, doi:10.1023/A:1008298122976.
+
+Folgueira, M., Souchay, J., and Kinoshita, H., 1998b, “Effects on the nutation of C4m and S4m harmonics,” Celest. Mech. Dyn. Astr., 70(3), pp. 147–157, doi:10.1023/A:1008383423586.
+
+Folgueira, M., Bizouard, C., and Souchay, J., 2001, “Diurnal and sub-diurnal luni-solar nutations: comparisons and effects,” Celest. Mech. Dyn. Astr., 81(3), pp. 191–217, doi:10.1023/A:1013290523560.
+
+Fukushima, T., 1991, “Geodesic Nutation,” Astron. Astrophys., 244(1), pp. L11– L12.
+
+Fukushima, T., 2003, “A new precession formula,” Astron. J., 126, pp. 494–534.
+
+Getino, J., Ferr´andiz, J. M., and Escapa, A., 2001, “Hamiltonian theory for the non-rigid Earth: semi-diurnal terms,” Astron. Astrophys., 370(1), pp. 330– 341.
+
+Guinot, B., 1979, “Basic Problems in the Kinematics of the Rotation of the Earth,” in Time and the Earth’s Rotation, McCarthy, D. D. and Pilkington, J. D. (eds.), D. Reidel Publishing Company, pp. 7–18.
+
+Herring, T. A., Mathews, P. M., and Buffett, B. A., 2002, “Modeling of nutationprecession: Very long baseline interferometry results,” J. Geophys. Res., 107(B4), doi: 10.1029/2001JB000165.
+
+Hilton, J.L., Capitaine, N., Chapront, J., Ferrandiz, J.M., Fienga, A., Fukushima, T., Getino, J., Mathews, P., Simon, J.-L., Soffel, M., Vondrak, J., Wallace, P., and Williams, J., 2006, “Report of the International Astronomical Union Division I Working Group on Precession and the Ecliptic”, Celest. Mech. Dyn. Astron., 94(3), pp. 351–367, doi:10.1007/s10569-006-0001-2.
+
+Kinoshita, H., 1977, “Theory of the rotation of the rigid Earth,” Celest. Mech. 15(3), 277–326, doi:10.1007/BF01228425.
+
+Kinoshita, H. and Souchay, J., 1990, “The theory of the nutation for the rigid Earth model at the second order,” Celest. Mech. Dyn. Astron., 48(3), pp. 187–265, doi:10.1007/BF02524332.
+
+Lambert, S., 2007, “Empirical modeling of the retrograde Free Core Nutation,” available at ftp://hpiers.obspm.fr/eop-pc/models/fcn/notice.pdf.
+
+Lambert, S. and Bizouard, C., 2002, “Positioning the Terrestrial Ephemeris Origin in the International Terrestrial Reference Frame,” Astron. Astrophys., 394(1), pp. 317–321, doi:10.1051/0004-6361:20021139.
+
+Lieske, J. H., Lederle, T., Fricke, W., and Morando, B., 1977, “Expressions for the Precession Quantities Based upon the IAU (1976) System of Astronomical Constants,” Astron. Astrophys., 58(1-2), pp. 1–16.   
+Ma, C., Arias, E. F., Eubanks, T. M., Fey, A. L., Gontier, A.-M., Jacobs, C. S., Sovers, O. J., Archinal, B. A., and Charlot, P., 1998, “The International Celestial Reference Frame as realized by Very Long Baseline Interferometry,” Astron. J., 116(1), pp. 516–546, doi:10.1086/300408.   
+Mathews, P. M., Herring, T. A., and Buffett B. A., 2002, “Modeling of nutation and precession: New nutation series for nonrigid Earth, and insights into the Earth’s Interior,” J. Geophys. Res., 107(B4), doi: 10.1029/2001JB000390.   
+Mathews, P. M. and Bretagnon, P., 2003, “High frequency nutation,” in Proc. of the Journ´ees 2001 - Syst\`emes de R´ef´erence Spatio-temporels, N. Capitaine (ed.), Observatoire de Paris, pp. 28–33.   
+McCarthy, D. D. (ed.), 1996, “IERS Conventions”, IERS Technical Note, 21, Observatoire de Paris, Paris, available at http://www.iers.org/TN21   
+McCarthy, D. D. and Luzum, B. J., 2003, “An Abridged Model of the Precession-Nutation of the Celestial Pole,” Celest. Mech. Dyn. Astr., 85(1), pp. 37–49, doi:10.1023/A:1021762727016.   
+Ray, R. D., Steinberg, D. J., Chao, B. F., and Cartwright, D. E., 1994, “Diurnal and semi-diurnal variations in the Earth’s rotation rate induced by oceanic tides”, Science, 264(5160), 830–832, doi:10.1126/science.264.5160.830.   
+Roosbeek, F., 1999,“Diurnal and sub-diurnal terms in RDAN97 series,” Celest. Mech. Dyn. Astr., 74(4), pp. 243–252, doi:10.1023/A:1008312424283.   
+Seidelmann, P. K., 1982, “1980 IAU Theory of Nutation: The Final Report of the IAU Working Group on Nutation,” Celest. Mech., 27(1), pp. 79–106, doi:10.1007/BF01228952.   
+Seidelmann, P. K. and Kovalevksy, J., 2002, “Application of the new concepts and definitions (ICRS, CIP and CEO) in fundamental astronomy,” Astron. Astrophys., 392(1), pp. 341–351, doi:10.1051/0004-6361:20020931.   
+Simon, J.-L., Bretagnon, P., Chapront, J., Chapront-Touz´e, M., Francou, G., and Laskar, J., 1994, “Numerical Expressions for Precession Formulae and Mean Elements for the Moon and the Planets,” Astron. Astrophys., 282(2), pp. 663–683.   
+Souchay, J. and Kinoshita, H., 1997, “Corrections and new developments in rigid-Earth nutation theory. II. Influence of second-order geopotential and direct planetary effect,” Astron. Astrophys., 318, pp. 639–652.   
+Souchay, J., Loysel, B., Kinoshita, H., and Folgueira, M., 1999, “Corrections and new developments in rigid Earth nutation theory: III. Final tables REN-2000 including crossed-nutation and spin-orbit coupling effects,” Astron. Astrophys. Suppl. Ser., 135(1), pp. 111–131, doi:10.1051/aas:1999446.   
+Standish, E. M., 1981, “Two differing definitions of the dynamical equinox and the mean obliquity,” Astron. Astrophys., 101, pp. L17–L18.   
+Tapley, B. D., Watkins, M. M., Ries, J. C., Davis, G. W., Eanes, R. J., Poole, S. R., Rim, H. J., Schutz, B. E., Shum, C. K., Nerem, R. S., Lerch, F. J., Marshall, J. A., Klosko, S. M., Pavlis, N. K., and Williamson, R. G., 1996, “The Joint Gravity Model 3,” J. Geophys. Res., 101(B12), pp. 28029– 28049, doi:10.1029/96JB01645.   
+Tisserand, F., 1891, Trait´e de M´ecanique C´eleste, Tome II, Paris, Gauthier-Villars, 1891.   
+Wahr, J. M., 1981, “The forced nutations of an elliptical, rotating, elastic and oceanless Earth,” Geophys. J. Roy. astr. Soc., 64(3), pp. 705–727, doi: 10.1111/j.1365-246X.1981.tb02691.x.   
+Wallace, P. T., 1998, “SOFA: Standards of Fundamental Astronomy”, Highlights of Astronomy, Vol. 11A, J. Andersen (ed.), Kluwer Academic Publishers, p. 191.   
+Wallace, P. T., Capitaine, N., 2006, “Precession-nutation procedures consistent with IAU 2006 resolutions”, Astron. Astrophys., 459(3), pp. 981–985, doi:10.1051/0004-6361:20065897.   
+Williams, J. G., 1994, “Contributions to the Earth’s obliquity rate, precession, and nutation,” Astron. J., 108(2), pp. 711–724, doi:10.1086/117108.   
+Williams, J. G., Newhall, X. X., and Dickey, J. O., 1991, “Luni-solar precession: determination from lunar laser ranges,” Astron. Astrophys., 241(1), pp. L9–L12.   
+W¨unsch, J., 1991, “Small waves in UT1 caused by the inequality of the equatorial moments of inertia A and B of the Earth,” Astron. Nachr., 312(5), 321–325, doi:10.1002/asna.2113120510.
+
+Gravitational models commonly used in current (2010) precision orbital analysis represent a significant improvement with respect to geopotential model EGM96, the past conventional model of the IERS Conventions (2003), thanks to the availability of CHAMP ${ < } ^ { 1 } >$ and, most importantly, GRACE ${ < } ^ { 2 } >$ data in the 2000s. The IERS, recognizing the recent development of new gravitational models derived from the optimal combination of GRACE data with high resolution gravitational information obtained from surface gravimetry and satellite altimetry data, recommends at this time the EGM2008 model as the conventional model.
+
+The conventional model that is presented in Section 6.1 describes the static part of the field and the underlying background model for the secular variations of some of its coefficients. In addition, other time varying effects should be taken into account: solid Earth tides (Section 6.2), ocean tides (Section 6.3), solid Earth pole tide (Section 6.4), and ocean pole tide (Section 6.5).
+
+The geopotential field $V$ at the point (r, $\phi$ , $\lambda$ ) is expanded in spherical harmonics up to degree N as
+
+$$
+V ( r , \phi , \lambda ) = \frac { G M } { r } \sum _ { n = 0 } ^ { N } \left( \frac { a _ { e } } { r } \right) ^ { n } \sum _ { m = 0 } ^ { n } \left[ \bar { C } _ { n m } c o s ( m \lambda ) + \bar { S } _ { n m } s i n ( m \lambda ) \right] \bar { P } _ { n m } ( \sin \phi )
+$$
+
+(with $S _ { n 0 } = 0$ ), where $C _ { n m }$ and $S _ { n m }$ are the normalized geopotential coefficients and $\bar { P } _ { n m }$ are the normalized associated Legendre functions. The normalized Legendre function is related to the classical (unnormalized) one by
+
+$$
+\bar { P } _ { n m } = N _ { n m } P _ { n m } ,
+$$
+
+where
+
+$$
+N _ { n m } = { \sqrt { \frac { ( n - m ) ! ( 2 n + 1 ) ( 2 - \delta _ { 0 m } ) } { ( n + m ) ! } } } , \qquad \delta _ { 0 m } = { \left\{ \begin{array} { l l } { 1 } & { { \mathrm { i f ~ } } m = 0 } \\ { 0 } & { { \mathrm { i f ~ } } m \neq 0 } \end{array} \right. }
+$$
+
+Correspondingly, the normalized geopotential coefficients $\left( C _ { n m } , S _ { n m } \right)$ are related to the unnormalized coefficients $\left( C _ { n m } , S _ { n m } \right)$ by
+
+$$
+C _ { n m } = N _ { n m } \bar { C } _ { n m } , \quad S _ { n m } = N _ { n m } \bar { S } _ { n m } .
+$$
+
+The scaling parameters $( G M , ~ a _ { e } )$ associated with the model are described in Section 6.1. Sections 6.2 to 6.5 provide variations to the normalized coefficients $\left( C _ { n m } , S _ { n m } \right)$ due to the physical effects described in each section.
+
+# 6.1 Conventional model based on the EGM2008 model
+
+The EGM2008 model (Pavlis et al., 2008) is complete to degree and order 2159, and contains additional spherical harmonic coefficients up to degree 2190 and order 2159. The $G M _ { \oplus }$ and $a _ { \mathrm { e } }$ values reported with EGM2008 $( 3 9 8 6 0 0 . 4 4 1 5 ~ \mathrm { k m ^ { 3 } / s ^ { 2 } }$ and 6378136.3 m) should be used as scaling parameters with its gravitational potential coefficients. They are to be considered as TT-compatible values. The recommended TCG-compatible value, $G M _ { \oplus } = 3 9 8 6 0 0 . 4 4 1 8 ~ \mathrm { k m ^ { 3 } / s ^ { 2 } }$ , should be used with the two-body term when working with Geocentric Coordinate Time (TCG) (398600.4415 or 398600.4356 should be used by those still working with Terrestrial Time (TT) or Barycentric Dynamical Time (TDB), respectively). The EGM2008 model (including error estimates) is available at ${ < } ^ { 3 } >$ .
+
+Although EGM2008 is complete to degree and order 2159, most users in space geodesy will find their needs covered by a truncated version of the model. Suggested truncation levels as a function of the orbit of interest are listed in Table 6.1 It is expected that these truncation levels provide a 3-dimensional orbit accuracy of better than $0 . 5 \mathrm { m m }$ for the indicated satellites (Ries, 2010).
+
+Table 6.1: Suggested truncation levels for use of EGM2008 at different orbits   
+
+<table><tr><td>Orbit radius /km</td><td>Example</td><td>Truncation level</td></tr><tr><td>7331</td><td>Starlette</td><td>90</td></tr><tr><td>12270</td><td>Lageos</td><td>20</td></tr><tr><td>26600</td><td>GPS</td><td>12</td></tr></table>
+
+The EGM2008 model was based on the ITG-GRACE03S GRACE-only gravitational model ( ${ < } ^ { 4 } >$ , see also Mayer-G¨urr, 2007) which is available along with its complete error covariance matrix to degree and order 180. Therefore the static gravitational field was developed assuming models complying with the IERS Conventions (2003) and complemented by the following:
+
+• ocean tides: FES2004 (Lyard et al., 2006), • ocean pole tide: Desai (2003, see Section 6.5), • atmosphere and ocean de-aliasing: AOD1B RL04 (Flechtner, 2007).
+
+For some of the low-degree coefficients, the conventional geopotential model uses values which are different from the original EGM2008 values. The static field also assumes values for the secular rates of low-degree coefficients. In order to use the static field properly and project it in time, the secular rates should be accounted for. The instantaneous values of coefficients $C _ { n 0 }$ to be used when computing orbits are given by:
+
+$$
+\bar { C } _ { n 0 } ( t ) = \bar { C } _ { n 0 } ( t _ { 0 } ) + d \bar { C } _ { n 0 } / d t \times ( t - t _ { 0 } )
+$$
+
+where $t _ { 0 }$ is the epoch J2000.0 and the values of $C _ { n 0 } ( t _ { 0 } )$ and $d C _ { n 0 } / d t$ are given in Table 6.2. Note that the zero-tide $C _ { 2 0 }$ coefficient in the conventional geopotential model is obtained from the analysis of 17 years of SLR data approximately centered on year 2000 and has an uncertainty of $2 \times 1 0 ^ { - 1 1 }$ (Cheng et al., 2010). It differs significantly from the EGM2008 value obtained from 4 years of GRACE data, as it is expected that tide-like aliases will affect GRACE-based $C _ { 2 0 }$ values, depending on the averaging interval used. The tide-free value of $C _ { 2 0 }$ can be obtained as described in Section 6.2.2.
+
+Table 6.2: Low-degree coefficients of the conventional geopotential model   
+
+<table><tr><td>Coefficient</td><td>Value at 2000.0</td><td>Reference</td><td>Rate yr-1</td><td>Reference</td></tr><tr><td>C20 (zero-tide)</td><td>-0.48416948×10-3</td><td>Cheng et al., 2010</td><td>11.6 × 10-12</td><td>Nerem et al., 1993</td></tr><tr><td>C30</td><td>0.9571612×10-6</td><td>EGM2008</td><td>4.9 ×10-12</td><td>Cheng et al., 1997</td></tr><tr><td>C40</td><td>0.5399659×10-6</td><td>EGM2008</td><td>4.7 ×10-12</td><td>Cheng et al., 1997</td></tr></table>
+
+Values for the $C _ { 2 1 }$ and $S _ { 2 1 }$ coefficients are included in the conventional geopotential model. The $C _ { 2 1 }$ and $S _ { 2 1 }$ coefficients describe the position of the Earth’s figure axis. When averaged over many years, the figure axis should closely coincide with the observed position of the rotation pole averaged over the same time period. Any differences between the averaged positions of the mean figure and the mean rotation pole would be due to long-period fluid motions in the atmosphere, oceans, or Earth’s fluid core (Wahr, 1987; 1990). At present, there is no independent evidence that such motions are important. The conventional values for $C _ { 2 1 } ( t )$ and $S _ { 2 1 } ( t )$ are intended to give a mean figure axis that corresponds to the mean pole position consistent with the terrestrial reference frame defined in Chapter 4.
+
+This choice for $C _ { 2 1 }$ and $S _ { 2 1 }$ is realized as follows. First, to use the gravitational potential coefficients to solve for a satellite orbit, it is necessary to rotate from the Earth-fixed frame, where the coefficients are pertinent, to an inertial frame, where the satellite motion is computed. This transformation between frames should include polar motion. We assume the polar motion parameters used are relative to the IERS Reference Pole. Then the values
+
+$$
+\begin{array} { r l r } { \bar { C } _ { 2 1 } ( t ) } & { = } & { \sqrt { 3 } \bar { x } _ { p } ( t ) \bar { C } _ { 2 0 } \mathrm { ~ ~ - ~ } \bar { x } _ { p } ( t ) \bar { C } _ { 2 2 } + \bar { y } _ { p } ( t ) \bar { S } _ { 2 2 } , } \\ { \bar { S } _ { 2 1 } ( t ) } & { = } & { - \sqrt { 3 } \bar { y } _ { p } ( t ) \bar { C } _ { 2 0 } \mathrm { ~ ~ - ~ } \bar { y } _ { p } ( t ) \bar { C } _ { 2 2 } - \bar { x } _ { p } ( t ) \bar { S } _ { 2 2 } , } \end{array}
+$$
+
+where $\bar { x } _ { p } ( t )$ and $\bar { y } _ { p } ( t )$ (in radians) represent the IERS conventional mean pole (see Section 7.1.4), provide a mean figure axis which coincides with the mean pole consistent with the TRF defined in Chapter 4. Any recent value of $C _ { 2 0 }$ , $C _ { 2 2 }$ and $S _ { 2 2 }$ is adequate for $1 0 ^ { - 1 4 }$ accuracy in Equation (6.5), e.g. the values of the present conventional model (−0.48416948 $\times 1 0 ^ { - 3 }$ , $2 . 4 3 9 3 8 3 6 \times 1 0 ^ { - 6 }$ and $- 1 . 4 0 0 2 7 3 7 \times 1 0 ^ { - 6 }$ respectively) can be used.
+
+The models for the low degree terms are generally consistent with the past longterm trends, but these are not strictly linear in reality. There may be decadal variations that are not captured by the models. In addition, they may not be consistent with more recent surface mass trends due to increased ice sheet melting and other results of global climate change.
+
+# 6.2 Effect of solid Earth tides
+
+# 6.2.1 Conventional model for the solid Earth tides
+
+The changes induced by the solid Earth tides in the free space potential are most conveniently modeled as variations in the standard geopotential coefficients $C _ { n m }$ and $S _ { n m }$ (Eanes et al., 1983). The contributions $\Delta C _ { n m }$ and $\Delta S _ { n m }$ from the tides are expressible in terms of the Love number $k$ . The effects of ellipticity and of the Coriothree $k$ s force due toparameters, $k _ { n m } ^ { ( 0 ) }$ rth rand $k _ { n m } ^ { ( \pm ) }$ on on tidal (except for $n = 2$ ations necessitate the use of) to characterize the changes produced in the free space potential by tides of spherical harmonic degree and order $( n m )$ (Wahr, 1981); only two parameters are needed for $n = 2$ because $k _ { 2 m } ^ { ( - ) } = 0$ due to mass conservation.
+
+Anelasticity of the mantle causes $k _ { n m } ^ { ( 0 ) }$ and $k _ { n m } ^ { ( \pm ) }$ to acquire small imaginary parts (reflecting a phase lag in the deformational response of the Earth to tidal forces), and also gives rise to a variation with frequency which is particularly pronounced within the long period band. Though modeling of anelasticity at the periods relevant to tidal phenomena (8 hours to 18.6 years) is not yet definitive, it is clear that the magnitudes of the contributions from anelasticity cannot be ignored (see below). Recent evidence relating to the role of anelasticity in the accurate modeling of nutation data (Mathews et al., 2002) lends support to the model employed herein, at least up to diurnal tidal periods; and there is no compelling reason at present to adopt a different model for the long period tides.
+
+Solid Earth tides within the diurnal tidal band (for which $( n m ) = ( 2 1 )$ ) are not wholly due to the direct action of the tide generating potential (TGP) on the solid Earth; they include the deformations (and associated geopotential changes) arising from other effects of the TGP, namely, ocean tides and wobbles of the mantle and the core regions. Deformation due to wobbles arises from the incremental centrifugal potentials caused by the wobbles; and ocean tides load the crust and thus cause deformations. Anelasticity affects the Earth’s deformational response to all these types of forcing.
+
+The wobbles, in turn, are affected by changes in the Earth’s moment of inertia due to deformations from all sources, and in particular, from the deformation due to loading by the $( n m ) = ( 2 1 )$ part of the ocean tide; wobbles are also affected by the anelasticity contributions to all deformations, and by the coupling of the fluid core to the mantle and the inner core through the action of magnetic fields at its boundaries (Mathews et al., 2002). Resonances in the wobbles—principally, the Nearly Diurnal Free Wobble resonance associated with the FCN —and the consequent resonances in the contribution to tidal deformation from the centrifugal perturbations associated with the wobbles, cause the body tide and load Love/Shida number parameters of the diurnal tides to become strongly frequency dependent. For the derivation of resonance formulae of the form (6.9) below to represent this frequency dependence, see Mathews et al., (1995). The resonance expansions assume that the Earth parameters entering the wobble equations are all frequency independent. However the ocean tide induced deformation makes a frequency dependent contribution to deformability parameters which are among the Earth parameters just referred to. It becomes necessary therefore to add small corrections to the Love number parameters computed using the resonance formulae. These corrections are included in the tables of Love number parameters given in this chapter and the next.
+
+The deformation due to ocean loading is itself computed in the first place using frequency independent load Love numbers (see Section 7.1.2). Corrections to take account of the resonances in the load Love numbers are incorporated through equivalent corrections to the body tide Love numbers, following Wahr and Sasao (1981), as explained further below. These corrections are also included in the tables of Love numbers.
+
+The degree 2 tides produce time dependent changes in $k _ { 2 m } ^ { ( 0 ) }$ , which can exceed $1 0 ^ { - 8 }$ in magnitude. They also produce changes exceeding $C _ { 2 m }$ and $S _ { 2 m }$ , through $3 \times 1 0 ^ { - 1 2 }$ in $C _ { 4 m }$ and $S _ { 4 m }$ through $k _ { 2 m } ^ { ( + ) }$ . (The direct contributions of the degree 4 tidal potential to these coefficients are negligible.) The only other changes exceeding this cutoff are in $C _ { 3 m }$ and $S _ { 3 m }$ , produced by the degree 3 part of the TGP.
+
+The computation of the tidal contributions to the geopotential coefficients is most efficiently done by a three-step procedure. In Step 1, the ( $? m$ ) part of the tidal potential is evaluated in the time domain for each $m$ using lunar and solar ephemerides, and the corresponding chusing frequency independent nominal values s f $\Delta C _ { 2 m }$ and resp $\Delta S _ { 2 m }$ computed. The contributions of the degree 3 tides to the degree 2 tides to $C _ { 4 m }$ and $S _ { 4 m }$ $C _ { 3 m }$ and ugh $k _ { 2 m }$ $S _ { 3 m }$ $k _ { 2 m } ^ { ( + ) }$ through may be computed by a similar $k _ { 3 m } ^ { ( 0 ) }$ and also those of $k _ { 2 m } ^ { ( 0 ) }$ procedure; they are at the level of 10−11.
+
+Step 2 corrects for the deviations of the $k _ { 2 1 } ^ { ( 0 ) }$ of several of the constituent tides of the diurnal band from the constant nominal value $k _ { 2 1 }$ assumed for this band in the first step. Similar corrections need to be applied to a few of the constituents of the other two bands also.
+
+Steps 1 and 2 can be used to compute the total tidal contribution, including the time independent (permanent) contribution to the geopotential coefficient $C _ { 2 0 }$ , which is adequate for a “conventional tide free” model such as EGM96. When using a “zero tide” model, this permanent part should not be counted twice, this is the goal of Step 3 of the computation. See Section 6.2.2.
+
+With frequency-independent values $k _ { n m }$ (Step 1), changes induced by the $( n m )$ part of the TGP in the normalized geopotential coefficients having the same $( n m )$ are given in the time domain by
+
+$$
+\Delta \bar { C } _ { n m } - i \Delta \bar { S } _ { n m } = \frac { k _ { n m } } { 2 n + 1 } \sum _ { j = 2 } ^ { 3 } \frac { G M _ { j } } { G M _ { \oplus } } \Big ( \frac { R _ { e } } { r _ { j } } \Big ) ^ { n + 1 } \bar { P } _ { n m } \big ( \sin \Phi _ { j } \big ) e ^ { - i m \lambda _ { j } }
+$$
+
+where
+
+$$
+\begin{array} { r l } { k _ { n m } } & { = \mathrm { ~ n o m i n a l ~ L o v e ~ n u m b e r ~ f o r ~ d e g r e e ~ } n \mathrm { ~ a n d ~ o r d e r ~ } m , } \\ { R _ { e } } & { = \mathrm { ~ e q u a t o r i a l ~ r a d i n s ~ o f ~ t h e ~ E a r t h } , } \\ { G M _ { \emptyset } } & { = \mathrm { ~ g r a v i t a t i o n a l ~ p a r a m e t e r ~ f o r ~ t h e ~ E a r t h } , } \\ { G M _ { J } } & { = \mathrm { ~ g r a v i t a t i o n a l ~ p a r a m e t e r ~ f o r ~ t h e ~ M o o n ~ } ( j = 2 ) \mathrm { a n d ~ S u n ~ } ( j = 1 ) , } \\ { r _ { j } } & { = \mathrm { ~ d i s t a n c e ~ f r o m ~ g e o c e n t e r ~ t o ~ M o o n ~ o r ~ S u n } , } \\ { \Phi _ { j } } & { = \mathrm { ~ b o d y - d i x e d ~ g e o c e n t r i c ~ l a t i u d e ~ d e g ~ T o o n ~ o r ~ S u n } , } \\ { \lambda _ { j } } & { = \mathrm { ~ b o d e y - d i x e d ~ e n s t ~ l o n g ~ t h e ~ l i n d ~ e f r o m ~ G r e e n v i c h } ) \mathrm { ~ o f ~ M o o n ~ o r ~ S u p } } \end{array}
+$$
+
+Equation (6.6) yields $\Delta C _ { n m }$ and $\Delta S _ { n m }$ for both $n = 2$ and $n = 3$ for all $m$ , apart from the corrections for frequency dependence to be evaluated in Step 2. (The particular case $( n m ) = ( 2 0 )$ needs special consideration, however, as already indicated.)
+
+One further computation to be done in Step 1 is that of the changes in the degree 4 coefficients produced by the degree 2 tides. They are given by
+
+$$
+\begin{array} { r l r } { \Delta \bar { C } 4 m - i \Delta \bar { S } 4 m } & { { } = } & { \frac { k _ { 2 m } ^ { ( + ) } } { 5 } \sum _ { j = 2 } ^ { 3 } \frac { G M _ { j } } { G M _ { \oplus } } \left( \frac { R _ { c } } { r _ { j } } \right) ^ { 3 } \bar { P } _ { 2 m } ( \sin \Phi _ { j } ) e ^ { - i m \lambda _ { j } } , \quad ( m = 0 , 1 , 2 ) , } \end{array}
+$$
+
+which has the same form as Equation (6.6) for $n = 2$ except for the replacement of $k _ { 2 m }$ by $k _ { 2 m } ^ { ( + ) }$ .
+
+The parameter values for the computations of Step 1 are given in Table 6.3. The choice of these nominal values has been made so as to minimize the number of terms for which corrections will have to be applied in Step 2. The nominal value for has to be chosen real because there is no closed expression for the contribution to $C _ { 2 0 }$ from the imaginary part of $k _ { 2 0 } ^ { ( 0 ) }$ .
+
+Table 6.3: Nominal values of solid Earth tide external potential Love numbers.   
+
+<table><tr><td colspan="4">Elastic Earth</td><td colspan="3">Anelastic Earth</td></tr><tr><td>n</td><td>m</td><td>knm</td><td>k+</td><td>Re knm</td><td>Im knm</td><td>k+</td></tr><tr><td>2</td><td>0</td><td>0.29525</td><td>-0.00087</td><td>0.30190</td><td>-0.00000</td><td>-0.00089</td></tr><tr><td>2</td><td>1</td><td>0.29470</td><td>-0.00079</td><td>0.29830</td><td>-0.00144</td><td>-0.00080</td></tr><tr><td>2</td><td>2</td><td>0.29801</td><td>-0.00057</td><td>0.30102</td><td>-0.00130</td><td>-0.00057</td></tr><tr><td>3</td><td>0</td><td>0.093</td><td>·</td><td></td><td></td><td></td></tr><tr><td>3</td><td>1</td><td>0.093</td><td></td><td></td><td></td><td></td></tr><tr><td>3</td><td>2</td><td>0.093</td><td></td><td></td><td></td><td></td></tr><tr><td>3</td><td>3</td><td>0.094</td><td></td><td></td><td></td><td></td></tr></table>
+
+The frequency dependent corrections to the $\Delta C _ { n m }$ and $\Delta S _ { n m }$ values obtained from Step 1 are computed in Step 2 as the sum of contributions from a number of tidal constituents belonging to the respective bands. The contribution to $\Delta C _ { 2 0 }$ from the long period tidal constituents of various frequencies $f$ is
+
+$$
+\begin{array} { r l r } { \mathrm { R e } \sum _ { f ( 2 , 0 ) } ( A _ { 0 } \delta k _ { f } H _ { f } ) e ^ { i \theta _ { f } } } & { { } = } & { \sum _ { f ( 2 , 0 ) } [ \left( A _ { 0 } H _ { f } \delta k _ { f } ^ { R } \right) \cos \theta _ { f } - \left( A _ { 0 } H _ { f } \delta k _ { f } ^ { I } \right) \sin \theta _ { f } ] , } \end{array}
+$$
+
+while the contribution to $\left( \Delta C _ { 2 1 } - i \Delta S _ { 2 1 } \right)$ from the diurnal tidal constituents and to $\Delta C _ { 2 2 } - i \Delta S _ { 2 2 }$ from the semidiurnals are given by
+
+$$
+\Delta \bar { C } _ { 2 m } - i \Delta \bar { S } _ { 2 m } = \eta _ { m } \sum _ { f ( 2 , m ) } \left( A _ { m } \delta k _ { f } H _ { f } \right) e ^ { i \theta _ { f } } , \quad ( m = 1 , 2 ) ,
+$$
+
+where
+
+$$
+\begin{array} { l } { { A _ { 0 } = \displaystyle \frac { 1 } { R _ { e } \sqrt { 4 \pi } } = 4 . 4 2 2 8 \times 1 0 ^ { - 8 } \mathrm { m } ^ { - 1 } , } } \\ { { } } \\ { { A _ { m } = \displaystyle \frac { ( - 1 ) ^ { m } } { R _ { e } \sqrt { 8 \pi } } = ( - 1 ) ^ { m } ( 3 . 1 2 7 4 \times 1 0 ^ { - 8 } ) \mathrm { m } ^ { - 1 } , \qquad ( m \neq 0 ) , } } \\ { { } } \\ { { \displaystyle \eta _ { 1 } = - i , \eta _ { 2 } = 1 , } } \end{array}
+$$
+
+$\begin{array} { r c l } { { \delta k _ { f } } } & { { = } } & { { \mathrm { { \normalfont ~ d i f f e r e n c e ~ b e t w e e n ~ } } k _ { f } \mathrm { ~ d e f i n e d ~ a s ~ } k _ { 2 m } ^ { ( 0 ) } \mathrm { { \normalfont ~ a t ~ f r e q u e } } } } \\ { { } } & { { } } & { { \mathrm { { \normalfont ~ t h e ~ n o m i n a l ~ v a l u e ~ } } k _ { 2 m } , \mathrm { { \normalfont ~ i n ~ t h e ~ s e n s e ~ } } k _ { f } - k _ { 2 m } , } } \\ { { } } & { { } } & { { \mathrm { { \normalfont ~ c o t r i b u t i o n ~ f r o m ~ o c e a n ~ n o d i n g } } , } } \\ { { \delta k _ { f } ^ { R } } } & { { = } } & { { \mathrm { { \normalfont ~ r e a l ~ p a r t ~ o f ~ } } \delta k _ { f } , \mathrm { { \normalfont ~ a n d } ~ } } } \\ { { } } & { { } } & { { \mathrm { { \normalfont ~ \delta ~ i n a g i n a r y ~ p a r t ~ o f ~ } } \delta k _ { f } , \mathrm { { \normalfont ~ i . e . } } , \delta k _ { f } = \delta k _ { f } ^ { R } + i \delta k _ { f } ^ { R } , } } \\ { { } } & { { } } & { { } } \\ { { \displaystyle H _ { f } } } & { { = } } & { { \mathrm { { \normalfont ~ a n p l i t a d e ~ ( i n ~ m e t e r s ) ~ o f ~ t h e ~ t e r m ~ a t ~ f r e q u e n c e } } } } \\ { { } } & { { } } & { { \mathrm { { \normalfont ~ t h e ~ h a r m o n i c ~ e x p a n s i o n ~ o f ~ t h e ~ t i d e ~ g e n e r a t i n g } } } } \\ { { } } & { { } } & { { \mathrm { { \normalfont ~ d e f i n e d ~ a c o r d i n g ~ t o ~ c o n v e n t i o n ~ o f ~ c a r t w r i } } } } \\ { { } } & { { } } &  { \mathrm { { \normalfont ~ { \it ~ T } a n e r ~ } } ( 1 9 \mathrm { { \normalfont ~ \cdot ~ } } n \mathrm { { \normalfont ~ a n d } ~ } ) \mathrm { { \normalfont ~ a n d } ~ } } \end{array}$ at frequency $f$ and plus a $f$ from potential, ght and   
+$\begin{array} { r l r } { \theta _ { f } } & { { } = } & { { \bar { n } } \cdot { \bar { \beta } } = \sum _ { i = 1 } ^ { 6 } n _ { i } \beta _ { i } , \qquad \mathrm { o r } } \\ { \theta _ { f } } & { { } = } & { m ( \theta _ { g } + \pi ) - { \bar { N } } \cdot { \bar { F } } = m ( \theta _ { g } + \pi ) - \sum _ { j = 1 } ^ { 5 } N _ { j } F _ { j } , } \end{array}$   
+where   
+$\begin{array} { r c l } { { \bar { \beta } } } & { { = } } & { { \mathrm { s i x - v e c t o r ~ o f ~ D o o d s o n ' s ~ f u n d a m e n t a l ~ a r g u m e n t s ~ } \beta _ { i } , } } \\ { { } } & { { } } & { { ( \tau , s , h , p , N ^ { \prime } , p _ { s } ) , } } \\ { { } } & { { \bar { n } } } & { { = } } & { { \mathrm { s i x - v e c t o r ~ o f ~ m u l t i p l i e r s ~ } n _ { i } \mathrm { ~ ( f o r ~ t h e ~ t e r m ~ a t ~ f r e q u e n c y ~ } f } } \\ { { } } & { { } } & { { \mathrm { o f ~ t h e ~ f u n d a m e n t a l ~ a r g u m e n t s , } } } \\ { { \bar { F } } } & { { = } } & { { \mathrm { f i v e - v e c t o r ~ o f ~ f u n d a m e n t a l ~ a r g u m e n t s ~ } F _ { j } \qquad \quad } } \\ { { } } & { { } } & { { \mathrm { ( t h e ~ D e l a u n a n y ~ v a r i a b l e s ~ } l , l ^ { \prime } , F , D , \Omega ) \mathrm { ~ o f ~ n u t a t i o n ~ t h e o r y } } } \\ { { } } & { { } } & { { \mathrm { ( f i v e - v e c t o r ~ o f ~ m u l t i p l i e r s ~ } N _ { j } \mathrm { ~ o f ~ t h e ~ D e l a u m a y ~ v a r i a b l e s ~ f ~ } } } \\ { { } } & { { } } & { { \mathrm { t h e ~ n u t a t i o n ~ o f ~ f r e q u e n c y ~ } - f + \omega _ { g } / d t , } } \end{array}$ ) , or   
+and $\theta _ { g }$ is the Greenwich Mean Sidereal Time expressed in angle   
+units (i.e. $2 4 ~ \mathrm { h } = 3 6 0 ^ { \circ }$ ; see Chapter 5).   
+( $^ { - \prime \prime }$ in $( \theta _ { g } + \pi )$ is now to be replaced by $1 8 0 ^ { \circ }$ .)
+
+For the fundamental arguments $\left( l , l ^ { \prime } , F , D , \Omega \right)$ of nutation theory and the convention followed here in choosing their multipliers $N _ { j }$ , see Chapter 5. For conversion of tidal amplitudes defined according to different conventions to the amplitude $H _ { f }$ corresponding to the Cartwright-Tayler convention, use Table 6.8 given at the end of this chapter.
+
+For diurnal tides, the frequency dependent values of any load or body tide Love number parameter $L$ (such as $k _ { 2 1 } ^ { ( 0 ) }$ or $k _ { 2 1 } ^ { ( + ) }$ in the present context) may be represented as a function of the tidal excitation frequency $\sigma$ by a resonance formula
+
+$$
+L ( \sigma ) = L _ { 0 } + \sum _ { \alpha = 1 } ^ { 3 } \frac { L _ { \alpha } } { ( \sigma - \sigma _ { \alpha } ) } ,
+$$
+
+except for the small corrections referred to earlier. (They are to take account of frequency dependent contributions to a few of the Earth’s deformability parameters, which make (6.9) inexact.) The $\sigma _ { \alpha }$ , $( \alpha = 1 , 2 , 3$ ), are the respective resonance frequencies associated with the Chandler wobble (CW), the retrograde FCN, and the prograde free core nutation (also known as the free inner core nutation), and the $L _ { \alpha }$ are the corresponding resonance coefficients. All the parameters are complex. The $\sigma _ { \alpha }$ and $\sigma$ are expressed in cycles per sidereal day (cpsd), with the convention that positive (negative) frequencies represent retrograde (prograde) waves. (This sign convention, followed in tidal theory, is the opposite of that employed in analytical theories of nutation.) In particular, given the tidal frequency $f$ in degrees per hour, one has
+
+$$
+\sigma = f / ( 1 5 \times 1 . 0 0 2 7 3 7 9 0 9 ) ,
+$$
+
+the factor 1.002737909 being the number of sidereal days per solar day. The values used herein for the $\sigma _ { \alpha }$ are from Mathews et al. (2002), adapted to the sign
+
+convention used here:
+
+They were estimated from a fit of nutation theory to precession rate and nutation amplitude estimates found from an analyis of very long baseline interferometry (VLBI) data.
+
+Table 6.4 lists the values of $L _ { 0 }$ and $L _ { \alpha }$ in resonance formulae of the form (6.9) for k(0)21 and $k _ { 2 1 } ^ { ( + ) }$ . They were obtained by evaluating the relevant expressions from Mathews et al. (1995), using values taken from computations of Buffett and Mathews (unpublished) for the needed deformability parameters together with values obtained for the wobble resonance parameters in the course of computations of the nutation results of Mathews et al. (2002). The deformability parameters for an elliptical, rotating, elastic, and oceanless Earth model based on the 1- second reference period preliminary reference Earth model (PREM) (Dziewonski and Anderson, 1981) with the ocean layer replaced by solid, and corrections to these for the effects of mantle anelasticity, were found by integration of the tidal deformation equations. Anelasticity computations were based on the Widmer et al. (1991) model of mantle $Q$ . As in Wahr and Bergen (1986), a power law was assumed for the frequency dependence of $Q$ , with 200 $s$ as the reference period; the value $\alpha = 0 . 1 5$ was used for the power law index. The anelasticity contribution (out-of-phase and in-phase) to the tidal changes in the geopotential coefficients is at the level of $1 - 2 \%$ in-phase, and $0 . 5 - 1 \%$ out-of-phase, i.e., of the order of $1 0 ^ { - 1 0 }$ . The effects of anelasticity, ocean loading and currents, and electromagnetic couplings on the wobbles result in indirect contributions to $k _ { 2 1 } ^ { ( 0 ) }$ and $k _ { 2 1 } ^ { ( + ) }$ which are almost fully accounted for through the values of the wobble resonance parameters. Also shown in Table 6.4 are the resonance parameters for the load Love numbers $h _ { 2 1 } ^ { \prime }$ , $k _ { 2 1 } ^ { \prime }$ , and $l _ { 2 1 } ^ { \prime }$ , which are relevant to the solid Earth deformation caused by ocean tidal loading and to the consequential changes in the geopotential. (Only the real parts are shown: the small imaginary parts make no difference to the effect to be now considered which is itself small.)
+
+Table 6.4: Parameters in the resonance formulae for $k _ { 2 1 } ^ { ( 0 ) }$ $k _ { 2 1 } ^ { ( + ) }$ and the load Love numbers.   
+
+<table><tr><td colspan="3"></td><td colspan="2">（）</td></tr><tr><td>α</td><td>ReLα</td><td>Im Lα</td><td>Re Lα</td><td>Im Lα</td></tr><tr><td>0</td><td>0.29954</td><td>-0.1412 × 10-2</td><td>-0.804 × 10-3</td><td>0.237 × 10-5</td></tr><tr><td>1</td><td>-0.77896 × 10-3</td><td>-0.3711 × 10-4</td><td>0.209 × 10-5</td><td>0.103 × 10-6</td></tr><tr><td>2</td><td>0.90963 × 10-4</td><td>-0.2963 × 10-5</td><td>-0.182 × 10-6</td><td>0.650 × 10-8</td></tr><tr><td>3</td><td>-0.11416 × 10-5</td><td>0.5325 ×10-7</td><td>-0.713 × 10-9</td><td>-0.330 × 10-9</td></tr><tr><td colspan="5">Load Love numbers (Real parts only)</td></tr><tr><td></td><td>h1</td><td>121</td><td>K21</td><td></td></tr><tr><td>0</td><td>-0.99500</td><td>0.02315</td><td>-0.30808</td><td></td></tr><tr><td>1</td><td>1.6583 × 10-3</td><td>2.3232 ×10-4</td><td>8.1874 × 10-4</td><td></td></tr><tr><td>2</td><td>2.8018 × 10-4</td><td>-8.4659 × 10-6</td><td>1.4116 × 10-4</td><td></td></tr><tr><td>3</td><td>5.5852 × 10-7</td><td>1.0724 × 10-8</td><td>3.4618 × 10-7</td><td></td></tr></table>
+
+The expressions given in Section 6.3 for the contributions from ocean tidal loading assume the constant nominal value $k _ { 2 } ^ { \prime ( \mathrm { n o m ) } } = - 0 . 3 0 7 5$ for $k ^ { \prime }$ of the degree 2 tides. Further contributions arise from the frequency dependence of $k _ { 2 1 } ^ { \prime }$ . These may be expressed, following Wahr and Sasao (1981), in terms of an effective ocean tide contribution $\delta k ^ { ( O T ) } ( \sigma )$ to the body tide Love number $k _ { 2 1 } ^ { ( 0 ) }$ :
+
+$$
+\delta k ^ { ( O T ) } ( \sigma ) = [ k _ { 2 1 } ^ { \prime } ( \sigma ) - k _ { 2 } ^ { \prime ( \mathrm { n o m } ) } ] \left( \frac { 4 \pi G \rho _ { w } R } { 5 \bar { g } } \right) A _ { 2 1 } ( \sigma ) ,
+$$
+
+where $G$ is the constant of universal gravitation, $\rho _ { w }$ is the density of sea water $( 1 0 2 5 ~ \mathrm { k g ~ m } ^ { - 3 }$ ), $R$ is the Earth’s mean radius $( 6 . 3 7 1 \times 1 0 ^ { 6 } \mathrm { ~ m }$ ), $g$ is the mean acceleration due to gravity at the Earth’s surface $( 9 . 8 2 0 \mathrm { ~ m ~ s ~ } ^ { - 2 }$ ), and $A _ { 2 1 } ( \sigma )$ is the admittance for the degree 2 tesseral component of the ocean tide of frequency $\sigma$ in cpsd:
+
+$$
+A _ { 2 1 } ( \sigma ) = \zeta _ { 2 1 } ( \sigma ) / \bar { H } ( \sigma ) .
+$$
+
+$\zeta _ { 2 1 }$ is the complex amplitude of the height of the $( n m ) = ( 2 1 )$ component of the ocean tide, and $H$ is the height equivalent of the amplitude of the tide generating potential, the bar being a reminder that the spherical harmonics used in defining the two amplitudes should be identically normalized. Wahr and Sasao (1981) employed the factorized form
+
+$$
+A _ { 2 1 } ( \sigma ) = f _ { F C N } ( \sigma ) f _ { O D } ( \sigma ) ,
+$$
+
+wherein the first factor represents the effect of the FCN resonance, and the second, that of other ocean dynamic factors. The following empirical formulae (Mathews et al., 2002) which provide good fits to the FCN factors of a set of 11 diurnal tides (Desai and Wahr, 1995) and to the admittances obtainable from the ocean load angular momenta of four principal tides (Chao et al., 1996) are used herein:
+
+$$
+\begin{array} { c l c r } { { f _ { O D } ( \sigma ) = ( 1 . 3 1 0 1 - 0 . 8 0 9 8 i ) - ( 1 . 1 2 1 2 - 0 . 6 0 3 0 i ) \sigma , } } \\ { { f _ { F C N } ( \sigma ) = 0 . 1 7 3 2 + 0 . 9 6 8 7 f _ { e q m } ( \sigma ) , } } \\ { { f _ { e q m } ( \sigma ) = \displaystyle \frac { \gamma ( \sigma ) } { 1 - ( 3 \rho _ { w } / 5 \bar { \rho } ) \gamma ^ { \prime } ( \sigma ) } , } } \end{array}
+$$
+
+where $\gamma = 1 + k - h$ and $\gamma ^ { \prime } = 1 + k ^ { \prime } - h ^ { \prime }$ , is the Earth’s mean density. (Here $k$ stands for $k _ { 2 1 } ^ { ( 0 ) }$ , and similarly for the other symbols. Only the real parts need be used.) $f _ { e q m }$ is the FCN factor for a global equilibrium ocean.
+
+Table 6.5a shows the values of
+
+$$
+\delta k _ { f } \equiv ( k _ { 2 1 } ^ { ( 0 ) } ( \sigma ) - k _ { 2 1 } ) + \delta k _ { 2 1 } ^ { O T } ( \sigma ) ,
+$$
+
+along with the real and imaginary parts of the amplitude $\left( A _ { 1 } \delta k _ { f } H _ { f } \right)$ . The tides listed are those for which either of the parts is at least $1 0 ^ { - 1 3 }$ after round-off. (A cutoff at this level is used for the individual terms in order that accuracy at the level of $3 \times 1 0 ^ { - 1 2 }$ be not affected by the accumulated contributions from the numerous smaller terms that are disregarded.) Roughly half the value of the imaginary part comes from the ocean tide term, and the real part contribution from this term is of about the same magnitude.
+
+The values used for $k _ { 2 1 } ^ { ( 0 ) } ( \sigma )$ in evaluating $\delta k _ { f }$ are from an exact computation necessarily involving use of the framework of nutation-wobble theory which is outside the scope of this chapter. If the (approximate) resonance formula were used instead for the computation, the resulting numbers for $\delta k _ { f } ^ { R }$ and $\delta k _ { f } ^ { I }$ would require small corrections to match the exact values. In units of $1 0 ^ { - 5 }$ , they are (inphase, out-of-phase) (1, 1) for $\mathrm { Q _ { 1 } }$ , (1, 1) for O $^ { 1 }$ and its companion having Doodson numbers 145,545, (1, 0) for $N o _ { 1 }$ , $( 0 , - 1 )$ for $\mathrm { P _ { 1 } }$ , (244, 299) for $\psi _ { 1 }$ , (12, 12) for $\phi _ { 1 }$ , (3, 2) for $\mathrm { J } _ { 1 }$ , and (2, 1) for $O o _ { 1 }$ and its companion with Doodson numbers 185,565. These are the only tides for which the corrections would contribute nonnegligibly to the numbers listed in the last two columns of the table.
+
+Calculation of the correction due to any tidal constituent is illustrated by the following example for $K _ { 1 }$ . Given that $A _ { m } = A _ { 1 } = - 3 . 1 2 7 4 \times 1 0 ^ { - 8 }$ , and that $H _ { f } = 0 . 3 6 8 7 0$ , $\begin{array} { r } { \theta _ { f } = ( \theta _ { g } + \pi ) } \end{array}$ , and $k _ { 2 1 } ^ { ( 0 ) } = ( 0 . 2 5 7 4 6 + 0 . 0 0 1 1 8 i )$ for this tide, one finds on subtracting the nominal value $( 0 . 2 9 8 3 0 - 0 . 0 0 1 4 4 i )$ that $\delta k _ { f } = ( - 0 . 0 4 0 8 4 +$ $0 . 0 0 2 6 2 i$ ). Equation (6.8b) then yields:
+
+$$
+\begin{array} { r l r } { \left( \Delta \bar { C } _ { 2 1 } \right) _ { K _ { 1 } } } & { = } & { 4 7 0 . 9 \times 1 0 ^ { - 1 2 } \sin ( \theta _ { g } + \pi ) - 3 0 . 2 \times 1 0 ^ { - 1 2 } \cos ( \theta _ { g } + \pi ) , } \\ { \left( \Delta \bar { S } _ { 2 1 } \right) _ { K _ { 1 } } } & { = } & { 4 7 0 . 9 \times 1 0 ^ { - 1 2 } \cos ( \theta _ { g } + \pi ) + 3 0 . 2 \times 1 0 ^ { - 1 2 } \sin ( \theta _ { g } + \pi ) . } \end{array}
+$$
+
+Table 6.5a: The in-phase ( of the corrections for frequency dependence of $\imath p$ ) amplitudes $( A _ { 1 } \delta k _ { f } ^ { R } H _ { f } )$ and the out-of-phase ( $k _ { 2 1 } ^ { ( 0 ) }$ , taking the nominal value ) amplitudes $( A _ { 1 } \delta k _ { f } ^ { I } H _ { f } )$ $k _ { 2 1 }$ for the diurnal tides as $\mathrm { 0 . 2 9 8 3 0 - } i 0 . 0 0 1 4 4 \mathrm { ) }$ . Units: $1 0 ^ { - 1 2 }$ . The entries for $\delta k _ { f } ^ { R }$ and $\delta k _ { f } ^ { I }$ are in units of $1 0 ^ { - 5 }$ . Multipliers of the Doodson arguments identifying the tidal terms are given, as also those of the Delaunay variables characterizing the nutations produced by these   
+
+<table><tr><td colspan="3">terms.</td><td rowspan="2"></td><td rowspan="2"></td><td rowspan="2">TshpN&#x27;</td><td rowspan="2">ps</td><td rowspan="2"></td><td rowspan="2"></td><td rowspan="2">leFdΩ</td><td rowspan="2"></td><td rowspan="2"></td><td rowspan="2"></td><td rowspan="2"></td><td rowspan="2">Amp.Amp.</td></tr><tr><td>Name</td><td>deg/hr</td><td>Doodson</td><td></td><td>8k</td></tr><tr><td></td><td></td><td>No.</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>/10-5</td><td>/10-5</td><td>(ip)</td><td>(op)</td></tr><tr><td>2Q1</td><td>12.85429</td><td>125,755</td><td>1 -3</td><td>0</td><td>2 0</td><td>0</td><td>2</td><td>0</td><td>2 0</td><td></td><td>-29</td><td>3</td><td>-0.1</td><td>0.0</td></tr><tr><td>01</td><td>12.92714</td><td>127,555</td><td>1 -3</td><td>2</td><td>0 0</td><td>0</td><td>0</td><td>0</td><td>2 2</td><td>2</td><td>-30</td><td>3</td><td>-0.1</td><td>0.0</td></tr><tr><td></td><td>13.39645</td><td>135,645</td><td>1 -2</td><td>0</td><td>1 -1</td><td>0</td><td>1</td><td>0</td><td>2 0</td><td>1</td><td>-45</td><td>5</td><td>-0.1</td><td>0.0</td></tr><tr><td>Q1</td><td>13.39866</td><td>135,655</td><td>1 -2</td><td>0</td><td>1 0</td><td>0</td><td>1</td><td>0</td><td>2 0</td><td>2</td><td>-46</td><td>5</td><td>-0.7</td><td>0.1</td></tr><tr><td>p1</td><td>13.47151</td><td>137,455</td><td>1 -2</td><td>2 -1</td><td>0 0</td><td>0</td><td>-1</td><td>0</td><td>2 2</td><td>2</td><td>-49</td><td>5</td><td>-0.1 -1.3</td><td>0.0 0.1</td></tr><tr><td>01</td><td>13.94083</td><td>145,545</td><td>1 -1</td><td>0</td><td>-1</td><td>0</td><td>0</td><td>0 2</td><td>0</td><td>1</td><td>-82</td><td>7</td><td>-6.8</td><td></td></tr><tr><td>T1</td><td>13.94303</td><td>145,555</td><td>1 -1</td><td>0</td><td>0 0 0</td><td>0</td><td>0</td><td>0</td><td>2 0</td><td>2</td><td>-83</td><td>7</td><td></td><td>0.6</td></tr><tr><td>NT1</td><td>14.02517</td><td>147,555</td><td>1 -1 0</td><td>2 -2</td><td>0 0</td><td>0</td><td>0</td><td>0</td><td>0 2 -2</td><td>0</td><td>-91</td><td>9</td><td>0.1 0.1</td><td>0.0</td></tr><tr><td></td><td>14.41456</td><td>153,655</td><td>1</td><td>0 -1</td><td>1 -1</td><td>0</td><td>1</td><td>0</td><td>2 2 0</td><td></td><td>-168</td><td>14</td><td>0.1</td><td>0.0</td></tr><tr><td>Lk1</td><td>14.48520 14.48741</td><td>155,445 155,455</td><td>1 0 1</td><td>0 -1</td><td></td><td>0 0</td><td>-1 -1</td><td>0 0</td><td></td><td>1</td><td>-193</td><td>16</td><td>0.4</td><td>0.0 0.0</td></tr><tr><td rowspan="3">N01</td><td>14.49669</td><td></td><td>0 1 0</td><td>0</td><td>0 0</td><td></td><td></td><td>2</td><td>0 0</td><td>2</td><td>-194</td><td>16</td><td>1.3</td><td>-0.1</td></tr><tr><td>14.49890</td><td>155,655 155,665</td><td>1</td><td>0</td><td>1 1</td><td>0</td><td>1</td><td>0</td><td>0 0</td><td>0</td><td>-197</td><td>16</td><td></td><td></td></tr><tr><td>14.56955</td><td></td><td>0 1 0</td><td>2</td><td>1 -1</td><td>0 0</td><td>1 -1</td><td>0 0</td><td>0</td><td>1</td><td>-198</td><td>16</td><td>0.3 0.3</td><td>0.0 0.0</td></tr><tr><td rowspan="2">X1 T1</td><td>14.57176</td><td>157,455 157,465</td><td>1 0</td><td>2 -1</td><td>0 1</td><td>0</td><td>0</td><td>0 0</td><td>2 2</td><td>0 1</td><td>-231 -233</td><td>18 18</td><td>0.1</td><td>0.0</td></tr><tr><td>14.91787</td><td>162,556</td><td>1 1</td><td>-3</td><td>0 0</td><td>1</td><td>-1 0</td><td>1</td><td>2 -2</td><td>2</td><td>-834</td><td>58</td><td></td><td>-1.9 0.1</td></tr><tr><td rowspan="2">P1</td><td>14.95673</td><td>163,545</td><td>1 1</td><td>-2 0</td><td>-1</td><td>0</td><td>0 0</td><td>2</td><td>心</td><td></td><td>-1117</td><td>76</td><td>0.5</td><td>0.0</td></tr><tr><td>14.95893</td><td>163,555</td><td>1 1</td><td>-2</td><td>0 0</td><td>0</td><td>0</td><td>0</td><td>2 -2</td><td></td><td>-1138</td><td>77</td><td>-43.4</td><td>2.9</td></tr><tr><td rowspan="3">S1</td><td>15.00000</td><td>164,554</td><td>1 1</td><td>-1 0</td><td>0</td><td>-1</td><td>0 -1</td><td>2</td><td>-2</td><td></td><td>-1764</td><td>104</td><td>0.6</td><td>0.0</td></tr><tr><td>15.00000</td><td>164,556</td><td>1 1</td><td>-1</td><td>0 0</td><td>1</td><td>0</td><td>1</td><td>0 0</td><td>0</td><td>-1764</td><td>104</td><td>1.6</td><td>-0.1</td></tr><tr><td>15.02958</td><td>165,345</td><td>1 1</td><td>-2 0</td><td>-1</td><td>0</td><td>-2 0</td><td>2</td><td>0</td><td>1</td><td>-3048</td><td>92</td><td>0.1</td><td>0.0</td></tr><tr><td rowspan="4">K1</td><td>15.03665</td><td>165,535</td><td>1 1</td><td>0 0</td><td>-2</td><td>0</td><td>0</td><td>0 0</td><td>0</td><td>-2</td><td>-3630</td><td>195</td><td>0.1</td><td>0.0</td></tr><tr><td>15.03886</td><td>165,545</td><td>1 1</td><td>0</td><td>0 -1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0 -1</td><td>-3845</td><td>229</td><td>-8.8</td><td>0.5</td></tr><tr><td>15.04107</td><td>165,555</td><td>1 1</td><td>0 0</td><td>0</td><td>0</td><td>0</td><td>0 0</td><td>0</td><td>0</td><td>-4084</td><td>262</td><td>470.9</td><td></td></tr><tr><td>15.04328 15.04548</td><td>165,565</td><td>1 1</td><td>0 0</td><td>1</td><td>0</td><td>0 0</td><td>0</td><td>0</td><td>1</td><td>-4355</td><td>297</td><td>68.1</td><td>-30.2 -4.6</td></tr><tr><td rowspan="6">31 15.08214 15.08214</td><td>15.07749 15.07993</td><td>165,575 166,455</td><td>1 1 1 1</td></table>
+
+The variation of $k _ { 2 0 } ^ { ( 0 ) }$ across the zonal tidal band, $( n m ) = ( 2 0 )$ , is due to mantle anelasticity; it is described by the formula
+
+$$
+k _ { 2 0 } ^ { ( 0 ) } = 0 . 2 9 5 2 5 - 5 . 7 9 6 \times 1 0 ^ { - 4 } \left\{ \cot \frac { \alpha \pi } { 2 } \left[ 1 - \left( \frac { f _ { m } } { f } \right) ^ { \alpha } \right] + i \left( \frac { f _ { m } } { f } \right) ^ { \alpha } \right\}
+$$
+
+on the basis of the anelasticity model referred to earlier. Here $f$ is the frequency   
+of the zonal tiof 200 s, and tuent, . The $f _ { m }$ is the refein Table frequency are the d a peween $\alpha = 0 . 1 5$ $\delta k _ { f }$ $6 . 5 \mathrm { b }$ $k _ { 2 0 } ^ { ( 0 ) }$ $k _ { 2 0 } = 0 . 3 0 1 9 0$   
+Table 6.3.
+
+The total variation in geopotential coefficient $\bar { C } _ { 2 0 }$ is obtained by adding to the result of Step 1 the sum of the contributions from the tidal constituents listed in Table 6.5b computed using Equation (6.8a). The tidal variations in $C _ { 2 m }$ and $S _ { 2 m }$ for the other $m$ are computed similarly, except that Equation (6.8b) is to be used together with Table 6.5a for $m = 1$ and Table 6.5c for $m = 2$ .
+
+Table 6.5b: Corrections for frequency dependence of $k _ { 2 0 } ^ { ( 0 ) }$ of the zonal tides due to anelasticity. Units: . The nominal value $k _ { 2 0 }$ for the zonal tides is taken as 0.30190. The real and imaginary parts $\delta k _ { f } ^ { R }$ and $\delta k _ { f } ^ { I }$ of $\delta k _ { f }$ are listed, along with the corresponding in-phase   
+
+<table><tr><td>Doodson(</td><td>(ip) amplitude(AoHfδkβ) and out-of-phase (op) amplitude(AoHfδkf） to be used in Equation (6.8a).</td><td>deg/hr T s h p N&#x27; psl l&#x27; FD Ω</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>sk</td><td>Amp.</td><td>sk</td><td>Amp.</td></tr><tr><td colspan="2">Name</td><td>No.</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>(ip)</td><td>(op)</td></tr><tr><td rowspan="6">Sa Ssa</td><td>55,565</td><td>0.00221</td><td>0</td><td>0 0</td><td>0</td><td>1</td><td>0</td><td></td><td>0 0</td><td>0</td><td>0</td><td>1</td><td>0.01347</td><td>16.6</td><td>-0.00541 -6.7</td></tr><tr><td>55,575</td><td>0.00441</td><td>0 0</td><td>0</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0 2</td><td>0.01124</td><td>-0.1</td><td>-0.00488</td><td>0.1</td></tr><tr><td>56,554</td><td>0.04107</td><td>0 0</td><td>1</td><td>0</td><td>0</td><td>）-1</td><td>0-1</td><td></td><td>0</td><td>0 0</td><td>0.00547</td><td>-1.2</td><td>-0.00349</td><td>0.8</td></tr><tr><td>57,555</td><td>0.08214</td><td>0 0</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>-2</td><td>2 -2</td><td>0.00403</td><td>-5.5</td><td>-0.00315</td><td>4.3</td></tr><tr><td>57,565</td><td>0.08434</td><td>0 0</td><td>2</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>-2</td><td>2 -1</td><td>0.00398</td><td>0.1</td><td>-0.00313</td><td>-0.1</td></tr><tr><td>58,54</td><td>0.12320</td><td>0 0</td><td>3</td><td>0</td><td>0</td><td>-1</td><td>0</td><td>-1</td><td>-2</td><td>2 -2</td><td>0.00326</td><td>-0.3</td><td>-0.00296</td><td>0.2</td></tr><tr><td rowspan="3">Msm Mm</td><td>63,655</td><td>0.47152</td><td>0 1</td><td>-2</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>-2 0</td><td>0.00101</td><td>-0.3</td><td>-0.00242</td><td>0.7</td></tr><tr><td>65,445</td><td>0.54217</td><td>0 1</td><td>0</td><td>-1</td><td>-1</td><td>0</td><td>-1</td><td>0</td><td>0</td><td>0 -1</td><td></td><td>0.00080</td><td>0.1 -0.00237</td><td>-0.2</td></tr><tr><td>65,455</td><td>0.54438</td><td>0 1</td><td>0</td><td>-1</td><td>0</td><td>0</td><td>-1</td><td>0</td><td>0</td><td>0 0</td><td>0.00080</td><td>-1.2</td><td>-0.00237</td><td>3.7</td></tr><tr><td rowspan="3">Msf</td><td>65,465</td><td>0.54658</td><td>01</td><td>0-1</td><td></td><td>1</td><td>0</td><td>-1</td><td>0</td><td>0</td><td>0 1</td><td>0.00079</td><td>0.1</td><td>-0.00237</td><td>-0.2</td></tr><tr><td>65,655</td><td>0.55366</td><td>0 1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>-2</td><td>0 -2</td><td></td><td>0.00077</td><td>0.1 -0.00236</td><td>-0.2</td></tr><tr><td>73,555</td><td>1.01590</td><td>0 2</td><td>-2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>-2 0</td><td>-0.00009</td><td>0.0</td><td>-0.00216</td><td>0.6</td></tr><tr><td rowspan="3">Mf</td><td>75,355</td><td>1.08875</td><td>0 2</td><td>0</td><td>-2</td><td>0</td><td>0</td><td>-2</td><td>0</td><td>0</td><td>0 0</td><td>-0.00018</td><td>0.0</td><td>-0.00213</td><td>0.3</td></tr><tr><td>75,555</td><td>1.09804</td><td>0 2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>-2</td><td>0</td><td>-2</td><td>-0.00019</td><td>0.6 -0.00213</td><td>6.3</td></tr><tr><td>75,565</td><td>1.10024</td><td>02</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0-2</td><td></td><td>0 -1</td><td>-0.00019</td><td>0.2</td><td>-0.00213</td><td>2.6</td></tr><tr><td rowspan="4">Mstm Mtm</td><td>75,575</td><td>1.10245</td><td>0 2</td><td>0</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0-2</td><td></td><td>0</td><td>0</td><td>-0.00019 0.0</td><td>-0.00213</td><td>0.2</td></tr><tr><td>83,655</td><td>1.56956</td><td>0</td><td>3-2</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0-2</td><td></td><td>-2 -2</td><td>-0.00065</td><td>0.1</td><td>-0.00202</td><td>0.2</td></tr><tr><td>85,455</td><td>1.64241</td><td>0 3</td><td>0</td><td>-1</td><td>0</td><td>0</td><td>-1</td><td>0-2</td><td></td><td>0 -2</td><td>-0.00071</td><td>0.4</td><td>-0.00201</td><td>1.1</td></tr><tr><td>85,465</td><td>1.64462</td><td>0 3</td><td>0-1</td><td></td><td>1</td><td>0</td><td>-1</td><td>0-2</td><td></td><td>0 -1</td><td>-0.00071</td><td>0.2</td><td>-0.00201</td><td>0.5</td></tr><tr><td>Msqm</td><td>93,555</td><td>2.11394</td><td>4 0</td><td>-2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>-2</td><td>-2 -2</td><td>-0.00102</td><td>0.1</td><td>-0.00193</td><td>0.2</td></tr><tr><td>Mqm</td><td>95,355</td><td>2.18679</td><td>0 4</td><td></td><td>0-2</td><td>0</td><td>0</td><td>-2</td><td>0-2</td><td></td><td>0-2</td><td>-0.00106</td><td>0.1</td><td>-0.00192</td><td>0.1</td></tr></table>
+
+# 6.2.2 Treatment of the permanent tide
+
+The degree 2 zonal tide generating potential has a mean (time average) value that is nonzero. This time independent $( n m ) = ( 2 0 )$ potential produces a permanent deformation and a consequent time independent contribution to the geopotential coefficient $C _ { 2 0 }$ . In formulating a geopotential model, two approaches may be taken (see Chapter 1). When the time independent contribution is included in the adopted value of $C _ { 2 0 }$ , then the value is termed “zero tide” and will be noted here $C _ { 2 0 } ^ { z t }$ . If the time independent contribution is not included in the adopted value of $C _ { 2 0 }$ , then the value is termed “conventional tide free” and will be noted here $\hat { C } _ { 2 0 } ^ { t f }$ .
+
+Table 6.5c: Amplitudes $\left( A _ { 2 } \delta k _ { f } H _ { f } \right)$ of the corrections for frequency dependence of $k _ { 2 2 } ^ { ( 0 ) }$ ng the nominal value $k _ { 2 2 }$ for the sectorial tides as . Units: $1 0 ^ { - 1 2 }$ corrections are only to the real part.   
+
+<table><tr><td></td><td>Name Doodsondeg/hrTsh p N&#x27;pse e F D Ωδk</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>Amp.</td></tr><tr><td></td><td>No. 245,655</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>N2 M</td><td>255,555</td><td>28.439732-10100102020.00006</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>28.98410200000002020.00004</td><td>-0.3 -1.2</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></table>
+
+In the case of a “zero tide” geopotential model, the model of tidal effects to be added should not once again contain a time independent part. One must not then use the expression (6.6) as it stands for modeling $\Delta C _ { 2 0 }$ ; its permanent part must first be restored. This is Step 3 of the computation, which provides $\Delta C _ { 2 0 } ^ { z t }$ , to b e used with a “zero tide” geopotential model.
+
+$$
+\Delta \bar { C } _ { 2 0 } ^ { z t } = \Delta \bar { C } _ { 2 0 } - \Delta \bar { C } _ { 2 0 } ^ { p e r m }
+$$
+
+where $\Delta C _ { 2 0 }$ is given by Equation (6.6) and where $\Delta C _ { 2 0 } ^ { p e r m }$ is the time-independent part:
+
+$$
+\Delta \bar { C } _ { 2 0 } ^ { p e r m } = A _ { 0 } H _ { 0 } k _ { 2 0 } = ( 4 . 4 2 2 8 \times { 1 0 } ^ { - 8 } ) ( - 0 . 3 1 4 6 0 ) k _ { 2 0 } .
+$$
+
+In the case of EGM2008, the difference between the zero-tide and tide-free value of $C _ { 2 0 }$ is $- 4 . 1 7 3 6 \times 1 0 ^ { - 9 }$ . Assuming the same values for $A _ { 0 }$ , $H _ { 0 }$ and $k _ { 2 0 }$ , the tide-free value of $C _ { 2 0 }$ corresponding to Table 6.2 would be $- 0 . 4 8 4 1 6 5 3 1 \times 1 0 ^ { - 3 }$ .
+
+The use of “zero tide” values and the subsequent removal of the effect of the permanent tide from the tide model is presented for consistency with the 18th IAG General Assembly Resolution 16.
+
+# 6.3 Effect of the ocean tides
+
+The dynamical effects of ocean tides are most easily incorporated as periodic variations in the normalized Stokes’ coefficients of degree n and order m $\Delta C _ { n m }$ and $\Delta S _ { n m }$ . These variations can be evaluated as
+
+$$
+[ \Delta \bar { C } _ { n m } - i \Delta \bar { S } _ { n m } ] ( t ) = \sum _ { f } \bar { \sum _ { + } } ( \mathcal { C } _ { f , n m } ^ { \pm } \mp i S _ { f , n m } ^ { \pm } ) e ^ { \pm i \theta _ { f } ( t ) } ,
+$$
+
+where format $\mathcal { C } _ { f , n m } ^ { \pm }$ and elow) $S _ { f , n m } ^ { \pm }$ are the geopotente tide constituent l harmonic , and where tudes (see more in- is the argument of $f$ $\theta _ { f } ( t )$ the tide constituent $f$ as defined in the explanatory text below Equation (6.8e).
+
+Ocean tide models are typically developed and distributed as gridded maps of tide height amplitudes. These models provide in-phase and quadrature amplitudes of tide heights for selected, main tidal frequencies (or main tidal waves), on a variable grid spacing over the oceans. Using standard methods of spherical harmonic decomposition and with the use of an Earth loading model, the maps of ocean tide height amplitudes have been converted to spherical harmonic coefficients of the geopotential, and provided for direct use in Equation (6.15). This computation follows Equation (6.21) and has been carried out for the tide model proposed in Section 6.3.2.
+
+Typically, an ocean tide model provides maps for only the largest tides or main waves. The spectrum of tidal geopotential perturbations can be completed by interpolation from the main waves to the smaller, secondary waves, using an assumption of linear variation of tidal admittance between closely spaced tidal frequencies. For each secondary wave, the geopotential harmonic amplitudes can be derived from the amplitudes of two nearby main lines, or pivot waves, (labeled with subscripts 1 and 2) as
+
+$$
+\begin{array} { r l r } { \mathcal { C } _ { f , n m } ^ { \pm } } & { = } & { \frac { \dot { \theta } _ { f } - \dot { \theta } _ { 1 } } { \dot { \theta } _ { 2 } - \dot { \theta } _ { 1 } } . \frac { H _ { f } } { H _ { 2 } } \mathcal { C } _ { 2 , n m } ^ { \pm } + \frac { \dot { \theta } _ { 2 } - \dot { \theta } _ { f } } { \dot { \theta } _ { 2 } - \dot { \theta } _ { 1 } } . \frac { H _ { f } } { H _ { 1 } } \mathcal { C } _ { 1 , n m } ^ { \pm } } \\ { \mathcal { S } _ { f , n m } ^ { \pm } } & { = } & { \frac { \dot { \theta } _ { f } - \dot { \theta } _ { 1 } } { \dot { \theta } _ { 2 } - \dot { \theta } _ { 1 } } . \frac { H _ { f } } { H _ { 2 } } \mathcal { S } _ { 2 , n m } ^ { \pm } + \frac { \dot { \theta } _ { 2 } - \dot { \theta } _ { f } } { \dot { \theta } _ { 2 } - \dot { \theta } _ { 1 } } . \frac { H _ { f } } { H _ { 1 } } \mathcal { S } _ { 1 , n m } ^ { \pm } } \end{array}
+$$
+
+where $H$ is the astronomic amplitude of the considered wave. See an example in Table 6.7 developed for the main waves of FES2004 (see Section 6.3.2).
+
+Some background information on the determination of the coefficients is given in Section 6.3.1, and is included here for completeness. It is not necessary for the evaluation of tidal perturbations to the geopotential. Information on selected tidal models and their use is provided in Section 6.3.2.
+
+# 6.3.1 Background on ocean tide models
+
+Ocean tide models are conventionally expressed in terms of amplitude and phase of waves at certain discrete frequencies.
+
+$$
+\xi ( \phi , \lambda , t ) = \sum _ { f } Z _ { f } ( \phi , \lambda ) \cos \left( \theta _ { f } ( t ) - \psi _ { f } ( \phi , \lambda ) \right)
+$$
+
+where $Z _ { f }$ is the amplitude of wave $f _ { i }$ , $\psi _ { f }$ is the phase at Greenwich and $\theta _ { f }$ is the Doodson argument, see the explanatory text below Equation (6.8e).
+
+When expanding amplitudes $\smash { \boldsymbol { Z } _ { f } }$ ) and phases $\left( \psi _ { f } \right)$ of the different waves of tides (from cotidal grids) in spherical harmonic functions of $Z _ { f } c o s ( \psi _ { f } )$ and $Z _ { f } s i n ( \psi _ { f } )$ , it yields:
+
+$$
+\xi ( \phi , \lambda , t ) = \sum _ { f } \sum _ { n = 1 } ^ { N } \sum _ { m = 0 } ^ { n } \bar { P } _ { n m } ( \sin \phi ) \sum _ { + } ^ { - } \xi _ { f , n m } ^ { \pm } ( \lambda , t )
+$$
+
+where
+
+$$
+\xi _ { f , n m } ^ { \pm } ( \lambda , t ) = \bar { C } _ { f , n m } ^ { \pm } \cos ( \theta _ { f } + \chi _ { f } \pm m \lambda ) + \bar { S } _ { f , n m } ^ { \pm } \sin ( \theta _ { f } + \chi _ { f } \pm m \lambda )
+$$
+
+The couples of coefficients $\left( \bar { C } _ { f , n m } ^ { \pm } , \bar { S } _ { f , n m } ^ { \pm } \right)$ represent prograde and retrograde normalized spherical harmonic coefficients of the main wave $f$ at degree $n$ and order $m$ , and can be alternately expressed in terms of amplitude $\hat { \bar { C } } _ { f , n m } ^ { \pm }$ and phase $\varepsilon _ { f , n m } ^ { \pm }$ such as:
+
+$$
+\begin{array} { r c l } { \bar { C } _ { f , n m } ^ { \pm } } & { = } & { \hat { \bar { C } } _ { f , n m } ^ { \pm } \sin ( \varepsilon _ { f , n m } ^ { \pm } ) } \\ { \bar { S } _ { f , n m } ^ { \pm } } & { = } & { \hat { \bar { C } } _ { f , n m } ^ { \pm } \cos ( \varepsilon _ { f , n m } ^ { \pm } ) } \end{array}
+$$
+
+The $\chi _ { f }$ values agree with the so-called Shureman convention which is traditionally applied in cotidal maps. They comply with the Doodson-Warburg convention which is defined according to the sign of the harmonic amplitude $H _ { f }$ (see Table 6.6 according to Cartwright and Eden, 1973).
+
+For each wave $f$ , the coefficients $\mathcal { C } _ { f , n m } ^ { \pm }$ and $S _ { f , n m } ^ { \pm }$ to be used in Equation (6.15)
+
+$$
+\begin{array} { r l r } { \mathcal { C } _ { f , n m } ^ { \pm } } & { = } & { \frac { 4 \pi G \rho _ { w } } { g _ { e } } \left( \frac { 1 + k _ { n } ^ { \prime } } { 2 n + 1 } \right) \hat { \bar { C } } _ { f , n m } ^ { \pm } \sin ( \varepsilon _ { f , n m } ^ { \pm } + \chi _ { f } ) } \\ { \mathcal { S } _ { f , n m } ^ { \pm } } & { = } & { \frac { 4 \pi G \rho _ { w } } { g _ { e } } \left( \frac { 1 + k _ { n } ^ { \prime } } { 2 n + 1 } \right) \hat { \bar { C } } _ { f , n m } ^ { \pm } \cos ( \varepsilon _ { f , n m } ^ { \pm } + \chi _ { f } ) } \end{array}
+$$
+
+Table 6.6: Values of the phase bias $\chi _ { f }$ according to the sign of $H _ { f }$   
+
+<table><tr><td></td><td>Hf&gt;0</td><td>Hf&lt;0</td></tr><tr><td>n1=0, long period wave</td><td></td><td>0</td></tr><tr><td>diurnal wave n1=1,</td><td>T</td><td>元</td></tr><tr><td></td><td></td><td></td></tr><tr><td>n1=2, semi-diurnal wave</td><td></td><td>T</td></tr></table>
+
+where $G$ and $g _ { e }$ are given in Chapter 1, $\rho _ { w }$ is the density of seawater (1025 kg $\mathrm { m } ^ { - 3 }$ ) and where $k _ { n } ^ { \prime }$ is the load deformation coefficient of degree n ( $k _ { 2 } ^ { \prime } = - 0 . 3 0 7 5$ , $k _ { 3 } ^ { \prime } = - 0 . 1 9 5$ , $k _ { 4 } ^ { \prime } = - 0 . 1 3 2$ , $k _ { 5 } ^ { \prime } = - 0 . 1 0 3 2$ , $k _ { 6 } ^ { \prime } = - 0 . 0 8 9 2$ ).
+
+# 6.3.2 Ocean tide models
+
+The practical implementation of ocean tide models in this form begins with identification of the underlying ocean tide height model. Once this model is identified, further needed information can include the specification of maximum degree and order of the expansion, the identification of the pivot waves for interpolation, the special handling (if necessary) of the solar (radiational) tides, or the long-period tidal bands.
+
+For the case of the FES2004 ocean tide model, these details of implementation are provided next.
+
+# FES2004
+
+The FES2004 ocean tide model (Lyard et al., 2006) includes long period waves ( $S _ { a }$ , $S _ { s a }$ , $M _ { m }$ , $M _ { f }$ , $M _ { t m }$ , $M _ { s q m }$ ), diurnal waves $( Q _ { 1 } , { \cal O } _ { 1 } , { \cal P } _ { 1 } , { \cal K } _ { 1 } )$ , semi-diurnal waves and the quarter-diurnal wave $( M _ { 4 } ^ { \mathrm { ~ 5 ~ } } )$ . For direct use in Equation (6.15), the coefficients $\mathcal { C } _ { f , n m } ^ { \pm }$ and $S _ { f , n m } ^ { \pm }$ for the main tidal waves of FES2004 can be found at $< ^ { 6 } >$
+
+The tide height coefficients can be found in the file $< ^ { 7 } >$ , both in the form of the coefficients $\bar { C } _ { f , n m } ^ { \pm }$ and $\bar { S } _ { f , n m } ^ { \pm }$ and in the form of the amplitudes Cˆ¯±f,n and phases $\varepsilon _ { f , n m } ^ { \pm }$ , as defined in Equations (6.19) and (6.20). They have been computed up to degree and order 100 by quadrature method from quarter-degree cotidal grids. Then ellipsoidal corrections to spherical harmonics were applied (Balmino, 2003) in order to take into account that tidal models are described on the oblate shape of the Earth.
+
+Table 6.7 provides a list of admittance waves which can be taken into account to complement the model. It indicates the pivot waves for linear interpolation following Equation (6.16), where indices 1 and 2 refer to the two pivot waves.
+
+It is to be noticed that radiational waves like $S _ { 1 }$ and $S _ { 2 }$ require special handling, since the common altimetric models (including FES2004) for these tides include the contributions of atmospheric pressure variations on the ocean height (i.e. the radiational tide). As a result, neither $S _ { 1 }$ and $S _ { 2 }$ are used as pivot waves for interpolation in Table 6.7. While an $S _ { 2 }$ wave is available as a part of the FES2004 model, a mean $S _ { 1 }$ wave is given outside FES2004 and available in file $< ^ { 8 } >$ .
+
+The additionally provided mean S1 wave should only be used in case the gravitational influences of mass transport from an ocean circulation model like MOG2D (Carr\`ere and Lyard, 2003) are not also modeled. This is because the S1 signal is generally part of such ocean circulation models provided with an interval of 6 hours.
+
+Moreover, very long period waves like $\Omega _ { 1 }$ (18.6 yr) and $\Omega _ { 2 }$ (9.3 yr) which are not yet correctly observed can be modeled as equilibrium waves. Their amplitudes (and phases) are computed from the astronomical amplitude $H _ { f }$ considering the elastic response of the Earth through the Love numbers:
+
+$$
+\hat { \bar { C } } _ { f , 2 0 } = \frac { 1 + k _ { 2 } - h _ { 2 } } { \sqrt { 4 \pi } } | H _ { f } | , \quad \epsilon _ { f , 2 0 } = - \frac { \pi } { 2 }
+$$
+
+where $k _ { 2 } ~ = ~ 0 . 2 9 5 2 5$ and $h _ { 2 } ~ = ~ 0 . 6 0 7 8$ are the Love numbers of potential and deformation, respectively.
+
+# Influence of tidal models
+
+For a satellite like Stella (altitude $8 0 0 \mathrm { k m }$ , inclination $9 8 . 7 ^ { \circ }$ and eccentricity 0.001), for one day of integration, the effects of ocean tides are typically of order several cm and can reach 20 cm. It is estimated that the main waves of the FES2004 model typically represent $8 0 \%$ of the effect (Biancale, 2008).
+
+For Starlette (altitude 800 km, inclination $4 9 . 8 ^ { \circ }$ and eccentricity 0.02) and Lageos1 (altitude 5900 km, inclination $1 0 9 . 8 ^ { \circ }$ and eccentricity 0.005), integration time of 6 and 7 days, respectively, showed a 3-D RMS difference (mostly along-track) of 9 and 7 mm, respectively, for the difference between FES2004 and the older CSR3.0 ocean tide model (Ries, 2010).
+
+Table 6.7: List of astronomical amplitudes $H _ { f }$ (m) for main waves of FES2004 (in bold) and for some secondary waves (with their pivot waves when they have to be linearly interpolated).   
+
+<table><tr><td>Darwin&#x27;s symbol</td><td>Doodson&#x27;s number</td><td>Hf</td><td>Pivot wave 1</td><td>Pivot wave 2</td></tr><tr><td>Ω1</td><td>055.565</td><td>.02793</td><td></td><td></td></tr><tr><td>22</td><td>055.575</td><td>-.00027</td><td></td><td></td></tr><tr><td>Sa</td><td>056.554</td><td>-.00492</td><td></td><td></td></tr><tr><td>Ssa</td><td>057.555</td><td>-.03100</td><td></td><td></td></tr><tr><td>Sta</td><td>058.554</td><td>-.00181</td><td>057.555</td><td>065.455</td></tr><tr><td>Msm</td><td>063.655</td><td>-.00673</td><td>057.555</td><td>065.455</td></tr><tr><td>Mm</td><td>065.445</td><td>.00231</td><td>057.555</td><td>065.455</td></tr><tr><td></td><td>065.455</td><td>-.03518</td><td></td><td></td></tr><tr><td></td><td>065.465</td><td>.00229</td><td>065.455</td><td>075.555</td></tr><tr><td></td><td>065.555</td><td>-.00375</td><td>065.455</td><td>075.555</td></tr><tr><td>Msf</td><td>065.655</td><td>.00188</td><td>065.455</td><td>075.555</td></tr><tr><td></td><td>073.555</td><td>-.00583</td><td>065.455</td><td>075.555</td></tr><tr><td>Mf</td><td>075.355</td><td>-.00288</td><td>065.455</td><td>075.555</td></tr><tr><td></td><td>075.555</td><td>-.06663</td><td></td><td></td></tr><tr><td></td><td>075.565</td><td>-.02762</td><td>075.555</td><td>085.455</td></tr><tr><td>Mstm</td><td>075.575</td><td>-.00258</td><td>075.555</td><td>085.455</td></tr><tr><td></td><td>083.655</td><td>-.00242</td><td>075.555</td><td>085.455</td></tr><tr><td>Mtm</td><td>083.665</td><td>-.00100</td><td>075.555</td><td>085.455</td></tr><tr><td></td><td>085.455</td><td>-.01276</td><td></td><td></td></tr><tr><td>Msqm</td><td>085.465</td><td>-.00529</td><td>085.455</td><td>093.555</td></tr><tr><td></td><td>093.555</td><td>-.00204</td><td></td><td></td></tr><tr><td></td><td>095.355</td><td>-.00169</td><td>085.455</td><td>093.555</td></tr><tr><td></td><td>117.655</td><td>-.00194</td><td>135.455</td><td>145.555</td></tr><tr><td>2Q1</td><td>125.755</td><td>-.00664</td><td>135.655</td><td>145.555</td></tr><tr><td>01</td><td>127.555</td><td>-.00802</td><td>135.655</td><td>145.555</td></tr><tr><td>01</td><td>135.645</td><td>-.00947</td><td>135.655</td><td>145.555</td></tr><tr><td>Q1</td><td>135.655</td><td>-.05020</td><td></td><td></td></tr><tr><td></td><td>137.445</td><td>-.00180</td><td>135.655</td><td>145.555</td></tr><tr><td>p1</td><td>137.455</td><td>-.00954</td><td>135.655</td><td>145.555</td></tr><tr><td>01</td><td>145.545</td><td>-.04946</td><td>135.655</td><td>145.555</td></tr><tr><td></td><td>145.555</td><td>-.26221</td><td></td><td></td></tr><tr><td></td><td>145.755</td><td>.00170</td><td>145.555</td><td>165.555</td></tr><tr><td>T1</td><td>147.555</td><td>.00343</td><td>145.555</td><td>165.555</td></tr><tr><td></td><td>153.655</td><td>.00194</td><td>145.555</td><td>165.555</td></tr><tr><td></td><td>155.455</td><td>.00741</td><td>145.555</td><td>165.555</td></tr></table>
+
+continued
+
+<table><tr><td>Darwin&#x27;s symbol</td><td>Doodson&#x27;s number</td><td>Hf</td><td>Pivot wave 1</td><td>Pivot wave 2</td></tr><tr><td rowspan="3">M1</td><td>155.555</td><td>-.00399</td><td>145.555</td><td>165.555</td></tr><tr><td>155.655</td><td>.02062</td><td>145.555</td><td>165.555</td></tr><tr><td>155.665</td><td>.00414</td><td>145.555</td><td>165.555</td></tr><tr><td>X1</td><td>157.455</td><td>.00394</td><td>145.555</td><td>165.555</td></tr><tr><td>T1</td><td>162.556</td><td>-.00714</td><td>145.555</td><td>165.555</td></tr><tr><td>P1</td><td>163.555</td><td>-.12203</td><td></td><td></td></tr><tr><td>S1</td><td>164.556</td><td>.00289</td><td></td><td></td></tr><tr><td>K1-</td><td>165.545</td><td>-.00730</td><td>145.555</td><td>165.555</td></tr><tr><td>K1</td><td>165.555</td><td>.36878</td><td></td><td></td></tr><tr><td>K1+</td><td>165.565</td><td>.05001</td><td>145.555</td><td>165.555</td></tr><tr><td>1</td><td>166.554</td><td>.00293</td><td>145.555</td><td>165.555</td></tr><tr><td>1</td><td>167.555</td><td>.00525</td><td>145.555</td><td>165.555</td></tr><tr><td>01</td><td>173.655</td><td>.00395</td><td>145.555</td><td>165.555</td></tr><tr><td>J1</td><td>175.455</td><td>.02062</td><td>145.555</td><td>165.555</td></tr><tr><td rowspan="3">S01</td><td>175.465</td><td>.00409</td><td>145.555</td><td>165.555</td></tr><tr><td>183.555</td><td>.00342</td><td>145.555</td><td>165.555</td></tr><tr><td>185.355</td><td>.00169</td><td>145.555</td><td>165.555</td></tr><tr><td>001</td><td>185.555</td><td>.01129</td><td>145.555</td><td>165.555</td></tr><tr><td></td><td>185.565</td><td>.00723</td><td>145.555</td><td>165.555</td></tr><tr><td>V1</td><td>195.455</td><td>.00216</td><td>145.555</td><td>165.555</td></tr><tr><td>3N2</td><td>225.855</td><td>.00180</td><td>235.755</td><td>245.655</td></tr><tr><td>€2</td><td>227.655</td><td>.00467</td><td>235.755</td><td>245.655</td></tr><tr><td>2N2</td><td>235.755</td><td>.01601</td><td></td><td></td></tr><tr><td>μ2</td><td>237.555</td><td>.01932</td><td>235.755</td><td>245.655</td></tr><tr><td></td><td>245.555</td><td>-.00389</td><td>237.755</td><td>245.655</td></tr><tr><td></td><td>245.645</td><td>-.00451</td><td>237.755</td><td>245.655</td></tr><tr><td>N2</td><td>245.655</td><td>.12099</td><td></td><td></td></tr><tr><td>V2</td><td>247.455</td><td>.02298</td><td>245.655</td><td>255.555</td></tr><tr><td>2</td><td>253.755</td><td>-.00190</td><td>245.655</td><td>255.555</td></tr><tr><td>Q2</td><td>254.556</td><td>-.00218</td><td>245.655</td><td>255.555</td></tr><tr><td></td><td>255.545</td><td>-.02358</td><td>245.655</td><td>255.555</td></tr><tr><td>M2</td><td>255.555</td><td>.63192</td><td></td><td></td></tr><tr><td>β</td><td>256.554</td><td>.00192</td><td>255.555</td><td>275.555</td></tr><tr><td>入2 L2</td><td>263.655</td><td>-.00466</td><td>255.555</td><td>275.555</td></tr><tr><td></td><td>265.455</td><td>-.01786</td><td>255.555</td><td>275.555</td></tr><tr><td></td><td>265.555</td><td>.00359</td><td>255.555</td><td>275.555</td></tr><tr><td></td><td>265.655</td><td>.00447</td><td>255.555</td><td>275.555</td></tr><tr><td>T2</td><td>265.665</td><td>.00197</td><td>255.555</td><td>275.555</td></tr><tr><td>S</td><td>272.556</td><td>.01720</td><td>255.555</td><td>275.555</td></tr><tr><td>R2</td><td>273.555</td><td>.29400</td><td></td><td></td></tr><tr><td>K2</td><td>274.554</td><td>-.00246</td><td>255.555</td><td>275.555</td></tr><tr><td></td><td>275.555</td><td>.07996</td><td></td><td></td></tr><tr><td>K2+</td><td>275.565</td><td>.02383</td><td>255.555</td><td>275.555</td></tr><tr><td>K2++</td><td>275.575</td><td>.00259</td><td>255.555</td><td>275.555</td></tr><tr><td>m2</td><td>285.455</td><td>.00447</td><td>255.555</td><td>275.555</td></tr><tr><td>M4</td><td>285.465</td><td>.00195</td><td>255.555</td><td>275.555</td></tr><tr><td></td><td>455.555</td><td></td><td></td><td></td></tr></table>
+
+# 6.4 Solid Earth pole tide
+
+The pole tide is generated by the centrifugal effect of polar motion, characterized by the potential
+
+$$
+\begin{array} { r l r } { \Delta V ( r , \theta , \lambda ) } & { = } & { - \frac { \Omega ^ { 2 } r ^ { 2 } } { 2 } \sin 2 \theta \left( m _ { 1 } \cos \lambda + m _ { 2 } \sin \lambda \right) } \\ & { = } & { - \frac { \Omega ^ { 2 } r ^ { 2 } } { 2 } \sin 2 \theta { \bf R e } \left[ \left( m _ { 1 } - i m _ { 2 } \right) e ^ { i \lambda } \right] . } \end{array}
+$$
+
+(See Section 7.1.4 for further details, including the relation of the wobble variables $( m _ { 1 } , m _ { 2 } )$ to the polar motion variables $( x _ { p } , y _ { p } )$ .) The deformation which constitutes this tide produces a perturbation
+
+$$
+- \frac { \Omega ^ { 2 } r ^ { 2 } } { 2 } \sin { 2 \theta } \mathrm { \bf ~ R e } \left[ k _ { 2 } \left( m _ { 1 } - i m _ { 2 } \right) e ^ { i \lambda } \right]
+$$
+
+in the external potential, which is equivalent to changes in the geopotential coefficients $C _ { 2 1 }$ and $S _ { 2 1 }$ . Using for $k _ { 2 }$ the value $0 . 3 0 7 7 + 0 . 0 0 3 6 i$ appropriate to the polar tide yields
+
+$$
+\begin{array} { r l r } { \Delta \bar { C } _ { 2 1 } } & { = } & { - 1 . 3 3 3 \times 1 0 ^ { - 9 } ( m _ { 1 } + 0 . 0 1 1 5 m _ { 2 } ) , } \\ & { } & \\ { \Delta \bar { S } _ { 2 1 } } & { = } & { - 1 . 3 3 3 \times 1 0 ^ { - 9 } ( m _ { 2 } - 0 . 0 1 1 5 m _ { 1 } ) , } \end{array}
+$$
+
+where $m _ { 1 }$ and $m _ { 2 }$ are in seconds of arc.
+
+# 6.5 Ocean pole tide
+
+The ocean pole tide is generated by the centrifugal effect of polar motion on the oceans. This centrifugal effect is defined in Equation (6.22) from Section 6.4. Polar motion is dominated by the 14-month Chandler wobble and annual variations. At these long periods, the ocean pole tide is expected to have an equilibrium response, where the displaced ocean surface is in equilibrium with the forcing equipotential surface.
+
+Desai (2002) presents a self-consistent equilibrium model of the ocean pole tide. This model accounts for continental boundaries, mass conservation over the oceans, self-gravitation, and loading of the ocean floor. Using this model, the ocean pole tide produces the following perturbations to the normalized geopotential coefficients, as a function of the wobble variables $( m _ { 1 } , m _ { 2 } )$ .
+
+$$
+\begin{array} { r } { \left[ \begin{array} { c } { \Delta \bar { C } _ { n m } } \\ { \Delta \bar { S } _ { n m } } \end{array} \right] = R _ { n } \left\{ \left[ \begin{array} { c } { \bar { A } _ { n m } ^ { R } } \\ { \bar { B } _ { n m } ^ { R } } \end{array} \right] \left( m _ { 1 } \gamma _ { 2 } ^ { R } + m _ { 2 } \gamma _ { 2 } ^ { I } \right) + \left[ \begin{array} { c } { \bar { A } _ { n m } ^ { I } } \\ { \bar { B } _ { n m } ^ { I } } \end{array} \right] \left( m _ { 2 } \gamma _ { 2 } ^ { R } - m _ { 1 } \gamma _ { 2 } ^ { I } \right) \right\} } \end{array}
+$$
+
+where
+
+$$
+R _ { n } = { \frac { \Omega ^ { 2 } a _ { E } ^ { 4 } } { G M } } { \frac { 4 \pi G \rho _ { w } } { g _ { e } } } \left( { \frac { 1 + k _ { n } ^ { \prime } } { 2 n + 1 } } \right)
+$$
+
+and
+
+$\Omega$ , $a _ { E }$ , $\it G M$ , $g _ { e }$ , and $G$ are defined in Chapter 1,   
+$\rho _ { w } =$ density of sea water $= 1 0 2 5 \ k g m ^ { - 3 }$ ,   
+$k _ { n } ^ { \prime } = \mathrm { l o a d }$ deformation coefficients $( k _ { 2 } ^ { \prime } = - 0 . 3 0 7 5 , k _ { 3 } ^ { \prime } = - 0 . 1 9 5 , k _ { 4 } ^ { \prime } = - 0 . 1 3 2 , k _ { 5 } ^ { \prime } =$ $- 0 . 1 0 3 2 , k _ { 6 } ^ { \prime } = - 0 . 0 8 9 2 )$ ,   
+$\gamma = \gamma _ { 2 } ^ { R } + i \gamma _ { 2 } ^ { I } = ( 1 + k _ { 2 } - h _ { 2 } ) = 0 . 6 8 7 0 + i 0 . 0 0 3 6$   
+(Values of $k _ { 2 }$ and $h _ { 2 }$ appropriate for the pole tide are as given in Sections 6.4 and 7.1.4),   
+$( m _ { 1 } , m _ { 2 } )$ are the wobble parameters in radians. Refer to Section 7.1.4 for the relationship between the wobble variables $( m _ { 1 } , m _ { 2 } )$ and the polar motion variable $( x _ { p } , y _ { p } )$ .efficients from the self-consistent equilibrium model,   
+$\bar { A } _ { n m } = \bar { A } _ { n m } ^ { R } + i \bar { A } _ { n m } ^ { I }$ and $\bar { B } _ { n m } = \bar { B } _ { n m } ^ { R } + i \bar { B } _ { n m } ^ { I }$ , are provided to degree and order 360 at $< ^ { 9 } >$ .   
+The $( n , m ) = ( 2 , 1 )$ coefficients are the dominant terms of the ocean pole tide. Using the values defined above yields the following $( n , m ) = ( 2 , 1 )$ coefficients for the ocean pole tide:
+
+$$
+\begin{array} { r l r } { \Delta \bar { C } _ { 2 1 } } & { = } & { - 2 . 1 7 7 8 \times 1 0 ^ { - 1 0 } ( m _ { 1 } - 0 . 0 1 7 2 4 m _ { 2 } ) , } \\ { \Delta \bar { S } _ { 2 1 } } & { = } & { - 1 . 7 2 3 2 \times 1 0 ^ { - 1 0 } ( m _ { 2 } - 0 . 0 3 3 6 5 m _ { 1 } ) , } \end{array}
+$$
+
+where $m _ { 1 }$ and $m _ { 2 }$ are in seconds of arc. Approximately $9 0 \%$ of the variance of the ocean pole tide potential is provided by the degree $n = 2$ spherical harmonic components, with the next largest contributions provided by the degree $n = 1$ and $n = 3$ components, respectively (see Figure 6.1). Expansion to spherical harmonic degree $n = 1 0$ provides approximately $9 9 \%$ of the variance. However, adequate representation of the continental boundaries will require a spherical harmonic expansion to high degree and order. The degree $n = 1$ components are shown in Figure 6.1 to illustrate the size of the ocean pole tide contribution to geocenter motion but these terms should not be used in modeling station displacements.
+
+![](images/46ed504fb3f72f1d3fc3d8e9d57d136c372f8f7b103d1dd79fb60306a96cb4f5.jpg)  
+Figure 6.1: Ocean pole tide: first spherical harmonic components.
+
+# 6.6 Conversion of tidal amplitudes defined according to different conventions
+
+The definition used for the amplitudes of tidal terms in the recent high-accuracy tables differ from each other and from Cartwright and Tayler (1971). Hartmann and Wenzel (1995) tabulate amplitudes in units of the potential $\mathrm { ( m ^ { 2 } s ^ { - 2 } ) }$ , while the amplitudes of Roosbeek (1996), which follow the Doodson (1921) convention, are dimensionless. To convert them to the equivalent tide heights $H _ { f }$ of the Cartwright-Tayler convention, multiply by the appropriate factors from Table 6.5. The following values are used for the constants appearing in the conversion factors: Doodson constant $D _ { 1 } = 2 . 6 3 3 5 8 3 5 2 8 5 5 ~ \mathrm { m } ^ { 2 } ~ \mathrm { s } ^ { - 2 }$ $g _ { e } \ = \ g$ at the equatorial radius = 9.79828685 (from $G M = 3 . 9 8 6 0 0 4 4 1 5 \times 1 0 ^ { 1 4 } ~ \mathrm { m } ^ { 3 } ~ \mathrm { s } ^ { - 2 }$ , $R _ { e } = 6 3 7 8 1 3 6 . 5 5$ m).
+
+Table 6.8: Factors for conversion to Cartwright-Tayler amplitudes from those defined according to Doodson’s and Hartmann and Wenzel’s conventions.   
+
+<table><tr><td>From Doodson</td><td>From Hartmann &amp; Wenzel</td></tr><tr><td>f20=-=-0.426105 √5ge</td><td>f20=2 = 0.361788 ge</td></tr><tr><td>f21=-2VD=-0.695827 3√5ge</td><td>f21 =1√8π = -0.511646 ge</td></tr><tr><td>f22= √96元D =0.695827</td><td>f22 √8π = 0.511646 》</td></tr><tr><td>3√5ge V20元D1 = -0.805263</td><td>ge f0 2√元 = 0.361788</td></tr><tr><td>f30=1 7ge</td><td>ge √8π</td></tr><tr><td>V720元D =0.603947 f31= 8√7 ge</td><td>f1 = 0.511646 ge</td></tr><tr><td>√1440元D =0.683288 f2= 10√7 ge</td><td>f32 √8π = 0.511646 ge</td></tr><tr><td>V2880πD = -0.644210 f33= 15√7 ge</td><td>f3 √8π = -0.511646 ge</td></tr></table>
+
+# References
+
+Balmino, G., 2003, “Ellipsoidal corrections to spherical harmonics of surface phenomena gravitational effects,,” Special publication in honour of H. Moritz, Technical University of Graz, pp. 21–30.   
+Biancale, R., 2008, personal communication.   
+Carr\`ere, L. and Lyard, F., 2003, “Modeling the barotropic response of the global ocean to atmospheric wind and pressure forcing - comparison with observations,” Geophys. Res. Lett. 30(6), 1275, doi: 10.1029/2002GL016473.   
+Cartwright, D. E. and Tayler, R. J., 1971, “New computations of the tide-generating potential,” Geophys. J. Roy. astr. Soc., 23(1), pp. 45–73., doi: 10.1111/j.1365-246X.1971.tb01803.x.   
+Cartwright, D. E. and Edden, A. C., 1973, “Corrected tables of tidal harmonics,” Geophys. J. Roy. astr. Soc., 33(3), pp. 253–264, doi: 10.1111/j.1365- 246X.1973.tb03420.x.   
+Casotto, S., 1989, “Nominal ocean tide models for TOPEX precise orbit determination,” Ph.D. dissertation, The Univ. of Texas at Austin.   
+Chapman, S. and Lindzen, R., 1970, Atmospheric Tides, D. Reidel, Dordrecht, 200 pp.   
+Chao, B. F., Ray, R. D., Gipson, J. M., Egbert, G. D. and Ma, C., 1996, “Diurnal/semidiurnal polar motion excited by oceanic tidal angular momentum,” J. Geophys. Res., 101(B9), pp. 20151–20163, doi: 10.1029/96JB01649.   
+Cheng, M.K., Shum, C.K., Tapley, B.D., 1997, “Determination of long-term changes in the Earth’s gravity field from satellite laser ranging observations,” J. Geophys. Res., 102(B10), pp. 22377–22390, doi:10.1029/97JB01740.   
+Cheng, M. K., Ries, J. C., and Tapley, B. D., 2010, “Variations of the Earth’s figure axis from satellite laser ranging and GRACE,” J. Geophys. Res., submitted.   
+Desai, S. D. and Wahr, J. M., 1995, “Empirical ocean tide models estimated from Topex/Poseidon altimetry,” J. Geophys. Res., 100(C12), pp. 25205–25228.   
+Desai, S. D., 2002, “Observing the pole tide with satellite altimetry,” J. Geophys. Res., 107(C11), 3186, doi:10.1029/ 2001JC001224.   
+Doodson, A. T., 1921, “The Harmonic development of the tide-generating potential,” Proc. R. Soc. A., 100, pp. 305–329.   
+Dziewonski, A. and Anderson, D. L., 1981, “Preliminary reference earth model,” Phys. Earth Planet. In., 25, pp. 297–356.   
+Eanes, R. J., Schutz, B., and Tapley, B., 1983, “Earth and ocean tide effects on Lageos and Starlette,” in Proc. of the Ninth International Symposium on Earth Tides, Kuo, J. T. (ed.), E. Sckweizerbart’sche Verlagabuchhandlung, Stuttgart.   
+Eanes R. J. and Bettadpur, S., 1995, “The CSR 3.0 global ocean tide model,” Technical Memorandum CSR-TM-95-06, Center for Space Research, University of Texas, Austin, TX.   
+Flechtner, F., 2007, “AOD1B Product Description Document,” GRACE project document 327-750, Rev. 3.1.   
+Hartmann, T. and Wenzel, H.-G., 1995, “The HW95 tidal potential catalogue,” Geophys. Res. Lett., 22(24), pp. 3553–3556, doi:10.1029/95GL03324.   
+Lyard, F., Lefevre, F., Letellier, T., Francis, O., 2006, “Modelling the global ocean tides: modern insights from FES2004,” Ocean Dyn., 56(5-6), pp. 394–415, doi: 10.1007/s10236-006-0086-x.   
+Mathews, P. M., Buffett, B. A., and Shapiro,. I. I., 1995, “Love numbers for diurnal tides: Relation to wobble admittances and resonance expansions,” J. Geophys. Res., 100(B9), pp. 9935–9948, doi:10.1029/95JB00670.
+
+Mathews, P. M., Herring, T. A., and Buffett, B. A., 2002, “Modeling of nutationprecession: New nutation series for nonrigid Earth, and insights into the Earth’s interior,” J. Geophys. Res., 107(B4), doi: 10.1029/2001JB000390.
+
+Mayer-G¨urr, T., “ITG-Grace03s: The latest GRACE gravity field solution computed in Bonn,” Joint International GSTM and DFG SPP Symposium Potsdam, 15-17 October 2007, see http://www.igg.uni-bonn.de/apmg/fileadmin/DatenModelle/media/ mayer-guerr gstm potsdam 2007.pdf.
+
+Nerem, R. S., Chao, B. F., Au, A. Y., Chan, J. C., Klosko, S. M., Pavlis, N. K. and Williamson, R. G., 1993, “Temporal variations of the Earth’s gravitational field from satellite laser ranging to Lageos,” Geophys. Res. Lett., 20(7), pp. 595–598, doi: 10.1029/93GL00169.
+
+Pavlis, N. K., Holmes, S. A., Kenyon, S. C., and Factor, J. K., 2008, “An Earth gravitational model to degree 2160: EGM2008,” presented at the 2008 General Assembly of the European Geosciences Union, Vienna, Austria, April 13-18, 2008, see http://earth-info.nga.mil/GandG/wgs84/gravitymod/egm2008/ NPavlis&al EGU2008.ppt.
+
+Ray, R. D. and Cartwright, D. E., 1994, “Satellite altimeter observations of the $M _ { f }$ and $M _ { m }$ ocean tides, with simultaneous orbit corrections,” Gravimetry and Space Techniques Applied to Geodynamics and Ocean Dynamics, Geophysical Monograph 82, IUGG Volume 17, pp. 69–78.
+
+Ries, J.C., 2010, personal communication.
+
+Roosbeek, F., 1996, “RATGP95: a harmonic development of the tide-generating potential using an analytical method,” Geophys. J. Int., 126(1), pp. 197– 204, doi: 10.1111/j.1365-246X.1996.tb05278.x.
+
+Schwiderski, E., 1983, “Atlas of ocean tidal charts and maps, Part I: The semidiurnal principal lunar tide M2,” Mar. Geod., 6(3-4), pp. 219–265, doi: 10.1080/15210608309379461.
+
+Souchay, J. and Folgueira, M., 1998, “The effect of zonal tides on the dynamical ellipticity of the Earth and its influence on the nutation,” Earth, Moon and Planets, 81(3), pp. 201–216, doi: 10.1023/A:1006331511290.
+
+Wahr, J. M., 1981, “The forced nutations of an elliptical, rotating, elastic, and oceanless Earth,” Geophys. J. Roy. Astron. Soc., 64(3), pp. 705–727, doi: 10.1111/j.1365-246X.1981.tb02691.x.
+
+Wahr, J., 1987, “The Earth’s C $^ { 2 1 }$ and S $^ { 2 1 }$ gravity coefficients and the rotation of the core,” Geophys. J. Roy. astr. Soc., 88, pp. 265–276.
+
+Wahr, J. M. and Sasao, T., 1981, “A diurnal resonance in the ocean tide and the Earth’s load response due to the resonant free “core nutation”,” Geophys. J. Roy. astr. Soc., 64, pp. 747–765.
+
+Wahr, J., 1990, “Corrections and update to ‘The Earth’s C21 and S21 gravity coefficients and the rotation of the core’,” Geophys. J. Int., 101, pp. 709– 711.
+
+Wahr, J. and Bergen, Z., 1986, “The effects of mantle elasticity on nutations, Earth tides, and tidal variations in the rotation rate,” Geophys. J. Roy. astr. Soc., 87, 633–668.
+
+Widmer, R., Masters, G., and Gilbert, F., 1991, “Spherically symmetric attenuation within the Earth from normal mode data,” Geophys. J. Int., 104, pp. 541–553.
+
+# 7 Displacement of reference points
+
+Models describing the displacements of reference points due to various effects are provided. In the following, three kinds of displacements are distinguished:
+
+• Conventional displacements of reference markers on the crust (see Section 7.1) relate the regularized positions $X _ { R } ( t )$ of the reference points (see Chapter 4) to their conventional instantaneous positions. Generally these conventional instantaneous positions are used in data analyses as a priori coordinates for subsequent adjustment of observational data. They include tidal motions (mostly near diurnal and semidiurnal frequencies) and other accurately modeled displacements of reference markers (mostly at longer periods); • Other displacements of reference markers (Section 7.2, presently, at the time of publication, under development) include non-tidal motions associated with changing environmental loads (very broad spectral content); • Displacements that affect the internal reference points within the observing instruments, which are generally technique-dependent, are mentioned in Section 7.3.
+
+The first two categories of displacements are described by geophysical models or gridded convolution results derived from geophysical models. The last category includes empirical physical effects that have been demonstrated to affect geodetic observing instruments.
+
+As the non-tidal load displacements (Section 7.2) normally change very little over typical integration spans and because models for these effects are usually less accurate, it is generally recommended that they not be included in computing conventional instantaneous positions. Instead, the corresponding non-tidal loading effects will remain as signals embedded in the geodetic time series results. These signals can be extracted and compared with the model results referenced here in post-analysis studies.
+
+In combinations of diverse analysis results, it is particularly important that equivalent displacement models are applied for like effects. Non-tidal load displacements should be consistently excluded from the conventional instantaneous positions, as recommended here, or else the same geophysical loading models together with the same environmental inputs should be applied.
+
+# 7.1 Models for conventional displacement of reference markers on the crust
+
+This section describes conventional models for displacement due to the body tides arising from the direct effect of the external tide generating potential (7.1.1), displacement due to ocean tidal loading (7.1.2) and due to diurnal and semidiurnal atmospheric pressure loading (7.1.3), displacement due to the centrifugal perturbations caused by Earth rotation variations, including the pole tide (7.1.4) and the loading caused by the ocean pole tide (7.1.5).
+
+# 7.1.1 Effects of the solid Earth tides
+
+# 7.1.1.1 Conventional model for solid Earth tides
+
+Site displacements caused by tides of spherical harmonic degree and order (nm) are characterized by the Love number $h _ { n m }$ and the Shida number $\boldsymbol { l } _ { n m }$ . The effective values of these numbers depend on station latitude and tidal frequency (Wahr, 1981). The latitude dependence and a small interband variation are caused by the Earth’s ellipticity and the Coriolis force due to Earth rotation. A strong frequency dependence within the diurnal band is produced by the Nearly Diurnal Free Wobble resonance associated with the FCN in the wobbles of the Earth and its core regions which contribute to the tidal deformations via their centrifugal effects. Additionally, the resonance in the deformation due to ocean tidal loading, which is not included in the computations of the last section which use constant load Love numbers, may be represented in terms of effective contributions to $h _ { 2 1 }$ and $l _ { 2 1 }$ . A further frequency dependence, which is most pronounced in the long-period tidal band, arises from mantle anelasticity leading to corrections to the elastic Earth Love numbers. The contributions to the Love number parameters from anelasticity and ocean tidal loading as well as those from the centrifugal perturbations due to the wobbles have imaginary parts which cause the tidal displacements to lag slightly behind the tide generating potential. All these effects need to be taken into account when an accuracy of 1 mm is desired in determining station positions.
+
+In order to account for the latitude dependence of the effective Love and Shida numbers, the representation in terms of multiple $h$ and $\mathbf { \xi } _ { l }$ parameters employed by Mathews et al. (1995) is used. In this representation, parameters ${ h ^ { ( 0 ) } }$ and ${ l ^ { ( 0 ) } }$ play the roles of $h _ { 2 m }$ and $l _ { 2 m }$ , while the latitude dependence is expressed in terms of additional parameters ${ h ^ { ( 2 ) } , h ^ { \prime } }$ and $l ^ { ( 1 ) } , l ^ { ( 2 ) } , l ^ { \prime }$ . These parameters are defined through their contributions to the site displacement as given by equations (7.1a-7.1c) below. Their numerical values as listed in the Conventions 1996 have since been revised, and the new values presented in Table 7.2 are used here. These values pertain to the elastic Earth and anelasticity models referred to in Chapter 6.
+
+The vector displacement $\Delta \vec { r _ { f } }$ due to a tidal term of frequency $f$ is given by the following expressions that result from evaluation of the defining equation (7.2) of Mathews et al. (1995):
+
+For a long-period tide of frequency $f$ :
+
+$$
+\begin{array} { r l r } { \Delta \vec { r } _ { f } } & { = } & { \sqrt { \frac { 5 } { 4 \pi } } H _ { f } \quad \Bigg \{ \quad \Big [ h ( \phi ) \left( \frac { 3 } { 2 } \sin ^ { 2 } \phi - \frac { 1 } { 2 } \right) + \sqrt { \frac { 4 \pi } { 5 } } h ^ { \prime } \Big ] \cos \theta _ { f } \ \hat { r } } \\ & { } & { + 3 l ( \phi ) \sin \phi \cos \phi \cos \theta _ { f } \ \hat { n } } \\ & { } & { + \cos \phi \left[ 3 l ^ { ( 1 ) } \sin ^ { 2 } \phi - \sqrt { \frac { 4 \pi } { 5 } } l ^ { \prime } \right] \sin \theta _ { f } \ \hat { e } \Bigg \} . } \end{array}
+$$
+
+For a diurnal tide of frequency $f$ :
+
+$$
+\begin{array} { r c l } { \Delta \vec { r } _ { f } } & { = } & { - \sqrt { \frac { 5 } { 2 4 \pi } } H _ { f } \quad \Bigg \{ \quad h ( \phi ) 3 \sin \phi \cos \phi \sin ( \theta _ { f } + \lambda ) \hat { r } } \\ & & { + \left[ 3 l ( \phi ) \cos 2 \phi - 3 l ^ { ( 1 ) } \sin ^ { 2 } \phi + \sqrt { \frac { 2 4 \pi } { 5 } } l ^ { \prime } \right] \sin ( \theta _ { f } + \lambda ) \hat { n } } \\ & & { + \left[ \left( 3 l ( \phi ) - \sqrt { \frac { 2 4 \pi } { 5 } } l ^ { \prime } \right) \sin \phi - 3 l ^ { ( 1 ) } \sin \phi \cos 2 \phi \right] \cos ( \theta _ { f } + \lambda ) \hat { e } \Bigg \} . } \end{array}
+$$
+
+For a semidiurnal tide of frequency $f$ :
+
+$$
+\begin{array} { r c l } { { \Delta \vec { r } _ { f } } } & { { = } } & { { \sqrt { \frac { 5 } { 9 6 \pi } } H _ { f } \quad \Bigg \{ \quad h ( \phi ) 3 \cos ^ { 2 } \phi \cos ( \theta _ { f } + 2 \lambda ) \hat { r } } } \\ { { } } & { { } } & { { } } \\ { { } } & { { } } & { { - 6 \sin \phi \cos \phi \left[ l ( \phi ) + l ^ { ( 1 ) } \right] \cos ( \theta _ { f } + 2 \lambda ) \hat { n } } } \\ { { } } & { { } } & { { } } \\ { { } } & { { } } & { { - 6 \cos \phi \left[ l ( \phi ) + l ^ { ( 1 ) } \sin ^ { 2 } \phi \right] \sin ( \theta _ { f } + 2 \lambda ) \hat { e } \Bigg \} . } } \end{array}
+$$
+
+In the above expressions,
+
+$$
+\begin{array} { l } { { h ( \phi ) = h ^ { ( 0 ) } + h ^ { ( 2 ) } ( 3 \sin ^ { 2 } \phi - 1 ) / 2 , } } \\ { { \ l ( \phi ) = l ^ { ( 0 ) } + l ^ { ( 2 ) } ( 3 \sin ^ { 2 } \phi - 1 ) / 2 , } } \end{array}
+$$
+
+$$
+\begin{array} { r c l } { H _ { f } } & { = } & { \mathrm { ~ a m p l i t u d e ~ ( ~ m ) ~ o f ~ t h e ~ t i d a l ~ t e r m ~ o f ~ f r e q u e n c y ~ } f , } \\ { \phi } & { = } & { \mathrm { ~ g e o c t u r t i c ~ i n d i t u d e ~ o f ~ s t a t i o n } , } \\ { \lambda } & { = } & { \mathrm { ~ e a s t ~ l o n g i t u d e ~ o f ~ s t a t i o n } , } \\ { \theta _ { f } } & { = } & { \mathrm { ~ t i d e ~ a r g u m e n t ~ f o r ~ t i d a l ~ c o n s i t i u e n t ~ w i t h ~ f r e q u e n c y ~ } f , } \\ { \hat { r } } & { = } & { \mathrm { ~ u n i t ~ v e c t o r ~ i n ~ r a d i a l ~ d i r e c t i o n } , } \\ { \hat { \theta } } & { = } & { \mathrm { ~ u n i t ~ v e c t o r ~ i n ~ e a s t ~ d i r e c t i o n } , } \\ { \hat { \pi } } & { = } & { \mathrm { ~ u n i t ~ v e c t o r ~ n e a s t ~ d i r e c t i o n } . } \end{array}
+$$
+
+The convention used in defining the tidal amplitude $H _ { f }$ is the one from Cartwright and Tayler (1971). To convert amplitudes defined according to other conventions that have been employed in recent more accurate tables, use the conversion factors given in Chapter 6, Table 6.8.
+
+Equations (7.1) assume that the Love and Shida number parameters are all real. Generalization to the case of complex parameters is done simply by making the following replacements for the combinations $L \cos ( \theta _ { f } + m \lambda )$ and $L \sin ( \theta _ { f } + m \lambda )$ , wherever they occur in those equations:
+
+$$
+\begin{array} { r l } & { L \cos ( \theta _ { f } + m \lambda )  L ^ { R } \cos ( \theta _ { f } + m \lambda ) - L ^ { I } \sin ( \theta _ { f } + m \lambda ) , } \\ & { } \\ & { L \sin ( \theta _ { f } + m \lambda )  L ^ { R } \sin ( \theta _ { f } + m \lambda ) + L ^ { I } \cos ( \theta _ { f } + m \lambda ) , } \end{array}
+$$
+
+where $L$ is a generic symbol for $h ^ { ( 0 ) } , h ^ { ( 2 ) } , h ^ { \prime } , l ^ { ( 0 ) } , l ^ { ( 1 ) } , l ^ { ( 2 ) }$ , and $l ^ { \prime }$ , and where $L ^ { R }$ and $L ^ { I }$ stand for their respective real and imaginary parts.
+
+The complex values of these 7 parameters are computed for the diurnal body tides from resonance formulae of the form given in Equation (6.9) of Chapter 6 using the values listed in Equation (6.10) of that chapter for the resonance frequencies $\sigma _ { \alpha }$ and those listed in Table 7.1 for the coefficients $L _ { 0 }$ and $L _ { \alpha }$ relating to each of the multiple $h$ and $l$ Love/Shida numbers. The manner in which $\sigma _ { \alpha }$ and $L _ { \alpha }$ were computed is explained in Chapter 6, where mention is also made of the models used for the elastic Earth and for mantle anelasticity. As was noted in that chapter, the frequency dependence of the ocean tide contributions to certain Earth parameters in the equations of motion for the wobbles has the effect of making the resonance formulae included in the tabulated values of inexact. The difference between the exact and resonance formula values is $h _ { 2 1 } ^ { ( 0 ) }$ and $l _ { 2 1 } ^ { ( 0 ) }$ in Table 7.2. (The only case where this difference makes a contribution above the cut-off in Table 7.3a is in the radial displacement due to the $\psi _ { 1 }$ tide.) Also included in the values listed in Table 7.2 are the resonant ocean tidal loading corrections outlined in the next paragraph.
+
+Site displacements caused by solid Earth deformations due to ocean tidal loading have been dealt with in the first section of this chapter. Constant nominal values were assumed for the load Love numbers in computing these. The values used for tides of degree 2 were $h _ { 2 } ^ { \prime ( n o m ) } = - 1 . 0 0 1$ , $l _ { 2 } ^ { \prime } { } ^ { ( n o m ) } = 0 . 0 2 9 5$ $k _ { 2 } ^ { \prime ( n o m ) } = - 0 . 3 0 7 5$ . Since resonances in the diurnal band also cause the values of the load Love numbers to vary, corrections need to be applied to the results of the first section. These corrections can be expressed in terms of effective ocean tide contributions δh(OT ) and $\delta l ^ { ( O T ) }$ to the respective body tide Love numbers $h _ { 2 1 } ^ { ( 0 ) }$ and $l _ { 2 1 } ^ { ( 0 ) }$ . $\delta h ^ { ( O T ) }$ and $\delta l ^ { ( O T ) }$ are given by expressions of the form (6.11) of Chapter 6, with appropriate replacements. They were computed using the same ocean tide admittances as in that chapter, and using the resonance parameters listed in Table 6.4 for the load Love numbers; they are included in the values listed in Table 7.2 under ${ h ^ { ( 0 ) R } }$ and $h ^ { ( 0 ) I }$ for the diurnal tides.
+
+Table 7.1: Parameters in the resonance formulae for the displacement Love numbers.   
+
+<table><tr><td colspan="5">h(0)</td></tr><tr><td>α</td><td>ReLα</td><td>Im Lα</td><td>h(2) ReLα</td><td>Im Lα</td></tr><tr><td>0</td><td>.60671 × 10+0</td><td>-.2420 × 10-2</td><td>-.615 × 10-3</td><td>-.122 × 10-4</td></tr><tr><td>1</td><td>-.15777 × 10-2</td><td>-.7630 × 10-4</td><td>.160 ×10-5</td><td>.116 × 10-6</td></tr><tr><td>2</td><td>.18053 × 10-3</td><td>-.6292 × 10-5</td><td>.201 × 10-6</td><td>.279 ×10-8</td></tr><tr><td>3</td><td>-.18616 × 10-5</td><td>.1379 × 10-6</td><td>-.329 × 10-7</td><td>-.217 × 10-8</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>1（0）</td><td></td><td>1(1)</td><td></td></tr><tr><td>α</td><td>ReLα</td><td>Im Lα</td><td>ReLα</td><td>Im Lα</td></tr><tr><td>0</td><td>.84963 × 10-1</td><td>-.7395 × 10-3</td><td>.121 ×10-2</td><td>.136 ×10-6</td></tr><tr><td>1</td><td>-.22107 × 10-3</td><td>-.9646 × 10-5</td><td>-.316 × 10-5</td><td>-.166 × 10-6</td></tr><tr><td>2</td><td>-.54710 × 10-5</td><td>-.2990 × 10-6</td><td>.272 × 10-6</td><td>-.858 ×10-8</td></tr><tr><td>3</td><td>-.29904 × 10-7</td><td>-.7717 × 10-8</td><td>-.545 × 10-8</td><td>.827 × 10-11</td></tr><tr><td></td><td>1(2)</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td>1&#x27;</td><td></td></tr><tr><td>α 0</td><td>ReLα .19334× 10-3</td><td>Im Lα</td><td>ReLα</td><td>Im Lα</td></tr><tr><td></td><td></td><td>-.3819 × 10-5</td><td>-.221 × 10-3</td><td>-.474 × 10-7</td></tr><tr><td>1</td><td>-.50331 × 10-6</td><td>-.1639 × 10-7</td><td>.576 ×10-6</td><td>.303 ×10-7</td></tr><tr><td>2</td><td>-.66460 × 10-8</td><td>.5076 × 10-9</td><td>.128× 10-6</td><td>-.378 × 10-8</td></tr><tr><td>3</td><td>.10372 × 10-7</td><td>.7511 × 10-9</td><td>-.655 ×10-8</td><td>-.291 × 10-9</td></tr></table>
+
+The variation of $h _ { 2 0 } ^ { ( 0 ) }$ and $l _ { 2 0 } ^ { ( 0 ) }$ across the zonal tidal band, ( $n m = 2 0$ ), due to mantle anelasticity, is described by the formulae
+
+$$
+\begin{array} { r } { h _ { 2 0 } ^ { ( 0 ) } = 0 . 5 9 9 8 - 9 . 9 6 \times 1 0 ^ { - 4 } \left\{ \cot \frac { \alpha \pi } { 2 } \left[ 1 - \left( \frac { f _ { m } } { f } \right) ^ { \alpha } \right] + i \left( \frac { f _ { m } } { f } \right) ^ { \alpha } \right\} , } \\ { l _ { 2 0 } ^ { ( 0 ) } = 0 . 0 8 3 1 - 3 . 0 1 \times 1 0 ^ { - 4 } \left\{ \cot \frac { \alpha \pi } { 2 } \left[ 1 - \left( \frac { f _ { m } } { f } \right) ^ { \alpha } \right] + i \left( \frac { f _ { m } } { f } \right) ^ { \alpha } \right\} } \end{array}
+$$
+
+on the basis of the anelasticity model already referred to. Here $f$ is the frequency of the zonal tidal constituent, $f _ { m }$ is the reference frequency equivalent to a period of 200 s, and $\alpha = 0 . 1 5$ .
+
+Table 7.2 lists the values of $h ^ { ( 0 ) } , h ^ { ( 2 ) } , h ^ { \prime } , l ^ { ( 0 ) } , l ^ { ( 1 ) } , l ^ { ( 2 ) }$ , and ${ \mathbf { } } { \mathbf { } } { \mathbf { } } { \mathbf { } } l ^ { \prime }$ for those tidal frequencies for which they are needed for use in the computational procedure described below. The tidal frequencies shown in the table are given in cycles per sidereal day (cpsd). Periods, in solar days, of the nutations associated with the diurnal tides are also shown.
+
+Computation of the variations of station coordinates due to solid Earth tides, like that of geopotential variations, is done most efficiently by the use of a two-step procedure. The evaluations in the first step use the expression in the time domain for the full degree 2 tidal potential or for the parts that pertain to particular bands $m = 0 , 1$ , or 2). Nominal values common to all the tidal constituents involved in the potential and to all stations are used for the Love and Shida numbers $h _ { 2 m }$ and $l _ { 2 m }$ in this step. They are chosen with reference to the values in Table 7.2 so as to minimize the computational effort needed in Step 2. Along with expressions for the dominant contributions from $h ^ { ( 0 ) }$ and ${ l ^ { ( 0 ) } }$ to the tidal displacements, relatively small contributions from some of the other parameters are included in Step 1 for reasons of computational efficiency. The displacements caused by the degree 3 tides are also computed in the first step, using constant values for $h _ { 3 }$ and $l _ { 3 }$ .
+
+Corrections to the results of the first step are needed to take account of the frequency-dependent deviations of the Love and Shida numbers from their respective nominal values, and also to compute the out-of-phase contributions from the zonal tides. Computations of these corrections constitute Step 2. The total displacement due to the tidal potential is the sum of the displacements computed in Steps 1 and 2.
+
+The full scheme of computations is outlined in the chart on page 103.
+
+CORRECTIONS FOR THE STATION TIDAL DISPLACEMENTS   
+Step 1: Corrections to be computed in the time domain   
+
+<table><tr><td rowspan="3">in-phase</td><td>for degree 2 and 3</td><td>Nominal values</td></tr><tr><td>.for degree 2 → eq (7.5)</td><td>h2 →h(Φ)=h(0）+h(2)[(3sin²Φ-1)/2] l2→l(Φ）=t(0）+(2)[(3sin²Φ-1）/2]</td></tr><tr><td></td><td>h(0)=0.6078,h(2) = -0.0006; t(0)= 0.0847,t(2） = 0.0002</td></tr><tr><td rowspan="3">out-of-phasef</td><td>.for degree 3 → eq (7.6)</td><td>h3 = 0.292 and l = 0.015</td></tr><tr><td>for degree 2 only</td><td>Nominal values</td></tr><tr><td>.diurnal tides → eq (7.10) .semidiurnal tides → eq (7.11)</td><td>h= -0.0025 and 𝑙 = -0.0007 h = -0.0022 and 𝑙 = -0.0007</td></tr><tr><td rowspan="3">contribution</td><td>fromlatitude dependence</td><td>Nominal values</td></tr><tr><td>.diurnal tides → eq (7.8)</td><td>t(1）= 0.0012</td></tr><tr><td>.semidiurnal tides → eq (7.9)</td><td>(1）= 0.0024</td></tr></table>
+
+<table><tr><td colspan="3">Step 2: Corrections to be computed in the frequency domain and to be added to the results of Step 1</td></tr><tr><td rowspan="3"> in-phase</td><td>for degree 2</td><td></td></tr><tr><td>.diurnal tides → eqs (7.12)</td><td>→Sum over all the components of Table 7.3a</td></tr><tr><td>.semidiurnal tides</td><td>→negligible</td></tr><tr><td rowspan="2"> in-phase</td><td>and out-of-phase for degree 2</td><td></td></tr><tr><td>. long-period tides→ eqs (7.13)</td><td>→ Sum over all the components of Table 7.3b</td></tr></table>
+
+# Displacement due to degree 2 tides, with nominal values for $h _ { 2 m } ^ { ( 0 ) }$ 1
+
+The first stage of the Step 1 calculations employs real nominal values $h _ { 2 }$ and $l _ { 2 }$ common to all the degree 2 tides for the Love and Shida numbers. It is found to be computationally most economical to choose these to be the values for the semidiurnal tides (which have very little intra-band variation). On using the nominal values, the displacement vector of the station due to the degree 2 tides is given by
+
+$$
+\Delta \Vec { r } = \sum _ { j = 2 } ^ { 3 } \frac { G M _ { j } R _ { e } ^ { 4 } } { G M _ { \oplus } R _ { j } ^ { 3 } } \Bigg \{ h _ { 2 } ~ \hat { r } \left( \frac { 3 ( \hat { R } _ { j } \cdot \hat { r } ) ^ { 2 } - 1 } { 2 } \right) + 3 l _ { 2 } ( \hat { R } _ { j } \cdot \hat { r } ) \left[ \hat { R } _ { j } - \left( \hat { R } _ { j } \cdot \hat { r } \right) \hat { r } \right] \Bigg \} ,
+$$
+
+where $h _ { 2 2 } ^ { ( 0 ) }$ and $l _ { 2 2 } ^ { ( 0 ) }$ of the semidiurnal tides are chosen as the nominal values $h _ { 2 }$ and $l _ { 2 }$ . The out-of-phase displacements due to the imaginary parts of the Love numbers are dealt with separately below. In Equation (7.5),
+
+Table 7.2: Displacement Love number parameters for degree 2 tides. Superscripts $R$ and $I$ identify the real and imaginary parts, respectively. Periods are given in solar days and frequencies in cpsd.   
+
+<table><tr><td>Name</td><td>Period</td><td>Frequency</td><td>h(0）R</td><td>（0）1</td><td>h(2）</td><td>h&#x27;</td></tr><tr><td>Semidiurnal</td><td></td><td>-2</td><td>.6078</td><td>-.0022</td><td>-.0006</td><td></td></tr><tr><td>Diurnal</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>2Q1</td><td>6.86</td><td>0.85461</td><td>.6039</td><td>-.0027</td><td>-.0006</td><td></td></tr><tr><td>01</td><td>7.10</td><td>0.85946</td><td>.6039</td><td>-.0026</td><td>-.0006</td><td></td></tr><tr><td>135,645</td><td>9.12</td><td>0.89066</td><td>.6036</td><td>-.0026</td><td>-.0006</td><td></td></tr><tr><td>Q1</td><td>9.13</td><td>0.89080</td><td>.6036</td><td>-.0026</td><td>-.0006</td><td></td></tr><tr><td>p1</td><td>9.56</td><td>0.89565</td><td>.6035</td><td>-.0026</td><td>-.0006</td><td></td></tr><tr><td>145,545</td><td>13.63</td><td>0.92685</td><td>.6028</td><td>-.0025</td><td>-.0006</td><td></td></tr><tr><td>01</td><td>13.66</td><td>0.92700</td><td>.6028</td><td>-.0025</td><td>-.0006</td><td></td></tr><tr><td>T1</td><td>14.77</td><td>0.93246</td><td>.6026</td><td>-.0025</td><td>-.0006</td><td></td></tr><tr><td>NT1</td><td>23.94</td><td>0.95835</td><td>.6011</td><td>-.0024</td><td>-.0006</td><td></td></tr><tr><td>N01</td><td>27.55</td><td>0.96381</td><td>.6005</td><td>-.0023</td><td>-.0006</td><td></td></tr><tr><td>X1</td><td>31.81</td><td>0.96865</td><td>.5998</td><td>-.0023</td><td>-.0006</td><td></td></tr><tr><td>T1</td><td>121.75</td><td>0.99181</td><td>.5878</td><td>-.0015</td><td>-.0006</td><td></td></tr><tr><td>P1</td><td>182.62</td><td>0.99454</td><td>.5817</td><td>-.0011</td><td>-.0006</td><td></td></tr><tr><td>S1</td><td>365.26</td><td>0.99727</td><td>.5692</td><td>-.0004</td><td>-.0006</td><td></td></tr><tr><td>165,545</td><td>6798.38</td><td>0.99985</td><td>.5283</td><td>.0023</td><td>-.0007</td><td></td></tr><tr><td>K1</td><td>infinity</td><td>1.00000</td><td>.5236</td><td>.0030</td><td>-.0007</td><td></td></tr><tr><td>165,565</td><td>-6798.38</td><td>1.00015</td><td>.5182</td><td>.0036</td><td>-.0007</td><td></td></tr><tr><td>165,575</td><td>-3399.19</td><td>1.00029</td><td>.5120</td><td>.0043</td><td>-.0007</td><td></td></tr><tr><td>1</td><td>-365.26</td><td>1.00273</td><td>1.0569</td><td>.0036</td><td>-.0001</td><td></td></tr><tr><td>166,564</td><td>-346.64</td><td>1.00288</td><td>.9387</td><td>-.0050</td><td>-.0003</td><td></td></tr><tr><td>1</td><td>-182.62</td><td>1.00546</td><td>.6645</td><td>-.0059</td><td>-.0006</td><td></td></tr><tr><td>01</td><td>-31.81</td><td>1.03135</td><td>.6117</td><td>-.0030</td><td>-.0006</td><td></td></tr><tr><td>J1</td><td>-27.55</td><td>1.03619</td><td>.6108</td><td>-.0030</td><td>-.0006</td><td></td></tr><tr><td>001</td><td>-13.66</td><td>1.07300</td><td>.6080</td><td>-.0028</td><td>-.0006</td><td></td></tr><tr><td>Long period</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>55,565</td><td>6798.38</td><td>.000147</td><td>.6344</td><td>-.0093</td><td>-.0006</td><td>.0001</td></tr><tr><td>Ssa</td><td>182.62</td><td>.005461</td><td>.6182</td><td>-.0054</td><td>-.0006</td><td>.0001</td></tr><tr><td>Mm</td><td>27.55</td><td>.036193</td><td>.6126</td><td>-.0041</td><td>-.0006</td><td>.0001</td></tr><tr><td>Mf</td><td>13.66</td><td>.073002</td><td>.6109</td><td>-.0037</td><td>-.0006</td><td>.0001</td></tr><tr><td>75,565</td><td>13.63</td><td>.073149</td><td>.6109</td><td>-.0037</td><td>-.0006</td><td>.0001</td></tr><tr><td>Name</td><td>Period</td><td>Frequency</td><td>(0)R</td><td>10）1</td><td>1(1)</td><td>1(2) 1</td></tr><tr><td>Semidiurnal</td><td></td><td>-2</td><td>.0847</td><td>-.0007</td><td>.0024 .0002</td><td></td></tr><tr><td>Diurnal</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Q1</td><td>9.13</td><td>0.89080</td><td>.0846</td><td>-.0006</td><td>.0012 .0002</td><td>-.0002</td></tr><tr><td>145,545</td><td>13.63</td><td>0.92685</td><td>.0846</td><td>-.0006 .0012</td><td>.0002</td><td>-.0002</td></tr><tr><td>O1</td><td>13.66</td><td>0.92700</td><td>.0846</td><td>-.0006 .0012</td><td>.0002</td><td>-.0002</td></tr><tr><td>N01</td><td>27.55</td><td>0.96381</td><td>.0847</td><td>-.0006 .0012</td><td>.0002</td><td>-.0002</td></tr><tr><td>P1</td><td>182.62</td><td>0.99454</td><td>.0853</td><td>-.0006 .0012</td><td>.0002</td><td>-.0002</td></tr><tr><td>165,545</td><td>6798.38</td><td>0.99985</td><td>.0869</td><td>-.0006 .0011</td><td>.0002</td><td>-.0003</td></tr><tr><td>K1</td><td>infinity</td><td>1.00000</td><td>.0870</td><td>-.0006 .0011</td><td>.0002</td><td>-.0003</td></tr><tr><td>165,565</td><td>-6798.38</td><td>1.00015</td><td>.0872</td><td>-.0006 .0011</td><td>.0002</td><td>-.0003</td></tr><tr><td>1</td><td>-365.26</td><td>1.00273</td><td>.0710</td><td>-.0020 .0019</td><td>.0002</td><td>.0001</td></tr><tr><td>1</td><td>-182.62</td><td>1.00546</td><td>.0828</td><td>-.0007 .0013</td><td>.0002</td><td>-.0002</td></tr><tr><td>J1</td><td>-27.55</td><td>1.03619</td><td>.0845</td><td>-.0006 .0012</td><td>.0002</td><td>-.0002</td></tr><tr><td>001</td><td>-13.66</td><td>1.07300</td><td>.0846</td><td>-.0006</td><td>.0012 .0002</td><td>-.0002</td></tr><tr><td>Long period</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>55,565</td><td>6798.38</td><td>.000147</td><td>.0936</td><td>-.0028</td><td>.0000 .0002</td><td></td></tr><tr><td>Ssa</td><td>182.62</td><td>.005461</td><td>.0886</td><td>-.0016</td><td>.0000 .0002</td><td></td></tr><tr><td>Mm</td><td>27.55</td><td>.036193</td><td>.0870</td><td>-.0012 .0000</td><td>.0002 .0002</td><td></td></tr><tr><td>Mf</td><td>13.66</td><td>.073002</td><td>.0864</td><td>-.0011 .0000</td><td></td><td></td></tr><tr><td>75,565</td><td>13.63</td><td>.073149</td><td>.0864</td><td>-.0011</td><td>.0000 .0002</td><td></td></tr></table>
+
+$$
+\begin{array} { r c l } { G M j } & { = } & { \mathrm { g r a s i t i a l o n a l ~ p a r a m e t e r ~ f o r ~ t h e ~ M o o n ~ ( } j = 2 ) } \\ & & { \mathrm { o r ~ t h e ~ s i m e ~ ( } j = 3 ) , } \\ { G M _ { \perp } } & { = } & { \mathrm { g r a v i l a t i o n a l ~ p a r a m e t e r ~ f o r ~ t h e ~ E a r t h } , } \\ { \hat { H } _ { \perp } , } & { = } & { \mathrm { ~ u n i t ~ v e c t o r ~ f r o m ~ t h e ~ g e c e n t e r ~ t o ~ M o o n ~ o r ~ S A m } } \\ & & { \mathrm { ~ a n d ~ t h e ~ m a g n i t i a l e ~ e q ~ C l u a t i v e t o r , ~ w e c t o r , } } \\ { R _ { e } } & { = } & { \mathrm { E a r t h } ^ { 3 } \mathrm { ~ e q u a t i o n a l ~ n e ~ d i m a g n e r ~ t o ~ T e ~ t h e ~ s t a t i o n ~ a n } } \\ { \hat { r } , } & { = } & { \mathrm { ~ u n i t ~ v e c t o r ~ f r o m ~ t h e ~ g e c e n t e r ~ t o ~ t h e ~ s t a t i o n ~ a n } } \\ & & { \mathrm { t h e ~ m a g n i t i o n ~ o f ~ t h e ~ t e t o , ~ } } \\ { h _ { 2 } } & { = } & { \mathrm { n o m i n a l ~ d e g e r e e ~ 2 . ~ c o v e n ~ n o t b e r } , } \\ { l _ { 2 } } & { = } & { \mathrm { n o m i n a l ~ d e g e r e e ~ 2 . ~ s i l i d a _ { 2 } ~ n u m b e r } . } \end{array}
+$$
+
+Note that the part proportional to $h _ { 2 }$ gives the radial (not vertical) component of the tide-induced station displacement, and the terms in $l _ { 2 }$ represent the vector displacement perpendicular to the radial direction (and not in the horizontal plane).
+
+The computation just described may be generalized to include the latitude dependence arising through ${ h ^ { ( 2 ) } }$ by simply adding $h ^ { ( 2 ) } \left[ ( 3 \sin ^ { 2 } \phi - 1 ) / 2 \right]$ to the constant nominal value given above, with $h ^ { ( 2 ) } = - 0 . 0 0 0 6$ . The addition of a similar term (with $l ^ { ( 2 ) } = 0 . 0 0 0 2$ ) to the nominal value of $l _ { 2 }$ takes care of the corresponding contribution to the transverse displacement. The resulting incremental displacements are small, not exceeding 0.4 mm radially and 0.2 mm in the transverse direction.
+
+# Displacement due to degree 3 tides
+
+The Love numbers of the degree 3 tides may be taken as real and constant in computations to the degree of accuracy aimed at here. The displacement vector due to these tides is then given by
+
+$$
+\Delta \vec { r } = \sum _ { j = 2 } ^ { 3 } \frac { G M _ { j } R _ { e } ^ { 5 } } { G M _ { \oplus } R _ { j } ^ { 4 } } \biggl \{ h _ { 3 } \hat { r } \biggl ( \frac { 5 } { 2 } ( \hat { R } _ { j } \cdot \hat { r } ) ^ { 3 } - \frac { 3 } { 2 } ( \hat { R } _ { j } \cdot \hat { r } ) \biggr ) + l _ { 3 } \biggl ( \frac { 1 5 } { 2 } ( \hat { R } _ { j } \cdot \hat { r } ) ^ { 2 } - \frac { 3 } { 2 } \biggr ) \left[ \hat { R } _ { j } - ( \hat { R } _ { j } \cdot \hat { r } ) \hat { r } \right] \biggr \} .
+$$
+
+Only the Moon’s contribution ( $j = 2$ ) needs to be computed, the term due to the Sun being negligible. The transverse part of the displacement (7.6) does not exceed 0.2 mm, but the radial displacement can reach 1.7 mm.
+
+Contributions to the transverse displacement due to the $l ^ { ( 1 ) }$ term The imaginary part of $l ^ { ( 1 ) }$ is negligible, as is the intra-band variation of Re $l ^ { ( 1 ) }$ ; and $l ^ { ( 1 ) }$ is effectively zero in the zonal band.
+
+In the expressions given below, and elsewhere in this chapter,
+
+$\Phi _ { j } = $ body fixed geocentric latitude of Moon or Sun, and
+
+$\lambda _ { j } =$ body fixed east longitude (from Greenwich) of Moon or Sun.
+
+The following formulae may be employed when the use of Cartesian coordinates $X _ { j } , Y _ { j } , Z _ { j }$ of the body relative to the terrestrial reference frame is preferred:
+
+$$
+\begin{array} { r l } & { P _ { 2 } ^ { 0 } \big ( \sin \Phi _ { j } \big ) = \frac { 1 } { R _ { j } ^ { 2 } } \left( \frac { 3 } { 2 } Z _ { j } ^ { 2 } - \frac { 1 } { 2 } R _ { j } ^ { 2 } \right) , } \\ & { P _ { 2 } ^ { 1 } \big ( \sin \Phi _ { j } \big ) \cos \lambda _ { j } = \frac { 3 X _ { j } Z _ { j } } { R _ { j } ^ { 2 } } , } \\ & { P _ { 2 } ^ { 1 } \big ( \sin \Phi _ { j } \big ) \sin \lambda _ { j } = \frac { 3 Y _ { j } Z _ { j } } { R _ { j } ^ { 2 } } , } \\ & { P _ { 2 } ^ { 2 } \big ( \sin \Phi _ { j } \big ) \cos 2 \lambda _ { j } = \frac { 3 } { R _ { j } ^ { 2 } } ( X _ { j } ^ { 2 } - Y _ { j } ^ { 2 } ) , } \\ & { P _ { 2 } ^ { 2 } \big ( \sin \Phi _ { j } \big ) \sin 2 \lambda _ { j } = \frac { 6 } { R _ { j } ^ { 2 } } X _ { j } Y _ { j } . } \end{array}
+$$
+
+Contribution from the diurnal band (with $l ^ { ( 1 ) } = 0 . 0 0 1 2$ ):
+
+$$
+\delta \vec { t } = - l ^ { ( 1 ) } \sin \phi \sum _ { j = 2 } ^ { 3 } \frac { G M _ { j } R _ { e } ^ { 4 } } { G M _ { \oplus } R _ { j } ^ { 3 } } P _ { 2 } ^ { 1 } ( \sin \Phi _ { j } ) \left[ \sin \phi \cos ( \lambda - \lambda _ { j } ) \ \hat { n } - \cos 2 \phi \sin ( \lambda - \lambda _ { j } ) \ \hat { e } \right] .
+$$
+
+Contribution from the semidiurnal band (with $l ^ { ( 1 ) } = 0 . 0 0 2 4$ ):
+
+$$
+\delta \vec { t } = - \frac { 1 } { 2 } l ^ { ( 1 ) } \sin \phi \cos \phi \sum _ { j = 2 } ^ { 3 } \frac { G M _ { j } R _ { e } ^ { 4 } } { G M _ { \oplus } R _ { j } ^ { 3 } } P _ { 2 } ^ { 2 } ( \sin \Phi _ { j } ) \left[ \cos 2 ( \lambda - \lambda _ { j } ) { \ \hat { n } } + \sin \phi \sin 2 ( \lambda - \lambda _ { j } ) { \ \hat { e } } \right] .
+$$
+
+The contributions of the $l ^ { ( 1 ) }$ term to the transverse displacement caused by the diurnal and semidiurnal tides could be up to $0 . 8 \mathrm { m m }$ and $1 . 0 \mathrm { m m }$ respectively.
+
+# Out-of-phase contributions from the imaginary parts of $h _ { 2 m } ^ { ( 0 ) }$ and
+
+$h ^ { I }$ $l ^ { I }$ $h _ { 2 m } ^ { ( 0 ) }$ $l _ { 2 m } ^ { ( 0 ) }$
+
+Contributions $\delta r$ to radial and $\delta \bar { t }$ to transverse displacements from diurnal tides (with $h ^ { I } = - 0 . 0 0 2 5$ , $l ^ { I } = - 0 . 0 0 0 7$ ):
+
+$$
+\delta r = - \frac { 3 } { 4 } h ^ { I } \sum _ { j = 2 } ^ { 3 } \frac { G M _ { j } R _ { e } ^ { 4 } } { G M _ { \oplus } R _ { j } ^ { 3 } } \sin 2 \Phi _ { j } \sin 2 \phi \sin ( \lambda - \lambda _ { j } ) ,
+$$
+
+$$
+\delta \vec { t } = - \frac { 3 } { 2 } l ^ { I } \sum _ { j = 2 } ^ { 3 } \frac { G M _ { j } R _ { e } ^ { 4 } } { G M _ { \oplus } R _ { j } ^ { 3 } } \sin 2 \Phi _ { j } \left[ \cos 2 \phi \sin ( \lambda - \lambda _ { j } ) \hat { n } + \sin \phi \cos ( \lambda - \lambda _ { j } ) \hat { e } \right] .
+$$
+
+Contributions from semidiurnal tides (with $h ^ { I } { = } { - } 0 . 0 0 2 2$ , $l ^ { I } { = } { - } 0 . 0 0 0 7$ :
+
+$$
+\delta r = - \frac { 3 } { 4 } h ^ { I } \sum _ { j = 2 } ^ { 3 } \frac { G M _ { j } R _ { e } ^ { 4 } } { G M _ { \oplus } R _ { j } ^ { 3 } } \cos ^ { 2 } \Phi _ { j } \cos ^ { 2 } \phi \sin 2 ( \lambda - \lambda _ { j } ) ,
+$$
+
+$$
+\delta \vec { t } = \frac { 3 } { 4 } \imath ^ { I } \sum _ { j = 2 } ^ { 3 } \frac { G M _ { j } R _ { e } ^ { 4 } } { G M _ { \oplus } R _ { j } ^ { 3 } } \cos ^ { 2 } \Phi _ { j } \left[ \sin 2 \phi \sin 2 ( \lambda - \lambda _ { j } ) \hat { n } - 2 \cos \phi \cos 2 ( \lambda - \lambda _ { j } ) \hat { e } \right] .
+$$
+
+The out-of-phase contribution from the zonal tides has no closed expression in the time domain.
+
+Computations of Step 2 take account of the intra-band variation of $h _ { 2 m } ^ { ( 0 ) }$ and l(0)2m. Variations of the imaginary parts are negligible except as stated below (see Table 7.3a). For the zonal tides, however, the contributions from the imaginary part have to be computed in Step 2.
+
+# Correction for frequency dependence of the Love and Shida numbers
+
+(a) Contributions from the diurnal band
+
+Corrections, which include both in-phase $( i p )$ and out-of-phase (op) parts, to the radial and transverse station displacements $\delta r$ and $\delta \bar { t }$ due to a diurnal tidal term of frequency $f$ are obtainable from Equation (7.1b):
+
+$$
+\begin{array} { r l r } { \delta r } & { = } & { [ \delta R _ { f } ^ { ( i p ) } \sin ( \theta _ { f } + \lambda ) + \delta R _ { f } ^ { ( o p ) } \cos ( \theta _ { f } + \lambda ) ] \sin 2 \phi , } \end{array}
+$$
+
+$$
+\begin{array} { r l r l } { \delta \vec { t } } & { = } & { [ \delta T _ { f } ^ { ( i p ) } \cos ( \theta _ { f } + \lambda ) - \delta T _ { f } ^ { ( o p ) } \sin ( \theta _ { f } + \lambda ) ] \sin \phi \hat { e } } \\ & { } & { + } & { [ \delta T _ { f } ^ { ( i p ) } \sin ( \theta _ { f } + \lambda ) + \delta T _ { f } ^ { ( o p ) } \cos ( \theta _ { f } + \lambda ) ] \cos 2 \phi \hat { n } , } \end{array}
+$$
+
+where
+
+$$
+\begin{array} { r l } & { \left( \begin{array} { l } { \delta R _ { f } ^ { ( i p ) } } \\ { \delta R _ { f } ^ { ( o p ) } } \end{array} \right) = - \frac { 3 } { 2 } \sqrt { \frac { 5 } { 2 4 \pi } } H _ { f } \left( \begin{array} { l } { \delta h _ { f } ^ { R } } \\ { \delta h _ { f } ^ { I } } \end{array} \right) , } \\ & { \left( \begin{array} { l } { \delta T _ { f } ^ { ( i p ) } } \\ { \delta T _ { f } ^ { ( o p ) } } \end{array} \right) = - 3 \sqrt { \frac { 5 } { 2 4 \pi } } H _ { f } \left( \begin{array} { l } { \delta l _ { f } ^ { R } } \\ { \delta l _ { f } ^ { I } } \end{array} \right) , } \end{array}
+$$
+
+and
+
+$\delta h _ { f } ^ { R }$ and $\delta h _ { f } ^ { I }$ are the differences of ${ h ^ { ( 0 ) R } }$ and $h ^ { ( 0 ) I }$ at frequency $f$ from the nominal values $h _ { 2 }$ and $h ^ { I }$ used in Equations (7.5) and (7.10a), respectively,   
+$\delta l _ { f } ^ { R }$ and $\delta l _ { f } ^ { I }$ are the differences of $l ^ { ( 0 ) R }$ and $l ^ { ( 0 ) I }$ at frequency $f$ from the nominal values $l _ { 2 }$ and $l ^ { I }$ used in Equations (7.5) and (7.10b), respectively.
+
+Table 7.3a: Corrections due to the frequency dependence of Love and Shida numbers for diurnal tides. Units: mm. All terms with radial correction $\geq 0 . 0 5$ mm are shown. Nominal values are $h _ { 2 } = 0 . 6 0 7 8$ and $l _ { 2 } = 0 . 0 8 4 7$ for the real parts, and $h ^ { I } = - 0 . 0 0 2 5$ and $l ^ { I } = - 0 . 0 0 0 7$ for the imaginary parts. Frequencies are given in degrees per hour.   
+
+<table><tr><td></td><td>Name Frequency Doodson T s h p N&#x27; p: l e F D Ω △Rp) △R(p △T(ip) △T(p)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Q1</td><td>13.39866</td><td>135,6551 -201</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>-0.08</td><td>0.00</td><td>-0.01</td><td>0.01</td></tr><tr><td></td><td>13.94083</td><td>145,545</td><td>1-1</td><td></td><td>0</td><td>0</td><td>-1</td><td>0</td><td>0</td><td>0</td><td>2 0</td><td>1</td><td>-0.10</td><td>0.00</td><td>0.00</td><td>0.00</td></tr><tr><td>01</td><td>13.94303</td><td>145,555</td><td>1-1</td><td></td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2 0</td><td>2</td><td>-0.51</td><td>0.00</td><td>-0.02</td><td>0.03</td></tr><tr><td>N01</td><td>14.49669</td><td>155,655</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0 0</td><td>0</td><td>0.06</td><td>0.00</td><td>0.00</td><td>0.00</td></tr><tr><td>T1</td><td>14.91787</td><td>162,556</td><td>1</td><td>1-3</td><td></td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>2-2</td><td>2</td><td>-0.06</td><td>0.00</td><td>0.00</td><td>0.00</td></tr><tr><td>P1</td><td>14.95893</td><td>163,555</td><td>1</td><td>1-2</td><td></td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2 -2</td><td>2</td><td>-1.23</td><td>-0.07</td><td>0.06</td><td>0.01</td></tr><tr><td></td><td>15.03886</td><td>165,545</td><td>1</td><td>1</td><td>0</td><td>0</td><td>-1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0-1</td><td>-0.22</td><td>0.01</td><td>0.01</td><td>0.00</td></tr><tr><td>K1</td><td>15.04107</td><td>165,555</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0 0</td><td>0</td><td>12.00</td><td>-0.78</td><td>-0.67</td><td>-0.03</td></tr><tr><td></td><td>15.04328</td><td>165,565</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0 0</td><td>1</td><td>1.73</td><td>-0.12</td><td>-0.10</td><td>0.00</td></tr><tr><td>1</td><td>15.08214</td><td>166,554</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>-1</td><td>0 -1</td><td>0</td><td>0</td><td>0</td><td>-0.50</td><td>-0.01</td><td>0.03</td><td>0.00</td></tr><tr><td>1</td><td>15.12321</td><td>167,555</td><td>1</td><td>12</td><td></td><td>0</td><td>0 </td><td>0</td><td>0</td><td>0-2</td><td></td><td>2-2</td><td>-0.11</td><td>0.01</td><td>0.01</td><td>0.00</td></tr></table>
+
+(b) Contributions from the long-period band Corrections $\delta r$ and $\delta \bar { t }$ due to a zonal tidal term of frequency $f$ include both $_ { i p }$ and $o p$ parts. From Equations (7.1a) and (7.3) one finds
+
+$$
+\delta { r } = \left( \frac { 3 } { 2 } \sin ^ { 2 } \phi - \frac { 1 } { 2 } \right) ( \delta { R } _ { f } ^ { ( i p ) } \cos \theta _ { f } + \delta { R } _ { f } ^ { ( o p ) } \sin \theta _ { f } ) ,
+$$
+
+$$
+{ \delta \vec { t } } = ( \delta T _ { f } ^ { ( i p ) } \cos \theta _ { f } + \delta T _ { f } ^ { ( o p ) } \sin \theta _ { f } ) \sin 2 \phi ~ \hat { n } ,
+$$
+
+where
+
+$$
+\begin{array} { r l r } { \left( \begin{array} { c } { \delta R _ { f } ^ { ( i p ) } } \\ { \delta R _ { f } ^ { ( o p ) } } \end{array} \right) } & { = } & { \sqrt { \frac { 5 } { 4 \pi } } H _ { f } \left( \begin{array} { c } { \delta h _ { f } ^ { R } } \\ { - \delta h _ { f } ^ { I } } \end{array} \right) , } \\ { \left( \begin{array} { c } { \delta T _ { f } ^ { ( i p ) } } \\ { \delta T _ { f } ^ { ( o p ) } } \end{array} \right) } & { = } & { \frac { 3 } { 2 } \sqrt { \frac { 5 } { 4 \pi } } H _ { f } \left( \begin{array} { c } { \delta l _ { f } ^ { R } } \\ { - \delta l _ { f } ^ { I } } \end{array} \right) . } \end{array}
+$$
+
+Table 7.3b: Corrections due to the frequency dependence of Love and Shida numbers for zonal tides. Units: mm. All terms with radial correction $\geq 0 . 0 5$ mm are shown. Nominal values are $h = 0 . 6 0 7 8$ and $l = 0 . 0 8 4 7$ . Frequencies are given in degrees per hour.   
+
+<table><tr><td></td><td>Name Frequency Doodson T s h p N&#x27; psl l F D Ω △R(ip) △R(p △Tip）△T(op)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>0.00221</td><td>55,5650000</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>0０001</td><td>0.47</td><td>0.16</td><td>0.23</td><td>0.07</td></tr><tr><td>Ssa</td><td>0.08214</td><td>57,555</td><td>0</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0 -2</td><td>2</td><td>-2</td><td>-0.20</td><td>-0.11</td><td>-0.12</td><td>-0.05</td></tr><tr><td>Mm</td><td>0.54438</td><td>65,455</td><td>0</td><td>1</td><td></td><td>0-1</td><td>0</td><td>0</td><td>-1</td><td>0 0</td><td>0</td><td>0</td><td>-0.11</td><td>-0.09</td><td>-0.08</td><td>-0.04</td></tr><tr><td>Mf</td><td>1.09804</td><td>75,555</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0 -2</td><td>0-2</td><td></td><td>-0.13</td><td>-0.15</td><td>-0.11</td><td>-0.07</td></tr><tr><td></td><td>1.10024</td><td>75,565</td><td>0</td><td>2</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0 -2</td><td>0-1</td><td></td><td>-0.05</td><td>-0.06</td><td>-0.05</td><td>-0.03</td></tr></table>
+
+Values of $\Delta R _ { f }$ and $\Delta T _ { f }$ listed in Table 7.3a and 7.3b are for the constituents that must be taken into account to ensure an accuracy of $1 \mathrm { m m }$ .
+
+A Fortran program (DEHANTTIDEINEL.F) for computing the steps 1 and 2 corrections is available at ${ < } ^ { 1 } >$ .
+
+7.1.1.2 Permanent deformation The tidal model described above in principle contains a time-independent part so that the coordinates obtained by taking into account this model in the analysis will be “conventional tide free” values. (Note that they do not correspond to what would be observed in the absence of tidal perturbation. See the discussion in Chapter 1.) This section allows a user to compute “mean tide” coordinates from “conventional tide free” coordinates.
+
+Specifically, the degree 2 zonal tide generating potential includes a spectral component of zero frequency and amplitude $H _ { 0 } ~ = ~ - 0 . 3 1 4 6 0 \mathrm { ~ m ~ }$ , and its effect enters the tidal displacement model through the time-independent component of expression (7.5). Evaluation of this component may be done using Equations (7.1a) and (7.2) with ${ \cal H } _ { f } = { \cal H } _ { 0 } , \theta _ { f } = 0$ , and with the same nominal values for the Love number parameters as were used in Step 1: $h _ { 2 } = 0 . 6 0 7 8 , l _ { 2 } = 0 . 0 8 4 7$ along with $h ^ { ( 2 ) } = - 0 . 0 0 0 6$ and $l ^ { ( 2 ) } = 0 . 0 0 0 2$ . One finds the radial component of the permanent displacement according to (7.5) to be
+
+$$
+\left[ - 0 . 1 2 0 6 + 0 . 0 0 0 1 P _ { 2 } ( \sin \phi ) \right] P _ { 2 } ( \sin \phi )
+$$
+
+in meters, and the transverse component to be
+
+$$
+[ - 0 . 0 2 5 2 - 0 . 0 0 0 1 P _ { 2 } ( \sin \phi ) ] \sin 2 \phi
+$$
+
+in meters northwards, where $P _ { 2 } ( \sin \phi ) = ( 3 \sin ^ { 2 } \phi - 1 ) / 2$ .
+
+These are the components of the vector to be added to the “conventional tide free” computed tide-corrected position to obtain the “mean tide” position. The radial component of this restitution to obtain the “mean tide” value amounts to about $- 1 2$ cm at the poles and about $+ 6$ cm at the equator.
+
+# 7.1.2 Local site displacement due to ocean loading
+
+Ocean tides cause a temporal variation of the ocean mass distribution and the associated load on the crust and produce time-varying deformations of the Earth that can reach $1 0 0 ~ \mathrm { { m m } }$ . The modeling of the associated site displacement is dealt with in this section.
+
+# Note on motion of the center of mass of the solid Earth
+
+When the solid Earth together with the fluid masses are considered as a system without any external forces acting upon it, the position of the common center of mass remains fixed in space. When a phenomenon, such as the ocean tides, causes displacements of fluid masses, the center of mass of the fluid masses moves periodically and must be compensated by an opposite motion of the center of mass of the solid Earth. The stations, being fixed to the solid Earth, are subject to this counter-motion.
+
+For observing techniques that rely upon the dynamical motion of satellites, which respond to the center of mass of the total Earth system, the modeled motions of crust-fixed stations should include the “geocenter motion” contributions that counterbalance the effects of the fluid components. For other observing techniques, such as VLBI, neglect of geocenter motion should have no observable consequences.
+
+# Models for ocean tidal loading
+
+The tide generating potential due to the gravitational attraction of the Moon and the Sun can be described by an expansion into a set of tidal harmonics (e.g. Hartmann and Wenzel, 1995; Tamura, 1987; Cartwright and Tayler, 1971; Cartwright and Edden, 1973). The response of the oceans, unlike for the solid Earth, is strongly dependent on local and regional conditions that affect fluid flow. Closed-form analytical expressions are not adequate to describe the ocean tidal response globally. Instead, gridded formulations are needed. Table 7.4 lists the leading global ocean tidal models that have been developed since Schwiderski and Szeto (1981). Most modern models assimilate sea surface height measurements made by altimetry satellites.
+
+The crustal loading at a particular location due to a given tidal harmonic is computed by integrating the tide height with a weighting function (Green’s function, see Farrell, 1972), carrying the integration over all the ocean masses. The total loading may be obtained by summing the effect of all harmonics. In practice, the three-dimensional site displacements due to ocean tidal loading are computed using the following scheme. Let $\Delta c$ denote a displacement component (radial, west, south) at a particular site at time $t$ . $\Delta c$ is obtained as
+
+$$
+\Delta c = \sum _ { j } A _ { c j } \cos ( \chi _ { j } ( t ) - \phi _ { c j } ) ,
+$$
+
+where the summation is carried out for a set of tidal constituents. The amplitudes $A _ { c j }$ and phases $\phi _ { c j }$ describe the loading response for the chosen site. The astronomical argument $\chi _ { j } ( t )$ for the 11 main tides can be computed with the subroutine ARG2.F, which can be obtained at ${ < } ^ { 1 } >$ .
+
+Conventionally, only a discrete set of harmonics in the long-period (order $m = 0$ ), diurnal ( $m = 1$ ) and semidiurnal ( $m = 2$ ) bands are usually considered explicitly. The 11 main tides considered are the semidiurnal waves $M _ { 2 } , S _ { 2 } , N _ { 2 } , K _ { 2 }$ , the diurnal waves $K _ { 1 } , O _ { 1 } , P _ { 1 } , Q _ { 1 }$ , and the long-period waves $M _ { f } , M _ { m }$ , and $S _ { s a }$ . The site-dependent amplitudes $A _ { c j }$ and phases $\phi _ { c j }$ for these 11 tides are obtained as described in the next sub-section. Amplitudes and phases for other tidal constituents can be obtained from those of the 11 main tides by a variety of approximation schemes. For instance, if one wishes to include the effect of sidelobes of the main tides generated by modulation with the 18.6-year lunar node, then suitable adjustments in the 11 amplitudes and phases can be applied so that
+
+$$
+\Delta c = \sum _ { k = 1 } ^ { 1 1 } f _ { k } A _ { c k } \cos ( \chi _ { k } ( t ) + u _ { k } - \phi _ { c k } ) ,
+$$
+
+where $f _ { k }$ and ${ u } _ { k }$ depend on the longitude of the lunar node. See Scherneck (1999) for the expression of these arguments.
+
+In more complete methods, the lesser tides are handled by interpolation of the admittances using some full tidal potential development (e.g. Hartmann and Wenzel, 1995). One of these methods has been chosen as the conventional IERS method, and has been implemented in a subroutine that is recommended as a conventional computation of the loading displacement (see sub-section “Conventional routine to compute the ocean loading displacement” below).
+
+Note that complete neglect of the minor tides and nodal modulations, using (7.15) with only the 11 main tides, is not recommended and may lead to errors of several mm, up to 5 mm rms at high latitudes (Hugentobler, 2006).
+
+Additional contributions to ocean-induced displacement arise from the frequency dependence of the load Love numbers due to the Nearly Diurnal Free Wobble in the diurnal tidal band. The effect of this dependence has been taken into account, following Wahr and Sasao (1981), by incrementing the body tide Love numbers as explained in Section 7.1.1.
+
+# Site-dependent tidal coefficients
+
+For a given site, the amplitudes $A _ { c j }$ and phases $\phi _ { c j } , 1 \le j \le 1 1$ , for the 11 main tides may be obtained electronically from the ocean loading service site at ${ < } ^ { 2 } >$ ; see Scherneck (1991). They are provided in either the so-called BLQ format or in the HARPOS format. An example for the BLQ format is given in Table 7.5. Note that tangential displacements are to be taken positive in west and south directions. The service allows coefficients to be computed selectably from any of eighteen ocean tide models; see Table 7.4.
+
+The accuracy of the ocean tide loading values depends on the errors in the ocean tide models, the errors in the Green’s function, the coastline representation and the numerical scheme of the loading computation itself. To have a correct representation of the water areas one normally uses a high resolution coastline of around $6 0 0 \mathrm { m }$ to 2 km. Note that still some problems exist near Antarctica where one should use the real land coastline instead of the ice shelve edges. Different elastic Earth models produce different Green’s functions but their differences are small, less than $2 \%$ . Most numerical schemes to compute the loading are good to about 2-5%. Currently, the largest contributor to the uncertainty in the loading value are the errors in the ocean tide models. Therefore it is recommended to use the most recent ocean tide models (TPXO7.2, see ${ < } ^ { 3 } { > }$ for a solution derived using tide gauge and TOPEX/Poseidon data; FES2004 for a hydrodynamic solution with altimetry data). However, older models might sometimes be preferred for internal consistency. Since many space geodesy stations are inland or near coasts, the accuracy of the tide models in the shelf areas is more crucial than in the open sea. Load convolution adopts land-sea masking according to the high resolution coastlines dataset included in the Generic Mapping Tools (GMT, Wessel and Smith, 1998). Ocean tide mass budgets have been constrained using a uniform co-oscillation oceanic layer. The integrating loading kernel employs a disk-generating Green’s function method (Farrell, 1972; Zschau, 1983; Scherneck, 1990).
+
+When generating tables of amplitudes and phases using the ocean loading service, one has to answer the question “Do you want to correct your loading values for the [geocenter] motion?”
+
+Answering “No” means that the coefficients do not include the large-scale effect of the geocenter motion caused by the ocean tide. This is appropriate for station coordinates given in a “crust-fixed” frame that is not sensitive to the Earth’s center of mass.
+
+Answering “Yes” means that the coefficients include the large-scale effect of the geocenter motion caused by the ocean tide. This is consistent with data analyses that realize a near-instantaneous “center of mass” frame using observations of satellite dynamics.
+
+# Conventional routine to compute the ocean loading displacement
+
+D. Agnew has provided a Fortran program (HARDISP.F) to compute the ocean tide loading displacements for a site, given the amplitudes $A _ { c j }$ and phases $\phi _ { c j } , 1 \leq$ $j \le 1 1$ , as generated by the Bos-Scherneck website (in BLQ format, see above). The implementation considers a total of 342 constituent tides whose amplitudes and phases are found by spline interpolation of the tidal admittances based on the 11 main tides. Tests have been carried out showing that differences with an earlier version of HARDISP.F with 141 constituent tides are of order $0 . 1 \mathrm { m m } \mathrm { r m s }$ . Comparisons with the ETERNA software of Wenzel (1996) have been carried out by M. Bos (2005), who concludes that the routine is precise to about $1 \%$ . Uncertainties in the ocean models are generally larger. The code for the routine can be obtained at ${ < } ^ { 1 } >$ .
+
+Table 7.4: Ocean tide models available at the automatic loading service.   
+
+<table><tr><td>Model code</td><td>Reference</td><td>Input</td><td>Resolution</td></tr><tr><td>Schwiderski</td><td>Schwiderski (1980)</td><td>Tide gauge</td><td>1°×1°</td></tr><tr><td>CSR3.0, CSR4.0</td><td>Eanes (1994)</td><td>TOPEX/Poseidon altim.</td><td>1°×1°</td></tr><tr><td>TPXO5</td><td>Eanes and Bettadpur (1995) Egbert et al. (1994)</td><td>T/P + Le Provost loading inverse hydrodyn. solution</td><td>0.5° × 0.5°</td></tr><tr><td>TPXO6.2</td><td>Egbert et al. (2002), see &lt;&gt;</td><td>from T/P altim. idem</td><td>256 × 512 0.25°× 0.25°</td></tr><tr><td>TPXO7.0, TPXO7.1</td><td>idem</td><td>idem</td><td>idem</td></tr><tr><td>FES94.1</td><td>Le Provost et al. (1994)</td><td>numerical model</td><td>0.5° × 0.5°</td></tr><tr><td>FES95.2</td><td>Le Provost et al. (1998)</td><td>num.model + assim.altim.</td><td>0.5° × 0.5°</td></tr><tr><td>FES98</td><td>Lefevre et al. (2000)</td><td>num.model + assim.tide gauges</td><td>0.25°× 0.25°</td></tr><tr><td>FES99</td><td>Lefevre et al. (2002)</td><td>numerical model + assim.</td><td>0.25°× 0.25°</td></tr><tr><td>FES2004</td><td>Letellier (2004)</td><td>tide gauges and altim. numerical model</td><td>0.125°× 0.125°</td></tr><tr><td>GOT99.2b, GOT00.2</td><td>Ray (1999)</td><td>T/P</td><td>0.5° × 0.5°</td></tr><tr><td>GOT4.7</td><td>idem</td><td>idem</td><td>idem</td></tr><tr><td>EOT08a</td><td>Savcenko et al. (2008)</td><td>Multi-mission altimetry</td><td>0.125°× 0.125°</td></tr><tr><td>AG06a</td><td>Andersen (2006)</td><td>Multi-mission altimetry</td><td>0.5° × 0.5°</td></tr><tr><td>NAO.99b</td><td>Matsumoto et al. (2000)</td><td>num. + T/P assim.</td><td>0.5°× 0.5°</td></tr></table>
+
+Table 7.5: Sample of an ocean loading table file in BLQ format. Each site record shows a header with information on the ocean tide model and the site name and geographic coordinates. First three rows of numbers designate amplitudes (meter), radial, west, south, followed by three lines with the corresponding phase values (degrees).   
+
+<table><tr><td colspan="17">Columns designate partial tides M2,S2,N2,K2,K1,O1,P1,Qi,Mf,Mm, and Ssa: $$</td></tr><tr><td>ONSALA</td><td></td><td>$$ CSR4.0_f-PP ID: 2009-06-25 20:02:03</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td colspan="10">$$ Computed by OLMPP by H G Scherneck, Onsala Space Observatory, 2009</td><td colspan="3"></td></tr><tr><td>$$ Onsala,</td><td></td><td></td><td></td><td></td><td></td><td>lon/lat:11.9264</td><td></td><td>57.3958</td><td></td><td></td><td></td></tr><tr><td>.00352</td><td>.00123</td><td>.00080</td><td>.00032</td><td>.00187</td><td>.00112</td><td>.00063</td><td>.00003</td><td>.00082</td><td></td><td>.00044</td><td>.00037</td></tr><tr><td>.00144</td><td>.00035</td><td>.00035</td><td>.00008</td><td>.00053</td><td>.00049</td><td>.00018</td><td>.00009</td><td></td><td>.00012</td><td>.00005</td><td>.00006</td></tr><tr><td>.00086</td><td>.00023</td><td>.00023</td><td>.00006</td><td>.00029</td><td>.00028</td><td>.00010</td><td></td><td>.00007</td><td>.00004</td><td>.00002</td><td>.00001</td></tr><tr><td>-64.7</td><td>-52.0</td><td>-96.2</td><td>-55.2</td><td>-58.8</td><td>-151.4</td><td></td><td>-65.6</td><td>-138.1</td><td>8.4</td><td>5.2</td><td>2.1</td></tr><tr><td>85.5</td><td>114.5</td><td>56.5</td><td>113.6</td><td>99.4</td><td></td><td>19.1</td><td>94.1</td><td>-10.4</td><td>-167.4</td><td>-170.0</td><td>-177.7</td></tr><tr><td>109.5</td><td>147.0</td><td>92.7</td><td>148.8</td><td>50.5</td><td>-55.1</td><td></td><td>36.4</td><td>-170.4</td><td>-15.0</td><td>2.3</td><td>5.2</td></tr></table>
+
+# Center of mass correction
+
+If necessary, the crust-frame translation (geocenter motion) due to the ocean tidal mass, $d X ( t )$ , $d Y ( t )$ , and $d Z ( t )$ , may be computed according to the method given
+
+by Scherneck at ${ < } ^ { 4 } >$ , e.g. for $d X ( t )$ as
+
+$$
+d X ( t ) = \sum _ { k = 1 } ^ { 1 1 } X _ { i n } ( k ) \cos ( \chi _ { k } ( t ) ) + X _ { c r } ( k ) \sin ( \chi _ { k } ( t ) )
+$$
+
+where the in-phase ( $_ { i n }$ ) and cross-phase ( $_ { c r }$ ) amplitudes (in meters) are tabulated for the various ocean models. Similarly for $d Y ( t )$ and $d Z ( t )$ . This correction should be applied, for instance, in the transformation of GPS orbits from the center-of-mass to the crust-fixed frame expected in the sp3 orbit format
+
+$$
+X _ { c r u s t - f i x e d } = X _ { c e n t e r - o f - m a s s } - d X ,
+$$
+
+i.e. the translation vector should be substracted when going from center-of-mass to sp3.
+
+# 7.1.3 $\mathbf { S } _ { 1 }  – \mathbf { S } _ { 2 }$ atmospheric pressure loading
+
+The diurnal heating of the atmosphere causes surface pressure oscillations at diurnal $\mathrm { S _ { 1 } }$ , semidiurnal $\mathrm { S _ { 2 } }$ , and higher harmonics. These “atmospheric tides” induce periodic motions of the Earth’s surface (Petrov and Boy, 2004). Previously, the $\mathrm { S } _ { 1 }$ and S $^ 2$ loading effects have not been included in the station motion model. Figure 7.1 shows the amplitude and phase of the predicted vertical deformation of the S1 and $j _ { 2 }$ tides derived from the model of Ray and Ponte (2003) using elastic Green’s functions (Farrell, 1972) in the center of mass of Earth $^ +$ fluid masses (CM) frame. Horizontal deformations (not shown) are a factor of 10 smaller in amplitude. The amplitude of the vertical deformation is equal to that of some ocean tide loading effects and should, therefore, be considered in the station motion model. Being close to the orbital period of the GPS satellites, modeling of the $\mathrm { S _ { 2 } }$ effect is especially important for this technique in order to minimize aliasing (Tregoning and Watson, 2009).
+
+The conventional recommendation is to calculate the station displacement using the Ray and Ponte (2003) S2 and S1 tidal model, hereafter referred to as RP03.
+
+# Tidal model
+
+The S1 and S2 RP03 tidal model is derived from the European Centre for Medium-Range Weather Forecasts (ECMWF) operational global surface pressure fields, using a procedure outlined by van den Dool et al. (1997). The S2 model has been tested by comparison against 428 barometer stations (Ray and Ponte, 2003). It is expected that National Centers for Environmental Prediction (NCEP) operational data provide equivalent results (van den Dool, 2004). Similar comparisons were found for the S1 models, although those tests were far less extensive. The barometer stations have also revealed small phase errors in the derived tidal fields. The origin of these errors is not understood, but the models can be corrected $a$ posteriori. The RP03 phases have been adjusted by 20 minutes to correct for this error.
+
+# Calculation of loading effects
+
+We use elastic Green’s functions (Farrell, 1972) derived in the various reference frames to generate the predicted in-phase and out-of-phase surface displacement from RP03. The spatial resolution of the input surface pressure grid is $1 . 1 2 5 ^ { \circ }$ .
+
+Elastic Green’s functions (versus frequency-dependent Green’s functions) are sufficient for this computation. By considering changes in viscoelasticity, Francis and Mazzega (1990) demonstrated that the amplitude of the M $^ 2$ ocean tidal radial surface displacement can vary by $1 . 5 \%$ and the phase by $3 \%$ , i.e. a negligible amount in comparison to uncertainties in the ocean tide model itself. A $1 . 5 \%$ effect on the $\mathrm { S _ { 2 } }$ radial displacement is $0 . 0 5 ~ \mathrm { { m m } }$ in amplitude which is certainly less than the uncertainty in the ${ \mathfrak { s } } _ { 1 }$ and $\mathrm { S _ { 2 } }$ pressure models and can be ignored.
+
+![](images/47a6c76ee7bf082afe03ad272ec6c386b733f669a3cf2a6eab5985b91ba18929.jpg)  
+Figure 7.1: Amplitude (in mm) and phase (in degrees) of the predicted vertical surface displacement from the $\mathrm { S _ { 1 } }$ and $\mathrm { S _ { 2 } }$ atmospheric tides from the model by Ray and Ponte (2003).
+
+In addition, differences in predicted displacements derived from different Green’s functions are on the order of 0.1 mm rms, so it seems unnecessary to generate corrections using Green’s functions derived for different Earth models. The threedimensional surface displacements are determined by assuming that the oceans respond as the solid Earth to the load, i.e. no inverted barometer. At these frequencies, the ocean does not have time to achieve equilibrium. Furthermore, it should be noted that the ocean’s response to these atmospheric tides is already modeled separately through the site displacements due to ocean tidal loading described in Section 7.1.2.
+
+The phase convention follows that of RP03. At any geographic location, at any time, the tidal deformation, expressed in terms of up, east and north components, is the sum of $d ( u , e , n ) _ { S _ { 1 } }$ and $d ( u , e , n ) _ { S _ { 2 } }$ defined as
+
+$$
+d ( u , e , n ) _ { S _ { 1 } } = A _ { d 1 } ( u , e , n ) * c o s ( \omega _ { 1 } T ) + B _ { d 1 } ( u , e , n ) * s i n ( \omega _ { 1 } T )
+$$
+
+$$
+d ( u , e , n ) _ { S _ { 2 } } = A _ { d 2 } ( u , e , n ) * c o s ( \omega _ { 2 } T ) + B _ { d 2 } ( u , e , n ) * s i n ( \omega _ { 2 } T ) ,
+$$
+
+where $A _ { d 1 } , B _ { d 1 } , A _ { d 2 } , B _ { d 2 }$ are the surface displacement coefficients expressed in the same length unit as the deformation components, $T$ is UT1 in days and $\omega _ { 1 }$ and $\omega _ { 2 }$ are the frequencies of the $\mathrm { S } _ { 1 }$ and S $^ 2$ atmospheric tides, e.g. $\omega _ { 1 } = 1$ cycle/day and $\omega _ { 2 } = 2$ cycles/day.
+
+The surface displacement coefficients $A _ { d 1 } , B _ { d 1 } , A _ { d 2 } , B _ { d 2 }$ are determined for each site by performing a global convolution sum of the Green’s functions with the $c o s _ { S _ { 1 } } , s i n _ { S _ { 1 } } , c o s _ { S _ { 2 } } , s i n _ { S _ { 2 } }$ pressure mass coefficients. Gridded values of the threedimensional predicted surface displacements from the RP03 model may be found at $< ^ { 5 } >$ . Corrections for the vertical surface displacement are usually sufficient, whereas estimates of horizontal effects are provided for completeness. The grids are provided for the two fundamental reference frames used for geodetic data analysis: center of solid Earth (CE) and center of mass of Earth $^ +$ atmosphere $^ +$ ocean $^ +$ water storage (CM). In most applications, e.g. corrections of satellitebased techniques at the observation level, the CM frame is most appropriate. A description of the grid indexing as well as a program grdintrp.f for interpolating the grids are also available at $< ^ { 5 } >$ .
+
+# Center of mass correction
+
+As with ocean tidal loading (see preceding section), it may be necessary to compute the crust-frame translation (geocenter motion) due to the atmospheric tidal mass. $d X ( t )$ , $d Y ( t )$ , and $d Z ( t )$ may be computed according to the method given by Scherneck at ${ < } ^ { 6 } >$ , e.g. for $d X ( t )$ as
+
+$$
+{ } _ { 1 } c o s ( \omega _ { 1 } T ) + B _ { 1 } s i n ( \omega _ { 1 } T ) + A _ { 2 } c o s ( \omega _ { 2 } T ) + B _ { 2 } s i n ( \omega _ { 2 } T
+$$
+
+where, as above, $\omega _ { 1 } = 1$ cycle/day and $\omega _ { 2 } = 2$ cycles/day and $A _ { 1 } , B _ { 1 } , A _ { 2 } , B _ { 2 }$ are the amplitudes of the in-phase and out-of-phase components of the atmospheric tides (in meters) and are given in Table 7.6 and in the file com.dat available at ${ < } ^ { 5 } >$ . As with ocean tidal loading (see preceding section), this correction should be applied in transforming GPS orbits from the center-of-mass to the crust-fixed frame expected in the sp3 orbit format.
+
+Table 7.6: Coefficients for the center of mass correction of the $\mathrm { S _ { 1 } { - } S _ { 2 } }$ atmospheric pressure loading   
+
+<table><tr><td></td><td>A1</td><td>B1</td><td>A2</td><td>B2</td></tr><tr><td>dX</td><td>2.1188E-04</td><td>-7.6861E-04</td><td>1.4472E-04</td><td>-1.7844E-04</td></tr><tr><td>dY</td><td>-7.2766E-04</td><td>-2.3582E-04</td><td>-3.2691E-04</td><td>-1.5878E-04</td></tr><tr><td>dZ</td><td>-1.2176E-05</td><td>3.2243E-05</td><td>-9.6271E-05</td><td>1.6976E-05</td></tr></table>
+
+# 7.1.4 Rotational deformation due to polar motion
+
+The variation of station coordinates caused by the pole tide can amount to a couple of centimeters and needs to be taken into account.
+
+Let us choose $\hat { x } , \hat { y }$ and $\hat { z }$ as a terrestrial system of reference. The $\hat { z }$ -axis is oriented along the Earth’s mean rotation axis, the $\hat { x }$ -axis points in the direction of the adopted origin of longitude and the $\hat { y }$ -axis is orthogonal to the $\hat { x }$ - and $\hat { z }$ - axes and in the plane of the $9 0 ^ { \circ }$ $\mathrm { E }$ meridian.
+
+The centrifugal potential caused by the Earth’s rotation is
+
+$$
+V = \frac { 1 } { 2 } \left[ r ^ { 2 } | \vec { \Omega } | ^ { 2 } - \left( \vec { r } \cdot \vec { \Omega } \right) ^ { 2 } \right] ,
+$$
+
+where $\vec { \Omega } = \Omega ( m _ { 1 } \ \hat { x } + m _ { 2 } \ \hat { y } + ( 1 + m _ { 3 } ) \ \hat { z } )$ . $\Omega$ is the mean angular velocity of the Earth’s rotation; $m _ { 1 }$ , $m _ { 2 }$ describe the time-dependent offset of the instantaneous rotation pole from the mean, and ${ } ^ { m _ { 3 } }$ , the fractional variation in the rotation rate; $r$ is the geocentric distance to the station.
+
+Neglecting the variations in $m _ { 3 }$ which induce displacements that are below the mm level, the $_ { m 1 }$ and $m _ { 2 }$ terms give a first order perturbation in the potential $V$ (Wahr, 1985)
+
+$$
+\Delta V ( r , \theta , \lambda ) = - \frac { \Omega ^ { 2 } r ^ { 2 } } { 2 } \sin { 2 \theta } ( m _ { 1 } \cos \lambda + m _ { 2 } \sin \lambda ) .
+$$
+
+The radial displacement $S _ { r }$ and the horizontal displacements $S _ { \theta }$ and $S _ { \lambda }$ (positive upwards, south and east, respectively, in a horizon system at the station) due to $\Delta V$ are obtained using the formulation of tidal Love numbers $h _ { 2 }$ and $\ell _ { 2 }$ (Munk and MacDonald, 1960):
+
+$$
+S _ { r } = h _ { 2 } \frac { \Delta V } { g } , \qquad S _ { \theta } = \frac { \ell _ { 2 } } { g } \partial _ { \theta } \Delta V , \qquad S _ { \lambda } = \frac { \ell _ { 2 } } { g } \frac { 1 } { \sin \theta } \partial _ { \lambda } \Delta V .
+$$
+
+The position of the Earth’s mean rotation pole has a secular variation, and its coordinates in the Terrestrial Reference Frame discussed in Chapter 4 are given, in terms of the polar motion variables $( x _ { p } , y _ { p } )$ defined in Chapter 5, by appropriate running averages $x _ { p }$ and $- \bar { y } _ { p }$ . Then
+
+$$
+m _ { 1 } = x _ { p } - \bar { x } _ { p } , \qquad m _ { 2 } = - ( y _ { p } - \bar { y } _ { p } ) .
+$$
+
+For the most accurate results, an estimate of the wander of the mean pole should be used, that represents the secular variation to within about $1 0 \mathrm { m a s }$ . This ensures that the geopotential field is aligned to the long term mean pole (see Section 6.1) within the present geodetic accuracy. This is no longer the case (Ries, 2010) with the conventional mean pole of the IERS Conventions (2003) which is to be replaced with the model given below. In the future, the IERS conventional mean pole will be revised as needed with sufficient advance notice. The present version (2010) of the conventional mean pole is composed of a cubic model valid over the period 1976.0–2010.0 and a linear model for extrapolation after 2010.0, ensuring continuity and derivability at 2010.0. The cubic model was derived by the IERS Earth Orientation Centre from a fit over the period 1976.0–2010.0 of the data in $< ^ { \prime } >$ . This data itself was obtained (Gambis, 2010) by filtering periodic terms in the EOP(IERS) C01 series $< ^ { 8 } >$ with an X11 Census process (Shiskin et al., 1967). The IERS (2010) mean pole model reads
+
+$$
+\bar { x } _ { p } ( t ) = \sum _ { i = 0 } ^ { 3 } ( t - t _ { 0 } ) ^ { i } \times \bar { x } _ { p } ^ { i } , \qquad \bar { y } _ { p } ( t ) = \sum _ { i = 0 } ^ { 3 } ( t - t _ { 0 } ) ^ { i } \times \bar { y } _ { p } ^ { i } ,
+$$
+
+where $t _ { 0 }$ is $2 0 0 0 . 0 < ^ { 9 } >$ and the coefficients $\bar { x } _ { p } ^ { i }$ and $\bar { y } _ { p } ^ { i }$ are given in Table 7.7.
+
+Table 7.7: Coefficients of the IERS (2010) mean pole model   
+
+<table><tr><td colspan="2"></td><td>Until</td><td>2010.0</td><td>After</td><td>2010.0</td></tr><tr><td>Degree i</td><td></td><td>x/mas yr-i</td><td>g/mas yr-i</td><td>x/mas yr-i</td><td>/ mas yr-i</td></tr><tr><td>0</td><td></td><td>55.974</td><td>346.346</td><td>23.513</td><td>358.891</td></tr><tr><td>1</td><td></td><td>1.8243</td><td>1.7896</td><td>7.6141</td><td>-0.6287</td></tr><tr><td></td><td>2</td><td>0.18413</td><td>-0.10729</td><td>0.0</td><td>0.0</td></tr><tr><td>3</td><td></td><td>0.007024</td><td>-0.000908</td><td>0.0</td><td>0.0</td></tr></table>
+
+Using Love number values appropriate to the frequency of the pole tide ( $h _ { 2 } =$ 0.6207, $l _ { 2 } = 0 . 0 8 3 6$ ) and $r = a = 6 . 3 7 8 \times 1 0 ^ { 6 } \mathrm { ~ m }$ , one finds
+
+$$
+\begin{array} { r l } & { S _ { r } = - 3 3 \sin 2 \theta \left( m _ { 1 } \cos \lambda + m _ { 2 } \sin \lambda \right) \mathrm { i n m m } , } \\ & { S _ { \theta } = - 9 \cos 2 \theta \left( m _ { 1 } \cos \lambda + m _ { 2 } \sin \lambda \right) \mathrm { i n m m } , } \\ & { S _ { \lambda } = 9 \cos \theta \left( m _ { 1 } \sin \lambda - m _ { 2 } \cos \lambda \right) \mathrm { i n m m } , } \end{array}
+$$
+
+with $m _ { 1 }$ and $m _ { 2 }$ given in arcseconds. Note that the values of the Love numbers include the anelastic contributions to the real part, which induce a contribution to the displacement of order $1 \mathrm { m m }$ , but do not include the contributions to the imaginary part, whose effects are about 5 times smaller. Taking into account that $_ { T / l 1 }$ and $m _ { 2 }$ vary, at most, by 0.8 as, the maximum radial displacement is approximately $2 5 \mathrm { m m }$ , and the maximum horizontal displacement is about 7 mm. If $X$ , $Y$ , and $Z$ are Cartesian coordinates of a station in a right-handed equatorial coordinate system, the changes in them due to polar motion are (note that the order of components is different in Equations (7.26) and (7.27))
+
+$$
+[ d X , d Y , d Z ] ^ { T } = R ^ { T } [ S _ { \theta } , S _ { \lambda } , S _ { r } ] ^ { T } ,
+$$
+
+where
+
+$$
+\begin{array} { r } { R = \left( \begin{array} { c c c } { \cos \theta \cos \lambda } & { \cos \theta \sin \lambda } & { - \sin \theta } \\ { - \sin \lambda } & { \cos \lambda } & { 0 } \\ { \sin \theta \cos \lambda } & { \sin \theta \sin \lambda } & { \cos \theta } \end{array} \right) . } \end{array}
+$$
+
+# 7.1.5 Ocean pole tide loading
+
+The ocean pole tide is generated by the centrifugal effect of polar motion on the oceans. This centrifugal effect is defined in Equation (6.10) of Section 6.2. Polar motion is dominated by the 14-month Chandler wobble and annual variations. At these long periods, the ocean pole tide is expected to have an equilibrium response, where the displaced ocean surface is in equilibrium with the forcing equipotential surface.
+
+Desai (2002) presents a self-consistent equilibrium model of the ocean pole tide. This model accounts for continental boundaries, mass conservation over the oceans, self-gravitation, and loading of the ocean floor. Using this model, the load of the ocean pole tide produces the following deformation vector at any point on the surface of the Earth with latitude $\phi$ and longitude $\lambda$ . The load deformation vector is expressed here in terms of radial, north and east components, $u _ { r }$ , $u _ { n }$ , and $u _ { e }$ , respectively, and is a function of the wobble parameters $( m _ { 1 } , m _ { 2 } )$ .
+
+$$
+\left[ \begin{array} { l } { u _ { r } ( \phi , \lambda ) } \\ { u _ { n } ( \phi , \lambda ) } \\ { u _ { e } ( \phi , \lambda ) } \end{array} \right] = K \left\{ \left( \begin{array} { l } { \boldsymbol { u } _ { r } ^ { R } ( \phi , \lambda ) } \\ { \left( \boldsymbol { m } _ { 1 } \gamma _ { 2 } ^ { R } + \boldsymbol { m } _ { 2 } \gamma _ { 2 } ^ { I } \right) } \\ { \boldsymbol { u } _ { e } ^ { R } ( \phi , \lambda ) } \end{array} \right) \left[ \begin{array} { l } { \boldsymbol { u } _ { r } ^ { R } ( \phi , \lambda ) } \\ { \boldsymbol { u } _ { n } ^ { R } ( \phi , \lambda ) } \\ { \boldsymbol { u } _ { e } ^ { R } ( \phi , \lambda ) } \end{array} \right] + \left( \boldsymbol { m } _ { 2 } \gamma _ { 2 } ^ { R } - \boldsymbol { m } _ { 1 } \gamma _ { 2 } ^ { I } \right) \left[ \begin{array} { l } { \boldsymbol { u } _ { r } ^ { I } ( \phi , \lambda ) } \\ { \boldsymbol { u } _ { n } ^ { I } ( \phi , \lambda ) } \\ { \boldsymbol { u } _ { e } ^ { I } ( \phi , \lambda ) } \end{array} \right] \right\}
+$$
+
+where
+
+$$
+\begin{array} { c } { { K = \displaystyle \frac { 4 \pi G a _ { E } \rho _ { w } H _ { p } } { 3 g _ { e } } } } \\ { { { } } } \\ { { H _ { p } = \left( \displaystyle \frac { 8 \pi } { 1 5 } \right) ^ { 1 / 2 } \displaystyle \frac { \Omega ^ { 2 } a _ { E } ^ { 4 } } { G M } } } \end{array}
+$$
+
+and
+
+$\Omega$ , $a _ { E }$ , $\it G M$ , $g _ { e }$ , and $G$ are defined in Chapter 1,   
+$\rho _ { w } = \mathrm { d e n s i t } .$ y of sea water $= 1 0 2 5 ~ \mathrm { k g ~ m ^ { - 3 } }$ ,   
+$\gamma = ( 1 + k _ { 2 } - h _ { 2 } ) = \gamma _ { 2 } ^ { R } + i \gamma _ { 2 } ^ { I } = 0 . 6 8 7 0 + 0 . 0 0 3 6 i$ (Values of $k _ { 2 }$ and $h _ { 2 }$ appropriate   
+for the pole tide are as given in Sections 6.2 and 7.1.4),
+
+![](images/8e05007ce3a5fac3ec931510e82e52c217c1c671caa578cd3cce8ec6b5e2115d.jpg)  
+Figure 7.2: Loading from ocean pole tide: Amplitude as a function of the amplitude of wobble variable.
+
+$( m _ { 1 } , m _ { 2 } )$ are the wobble parameters. Refer to Section 7.1.4 for the relationship between the wobble variables $( m _ { 1 } , m _ { 2 } )$ and the polar motion variables $( x _ { p } , y _ { p } )$ . $u _ { r } ^ { R } ( \phi , \lambda )$ , $u _ { n } ^ { R } ( \phi , \lambda )$ , $u _ { e } ^ { R } ( \phi , \lambda )$ are the real part of the ocean pole load tide coefficients. ${ u } _ { r } ^ { I } ( \phi , \lambda ) , ~ { u } _ { n } ^ { I } ( \phi , \lambda ) , ~ { u } _ { e } ^ { I } ( \phi , \lambda )$ are the imaginary part of the ocean pole load tide
+
+coefficients.
+
+Maps of the required ocean pole load tide coefficients are available on an equally spaced 0.5 by 0.5 degree global grid at ${ < } ^ { 1 0 } >$ . These coefficients provide the surface deformations with respect to the instantaneous center of mass of the deformed Earth including the mass of the loading ocean pole tide.
+
+The amplitude of this loading deformation is shown in Figure 7.2 in mm per arcsecond as a function of the amplitude $m$ of the wobble components $( m _ { 1 } , ~ m _ { 2 } )$ . Given that the amplitude of the wobble variable is typically of order 0.3 arcseconds, the load deformation is typically no larger than about (1.8, 0.5, 0.5) mm in (radial, north, east) component, but it may occasionally be larger.
+
+# 7.2 Models for other non-conventional displacement of reference markers on the crust
+
+It is envisioned that this section describes methods of modeling non-tidal displacements associated with changing environmental loads, e.g. from atmosphere, ocean and hydrology. For this purpose, models should be made available to the user community through the IERS Global Geophysical Fluid Center and its special bureaux, together with all necessary supporting information, implementation documentation, and software.
+
+At the time of this registered edition of the IERS Conventions, it is recommended not to include such modeling in operational solutions that support products and services of the IERS. Nevertheless, the non-tidal loading effects can be considered in other studies, and this section will be updated as adopted models become available.
+
+# 7.3 Models for the displacement of reference points of instruments
+
+This section lists effects which are to be considered when relating the reference point of an instrument used in a given technique to a marker that may be used as a reference by other techniques. Typical examples are antenna phase center offsets. These effects are technique-dependent and the conventional models for these effects are kept and updated by the technique services participating to the IERS: The IVS ${ < } ^ { 1 1 } >$ for very long baseline interferometry, the ILRS ${ < } ^ { 1 2 } >$ for satellite laser ranging, the IGS ${ < } ^ { 1 3 } >$ for global navigation satellite systems and the IDS ${ < } ^ { 1 4 } >$ for DORIS. This section provides a short description of these models and directs the user to the original source of information.
+
+# 7.3.1 Models common to several techniques
+
+As some of the effects depend on local environmental conditions, conventional models for these effects need to be based on a reference value for local temperature. A conventional model to determine reference temperature is given below.
+
+# Reference temperature
+
+If necessary, it is recommended to determine the reference temperature values with the model GPT (Boehm et al., 2007) which is based on a spherical harmonic expansion of degree and order 9 with an annual periodicity, and is provided as a Fortran routine, GPT.F, at ${ < } ^ { 1 5 } >$ and ${ < } ^ { 1 6 } >$ . The arguments of the routine are described in its header. The model assumes a yearly signature and no secular variation, so should not impact secular terms in the modeled geodetic data. If only a constant reference temperature is needed (no yearly term), the model value at the $1 1 9 ^ { t h }$ day of year, 07:30 UTC (e.g. MJD 44357.3125) should be used.
+
+# 7.3.2 Very long baseline interferometry
+
+# Thermal expansion
+
+VLBI antennas are subject to structural deformations due to temperature variations that can cause variations in the VLBI delay exceeding 10 ps. Correspondingly, the coordinates of the reference point may vary by several mm. For this reason the IVS has developed a model for VLBI antenna thermal deformation (Nothnagel, 2008) that is to be used in its routine product generation. The conventional model for VLBI antenna thermal deformation may be found at ${ < } ^ { 1 7 } >$ .
+
+# 7.3.3 Global navigation satellite systems
+
+Antenna phase center offsets and variations The exact phase center position of the transmitting as well as of the receiving antenna depends on the line of sight from the satellite to the receiver. This anisotropy is modeled by a phase center offset from a physical reference point to the mean electrical phase center together with its corresponding elevation- and azimuth-dependent variations. Since November 2006, the IGS applies consistent absolute phase center corrections for satellite and receiver antennas (Schmid et al., 2007). The current model is available at $< ^ { 1 8 } >$ .
+
+# References
+
+Andersen, O. B., 2006, see http://www.spacecenter.dk/data/global-ocean-tide-model-1/.   
+Boehm, J., Heinkelmann, R., and Schuh, H., 2007, “Short Note: A global model of pressure and temperature for geodetic applications,” J. Geod., 81(10), pp. 679–683, doi:10.1007/s00190-007-0135-3.   
+Bos, M. S., 2005, personal communication.   
+Cartwright, D. E. and Tayler, R. J., 1971, “New computations of the tide-generating potential,” Geophys. J. Roy. astr. Soc., 23(1), pp. 45–74.   
+Cartwright, D. E. and Edden, A. C., 1973, “Corrected tables of tidal harmonics,” Geophys. J. Roy. astr. Soc., 33(3), pp. 253–264, doi:10.1111/j.1365- 246X.1973.tb03420.x.   
+Chelton, D. B. and Enfield, D. B., 1986, “Ocean signals in tide gauge records,” J. Geophys. Res., 91(B9), pp. 9081–9098, doi: 10.1029/JB091iB09p09081   
+Desai, S. D., 2002, “Observing the pole tide with satellite altimetry,” J. Geophys. Res., 107(C11), 3186, doi:10.1029/2001JC001224.   
+Doodson, A. T., 1928, “The Analysis of Tidal Observations,” Phil. Trans. Roy. Soc. Lond., 227, pp. 223–279, http://www.jstor.org/stable/91217   
+Eanes, R. J., 1994, “Diurnal and semidiurnal tides from TOPEX/Poseidon altimetry,” paper G32B-6, presented at the Spring Meeting of the AGU, Baltimore, MD, EOS Trans AGU, 75, p. 108.   
+Eanes R. J. and Bettadpur, S., 1995, “The CSR 3.0 global ocean tide model,” Technical Memorandum CSR-TM-95-06, Center for Space Research, University of Texas, Austin, TX.   
+Egbert, G. D., Bennett, A. F., and Foreman, M. G. G., 1994, “TOPEX/ Poseidon tides estimated using a global inverse model,” J. Geophys. Res., 99(C12), pp. 24821–24852, doi: 10.1029/94JC01894   
+Egbert, G. D., Erofeeva, S.Y., 2002, “Efficient inverse modeling of barotropic ocean tides,” J. Atmos. Ocean. Technol., 19(2), pp. 183–204.
+
+Farrell, W. E., 1972, “Deformation of the Earth by surface loads,” Rev. Geophys. Space Phys., 10(3), pp. 761–797, doi: 10.1029/RG010i003p00761.
+
+Francis, O. and P. Mazzega, 1990, “Global charts of ocean tide loading effects,” J. Geophys Res., 95(C7), pp. 11411–11424, doi:10.1029/JC095iC07p11411.
+
+Gambis, D., personal communication, 2010.
+
+Haas, R., 1996, “Untersuchungen zu Erddeformationsmodellen f¨ur die Auswertung von geod¨atischen VLBI-Messungen”, PhD Thesis, Deutsche Geod¨atische Kommission, Reihe C, Heft Nr. 466, 103 pp.
+
+Haas, R., Scherneck, H.-G., and Schuh, H., 1997, “Atmospheric loading corrections in Geodetic VLBI and determination of atmospheric loading coefficients,” in Proc. of the 12 Working Meeting on European VLBI for Geodesy and Astronomy, Pettersen, B.R. (ed.), Honefoss, Norway, 1997, pp. 122–132.
+
+Hartmann, T. and Wenzel, H.-G., 1995, “The HW95 tidal potential catalogue,” Geophys. Res. Lett., 22(24), pp. 3553–3556, doi: 1029/95GL03324
+
+Hugentobler, U., 2006, personal communication.
+
+Le Provost, C., Genco, M. L., Lyard, F., Vincent, P., and Canceil, P., 1994, “Spectroscopy of the world ocean tides from a finite element hydrodynamic model,” J. Geophys. Res., 99(C12), pp. 24777–24797, doi: 10.1029/94JC01381
+
+Le Provost, C., Lyard, F., Molines, J. M., Genco, M. L., and Rabilloud, F., 1998, “A hydrodynamic ocean tide model improved by assimilating a satellite altimeter-derived data set,” J. Geophys. Res., 103(C3), pp. 5513–5529, doi: 10.1029/97JC01733
+
+Lef\`evre, F., Lyard, F. H., and Le Provost, C., 2000, “FES98: A new global tide finite element solution independent of altimetry,” Geophys. Res. Lett., 27(17), pp. 2717–2720, doi: 10.1029/1999GL011315
+
+Lef\`evre, F., Lyard, F. H., Le Provost, C., and Schrama, E.J.O., 2002, “FES99: A global tide finite element solution assimilating tide gauge and altimetric information,” J. of Atmos. Ocean. Technol., 19(9), pp. 1345–1356.
+
+Letellier, T., 2004, “Etude des ondes de mar´ee sur les plateaux continentaux,” Th\`ese doctorale, Universit´e de Toulouse III, 237pp.
+
+MacMillan, D. S. and Gipson, J. M., 1994, “Atmospheric pressure loading parameters from Very Long Baseline Interferometry observations,” J. Geophys. Res., 99(B9), pp. 18081–18087, doi: 10.1029/94JB01190
+
+Mathers, E. L. and Woodworth, P. L., 2001, “Departures from the local inverse barometer model observed in altimeter and tide gauge data and in a global barotropic numerical model,” J. Geophys. Res., 106(C4), pp. 6957–6972, doi: 10.1029/2000JC000241
+
+Mathews, P. M., Buffett, B. A., and Shapiro, I. I., 1995, “Love numbers for a rotating spheroidal Earth: New definitions and numerical values,” Geophys. Res. Lett., 22(5), pp. 579–582, doi: 10.1029/95GL00161
+
+Matsumoto, K., Takanezawa, T. and Ooe, M., 2000, “Ocean tide models developed by assimilating TOPEX/Poseidon altimeter data into hydrodynamical model: A global model and a regional model around Japan,” J. Oceanog., 56(5), pp. 567–581.
+
+Munk, W. H. and MacDonald, G. J. F., 1960, The Rotation of the Earth, Cambridge Univ. Press, New York, pp. 24–25.
+
+Nothnagel, A., 2009, “Conventions on thermal expansion modelling of radio telescopes for geodetic and astrometric VLBI ,” J. Geod., 83(8), pp. 787–792, doi: 10.1007/s00190-008-0284-z.
+
+Petrov, L. and J.-P. Boy, 2004, “Study of the atmospheric pressure loading signal in very long baseline interferometry observations,” J. Geophys. Res., 109, B03405, 14 pp., doi: 10.1029/2003JB002500.
+
+Ponte, R. M., Salstein, D. A., and Rosen, R. D., 1991, “Sea level response to pressure forcing in a barotropic numerical model,” J. Phys. Oceanogr., 21(7), pp. 1043–1057.   
+Ray, R., 1999, “A global ocean tide model From TOPEX/Poseidon altimetry: GOT99.2,” NASA Technical Memorandum, NASA/TM-1999-209478, National Aeronautics and Space Administration, Goddard Space Flight Center, Greenbelt, MD.   
+Ray, R. D. and R. M. Ponte, 2003, “Barometric tides from ECMWF operational analyses,” Ann. Geophys., 21(8), pp. 1897–1910, doi:10.5194/angeo-21- 1897-2003.   
+Ries, J.C., personal communication, 2010.   
+Row, L. W., Hastings, D. A., and Dunbar, P. K., 1995, “TerrainBase Worldwide Digital Terrain Data,” NOAA, National Geophysical Data Center, Boulder CO.   
+Savcenko, R., Bosch, W., 2008, “EOT08a - empirical ocean tide model from multi-mission satellite altimetry,” Report No. 81, Deutsches Geod¨atisches Forschungsinstitut (DGFI), M¨unchen, ftp://ftp.dgfi.badw.de/pub/EOT08a/doc/EOTO8a.pdf   
+Schmid, R., Steigenberger, P., Gendt, G., Ge, M., and Rothacher, M., 2007, “Generation of a consistent absolute phase center correction model for GPS receiver and satellite antennas,” J. Geod., 81(12), pp. 781–798, doi:10.1007/s00190-007-0148-y.   
+Scherneck, H.-G., 1990, “Loading Green’s functions for a continental shield with a Q-structure for the mantle and density constraints from the geoid,” Bull. d’Inform. Mar´ees Terr., 108, pp. 7775–7792.   
+Scherneck, H.-G., 1991, “A parameterized solid earth tide model and ocean tide loading effects for global geodetic baseline measurements,” Geophys. J. Int., 106(3), pp. 677–694, doi: 10.1111/j.1365-246X.1991.tb06339.x   
+Scherneck, H.-G., 1993, “Ocean tide loading: propagation of errors from the ocean tide into loading coefficients,” man. Geod., 18(2), pp. 59–71.   
+Scherneck, H.-G., 1999, in Explanatory supplement to the section “Local site displacement due to ocean loading” of the IERS Conventions (1996) Chapters 6 and 7, Schuh, H. (ed.), DGFI Report 71, pp. 19–23.   
+Schwiderski, E. W., 1980, “On charting global ocean tides,” Rev. Geophys. Space Phys., 18(1), pp. 243–268, doi: 10.1029/RG018i001p00243   
+Schwiderski, E. W. and Szeto, L. T., 1981, “The NSWC global ocean tide data tape (GOTD), its features and application, random-point tide program,” NSWC-TR 81–254, Naval Surface Weapons Center, Dahlgren, VA, 19 pp.   
+Shiskin, J., Young, A., Musgrave, J.C., 1967, “The X11 variant of the Census method II seasonal adjustment program,” Washington DC, Technical Paper n15, Bureau of Census, US Department of Commerce.   
+Sun, H. P., Ducarme, B., and Dehant, V., 1995, “Effect of the atmospheric pressure on surface displacements,” J. Geod., 70(3), pp. 131–139, doi: 10.1007/BF00943688   
+Tamura, Y., 1987, “A harmonic development of the tide-generating potential,” Bull. d’Inform. Mar´ees Terr., 99, pp. 6813–6855.   
+Tregoning, P. and C. Watson, 2009, “Atmospheric effects and spurious signals in GPS analyses”, J. Geophys. Res., 114(B9), B09403, 15 pp., doi: 10.1029/2009JB006344.   
+van den Dool, H. M., S. Saha, J. Schemm, and J. Huang, 1997, “A temporal interpolation method to obtain hourly atmospheric surface pressure tides in Reanalysis 1979-1995,” J. Geophys. Res., 102(D18), pp. 22013–22024, doi:10.1029/97JD01571.   
+van den Dool, H. M., 2004, personal communication.   
+Wahr, J. M., 1981, “Body tides on an elliptical, rotating, elastic, and oceanless Earth,” Geophys. J. Roy. astr. Soc., 64(3), pp. 677–703.   
+Wahr, J. M., 1985, “Deformation induced by polar motion,” J. Geophys. Res., 90(B11), pp. 9363–9368, doi:10.1029/JB090iB11p09363.   
+Wahr, J. M. and Sasao, T., 1981, “A diurnal resonance in the ocean tide and the Earth’s load response due to the resonant free “core nutation”,” Geophys. J. R. astr. Soc., 64, pp. 747–765.   
+Wenzel, H.-G., 1996 “The nanogal software: Earth tide data processing package Eterna 3.3,” Bull. d’Inform. Mar´ees Terr., 124, pp. 9425–9439.   
+Wessel, P. and Smith, W. H. F., 1998, “New, improved version of the Generic Mapping Tools released,” EOS Trans. AGU, 79, 579.   
+Zschau, J., 1983, “Rheology of the Earth’s mantle at tidal and Chandler Wobble periods,” Proc. Ninth Int. Symp. Earth Tides, New York, 1981, Kuo, J. T. (ed.), Schweizerbart’sche Verlagsbuchhandlung, Stuttgart, pp. 605–630.
+
+# 8 Tidal variations in the Earth’s rotation
+
+# 8.1 Effect of the tidal deformation (zonal tides) on Earth’s rotation
+
+Periodic variations in UT1 due to tidal deformation of the polar moment of inertia were first derived by Yoder et al. (1981) and included the tidal deformation (zonal tides) of the Earth with a decoupled core, an elastic mantle and equilibrium oceans. This model used effective Love numbers that differ from the bulk value of 0.301 because of the oceans and the fluid core, producing different theoretical values of the ratio $k / C$ (defined as the quantity which scales the rotational series, where $k$ is that part of the Love number which causes the tidal variation in the moment of inertia of the coupled mantle and oceans and $C$ is the dimensionless polar moment of inertia of the coupled values) for the fortnightly and monthly terms. However, Yoder et al. (1981) recommend the value of 0.94 for $k / C$ for both cases.
+
+Past versions of the IERS Conventions defined regularized UT1 $^ { 1 }$ as UT1 with the effect of the corrected tides with periods less than 35 days removed and UT1S as UT1 with the effects of all tidal constituents removed, including the long-period tides (up to 18.6 years). However, the IERS Conventions recommend that only UT1 and length of day (here noted $\Delta$ ) be used in routine data exchange applications in order to avoid possible confusion regarding the exact implementation of tidal models. In research applications, analysts must be careful to specify unambiguously any tidal models used.
+
+Table 8.1 provides corrections for the tidal variations in the Earth’s rotation with periods from 5 days to 18.6 years. These corrections ( $\delta$ UT1, $\delta \Delta$ , $\delta \omega$ ) represent the effect of tidal deformation on the physical variations in the rotation of the Earth and are the sum of: (1) the Yoder et al. (1981) elastic body and equilibrium ocean tide model assuming a value of 0.94 for $k / C$ ; (2) the in-phase and outof-phase components of the Wahr and Bergen (1986) inelastic body tide model for the QMU Earth model of Sailor and Dziewonski (1978) assuming a frequency dependence of $( f _ { m } / f ) ^ { \alpha }$ where $\alpha = 0 . 1 5$ , $f _ { m }$ is the seismic frequency corresponding to a period of $2 0 0 \mathrm { s }$ , and $f$ is the tidal frequency; and (3) the data assimilating dynamic ocean tide model “A” of Kantha et al. (1998) from which the equilibrium model of Yoder et al. (1981) was removed (see Gross (2009) for an evaluation of these and other tide models). To obtain variations free from tidal effects, these corrections should be subtracted from the observed UT1 $-$ UTC, length of day ( $\Delta$ ) and rotation velocity ( $\omega$ ). The difference between this newly recommended model and that in the Conventions ${ \it 2 0 0 3 }$ is mainly at the fortnightly tidal period where the UT1 amplitude difference is approximately 6 $\mu \mathrm { s }$ . The total amplitude of the fortnightly tide in UT1 is about 785 $\mu \mathrm { s }$ .
+
+$$
+\delta \mathrm { U T } 1 = \sum _ { i = 1 } ^ { 6 2 } B _ { i } \sin \xi _ { i } + C _ { i } \cos \xi _ { i } ,
+$$
+
+$$
+\delta \Delta = \sum _ { i = 1 } ^ { 6 2 } B _ { i } ^ { \prime } \cos \xi _ { i } + C _ { i } ^ { \prime } \sin \xi _ { i } ,
+$$
+
+$$
+\delta \omega = \sum _ { i = 1 } ^ { 6 2 } B _ { i } ^ { \prime \prime } \cos \xi _ { i } + C _ { i } ^ { \prime \prime } \sin \xi _ { i } ,
+$$
+
+$$
+\xi _ { i } = \sum _ { j = 1 } ^ { 5 } a _ { i j } \alpha _ { j } ,
+$$
+
+$B _ { i }$ , $C _ { i }$ , $B _ { i } ^ { \prime }$ , $C _ { i } ^ { \prime }$ , $B _ { i } ^ { \prime \prime }$ , and $C _ { i } ^ { \prime \prime }$ are given in columns 7–12 respectively in Table 8.1. $a _ { i j }$ are the integer multipliers of the for the $i ^ { \mathrm { t h } }$ tide given in the first five columns $\alpha _ { j }$ of Table 8.1. The arguments $\alpha _ { j }$ (l, $l ^ { \prime }$ , $F ^ { \prime }$ , $D$ or $\Omega$ ) are given in Section 5.7.2.
+
+The routine “RG ZONT2.F”, available from the IERS Conventions website ${ < } ^ { 2 } >$ implements the model from Table 8.1.
+
+In the past there has been some confusion over comparison of models appearing in the IERS Conventions and the values published in the Yoder et al. (1981) paper. J. Williams (2005, private communication) points out that there are four known errors in the Yoder et al. (1981) table. (1) The amplitude of term 22 (14.73-day period) should read $^ { - 5 0 }$ instead of 50. (2) The period of term 58 (1095.17-day period) should read −1095.17 instead of 1095.17, (i.e. the motion is retrograde). (3) The amplitude of term 59 (1305.47-day period) should read $- 4 4 8$ instead of −449. (4) The amplitude of term 60 (3232.85-day period) should read $+ 4 3$ instead of $^ { - 4 3 }$ .
+
+To avoid confusion among possible tidal models, it is recommended that the terms δUT1, $\delta \Delta$ , $\delta \omega$ be followed by the model name in parenthesis, e.g. δUT1(Yoder et al., 1981).
+
+# 8.2 Diurnal and semi-diurnal variations due to ocean tides
+
+The routine “ORTHO EOP.F”, available from the IERS Conventions website $< { } ^ { 3 } >$ , provides corrections for modeling the diurnal and sub-diurnal variations in polar motion and UT1. It was provided by Eanes (2000) and based on Ray et al. (1994). The difference with the older model of the Conventions (1996) can exceed 100 microarcseconds for polar motion and 10 microseconds for UT1.
+
+The model includes 71 tidal constituents with amplitudes on the order of tenths of milliarcseconds in polar motion and tens of microseconds in UT1. The coefficients of these terms have been derived by the IERS Earth Orientation Center from time series of these variations determined from “ORTHO EOP.F”, and are reported in Tables 8.2a and 8.2b for polar motion and in Tables 8.3a and 8.3b for UT1 and length of day (LOD). Previous versions of Tables 8.3a and 8.3b provided LOD with a resolution that was better than that for UT1. For consistency between the two and between these tables and Table 5.1b in Chapter 5, one digit has been removed for the LOD values in Tables 8.3a and 8.3b. Because these tables cannot be found in the code of “ORTHO EOP.F”, the IERS Earth Orientation Center has implemented them in the alternative software “interp.f” ${ < } ^ { 3 } { > }$ . The two routines agree at the level of a few microarcseconds in polar motion and a few tenths of a microsecond in UT1.
+
+# 8.3 Tidal variations in polar motion and polar motion excitation due to long period ocean tides
+
+Table 8.4 provides corrections for the tidal variations in polar motion and polar motion excitation with periods from 9 days to 18.6 years in terms of the amplitude $A$ and phase $\phi$ of the prograde (subscript $p$ ) and retrograde (subscript $r$ ) components defined for polar motion $\vec { \bf p } ( t )$ by:
+
+$$
+\begin{array} { r } { \vec { \bf p } ( t ) = p _ { x } ( t ) - i p _ { y } ( t ) = A _ { p } e ^ { i \phi _ { p } } e ^ { i \alpha ( t ) } + A _ { r } e ^ { i \phi _ { r } } e ^ { - i \alpha ( t ) } , } \end{array}
+$$
+
+and for polar motion excitation ${ \vec { \chi } } ( t ) \equiv { \vec { \mathbf { p } } } ( t ) + { \frac { i } { \sigma _ { 0 } } } { \frac { d { \vec { \mathbf { p } } } ( t ) } { d t } }$ by:
+
+$$
+\begin{array} { r } { \vec { \chi } ( t ) = \chi _ { x } ( t ) + i \chi _ { y } ( t ) = A _ { p } e ^ { i \phi _ { p } } e ^ { i \alpha ( t ) } + A _ { r } e ^ { i \phi _ { r } } e ^ { - i \alpha ( t ) } } \end{array}
+$$
+
+where by convention $p _ { y } ( t )$ is defined to be positive toward $9 0 ^ { \circ } \mathrm { W }$ longitude, $\chi _ { y } ( t )$ i s defined to be positive toward $9 0 ^ { \circ } \mathrm { E }$ longitude, $\sigma _ { 0 }$ is the complex-valued frequency of the Chandler wobble, and $\alpha ( t )$ is the tidal argument, the expansion of which in terms of $( l , l ^ { \prime } , F , D$ , and $\Omega$ ) is given in Table 8.4. These corrections are from the Dickman and Nam (1995) long-period spherical harmonic ocean tide model as reported by Dickman and Gross (2010). To obtain variations free from tidal effects, the sum of these corrections should be subtracted from the observed polar motion and polar motion excitation values. The effect on polar motion is largest for the fortnightly tide. Empirical fits to polar motion data give (prograde, retrograde) amplitudes of (69, 89) $\mu \mathrm { a s }$ at $M _ { f }$ . The model yields (prograde, retrograde) polar motion amplitudes of (66, 74) µas at $M _ { f }$ .
+
+Table 8.1: Zonal tide terms. Columns headed by the titles $\delta$ UT1, $\delta \Delta$ , and $\delta \omega$ provide the regularized forms of UT1, the duration of the day $\Delta$ , and the angular velocity of the Earth, $\omega$ . The units are $1 0 ^ { - 4 }$ s for UT1, $1 0 ^ { - 5 }$ s for $\Delta$ , and $1 0 ^ { - 1 4 }$ rad/s for $\omega$ . The column titled “Period” provides the approximate value of the period with a positive or negative sign to indicate a prograde or retrograde motion.   
+
+<table><tr><td colspan="4">ARGUMENT</td><td colspan="2">PERIOD</td><td colspan="2">8UT1</td><td colspan="2">8△</td><td colspan="2">s</td></tr><tr><td>1</td><td>1</td><td>F</td><td>D</td><td>Ω</td><td>Days</td><td>B</td><td>Ci</td><td>B</td><td>C</td><td>B</td><td>C</td></tr><tr><td>1</td><td>0</td><td>2</td><td>2</td><td>2</td><td>5.64</td><td>-0.0235</td><td>0.0000</td><td>0.2617</td><td>0.0000</td><td>-0.2209</td><td>0.0000</td></tr><tr><td>2</td><td>0</td><td>2</td><td>0</td><td>1</td><td>6.85</td><td>-0.0404</td><td>0.0000</td><td>0.3706</td><td>0.0000</td><td>-0.3128</td><td>0.0000</td></tr><tr><td>2</td><td>0</td><td></td><td>0</td><td>2</td><td>6.86</td><td>-0.0987</td><td>0.0000</td><td>0.9041</td><td>0.0000</td><td>-0.7630</td><td>0.0000</td></tr><tr><td>0</td><td>0</td><td>2</td><td>2</td><td>1</td><td>7.09</td><td>-0.0508</td><td>0.0000</td><td>0.4499</td><td>0.0000</td><td>-0.3797</td><td>0.0000</td></tr><tr><td>0</td><td>0</td><td></td><td>2</td><td>2</td><td>7.10</td><td>-0.1231</td><td>0.0000</td><td>1.0904</td><td>0.0000</td><td>-0.9203</td><td>0.0000</td></tr><tr><td>1</td><td>0</td><td>2</td><td>0</td><td>0</td><td>9.11</td><td>-0.0385</td><td>0.0000</td><td>0.2659</td><td>0.0000</td><td>-0.2244</td><td>0.0000</td></tr><tr><td>1</td><td>0</td><td>2</td><td>0</td><td>1</td><td>9.12</td><td>-0.4108</td><td>0.0000</td><td>2.8298</td><td>0.0000</td><td>-2.3884</td><td>0.0000</td></tr><tr><td>1</td><td>0</td><td>2</td><td>0</td><td>2</td><td>9.13</td><td>-0.9926</td><td>0.0000</td><td>6.8291</td><td>0.0000</td><td>-5.7637</td><td>0.0000</td></tr><tr><td>3</td><td>0</td><td>0</td><td>0</td><td>0</td><td>9.18</td><td>-0.0179</td><td>0.0000</td><td>0.1222</td><td>0.0000</td><td>-0.1031</td><td>0.0000</td></tr><tr><td>-1</td><td>0</td><td>2</td><td>2</td><td>1</td><td>9.54</td><td>-0.0818</td><td>0.0000</td><td>0.5384</td><td>0.0000</td><td>-0.4544</td><td>0.0000</td></tr><tr><td>-1</td><td>0</td><td>2</td><td>2</td><td>2</td><td>9.56</td><td>-0.1974</td><td>0.0000</td><td>1.2978</td><td>0.0000</td><td>-1.0953</td><td>0.0000</td></tr><tr><td>1</td><td>0</td><td>0</td><td>2</td><td>0</td><td>9.61</td><td>-0.0761</td><td>0.0000</td><td>0.4976</td><td>0.0000</td><td>-0.4200</td><td>0.0000</td></tr><tr><td>2</td><td>0</td><td>2</td><td>-2</td><td>2</td><td>12.81</td><td>0.0216</td><td>0.0000</td><td>-0.1060</td><td>0.0000</td><td>0.0895</td><td>0.0000</td></tr><tr><td>0</td><td>1</td><td>2</td><td>0</td><td>2</td><td>13.17</td><td>0.0254</td><td>0.0000</td><td>-0.1211</td><td>0.0000</td><td>0.1022</td><td>0.0000</td></tr><tr><td>0</td><td>0</td><td>2</td><td>0</td><td>0</td><td>13.61</td><td>-0.2989</td><td>0.0000</td><td>1.3804</td><td>0.0000</td><td>-1.1650</td><td>0.0000</td></tr><tr><td>0</td><td>0</td><td>2</td><td>0</td><td>1</td><td>13.63</td><td>-3.1873</td><td>0.2010</td><td>14.6890</td><td>0.9266</td><td>-12.3974</td><td>-0.7820</td></tr><tr><td>0</td><td>0</td><td>2</td><td>0</td><td>2</td><td>13.66</td><td>-7.8468</td><td>0.5320</td><td>36.0910</td><td>2.4469</td><td>-30.4606</td><td>-2.0652</td></tr><tr><td>2</td><td>0</td><td>0</td><td>0</td><td>-1</td><td>13.75</td><td>0.0216</td><td>0.0000</td><td>-0.0988</td><td>0.0000</td><td>0.0834</td><td>0.0000</td></tr><tr><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>13.78</td><td>-0.3384</td><td>0.0000</td><td>1.5433</td><td>0.0000</td><td>-1.3025</td><td>0.0000</td></tr><tr><td>2</td><td>0</td><td>0</td><td>0</td><td>1</td><td>13.81</td><td>0.0179</td><td>0.0000</td><td>-0.0813</td><td>0.0000</td><td>0.0686</td><td>0.0000</td></tr><tr><td>0</td><td>-1</td><td>2</td><td>0</td><td>2</td><td>14.19</td><td>-0.0244</td><td>0.0000</td><td>0.1082</td><td>0.0000</td><td>-0.0913</td><td>0.0000</td></tr><tr><td>0</td><td>0</td><td>0</td><td>2</td><td>-1</td><td>14.73</td><td>0.0470</td><td>0.0000</td><td>-0.2004</td><td>0.0000</td><td>0.1692</td><td>0.0000</td></tr><tr><td>0</td><td>0</td><td>0</td><td>2</td><td>0</td><td>14.77</td><td>-0.7341</td><td>0.0000</td><td>3.1240</td><td>0.0000</td><td>-2.6367</td><td>0.0000</td></tr><tr><td>0</td><td>0</td><td>0</td><td>2</td><td>1</td><td>14.80</td><td>-0.0526</td><td>0.0000</td><td>0.2235</td><td>0.0000</td><td>-0.1886</td><td>0.0000</td></tr><tr><td>0</td><td>-1</td><td>0</td><td>2</td><td>0</td><td>15.39</td><td>-0.0508</td><td>0.0000</td><td>0.2073</td><td>0.0000</td><td>-0.1749</td><td>0.0000</td></tr><tr><td>1</td><td>0</td><td>2</td><td>-2</td><td>1</td><td>23.86</td><td>0.0498</td><td>0.0000</td><td>-0.1312</td><td>0.0000</td><td>0.1107</td><td>0.0000</td></tr><tr><td>1</td><td>0</td><td>2</td><td>-2</td><td>2</td><td>23.94</td><td>0.1006</td><td>0.0000</td><td>-0.2640</td><td>0.0000</td><td>0.2228</td><td>0.0000</td></tr><tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>25.62</td><td>0.0395</td><td>0.0000</td><td>-0.0968</td><td>0.0000</td><td>0.0817</td><td>0.0000</td></tr><tr><td>-1</td><td>0</td><td>2</td><td>0</td><td>0</td><td>26.88</td><td>0.0470</td><td>0.0000</td><td>-0.1099</td><td>0.0000</td><td>0.0927</td><td>0.0000</td></tr><tr><td>-1</td><td>0</td><td>2</td><td>0</td><td>1</td><td>26.98</td><td>0.1767</td><td>0.0000</td><td>-0.4115</td><td>0.0000</td><td>0.3473</td><td>0.0000</td></tr><tr><td>-1</td><td>0</td><td>2</td><td>0</td><td>2</td><td>27.09</td><td>0.4352</td><td>0.0000</td><td>-1.0093</td><td>0.0000</td><td>0.8519</td><td>0.0000</td></tr></table>
+
+(Table 8.1: continued)   
+
+<table><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>-1</td><td>27.44</td><td>0.5339</td><td>0.0000</td><td>-1.2224</td><td>0.0000</td><td>1.0317</td><td>0.0000</td></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>27.56</td><td>-8.4046</td><td>0.2500</td><td>19.1647</td><td>0.5701</td><td>-16.1749</td><td>-0.4811</td></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>27.67</td><td>0.5443</td><td>0.0000</td><td>-1.2360</td><td>0.0000</td><td>1.0432</td><td>0.0000</td></tr><tr><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>29.53</td><td>0.0470</td><td>0.0000</td><td>-0.1000</td><td>0.0000</td><td>0.0844</td><td>0.0000</td></tr><tr><td>1</td><td>-1</td><td>0</td><td>0</td><td>0</td><td>29.80</td><td>-0.0555</td><td>0.0000</td><td>0.1169</td><td>0.0000</td><td>-0.0987</td><td>0.0000</td></tr><tr><td>-1</td><td>0</td><td>0</td><td>2</td><td>-1</td><td>31.66</td><td>0.1175</td><td>0.0000</td><td>-0.2332</td><td>0.0000</td><td>0.1968</td><td>0.0000</td></tr><tr><td>-1</td><td>0</td><td>0</td><td>2</td><td>0</td><td>31.81</td><td>-1.8236</td><td>0.0000</td><td>3.6018</td><td>0.0000</td><td>-3.0399</td><td>0.0000</td></tr><tr><td>-1</td><td>0</td><td>0</td><td>2</td><td>1</td><td>31.96</td><td>0.1316</td><td>0.0000</td><td>-0.2587</td><td>0.0000</td><td>0.2183</td><td>0.0000</td></tr><tr><td>1</td><td>0</td><td>-2</td><td>2</td><td>-1</td><td>32.61</td><td>0.0179</td><td>0.0000</td><td>-0.0344</td><td>0.0000</td><td>0.0290</td><td>0.0000</td></tr><tr><td>-1</td><td>-1</td><td>0</td><td>2</td><td>0</td><td>34.85</td><td>-0.0855</td><td>0.0000</td><td>0.1542</td><td>0.0000</td><td>-0.1302</td><td>0.0000</td></tr><tr><td>0</td><td>2</td><td>2</td><td>-2</td><td>2</td><td>91.31</td><td>-0.0573</td><td>0.0000</td><td>0.0395</td><td>0.0000</td><td>-0.0333</td><td>0.0000</td></tr><tr><td>0</td><td>1</td><td>2</td><td>-2</td><td>1</td><td>119.61</td><td>0.0329</td><td>0.0000</td><td>-0.0173</td><td>0.0000</td><td>0.0146</td><td>0.0000</td></tr><tr><td>0</td><td>1</td><td>2</td><td>-2</td><td>2</td><td>121.75</td><td>-1.8847</td><td>0.0000</td><td>0.9726</td><td>0.0000</td><td>-0.8209</td><td>0.0000</td></tr><tr><td>0</td><td>0</td><td>2</td><td>-2</td><td>0</td><td>173.31</td><td>0.2510</td><td>0.0000</td><td>-0.0910</td><td>0.0000</td><td>0.0768</td><td>0.0000</td></tr><tr><td>0</td><td>0</td><td>2</td><td>-2</td><td>1</td><td>177.84</td><td>1.1703</td><td>0.0000</td><td>-0.4135</td><td>0.0000</td><td>0.3490</td><td>0.0000</td></tr><tr><td>0</td><td>0</td><td>2</td><td>-2</td><td>2</td><td>182.62</td><td>-49.7174</td><td>0.4330</td><td>17.1056</td><td>0.1490</td><td>-14.4370</td><td>-0.1257</td></tr><tr><td>0</td><td>2</td><td>0</td><td>0</td><td>0</td><td>182.63</td><td>-0.1936</td><td>0.0000</td><td>0.0666</td><td>0.0000</td><td>-0.0562</td><td>0.0000</td></tr><tr><td>2</td><td>0</td><td>0</td><td>-2</td><td>-1</td><td>199.84</td><td>0.0489</td><td>0.0000</td><td>-0.0154</td><td>0.0000</td><td>0.0130</td><td>0.0000</td></tr><tr><td>2</td><td>0</td><td>0</td><td>-2</td><td>0</td><td>205.89</td><td>-0.5471</td><td>0.0000</td><td>0.1670</td><td>0.0000</td><td>-0.1409</td><td>0.0000</td></tr><tr><td>2</td><td>0</td><td>0</td><td>-2</td><td>1</td><td>212.32</td><td>0.0367</td><td>0.0000</td><td>-0.0108</td><td>0.0000</td><td>0.0092</td><td>0.0000</td></tr><tr><td>0</td><td>-1</td><td>2</td><td>-2</td><td>1</td><td>346.60</td><td>-0.0451</td><td>0.0000</td><td>0.0082</td><td>0.0000</td><td>-0.0069</td><td>0.0000</td></tr><tr><td>0</td><td>1</td><td>0</td><td>0</td><td>-1</td><td>346.64</td><td>0.0921</td><td>0.0000</td><td>-0.0167</td><td>0.0000</td><td>0.0141</td><td>0.0000</td></tr><tr><td>0</td><td>-1</td><td>2</td><td>-2</td><td>2</td><td>365.22</td><td>0.8281</td><td>0.0000</td><td>-0.1425</td><td>0.0000</td><td>0.1202</td><td>0.0000</td></tr><tr><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>365.26</td><td>-15.8887</td><td>0.1530</td><td>2.7332</td><td>0.0263</td><td>-2.3068</td><td>-0.0222</td></tr><tr><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>386.00</td><td>-0.1382</td><td>0.0000</td><td>0.0225</td><td>0.0000</td><td>-0.0190</td><td>0.0000</td></tr><tr><td>1</td><td>0</td><td>0</td><td>-1</td><td>0</td><td>411.78</td><td>0.0348</td><td>0.0000</td><td>-0.0053</td><td>0.0000</td><td>0.0045</td><td>0.0000</td></tr><tr><td>2</td><td>0</td><td>-2</td><td>0</td><td>0</td><td>-1095.18</td><td>-0.1372</td><td>0.0000</td><td>-0.0079</td><td>0.0000</td><td>0.0066</td><td>0.0000</td></tr><tr><td>-2</td><td>0</td><td>2</td><td>0</td><td>1</td><td>1305.48</td><td>0.4211</td><td>0.0000</td><td>-0.0203</td><td>0.0000</td><td>0.0171</td><td>0.0000</td></tr><tr><td>-1</td><td>1</td><td>0</td><td>1</td><td>0</td><td>3232.86</td><td>-0.0404</td><td>0.0000</td><td>0.0008</td><td>0.0000</td><td>-0.0007</td><td>0.0000</td></tr><tr><td>0</td><td>0</td><td>0</td><td>0</td><td>2</td><td>-3399.19</td><td>7.8998</td><td>0.0000</td><td>0.1460</td><td>0.0000</td><td>-0.1232</td><td>0.0000</td></tr><tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>-6798.38</td><td>-1617.2681</td><td>0.0000</td><td>-14.9471</td><td>0.0000</td><td>12.6153</td><td>0.0000</td></tr></table>
+
+Table 8.2a: Coefficients of sin(argument) and cos(argument) of diurnal variations in pole coordinates $x _ { p }$ and $y _ { p }$ caused by ocean tides. The units are $\mu \mathrm { a s }$ ; $\gamma$ denotes GMST $+ \pi$ .   
+
+<table><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=6>argument</td><td rowspan=1 colspan=2>Doodson</td><td rowspan=1 colspan=1>Period</td><td rowspan=1 colspan=3>xp</td><td rowspan=1 colspan=2>yp</td></tr><tr><td rowspan=1 colspan=2>Tide</td><td rowspan=1 colspan=6>Y   1  l F D m</td><td rowspan=1 colspan=2>number</td><td rowspan=1 colspan=1>(days)</td><td rowspan=1 colspan=3>sin   cos</td><td rowspan=1 colspan=2>sin  cos</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=6>1 -1  0 -2 -2 -2</td><td rowspan=1 colspan=2>117.655</td><td rowspan=1 colspan=1>1.2113611</td><td rowspan=1 colspan=3>0.0     0.9</td><td rowspan=1 colspan=2>-0.9   -0.1</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=3>1 -2  0</td><td rowspan=1 colspan=3>-2  0 -1</td><td rowspan=1 colspan=2>125.745</td><td rowspan=1 colspan=1>1.1671262</td><td rowspan=1 colspan=3>0.1     0.6</td><td rowspan=1 colspan=2>-0.6   0.1</td></tr><tr><td rowspan=1 colspan=2>2Q1</td><td rowspan=1 colspan=3>1  -2  0</td><td rowspan=1 colspan=3>-2  0 -2</td><td rowspan=1 colspan=2>125.755</td><td rowspan=1 colspan=1>1.1669259</td><td rowspan=1 colspan=3>0.3     3.4</td><td rowspan=1 colspan=2>-3.4   0.3</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=3>1  0  0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>-2 -1</td><td rowspan=1 colspan=2>127.545</td><td rowspan=1 colspan=1>1.1605476</td><td rowspan=1 colspan=3>0.1     0.8</td><td rowspan=1 colspan=2>-0.8   0.1</td></tr><tr><td rowspan=1 colspan=2>01</td><td rowspan=1 colspan=3>1  0  0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>-2 -2</td><td rowspan=1 colspan=2>127.555</td><td rowspan=1 colspan=1>1.1603495</td><td rowspan=1 colspan=3>0.5     4.2</td><td rowspan=1 colspan=2>-4.1    0.5</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=3>1 -1  0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>0 -1</td><td rowspan=1 colspan=2>135.645</td><td rowspan=1 colspan=1>1.1196993</td><td rowspan=1 colspan=3>1.2     5.0</td><td rowspan=1 colspan=2>-5.0   1.2</td></tr><tr><td rowspan=1 colspan=2>Q1</td><td rowspan=1 colspan=2>1 -1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>0 -2</td><td rowspan=1 colspan=2>135.655</td><td rowspan=1 colspan=1>1.1195148</td><td rowspan=1 colspan=3>6.2   26.3</td><td rowspan=1 colspan=2>-26.3   6.2</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=2>1  1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>-2 -1</td><td rowspan=1 colspan=2>137.445</td><td rowspan=1 colspan=1>1.1136429</td><td rowspan=1 colspan=3>0.2     0.9</td><td rowspan=1 colspan=2>-0.9    0.2</td></tr><tr><td rowspan=1 colspan=2>RO1</td><td rowspan=1 colspan=2>1   1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>-2 -2</td><td rowspan=1 colspan=2>137.455</td><td rowspan=1 colspan=1>1.1134606</td><td rowspan=1 colspan=3>1.3     5.0</td><td rowspan=1 colspan=2>-5.0   1.3</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=2>1  0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>0  0</td><td rowspan=1 colspan=2>145.535</td><td rowspan=1 colspan=1>1.0761465</td><td rowspan=1 colspan=3>-0.3    -0.8</td><td rowspan=1 colspan=1>0.8</td><td rowspan=1 colspan=1>-0.3</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=2>1  0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>0 -1</td><td rowspan=1 colspan=2>145.545</td><td rowspan=1 colspan=1>1.0759762</td><td rowspan=1 colspan=3>9.2   25.1</td><td rowspan=1 colspan=1>-25.1</td><td rowspan=1 colspan=1>9.2</td></tr><tr><td rowspan=1 colspan=2>01</td><td rowspan=1 colspan=2>1  0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>0 -2</td><td rowspan=1 colspan=2>145.555</td><td rowspan=1 colspan=1>1.0758059</td><td rowspan=1 colspan=3>48.8  132.9</td><td rowspan=1 colspan=1>-132.9</td><td rowspan=1 colspan=1>48.8</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=2>1 -2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=2>0  0</td><td rowspan=1 colspan=2>145.755</td><td rowspan=1 colspan=1>1.0750901</td><td rowspan=1 colspan=3>-0.3    -0.9</td><td rowspan=1 colspan=1>0.9</td><td rowspan=1 colspan=1>-0.3</td></tr><tr><td rowspan=1 colspan=2>TO1</td><td rowspan=1 colspan=2>1  0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=2>147.555</td><td rowspan=1 colspan=1>1.0695055</td><td rowspan=1 colspan=3>-0.7    -1.7</td><td rowspan=1 colspan=1>1.7</td><td rowspan=1 colspan=1>-0.7</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>153.655</td><td rowspan=1 colspan=1>1.0406147</td><td rowspan=1 colspan=1>-0.4</td><td rowspan=1 colspan=2>-0.9</td><td rowspan=1 colspan=1>0.9</td><td rowspan=1 colspan=1>-0.4</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=2>155.445</td><td rowspan=1 colspan=1>1.0355395</td><td rowspan=1 colspan=1>-0.3</td><td rowspan=1 colspan=2>-0.6</td><td rowspan=1 colspan=1>0.6</td><td rowspan=1 colspan=1>-0.3</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>155.455</td><td rowspan=1 colspan=1>1.0353817</td><td rowspan=1 colspan=1>-1.6</td><td rowspan=1 colspan=2>-3.5</td><td rowspan=1 colspan=1>3.5</td><td rowspan=1 colspan=1>-1.6</td></tr><tr><td rowspan=1 colspan=2>M1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=2>155.655</td><td rowspan=1 colspan=1>1.0347187</td><td rowspan=1 colspan=1>-4.5</td><td rowspan=1 colspan=2>-9.6</td><td rowspan=1 colspan=1>9.6</td><td rowspan=1 colspan=1>-4.5</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=2>155.665</td><td rowspan=1 colspan=1>1.0345612</td><td rowspan=1 colspan=1>-0.9</td><td rowspan=1 colspan=2>-1.9</td><td rowspan=1 colspan=1>1.9</td><td rowspan=1 colspan=1>-0.9</td></tr><tr><td rowspan=1 colspan=2>X1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>157.455</td><td rowspan=1 colspan=1>1.0295447</td><td rowspan=1 colspan=1>-0.9</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>-1.8</td><td rowspan=1 colspan=1>1.8</td><td rowspan=1 colspan=1>-0.9</td></tr><tr><td rowspan=1 colspan=2>T1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>162.556</td><td rowspan=1 colspan=1>1.0055058</td><td rowspan=1 colspan=1>1.5</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>3.0</td><td rowspan=1 colspan=1>-3.0</td><td rowspan=1 colspan=1>1.5</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>163.545</td><td rowspan=1 colspan=1>1.0028933</td><td rowspan=1 colspan=1>-0.3</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>-0.6</td><td rowspan=1 colspan=1>0.6</td><td rowspan=1 colspan=1>-0.3</td></tr><tr><td rowspan=1 colspan=2>P1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>163.555</td><td rowspan=1 colspan=1>1.0027454</td><td rowspan=1 colspan=1>26.1</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>51.2</td><td rowspan=1 colspan=1>-51.2</td><td rowspan=1 colspan=1>26.1</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>164.554</td><td rowspan=1 colspan=1>1.0000001</td><td rowspan=1 colspan=1>-0.2</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>-0.4</td><td rowspan=1 colspan=1>0.4</td><td rowspan=1 colspan=1>-0.2</td></tr><tr><td rowspan=1 colspan=2>S1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>164.556</td><td rowspan=1 colspan=1>0.9999999</td><td rowspan=1 colspan=1>-0.6</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>-1.2</td><td rowspan=1 colspan=1>1.2</td><td rowspan=1 colspan=1>-0.6</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>165.545</td><td rowspan=1 colspan=1>0.9974159</td><td rowspan=1 colspan=1>1.5</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>3.0</td><td rowspan=1 colspan=1>-3.0</td><td rowspan=1 colspan=1>1.5</td></tr><tr><td rowspan=1 colspan=2>K1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>165.555</td><td rowspan=1 colspan=1>0.9972696</td><td rowspan=1 colspan=1>-77.5</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>-151.7</td><td rowspan=1 colspan=1>151.7</td><td rowspan=1 colspan=1>-77.5</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>165.565</td><td rowspan=1 colspan=1>0.9971233</td><td rowspan=1 colspan=1>-10.5</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>-20.6</td><td rowspan=1 colspan=1>20.6</td><td rowspan=1 colspan=1>-10.5</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>165.575</td><td rowspan=1 colspan=1>0.9969771</td><td rowspan=1 colspan=1>0.2</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>0.4</td><td rowspan=1 colspan=1>-0.4</td><td rowspan=1 colspan=1>0.2</td></tr><tr><td rowspan=1 colspan=2>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>166.554</td><td rowspan=1 colspan=1>0.9945541</td><td rowspan=1 colspan=1>-0.6</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>-1.2</td><td rowspan=1 colspan=1>1.2</td><td rowspan=1 colspan=1>-0.6</td></tr><tr><td rowspan=1 colspan=2>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>167.555</td><td rowspan=1 colspan=1>0.9918532</td><td rowspan=1 colspan=1>-1.1</td><td rowspan=1 colspan=2>-2.1</td><td rowspan=1 colspan=1>2.1</td><td rowspan=1 colspan=1>-1.1</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>TT1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>173.655</td><td rowspan=1 colspan=1>0.9669565</td><td rowspan=1 colspan=1>-0.7</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>-1.4</td><td rowspan=1 colspan=1>1.4</td><td rowspan=1 colspan=1>-0.7</td></tr><tr><td rowspan=1 colspan=2>J1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>175.455</td><td rowspan=1 colspan=1>0.9624365</td><td rowspan=1 colspan=1>-3.5</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>-7.3</td><td rowspan=1 colspan=1>7.3</td><td rowspan=1 colspan=1>-3.5</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>175.465</td><td rowspan=1 colspan=1>0.9623003</td><td rowspan=1 colspan=1>-0.7</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>-1.4</td><td rowspan=1 colspan=1>1.4</td><td rowspan=1 colspan=1>-0.7</td></tr><tr><td rowspan=1 colspan=2>S01</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>183.555</td><td rowspan=1 colspan=1>0.9341741</td><td rowspan=1 colspan=1>-0.4</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>-1.1</td><td rowspan=1 colspan=1>1.1</td><td rowspan=1 colspan=1>-0.4</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=2>1  2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=2>0</td><td rowspan=1 colspan=1>185.355</td><td rowspan=1 colspan=1>0.9299547</td><td rowspan=1 colspan=1>-0.2</td><td rowspan=1 colspan=2>-0.5</td><td rowspan=1 colspan=1>0.5</td><td rowspan=1 colspan=1>-0.2</td></tr><tr><td rowspan=1 colspan=2>001</td><td rowspan=1 colspan=2>1   0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=2>2</td><td rowspan=1 colspan=1>185.555</td><td rowspan=1 colspan=1>0.9294198</td><td rowspan=1 colspan=1>-1.1</td><td rowspan=1 colspan=2>-3.4</td><td rowspan=1 colspan=1>3.4</td><td rowspan=1 colspan=1>-1.1</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=2>1  0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=2>1</td><td rowspan=1 colspan=1>185.565</td><td rowspan=1 colspan=1>0.9292927</td><td rowspan=1 colspan=1>-0.7</td><td rowspan=1 colspan=2>-2.2</td><td rowspan=1 colspan=1>2.2</td><td rowspan=1 colspan=1>-0.7</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=2>1  0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=3>0   185.575</td><td rowspan=1 colspan=1>0.9291657</td><td rowspan=1 colspan=1>-0.1</td><td rowspan=1 colspan=2>-0.5</td><td rowspan=1 colspan=1>0.5</td><td rowspan=1 colspan=1>-0.1</td></tr><tr><td rowspan=1 colspan=2>V1</td><td rowspan=1 colspan=2>1  1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=4>0  2   195.455</td><td rowspan=1 colspan=2>0.8990932   0.0</td><td rowspan=1 colspan=2>-0.6</td><td rowspan=1 colspan=1>0.6</td><td rowspan=1 colspan=1>0.0</td></tr><tr><td rowspan=1 colspan=4>1  1</td><td rowspan=1 colspan=6>0  2  0  1   195.465</td><td rowspan=1 colspan=6>0.8989743   0.0    -0.4    0.4   0.0</td></tr></table>
+
+Table 8.2b: Coefficients of sin(argument) and cos(argument) of semidiurnal variations in pole coordinates $x _ { p }$ and $y _ { p }$ caused by ocean tides. The units are $\mu \mathrm { a s }$ ; $\gamma$ denotes GMST+ $\pi$   
+
+<table><tr><td rowspan="2">Tide</td><td colspan="6">argument</td><td rowspan="2">Doodson</td><td rowspan="2">Period</td><td colspan="2">xp</td><td colspan="2">yp</td></tr><tr><td>Y</td><td>1</td><td>l</td><td>F</td><td>D Ω</td><td>number</td><td>(days)</td><td>sin</td><td>Cos</td><td>sin COs</td></tr><tr><td></td><td>2</td><td>-3</td><td>0</td><td>-2</td><td>0</td><td>-2</td><td>225.855</td><td>0.5484264</td><td>-0.5</td><td>0.0</td><td>0.6</td><td>0.2</td></tr><tr><td>2N2</td><td>2</td><td>-1</td><td>0</td><td>-2</td><td>-2</td><td>-2</td><td>227.655</td><td>0.5469695</td><td>-1.3</td><td>-0.2</td><td>1.5</td><td>0.7</td></tr><tr><td>μ2</td><td>2</td><td>-2</td><td>0</td><td>-2</td><td>0</td><td>-2</td><td>235.755</td><td>0.5377239</td><td>-6.1</td><td>-1.6</td><td>3.1</td><td>3.4</td></tr><tr><td></td><td>2</td><td>0</td><td>0</td><td>-2</td><td>-2</td><td>-2</td><td>237.555</td><td>0.5363232</td><td>-7.6</td><td>-2.0</td><td>3.4</td><td>4.2</td></tr><tr><td></td><td>2</td><td>0</td><td>1</td><td>-2</td><td>-2</td><td>-2</td><td>238.554</td><td>0.5355369</td><td>-0.5</td><td>-0.1</td><td>0.2</td><td>0.3</td></tr><tr><td></td><td>2</td><td>-1</td><td>-1</td><td>-2</td><td>0</td><td>-2</td><td>244.656</td><td>0.5281939</td><td>0.5</td><td>0.1</td><td>-0.1</td><td>-0.3</td></tr><tr><td>N2</td><td>2</td><td>-1</td><td>0</td><td>-2</td><td>0</td><td>-1</td><td>245.645</td><td>0.5274721</td><td>2.1</td><td>0.5</td><td>-0.4</td><td>-1.2</td></tr><tr><td></td><td>2</td><td>-1</td><td>0</td><td>-2</td><td>0</td><td>-2</td><td>245.655</td><td>0.5274312</td><td>-56.9</td><td>-12.9</td><td>11.1</td><td>32.9</td></tr><tr><td>V2</td><td>2</td><td>-1</td><td>1</td><td>-2</td><td>0</td><td>-2</td><td>246.654</td><td>0.5266707</td><td>-0.5</td><td>-0.1</td><td>0.1</td><td>0.3</td></tr><tr><td></td><td>2</td><td>1</td><td>0</td><td>-2</td><td>-2</td><td>-2</td><td>247.455</td><td>0.5260835</td><td>-11.0</td><td>-2.4</td><td>1.9</td><td>6.4</td></tr><tr><td></td><td>2</td><td>1</td><td>1</td><td>-2</td><td>-2</td><td>-2</td><td>248.454</td><td>0.5253269</td><td>-0.5</td><td>-0.1</td><td>0.1</td><td>0.3</td></tr><tr><td></td><td>2</td><td>-2</td><td>0</td><td>-2</td><td>2</td><td>-2</td><td>253.755</td><td>0.5188292</td><td>1.0</td><td>0.1</td><td>-0.1</td><td>-0.6</td></tr><tr><td></td><td>2</td><td>0</td><td>-1</td><td>-2</td><td>0</td><td>-2</td><td>254.556</td><td>0.5182593</td><td>1.1</td><td>0.1</td><td>-0.1</td><td>-0.7</td></tr><tr><td>M2</td><td>2</td><td>0</td><td>0</td><td>-2</td><td>0</td><td>-1</td><td>255.545</td><td>0.5175645</td><td>12.3</td><td>1.0</td><td>-1.4</td><td>-7.3</td></tr><tr><td></td><td>2</td><td>0</td><td>0</td><td>-2</td><td>0</td><td>-2</td><td>255.555</td><td>0.5175251</td><td>-330.2</td><td>-27.0</td><td>37.6</td><td>195.9</td></tr><tr><td></td><td>2</td><td>0</td><td>1</td><td>-2</td><td>0</td><td>-2</td><td>256.554</td><td>0.5167928</td><td>-1.0</td><td>-0.1</td><td>0.1</td><td>0.6</td></tr><tr><td>入2 L2</td><td>2</td><td>-1</td><td>0</td><td>-2</td><td>2</td><td>-2</td><td>263.655</td><td>0.5092406</td><td>2.5</td><td>-0.3</td><td>-0.4</td><td>-1.5</td></tr><tr><td></td><td>2</td><td>1</td><td>0</td><td>-2</td><td>0</td><td>-2</td><td>265.455</td><td>0.5079842</td><td>9.4</td><td>-1.4</td><td>-1.9</td><td>-5.6</td></tr><tr><td></td><td>2</td><td>-1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>265.655</td><td>0.5078245</td><td>-2.4</td><td>0.4</td><td>0.5</td><td>1.4</td></tr><tr><td></td><td>2</td><td>-1</td><td>0</td><td>0</td><td>0</td><td>-1</td><td>265.665</td><td>0.5077866</td><td>-1.0</td><td>0.2</td><td>0.2</td><td>0.6</td></tr><tr><td>T</td><td>2</td><td>0</td><td>-1</td><td>-2</td><td>2</td><td>-2</td><td>272.556</td><td>0.5006854</td><td>-8.5</td><td>3.5</td><td>3.3</td><td>5.1</td></tr><tr><td></td><td>2</td><td>0</td><td>0</td><td>-2</td><td>2</td><td>-2</td><td>273.555</td><td>0.5000000</td><td>-144.1</td><td>63.6</td><td>59.2</td><td>86.6</td></tr><tr><td>R2</td><td>2</td><td>0</td><td>1</td><td>-2</td><td>2</td><td>-2</td><td>274.554</td><td>0.4993165</td><td>1.2</td><td>-0.6</td><td>-0.5</td><td>-0.7</td></tr><tr><td>K2</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>275.545</td><td>0.4986714</td><td>0.5</td><td>-0.2</td><td>-0.2</td><td>-0.3</td></tr><tr><td></td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>275.555</td><td>0.4986348</td><td>-38.5</td><td>19.1</td><td>17.7</td><td>23.1</td></tr><tr><td></td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>-1</td><td>275.565</td><td>0.4985982</td><td>-11.4</td><td>5.8</td><td>5.3</td><td>6.9</td></tr><tr><td></td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>-2</td><td>275.575</td><td>0.4985616</td><td>-1.2</td><td>0.6</td><td>0.6</td><td>0.7</td></tr><tr><td></td><td>2</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>285.455</td><td>0.4897717</td><td>-1.8</td><td>1.8</td><td>1.7</td><td>1.0</td></tr><tr><td></td><td>2</td><td>1</td><td>0</td><td>0</td><td>0</td><td>-1</td><td>285.465</td><td>0.4897365</td><td>-0.8</td><td>0.8</td><td>0.8</td><td>0.5</td></tr><tr><td></td><td>2</td><td>0</td><td>0</td><td>2</td><td>0</td><td>2</td><td>295.555</td><td>0.4810750</td><td>-0.3</td><td>0.6</td><td>0.7</td><td>0.2</td></tr></table>
+
+Table 8.3a: Coefficients of sin(argument) and cos(argument) of diurnal variations in UT1 and LOD caused by ocean tides. The units are $\mu \mathrm { s }$ ; $\gamma$ denotes GMST+ $\pi$ .   
+
+<table><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=6>argument</td><td rowspan=1 colspan=2>Doodson</td><td rowspan=1 colspan=1>Period</td><td rowspan=1 colspan=4>UT1</td><td rowspan=1 colspan=2>LOD</td></tr><tr><td rowspan=1 colspan=2>Tide</td><td rowspan=1 colspan=6>Y   1  1 F D m</td><td rowspan=1 colspan=2>number</td><td rowspan=1 colspan=1>(days)</td><td rowspan=1 colspan=4>sin   cos</td><td rowspan=1 colspan=2>sin  cos</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=3>1 -1  0</td><td rowspan=1 colspan=3>-2 -2 -2</td><td rowspan=1 colspan=2>117.655</td><td rowspan=1 colspan=1>1.2113611</td><td rowspan=1 colspan=4>0.40   -0.08</td><td rowspan=1 colspan=2>-0.4   -2.1</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=3>1 -2  0</td><td rowspan=1 colspan=3>-2  0 -1</td><td rowspan=1 colspan=2>125.745</td><td rowspan=1 colspan=1>1.1671262</td><td rowspan=1 colspan=4>0.19   -0.06</td><td rowspan=1 colspan=2>-0.3   -1.1</td></tr><tr><td rowspan=1 colspan=2>2Q1</td><td rowspan=1 colspan=3>1 -2  0</td><td rowspan=1 colspan=3>-2  0 -2</td><td rowspan=1 colspan=2>125.755</td><td rowspan=1 colspan=1>1.1669259</td><td rowspan=1 colspan=4>1.03   -0.31</td><td rowspan=1 colspan=2>-1.7   -5.6</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=3>1  0  0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>-2 -1</td><td rowspan=1 colspan=2>127.545</td><td rowspan=1 colspan=1>1.1605476</td><td rowspan=1 colspan=4>0.22   -0.07</td><td rowspan=1 colspan=2>-0.4   -1.2</td></tr><tr><td rowspan=1 colspan=2>01</td><td rowspan=1 colspan=3>1  0  0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>-2 -2</td><td rowspan=1 colspan=2>127.555</td><td rowspan=1 colspan=1>1.1603495</td><td></td><td rowspan=1 colspan=3>1.19   -0.39</td><td rowspan=1 colspan=2>-2.1   -6.4</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=3>1 -1  0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>0  -1</td><td rowspan=1 colspan=2>135.645</td><td rowspan=1 colspan=1>1.1196993</td><td></td><td rowspan=1 colspan=3>0.97  -0.47</td><td rowspan=1 colspan=2>-2.7   -5.4</td></tr><tr><td rowspan=1 colspan=2>Q1</td><td rowspan=1 colspan=2>1 -1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>0 -2</td><td rowspan=1 colspan=2>135.655</td><td rowspan=1 colspan=1>1.1195148</td><td></td><td rowspan=1 colspan=3>5.12   -2.50</td><td rowspan=1 colspan=2>-14.0  -28.7</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=2>1  1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>-2 -1</td><td rowspan=1 colspan=2>137.445</td><td rowspan=1 colspan=2>1.1136429</td><td rowspan=1 colspan=3>0.17   -0.09</td><td rowspan=1 colspan=2>-0.5   -1.0</td></tr><tr><td rowspan=1 colspan=2>RO1</td><td rowspan=1 colspan=2>1  1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>-2 -2</td><td rowspan=1 colspan=2>137.455</td><td rowspan=1 colspan=2>1.1134606</td><td rowspan=1 colspan=2>0.91</td><td rowspan=1 colspan=1>-0.47</td><td rowspan=1 colspan=1>-2.7</td><td rowspan=1 colspan=1>-5.1</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=2>1  0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>0  0</td><td rowspan=1 colspan=2>145.535</td><td rowspan=1 colspan=2>1.0761465</td><td rowspan=1 colspan=2>-0.09</td><td rowspan=1 colspan=1>0.07</td><td rowspan=1 colspan=1>0.4</td><td rowspan=1 colspan=1>0.5</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=2>1  0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>0 -1</td><td rowspan=1 colspan=2>145.545</td><td rowspan=1 colspan=2>1.0759762</td><td rowspan=1 colspan=3>3.03  -2.28</td><td rowspan=1 colspan=1>-13.3</td><td rowspan=1 colspan=1>-17.7</td></tr><tr><td rowspan=1 colspan=2>01</td><td rowspan=1 colspan=2>1  0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>145.555</td><td rowspan=1 colspan=2>1.0758059</td><td rowspan=1 colspan=3>16.02 -12.07</td><td rowspan=1 colspan=1>-70.5</td><td rowspan=1 colspan=1>-93.6</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=2>145.755</td><td rowspan=1 colspan=2>1.0750901</td><td rowspan=1 colspan=3>-0.10   0.08</td><td rowspan=1 colspan=2>0.5    0.6</td></tr><tr><td rowspan=1 colspan=2>T01</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=2>147.555</td><td rowspan=1 colspan=2>1.0695055</td><td rowspan=1 colspan=3>-0.19   0.15</td><td rowspan=1 colspan=1>0.9</td><td rowspan=1 colspan=1>1.1</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>153.655</td><td rowspan=1 colspan=2>1.0406147</td><td rowspan=1 colspan=2>-0.08</td><td rowspan=1 colspan=1>0.07</td><td rowspan=1 colspan=1>0.5</td><td rowspan=1 colspan=1>0.5</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=2>155.445</td><td rowspan=1 colspan=2>1.0355395</td><td rowspan=1 colspan=2>-0.06</td><td rowspan=1 colspan=1>0.05</td><td rowspan=1 colspan=1>0.3</td><td rowspan=1 colspan=1>0.4</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>155.455</td><td rowspan=1 colspan=2>1.0353817</td><td rowspan=1 colspan=2>-0.31</td><td rowspan=1 colspan=1>0.27</td><td rowspan=1 colspan=1>1.7</td><td rowspan=1 colspan=1>1.9</td></tr><tr><td rowspan=1 colspan=2>M1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=2>155.655</td><td rowspan=1 colspan=2>1.0347187</td><td rowspan=1 colspan=2>-0.86</td><td rowspan=1 colspan=1>0.75</td><td rowspan=1 colspan=1>4.6</td><td rowspan=1 colspan=1>5.2</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=2>155.665</td><td rowspan=1 colspan=2>1.0345612</td><td rowspan=1 colspan=2>-0.17</td><td rowspan=1 colspan=1>0.15</td><td rowspan=1 colspan=1>0.9</td><td rowspan=1 colspan=1>1.0</td></tr><tr><td rowspan=1 colspan=2>X1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=2>157.455</td><td rowspan=1 colspan=1>1.0295447</td><td></td><td rowspan=1 colspan=2>-0.16</td><td rowspan=1 colspan=1>0.14</td><td rowspan=1 colspan=1>0.8</td><td rowspan=1 colspan=1>1.0</td></tr><tr><td rowspan=1 colspan=2>T1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>162.556</td><td rowspan=1 colspan=1>1.0055058</td><td></td><td rowspan=1 colspan=2>0.31</td><td rowspan=1 colspan=1>-0.19</td><td rowspan=1 colspan=1>-1.2</td><td rowspan=1 colspan=1>-2.0</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=2>163.545</td><td rowspan=1 colspan=1>1.0028933</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2>-0.06</td><td rowspan=1 colspan=1>0.03</td><td rowspan=1 colspan=1>0.2</td><td rowspan=1 colspan=1>0.4</td></tr><tr><td rowspan=1 colspan=2>P1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>163.555</td><td rowspan=1 colspan=2>1.0027454</td><td rowspan=1 colspan=2>5.51</td><td rowspan=1 colspan=1>-3.10</td><td rowspan=1 colspan=1>-19.4</td><td rowspan=1 colspan=1>-34.5</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=2>164.554</td><td rowspan=1 colspan=2>1.0000001</td><td></td><td rowspan=1 colspan=1>-0.05</td><td rowspan=1 colspan=1>0.02</td><td rowspan=1 colspan=1>0.2</td><td rowspan=1 colspan=1>0.3</td></tr><tr><td rowspan=1 colspan=2>S1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td></td><td rowspan=1 colspan=1>164.556</td><td rowspan=1 colspan=2>0.9999999</td><td></td><td rowspan=1 colspan=1>-0.13</td><td rowspan=1 colspan=1>0.07</td><td rowspan=1 colspan=1>0.4</td><td rowspan=1 colspan=1>0.8</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>1</td><td></td><td rowspan=1 colspan=1>165.545</td><td rowspan=1 colspan=2>0.9974159</td><td></td><td rowspan=1 colspan=1>0.35</td><td rowspan=1 colspan=1>-0.17</td><td rowspan=1 colspan=1>-1.1</td><td rowspan=1 colspan=1>-2.2</td></tr><tr><td rowspan=1 colspan=2>K1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td></td><td rowspan=1 colspan=1>165.555</td><td rowspan=1 colspan=2>0.9972696</td><td></td><td rowspan=1 colspan=1>-17.62</td><td rowspan=1 colspan=1>8.55</td><td rowspan=1 colspan=1>53.9</td><td rowspan=1 colspan=1>111.0</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>-1</td><td></td><td rowspan=1 colspan=1>165.565</td><td rowspan=1 colspan=2>0.9971233</td><td></td><td rowspan=1 colspan=1>-2.39</td><td rowspan=1 colspan=1>1.16</td><td rowspan=1 colspan=1>7.3</td><td rowspan=1 colspan=1>15.1</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=2>-2</td><td rowspan=1 colspan=1>165.575</td><td rowspan=1 colspan=3>0.9969771</td><td rowspan=1 colspan=1>0.05</td><td rowspan=1 colspan=1>-0.03</td><td rowspan=1 colspan=1>-0.2</td><td rowspan=1 colspan=1>-0.3</td></tr><tr><td rowspan=1 colspan=2>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=3>0   166.554</td><td rowspan=1 colspan=3>0.9945541</td><td rowspan=1 colspan=1>-0.14</td><td rowspan=1 colspan=1>0.06</td><td rowspan=1 colspan=1>0.4</td><td rowspan=1 colspan=1>0.9</td></tr><tr><td rowspan=1 colspan=2>+1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>-2</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>167.555</td><td rowspan=1 colspan=3>0.9918532</td><td rowspan=1 colspan=1>-0.27</td><td rowspan=1 colspan=1>0.11</td><td rowspan=1 colspan=1>0.7</td><td rowspan=1 colspan=1>1.7</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>TT1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>-1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>173.655</td><td rowspan=1 colspan=3>0.9669565</td><td rowspan=1 colspan=1>-0.29</td><td rowspan=1 colspan=1>0.04</td><td rowspan=1 colspan=1>0.3</td><td rowspan=1 colspan=1>1.9</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>J</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=2>175.455</td><td rowspan=1 colspan=3>0.9624365</td><td rowspan=1 colspan=1>-1.61</td><td rowspan=1 colspan=1>0.19</td><td rowspan=1 colspan=1>1.2</td><td rowspan=1 colspan=1>10.5</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=3>-1   175.465</td><td rowspan=1 colspan=3>0.9623003</td><td rowspan=1 colspan=1>-0.32</td><td rowspan=1 colspan=1>0.04</td><td rowspan=1 colspan=1>0.2</td><td rowspan=1 colspan=1>2.1</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>S01</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=3>0   183.555</td><td rowspan=1 colspan=3>0.9341741</td><td rowspan=1 colspan=1>-0.41</td><td rowspan=1 colspan=1>-0.01</td><td rowspan=1 colspan=1>-0.0</td><td rowspan=1 colspan=1>2.7</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=3>0   185.355</td><td rowspan=1 colspan=3>0.9299547</td><td rowspan=1 colspan=1>-0.21</td><td rowspan=1 colspan=1>-0.01</td><td rowspan=1 colspan=1>-0.0</td><td rowspan=1 colspan=1>1.4</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>001</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=3>2   185.555</td><td rowspan=1 colspan=3>0.9294198</td><td rowspan=1 colspan=1>-1.44</td><td rowspan=1 colspan=1>-0.04</td><td rowspan=1 colspan=1>-0.3</td><td rowspan=1 colspan=1>9.7</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=3>1   185.565</td><td rowspan=1 colspan=3>0.9292927</td><td rowspan=1 colspan=1>-0.92</td><td rowspan=1 colspan=1>-0.02</td><td rowspan=1 colspan=1>-0.2</td><td rowspan=1 colspan=1>6.2</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=3>0   185.575</td><td rowspan=1 colspan=3>0.9291657</td><td rowspan=1 colspan=1>-0.19</td><td rowspan=1 colspan=1>0.00</td><td rowspan=1 colspan=1>-0.0</td><td rowspan=1 colspan=1>1.3</td></tr><tr><td rowspan=1 colspan=2>V1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=3>0  2  0</td><td rowspan=1 colspan=3>2   195.455</td><td rowspan=1 colspan=3>0.8990932</td><td rowspan=1 colspan=4>-0.40   -0.02  -0.2    2.8</td></tr><tr><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=6>0  2  0  1   195.465</td><td rowspan=1 colspan=7>0.8989743  -0.25  -0.02  -0.1    1.8</td></tr></table>
+
+Table 8.3b: Coefficients of sin(argument) and cos(argument) of semidiurnal variations in UT1 and LOD caused by ocean tides. The units are $\mu \mathrm { s }$ ; $\gamma$ denotes GMST+ $\pi$ .   
+
+<table><tr><td rowspan="2">Tide</td><td colspan="6">argument</td><td rowspan="2">Doodson</td><td colspan="2">Period UT1</td><td colspan="2">LOD</td></tr><tr><td>Y</td><td>l</td><td>l&#x27; F</td><td>D</td><td>Ω</td><td>number</td><td>(days)</td><td>sin</td><td>COs</td><td>sin COS</td></tr><tr><td rowspan="5">2N2 μ2</td><td>2</td><td>-3</td><td>0</td><td>-2</td><td>0 -2</td><td>225.855</td><td>0.5484264</td><td>-0.09</td><td>-0.01</td><td>-0.1</td><td>1.0</td></tr><tr><td>2</td><td>-1</td><td>0</td><td>-2</td><td>-2 -2</td><td>227.655</td><td>0.5469695</td><td>-0.22</td><td>-0.03</td><td>-0.4</td><td>2.6</td></tr><tr><td>2</td><td>-2</td><td>0</td><td>-2</td><td>0 -2</td><td>235.755</td><td>0.5377239</td><td>-0.64</td><td>-0.18</td><td>-2.1</td><td>7.4</td></tr><tr><td>2</td><td>0</td><td>0</td><td>-2</td><td>-2</td><td>-2 237.555</td><td>0.5363232</td><td>-0.74</td><td>-0.22</td><td>-2.6</td><td>8.7</td></tr><tr><td>2</td><td>0</td><td>1</td><td>-2</td><td>-2</td><td>-2 238.554</td><td>0.5355369</td><td>-0.05</td><td>-0.02</td><td>-0.2</td><td>0.6</td></tr><tr><td></td><td>2</td><td>-1 -1</td><td></td><td>-2</td><td>0 -2</td><td>244.656</td><td>0.5281939</td><td>0.03</td><td>0.01</td><td>0.2</td><td>-0.4</td></tr><tr><td></td><td>2</td><td>-1</td><td>0</td><td>-2</td><td>0 -1</td><td>245.645</td><td>0.5274721</td><td>0.14</td><td>0.06</td><td>0.7</td><td>-1.7</td></tr><tr><td>N2</td><td>2</td><td>-1</td><td>0</td><td>-2</td><td>0 -2</td><td>245.655</td><td>0.5274312</td><td>-3.79</td><td>-1.56</td><td>-18.6</td><td>45.2</td></tr><tr><td></td><td>2</td><td>-1</td><td>1</td><td>-2</td><td>0 -2</td><td>246.654</td><td>0.5266707</td><td>-0.03</td><td>-0.01</td><td>-0.2</td><td>0.4</td></tr><tr><td>V2</td><td>2</td><td>1</td><td>0</td><td>-2</td><td>-2 -2</td><td>247.455</td><td>0.5260835</td><td>-0.70</td><td>-0.30</td><td>-3.6</td><td>8.3</td></tr><tr><td rowspan="5"></td><td>2</td><td>1</td><td>1</td><td>-2</td><td>-2 -2</td><td>248.454</td><td>0.5253269</td><td>-0.03</td><td>-0.01</td><td>-0.2</td><td>0.4</td></tr><tr><td>2</td><td>-2</td><td>0</td><td>-2</td><td>2 -2</td><td>253.755</td><td>0.5188292</td><td>0.05</td><td>0.02</td><td>0.3</td><td>-0.6</td></tr><tr><td>2</td><td>0</td><td>-1</td><td>-2</td><td>0 -2</td><td>254.556</td><td>0.5182593</td><td>0.06</td><td>0.03</td><td>0.3</td><td>-0.7</td></tr><tr><td>2</td><td>0</td><td>0</td><td>-2</td><td>0 -1</td><td>255.545</td><td>0.5175645</td><td>0.60</td><td>0.27</td><td>3.2</td><td>-7.3</td></tr><tr><td>2</td><td>0</td><td>0</td><td>-2</td><td>0 -2</td><td>255.555</td><td>0.5175251</td><td>-16.19</td><td>-7.25</td><td>-86.8</td><td>196.6</td></tr><tr><td>M2</td><td>2</td><td>0</td><td>1</td><td>-2</td><td>0 -2</td><td>256.554</td><td>0.5167928</td><td>-0.05</td><td>-0.02</td><td>-0.3</td><td>0.6</td></tr><tr><td>X2</td><td>2</td><td>-1</td><td>0</td><td>-2</td><td>2 -2</td><td>263.655</td><td>0.5092406</td><td>0.11</td><td>0.03</td><td>0.4</td><td>-1.4</td></tr><tr><td>L2</td><td>2</td><td>1 0</td><td>-2</td><td></td><td>0 -2</td><td>265.455</td><td>0.5079842</td><td>0.42</td><td>0.12</td><td>1.4</td><td>-5.3</td></tr><tr><td></td><td>2 -1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>265.655</td><td>0.5078245</td><td>-0.11</td><td>-0.03</td><td>-0.4</td><td>1.3</td></tr><tr><td></td><td>2 -1</td><td>0</td><td>0</td><td>0</td><td>-1</td><td>265.665</td><td>0.5077866</td><td>-0.05</td><td>-0.01</td><td>-0.2</td><td>0.6</td></tr><tr><td>T</td><td>2</td><td>0 -1</td><td></td><td>-2</td><td>2 -2</td><td>272.556</td><td>0.5006854</td><td>-0.44</td><td>-0.02</td><td>-0.2</td><td>5.5</td></tr><tr><td>S R2</td><td>2</td><td>0</td><td>0 -2</td><td></td><td>2 -2</td><td>273.555</td><td>0.5000000</td><td>-7.55</td><td>-0.16</td><td>-2.0</td><td>94.8</td></tr><tr><td></td><td>2</td><td>0 1</td><td>-2</td><td></td><td>2 -2</td><td>274.554</td><td>0.4993165</td><td>0.06</td><td>0.00</td><td>0.0</td><td>-0.8</td></tr><tr><td rowspan="5">K2</td><td>2 0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>275.545</td><td>0.4986714</td><td>0.03</td><td>0.00</td><td>-0.0</td><td>-0.3</td></tr><tr><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0 275.555</td><td>0.4986348</td><td>-2.10</td><td>0.04</td><td>0.5</td><td>26.5</td></tr><tr><td>2</td><td>0</td><td>0</td><td>0</td><td>0 -1</td><td>275.565</td><td>0.4985982</td><td>-0.63</td><td>0.01</td><td>0.2</td><td>7.9</td></tr><tr><td>2</td><td>0</td><td>0</td><td>0</td><td>0 -2</td><td>275.575</td><td>0.4985616</td><td>-0.07</td><td>0.00</td><td>0.0</td><td>0.9</td></tr><tr><td>2</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0 285.455</td><td>0.4897717</td><td>-0.15</td><td>0.04</td><td>0.5</td><td>1.9</td></tr><tr><td>2</td><td>1</td><td>0</td><td>0</td><td>0</td><td>-1</td><td>285.465</td><td>0.4897365</td><td>-0.06</td><td>0.02</td><td>0.2</td><td>0.8</td></tr><tr><td></td><td>2 0</td><td>0</td><td>2</td><td>0</td><td>2</td><td>295.555</td><td>0.4810750</td><td>-0.05</td><td>0.02</td><td>0.2</td><td>0.6</td></tr></table>
+
+Table 8.4: Ocean tidal variations in polar motion and polar motion excitation.   
+
+<table><tr><td colspan="11">Tide Argument</td><td colspan="4">Polar Motion Excitation</td></tr><tr><td rowspan="2"></td><td colspan="3" rowspan="2">lFDΩ</td><td rowspan="2">Period (days)</td><td rowspan="2">(μas)</td><td rowspan="2">Prograde amp phase</td><td rowspan="2">（）</td><td rowspan="2">Retrograde ampphase</td><td rowspan="2">（）</td><td rowspan="2">Prograde amp (μas)</td><td rowspan="2"></td><td rowspan="2">Retrograde amp phase</td></tr><tr><td>phase （）</td></tr><tr><td>mtm</td><td>1</td><td>0</td><td>2</td><td>0 1</td><td>9.12</td><td>4.43 -112.62</td><td></td><td>(μas) 5.57</td><td>21.33</td><td>205.83</td><td>67.21</td><td>(μas) 269.95</td><td>（） 21.17</td></tr><tr><td>Mtm</td><td>1</td><td>0</td><td>2</td><td>0 2</td><td>9.13</td><td></td><td>10.72 -112.56</td><td>13.48</td><td>21.30</td><td>497.59</td><td>67.27</td><td>652.59</td><td>21.14</td></tr><tr><td>mf</td><td>0</td><td>0</td><td>2</td><td>0 1</td><td>13.63</td><td>27.35</td><td>-91.42</td><td>30.59</td><td>13.31</td><td>841.32</td><td>88.42</td><td>1002.12</td><td>13.15</td></tr><tr><td>Mf</td><td>0</td><td>0</td><td>2</td><td>0 2</td><td>13.66</td><td>66.09</td><td>-91.31</td><td>73.86</td><td>13.27</td><td>2028.73</td><td></td><td>88.53 2414.94</td><td>13.11</td></tr><tr><td>Msf</td><td>00</td><td></td><td>0</td><td>2 0</td><td>14.77</td><td>5.94</td><td>-87.13</td><td>6.42</td><td>11.75</td><td>168.13</td><td>92.70</td><td>194.74</td><td>11.60</td></tr><tr><td>Mm</td><td>1</td><td>.00</td><td></td><td>0 0</td><td>27.56</td><td>43.74</td><td>-56.70</td><td>31.12</td><td>-0.91</td><td>643.61</td><td>123.13</td><td>520.16</td><td>-1.06</td></tr><tr><td>Msm</td><td>-1</td><td>0</td><td>0</td><td>2 0</td><td>31.81</td><td>8.85</td><td>-51.11</td><td>5.42</td><td>-4.21</td><td>111.62</td><td>128.72</td><td>79.23</td><td>-4.36</td></tr><tr><td>Ssa</td><td>0</td><td>0</td><td>2</td><td>-2 2</td><td>182.62</td><td>86.48</td><td>-20.30</td><td>99.77</td><td>175.57</td><td>118.56</td><td>159.42</td><td>336.32</td><td>175.46</td></tr><tr><td>Sa</td><td>0</td><td>1</td><td>0</td><td>0 0</td><td>365.26</td><td>17.96</td><td>-17.38</td><td>3152.15 170.60</td><td></td><td></td><td>3.33 161.60</td><td></td><td>332.53 170.51</td></tr><tr><td>Mn</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1 -6798.38 208.17</td><td></td><td></td><td>166.89 186.98 166.67</td><td></td><td></td><td>221.43 166.88</td><td>175.07 166.68</td><td></td></tr></table>
+
+# References
+
+Dickman, S. R. and Nam, Y. S., 1995, “Revised predictions of long-period ocean tidal effects on Earth’s rotation rate,” J. Geophys. Res., 100(B5), pp. 8233–8243, doi:10.1029/95JB00028.   
+Dickman, S. R. and Gross, R. S., 2010, “Rotational evaluation of a long-period spherical harmonic ocean tide model,” J. Geod., 84(7), pp. 457–464, doi: 10.1007/s00190-010-0383-5.   
+Eanes, R., 2000, personal communication.   
+Gross, R. S., 2009, “Ocean tidal effects on Earth rotation,” J. Geodyn., 48(3–5), pp. 219–225, doi: 10.1016/j.jog.2009.09.016.   
+Kantha, L. H., Stewart, J. S., and Desai, S. D., 1998, “Long-period lunar fortnightly and monthly ocean tides,” J. Geophys. Res., 103(C6), pp. 12639– 12647, doi:10.1029/98JC00888.   
+Ray, R. D., Steinberg, D. J., Chao, B. F., and Cartwright, D. E., 1994, “Diurnal and semidiurnal variations in the Earth’s rotation rate induced by oceanic tides,” Science, 264(5160), pp. 830–832, doi:10.1126/science.264.5160.830.   
+Sailor, R. V. and Dziewonski, A. M., 1978, “Measurements and interpretation of normal mode attentuation,” Geophys. J. Roy. astr. Soc., 53(3), pp. 559–581, doi:10.1111/j.1365-246X.1978.tb03760.x.   
+Wahr, J. and Bergen, Z., 1986, “The effects of mantle anelasticity on nutations, Earth tides, and tidal variations in rotation rate,” Geophys. J. Roy. astr. Soc., 87(2), pp. 633–668, doi:10.1111/j.1365-246X.1986.tb06642.x.   
+Yoder, C. F., Williams, J. G., and Parke, M. E., 1981, “Tidal variations of Earth rotation,” J. Geophys. Res., 86(B2), pp. 881–891, doi:10.1029/JB086iB02p00881.
+
+Techniques operated for the realization of the IERS reference systems make use of electromagnetic signals received on the surface of the Earth. During their transit of the atmosphere, the signals experience delays which must be modeled in the analysis software. This chapter presents models for the propagation of optical signals in the troposphere (9.1), for radio signals in the troposphere (9.2) and for radio signals in the ionosphere (9.4). For Doppler techniques which use timedifferenced phases as observables, the models presented in this chapter should be time-differenced as well.
+
+# 9.1 Tropospheric model for optical techniques
+
+The accuracy of satellite and lunar laser ranging (SLR & LLR) is greatly affected by the residual errors in modeling the effect of signal propagation through the troposphere and stratosphere. Although several models for atmospheric correction have been developed, the more traditional approach in LR data analysis uses a model developed in the 1970s (Marini and Murray, 1973). Mendes et al. (2002) pointed out some limitations in that model, namely the modeling of the elevation dependence of the zenith atmospheric delay, i.e. the mapping function (MF) component of the model. The MFs developed by Mendes et al. (2002) represent a significant improvement over the MF in the Marini-Murray model and other known MFs. Of particular interest is the ability of the new MFs to be used in combination with any zenith delay (ZD) model to predict the atmospheric delay in the line-of-sight direction. Subsequently, Mendes and Pavlis (2004) developed a more accurate ZD model, applicable to the range of wavelengths used in modern LR instrumentation. The combined set of the new mapping function and the new ZD model were adopted in October 2006 by the Analysis Working Group of the International Laser Ranging Service (ILRS) as the new standard model to be used for the analysis of LR data starting January 1, 2007. The alternative to correct the atmospheric delay using two-color ranging systems is still at an experimental stage.
+
+# 9.1.1 Zenith delay models
+
+The atmospheric propagation delay experienced by a laser signal in the zenith direction is defined as
+
+$$
+d _ { a t m } ^ { z } = 1 0 ^ { - 6 } \int _ { r _ { s } } ^ { r _ { a } } N d z = \int _ { r _ { s } } ^ { r _ { a } } \left( n - 1 \right) d z ,
+$$
+
+or, if we split the zenith delay into hydrostatic ( $d _ { h } ^ { z }$ ) and non-hydrostatic ( $d _ { n h } ^ { z }$ ) components,
+
+$$
+d _ { a t m } ^ { z } = d _ { h } ^ { z } + d _ { n h } ^ { z } = 1 0 ^ { - 6 } \int _ { r _ { s } } ^ { r _ { a } } N _ { h } d z + 1 0 ^ { - 6 } \int _ { r _ { s } } ^ { r _ { a } } N _ { n h } d z ,
+$$
+
+where $N = ( n - 1 ) \times 1 0 ^ { 6 }$ is the (total) group refractivity of moist air, $n$ is the (total) refractive index of moist air, $N _ { h }$ and $N _ { n h }$ are the hydrostatic and the nonhydrostatic components of the refractivity, $r _ { s }$ is the geocentric radius of the laser station, $r _ { a }$ is the geocentric radius of the top of the (neutral) atmosphere, and $d _ { a t m } ^ { \boldsymbol { z } }$ and $d z$ have length units.
+
+In the last few years, the computation of the group refractivity at optical wavelengths has received special attention and, as a consequence, the International Association of Geodesy (IAG) (IUGG, 1999) recommended a new procedure to compute the group refractivity, following Ciddor (1996) and Ciddor and Hill (1999). Based on this procedure, Mendes and Pavlis (2004) derived closed-form expressions to compute the zenith delay. For the hydrostatic component, we have
+
+$$
+d _ { h } ^ { z } = 0 . 0 0 2 4 1 6 5 7 9 { \frac { f _ { h } ( \lambda ) } { f _ { s } ( \phi , H ) } } P _ { s } ,
+$$
+
+where $d _ { h } ^ { z }$ is the zenith hydrostatic delay, in meters, and $P _ { s }$ is the surface barometric pressure, in hPa. The function $f _ { s } ( \phi , H )$ is given by
+
+$$
+f _ { s } ( \phi , H ) = 1 - 0 . 0 0 2 6 6 \cos 2 \phi - 0 . 0 0 0 0 0 2 8 H ,
+$$
+
+where $\phi$ is the geodetic latitude of the station and $H$ is the geodetic height of the station in meters ${ < } ^ { 1 } >$ , $f _ { h } \left( \lambda \right)$ is the dispersion equation for the hydrostatic component
+
+$$
+f _ { h } \left( \lambda \right) = { 1 0 } ^ { - 2 } \times \left[ { k _ { 1 } ^ { * } \frac { \left( { k _ { 0 } + \sigma ^ { 2 } } \right) } { \left( { k _ { 0 } - \sigma ^ { 2 } } \right) ^ { 2 } } + k _ { 3 } ^ { * } \frac { \left( { k _ { 2 } + \sigma ^ { 2 } } \right) } { \left( { k _ { 2 } - \sigma ^ { 2 } } \right) ^ { 2 } } } \right] C _ { \mathrm { C O _ { 2 } } } ,
+$$
+
+with $k _ { 0 } = \mathrm { 2 3 8 . 0 1 8 5 ~ \mu m ^ { - 2 } }$ , $k _ { 2 } = 5 7 . 3 6 2 ~ \mu \mathrm { m } ^ { - 2 }$ , $k _ { 1 } ^ { * } = 1 9 9 9 0 . 9 7 5 \ \mu \mathrm { m } ^ { - 2 }$ , and $k _ { 3 } ^ { * } =$ $5 7 9 . 5 5 1 7 4 ~ \mu \mathrm { m } ^ { - 2 }$ , $\sigma$ is the wave number $\sigma = \lambda ^ { - 1 }$ , where $\lambda$ is the wavelength, in $\mu \mathrm { m }$ ), $C _ { C O _ { 2 } } = 1 + 0 . 5 3 4 \times 1 0 ^ { - 6 } \left( x _ { c } - 4 5 0 \right)$ , and $x _ { c }$ is the carbon dioxide (CO $^ 2$ ) content, in ppm. In the conventional formula, a CO $^ 2$ content of 375 ppm should be used, in line with the IAG recommendations, thus $C _ { \mathrm { C O _ { 2 } } } = 0 . 9 9 9 9 5 9 9 5$ should be used.
+
+For the non-hydrostatic component, we have:
+
+$$
+d _ { n h } ^ { z } = 1 0 ^ { - 4 } \left( 5 . 3 1 6 f _ { n h } ( \lambda ) - 3 . 7 5 9 f _ { h } ( \lambda ) \right) \frac { \mathrm { e _ { s } } } { f _ { s } ( \phi , H ) } ,
+$$
+
+where $d _ { n h } ^ { z }$ is the zenith non-hydrostatic delay, in meters, and $e _ { s }$ is the surface water vapor pressure, in hPa. $f _ { n h }$ is the dispersion formula for the non-hydrostatic component:
+
+$$
+f _ { n h } \left( \lambda \right) = 0 . 0 0 3 1 0 1 \left( \omega _ { 0 } + 3 \omega _ { 1 } \sigma ^ { 2 } + 5 \omega _ { 2 } \sigma ^ { 4 } + 7 \omega _ { 3 } \sigma ^ { 6 } \right) ,
+$$
+
+where $\omega _ { 0 } = 2 9 5 . 2 3 5$ , $\omega _ { 1 } = 2 . 6 4 2 2 ~ \mu \mathrm { m } ^ { 2 }$ , $\omega _ { 2 } = - 0 . 0 3 2 3 8 0 ~ \mu \mathrm { m } ^ { 4 }$ , and $\omega _ { 3 } = 0 . 0 0 4 0 2 8$ $\mu \mathrm { m } ^ { 6 }$ .
+
+The subroutine FCUL ZTD HPA.F to compute the total zenith delay is available at ${ < } ^ { 2 } >$ .
+
+From the assessment of the zenith models against ray tracing for the most used wavelengths in LR, it can be concluded that these zenith delay models have overall rms errors for the total zenith delay below $1 \mathrm { m m }$ across the whole frequency spectrum (Mendes and Pavlis, 2003; Mendes and Pavlis, 2004).
+
+# 9.1.2 Mapping function
+
+Due to the small contribution of water vapor to atmospheric refraction at visible wavelengths, we can consider a single MF for laser ranging. In this case, we have:
+
+$$
+d _ { a t m } = d _ { a t m } ^ { z } \cdot m ( e ) ,
+$$
+
+where $d _ { a t m } ^ { z }$ is the total zenith propagation delay and $m ( e )$ the (total) MF. Mendes et al. (2002) derived a MF, named FCULa, based on a truncated form of the continued fraction in terms of $1 / s i n ( e )$ (Marini, 1972), normalized to unity at the zenith
+
+$$
+m ( e ) = \frac { 1 + \displaystyle \frac { a _ { 1 } } { 1 + \displaystyle \frac { a _ { 2 } } { 1 + a _ { 3 } } } } { \sin e + \displaystyle \frac { a _ { 1 } } { \sin e + \displaystyle \frac { a _ { 2 } } { \sin e + \displaystyle \frac { a _ { 2 } } { \sin e + a _ { 3 } } } } } .
+$$
+
+Note that the same formula is used for radio techniques, but with different variables, see Equation (9.13). The FCULa MF is based on ray tracing through one full year of radiosonde data from 180 globally distributed stations. It is valid for a wide range of wavelengths from $0 . 3 5 5 \ \mu \mathrm { m }$ to $1 . 0 6 4 \ \mu \mathrm { m }$ (Mendes and Pavlis, 2003) and for elevation angles greater than 3 degrees, if we neglect the contribution of horizontal refractivity gradients. The coefficients $a _ { i }$ (i=1,2,3) have the following mathematical formulation:
+
+Table 9.1: Coefficients $\mathit { a } _ { i j }$ ) for the FCULa mapping function, see Equation (9.10). Coefficients ( $a _ { i 1 }$ ) are in $C ^ { - 1 }$ and coefficients ( $a _ { i 3 }$ ) in $m ^ { - 1 }$ .   
+
+<table><tr><td>aij</td><td>FCULa</td></tr><tr><td>a10 a11 a12</td><td>(12100.8±1.9) ×10-7 (1729.5±4.3) ×10-9 (319.1±3.1) ×10-7 ×10-11</td></tr><tr><td>α13 a20 a21</td><td>(-1847.8±6.5) (30496.5±6.6) × 10-7 (234.6±1.5) × 10-8 (-103.5±1.1) ×10-6</td></tr><tr><td>a22 a23</td><td>(-185.6±2.2) ×10-10</td></tr><tr><td>a30 a31 a32</td><td>(6877.7±1.2) × 10-5 (197.2±2.8) × 10-7 (-345.8±2.0) × 10-5 (106.0±4.2) × 10-9</td></tr></table>
+
+$$
+a _ { i } = a _ { i 0 } + a _ { i 1 } t _ { s } + a _ { i 2 } \cos \phi + a _ { i 3 } H ,
+$$
+
+where $t _ { s }$ is the temperature at the station in Celsius degrees, $H$ is the geodetic height of the station, in meters, and the coefficients are given in Table 1, see Mendes et al. (2002) for details. The subroutine FCUL A.F to compute the FCULa mapping function is available at ${ < } ^ { 2 } >$ .
+
+The new mapping functions represent a significant improvement over other mapping functions available and have the advantage of being easily combined with different zenith delay models. The analysis of two years of SLR data from LAGEOS and LAGEOS 2 indicate a clear improvement in the estimated station heights $8 \%$ reduction in variance), while the simultaneously adjusted tropospheric zenith delay biases were all consistent with zero (Mendes et al., 2002).
+
+For users who do not have extreme accuracy requirements or do not know the station temperature, the FCULb mapping function, which depends on the station location and the day of the year, has been developed, see Mendes et al. (2002) for details. The subroutine FCUL B.F to compute the FCULb mapping function is available at ${ < } ^ { 2 } { > }$ .
+
+# 9.1.3 Future developments
+
+The accuracy of the new atmospheric delay models are still far from the accuracy required for global climate change studies. The goal as set forth by the International Laser Ranging Service (ILRS) is better than one millimeter. The LR community has been looking into ways to achieve that accuracy. One significant component that is missing from the above models is to account for the effect of horizontal gradients in the atmosphere, an error source that contributes up to 5 cm of delay at low elevation angles. Ranging at low elevation angles improves the de-correlation of errors in the vertical coordinate with errors in the measurement process (biases). Stations thus strive to range as low as possible, thence the need for model improvements.
+
+Global meteorological fields are now becoming more readily accessible, with higher spatio-temporal resolution, better accuracy and more uniform quality. This is primarily due to the availability of satellite observations with global coverage twice daily. Hulley and Pavlis (2007) developed a new technique, and tested it with real data, computing the total atmospheric delay, including horizontal gradients, via three-dimensional atmospheric ray tracing (3D ART) with meteorological fields from the Atmospheric Infrared Sounder (AIRS). This technique has already been tested and applied to two years of SLR data from LAGEOS 1 and 2, and for ten core, globally-distributed SLR stations. Replacing the atmospheric corrections estimated from the Mendes-Pavlis ZD and MF models with 3D ART resulted in reducing the variance of the SLR range residuals by up to $2 5 \%$ for all the data used in the analysis. As of May 2007, an effort is in progress to establish a service that will compute these corrections for all of the collected SLR and LLR data in the future. Once this service is in place, it is expected that this new approach will be adopted as the standard for SLR and LLR data reductions.
+
+# 9.2 Tropospheric model for radio techniques
+
+The non-dispersive delay imparted by the atmosphere on a radio signal up to 30 GHz in frequency, which reaches a magnitude of about $2 . 3 \textrm { m }$ at sea level, is conveniently divided into “hydrostatic” and “wet” components. The hydrostatic delay is caused by the refractivity of the dry gases (mainly $N _ { 2 }$ and $O _ { 2 }$ ) in the troposphere and by most of the nondipole component of the water vapor refractivity. The rest of the water vapor refractivity is responsible for most of the wet delay. The hydrostatic delay component accounts for roughly $9 0 \%$ of the total delay at any given site globally, but can vary between about 80 and $1 0 0 \%$ depending on location and time of year. It can be accurately computed $a$ priori based on reliable surface pressure data using the formula of Saastamoinen (1972) as given by Davis et al. (1985):
+
+$$
+D _ { h z } = \frac { [ ( 0 . 0 0 2 2 7 6 8 \pm 0 . 0 0 0 0 0 0 5 ) ] P _ { 0 } } { f _ { s } ( \phi , H ) }
+$$
+
+where $D _ { h z }$ is the zenith hydrostatic delay in meters, $P _ { 0 }$ is the total atmospheric pressure in hPa (equivalent to millibars) at the antenna reference point (e.g. antenna phase center for Global Positioning System, the intersection of the axes of rotation for VLBI 3), and the function $f _ { s } ( \phi , H )$ is given in Equation (9.4).
+
+There is currently no simple method to estimate an accurate $a$ priori value for the wet tropospheric delay, although research continues into the use of external monitoring devices (such as water vapor radiometers) for this purpose. So, in most precise applications where sub-decimeter accuracy is sought, the residual delay must usually be estimated with the other geodetic quantities of interest. The estimation is facilitated by a simple parameterization of the tropospheric delay, where the line-of-sight delay, $D _ { L }$ , is expressed as a function of four parameters as follows:
+
+$$
+D _ { L } = m _ { h } ( e ) D _ { h z } + m _ { w } ( e ) D _ { w z } + m _ { g } ( e ) [ G _ { N } \cos ( a ) + G _ { E } \sin ( a ) ] .
+$$
+
+The four parameters in this expression are the zenith hydrostatic delay, $D _ { h z }$ , the zenith wet delay, $D _ { w z }$ , and a horizontal delay gradient with components $G _ { N }$ and $G _ { E }$ . $m _ { h }$ , $m _ { w }$ and $m _ { g }$ are the hydrostatic, wet, and gradient mapping functions, respectively, and $e$ is the elevation angle of the observation direction in vacuum. $a$ is the azimuth angle in which the signal is received, measured east from north.
+
+Horizontal gradient parameters are needed to account for a systematic component in the N/S direction towards the equator due to the atmospheric bulge (MacMillan and Ma, 1997), which are about $- 0 . 5 / + 0 . 5$ mm at mid-latitudes in the northern and southern hemispheres, respectively. They also capture the effects of random components in both directions due to weather systems. Failing to model gradients in radiometric analyses can lead to systematic errors in the scale of the estimated terrestrial reference frame at the level of about 1 ppb, as well as cause latitude and declination offsets in station and source positions, the latter also depending on the station distribution (Titov, 2004). A mean a priori model for the gradients which is based on re-analysis data of the European Centre for Medium-Range Weather
+
+Forecasts (ECMWF) is provided by the subroutine APG.F available at ${ < } ^ { 4 } >$ and ${ < } ^ { 2 } { > }$ . However, an a priori model cannot replace the (additional) estimation of gradient parameters, if observations at elevation angles below $1 5 ^ { \circ }$ are analyzed. In the case of GPS analyses, such low-elevation data could be deweighted because of multipath effects.
+
+Horizontal tropospheric gradients can reach or exceed 1 mm and their estimation was shown by Chen and Herring (1997) and MacMillan (1995) to be beneficial for VLBI, and by Bar-Sever et al. (1998) to be beneficial for GPS. Chen and Herring (1997) propose to use $m _ { g } ( e ) \ = \ 1 / ( \sin e \tan e + 0 . 0 0 3 2 )$ . Unlike other gradient mapping functions this equation is not affected by singularity at very low elevations (below $5 ^ { \circ }$ ).
+
+The hydrostatic and wet mapping functions, $m _ { h }$ and $_ { T l \ w }$ , for the neutral atmosphere depend on the vertical distribution of the hydrostatic and wet refractivity above the geodetic sites. With the availability of numerical weather models (NWM) this information can currently be extracted globally with a temporal resolution of six hours (Niell, 2001). Unlike previous mapping functions these are not limited in their accuracy by the use of only surface meteorological data, as in the functions of Ifadis (1986) or in MTT (Herring, 1992), or of the lapse rate and the heights of the isothermal layer and the tropopause as additionally used in the function of Lanyi (1984), nor by the use of average in situ properties of the atmosphere, even if validated with radiosonde data, as in NMF (Niell, 1996). The general form of the hydrostatic and wet mapping functions is (Herring, 1992)
+
+$$
+m _ { h , w } \left( e \right) = \frac { 1 + \displaystyle \frac { a } { 1 + \displaystyle \frac { b } { 1 + c } } } { \sin e + \displaystyle \frac { a } { \sin e + \displaystyle \frac { b } { \sin e + \displaystyle \frac { b } { \sin e + \displaystyle c } } } } .
+$$
+
+The Vienna Mapping Function 1 (VMF1) (Boehm et al., 2006a) is based on exact ray traces through the refractivity profiles of a NWM at $3 ^ { \circ }$ elevation and empirical equations for the $b$ and $c$ coefficients of the continued fraction in Equation (9.13). Niell (2006) compared mapping functions determined from radiosonde data in 1992 with VMF1 and found that the equivalent station height standard deviations are less than 3 mm, which is significantly better than for other mapping functions available. These results are confirmed by VLBI analyses as shown by Boehm et al. (2007a) and Tesmer et al. (2007), respectively. Thus, VMF1 is recommended for any global application, such as the determination of the terrestrial reference frame and Earth orientation parameters.
+
+At the webpage ${ < } ^ { 4 } >$ , the $a$ coefficients of VMF1 as derived from data of the ECMWF are provided with a time interval of 6 hours for the positions of most sites of the International GNSS Service (IGS), the International VLBI Service for Geodesy and Astrometry (IVS), and the International DORIS Service (IDS), as well as on a global $2 . 5 ^ { \circ } \times 2 . 0 ^ { \circ }$ grid. Kouba (2008) compares results from the grids with VMF1 given at the sites and provides algorithms on how to use the grids.
+
+The Global Mapping Function (GMF) (Boehm et al., 2006b) is an empirical mapping function in the tradition of NMF that can be calculated using only station latitude, longitude (not used by NMF), height, and day of the year. GMF, which is based on spherical harmonics up to degree and order 9, was developed with the goal to be more accurate than NMF and to be consistent with VMF1. Some comparisons of GMF, VMF1 and other MFs with radiosonde data may be found in (Niell, 2006). GMF is easy to implement and can be used when the best accuracy is not required or when VMF1 is not available. The Fortran subroutines VMF1.F and GMF.F are available at $< ^ { 2 } >$ and ${ < } ^ { 4 } >$ .
+
+# 9.3 Sources for meteorological data
+
+Because 1 mbar pressure error causes an a priori delay error of about 2.3 mm at sea level, it is essential to use accurate estimates of meteorological data (Tregoning and
+
+Herring, 2006). If meteorological instrumentation is not available, meteorological data may be retrieved from a NWM, e.g. the ECMWF as provided together with VMF1 at ${ < } ^ { 4 } >$ . In both cases adjustments of the pressure should be applied for the height difference between the location of the pressure measurement (from in situ instrumentation or from NWM) and the reference point of the space geodesy instrument. Commonly used formulas for the adjustment can be found in (Boehm et al., 2007b). Alternatively, local pressure and temperature estimates could be determined with the empirical model GPT (Boehm et al., 2007b) that has been developed similarly to the GMF, and is provided as a Fortran routine, GPT.F, at ${ < } ^ { 2 } >$ and ${ < } ^ { 4 } >$ .
+
+# 9.4 Ionospheric model for radio techniques
+
+Dispersive effects of the ionosphere on the propagation of radio signals are classically accounted for by linear combination of multi-frequency observations. In past years it has been shown that this approach induces errors on the computed time of propagation that can reach 100 ps for GPS due to the fact that higher order dispersive effects are not considered. For wide-band VLBI observations, the induced errors might reach a couple of ps. In this section the estimation of the effect of higher-order neglected ionospheric terms and possible conventional models are summarized for the microwave range, with frequencies from hundreds of MHz to few tens of GHz.
+
+# 9.4.1 Ionospheric delay dependence on radio signals including higher order terms
+
+The delay $\delta \rho _ { I }$ experienced by the transionospheric electromagnetic signals, travelling from the transmitter $T$ at ${ \vec { r } } _ { T }$ to the receiver $R$ at ${ \vec { r } } _ { R }$ , separated by a distance $\rho$ , can be expressed by the integral of the refractive index $n$ along the ray path:
+
+$$
+\delta \rho _ { I } = \int _ { \vec { r } _ { T } } ^ { \vec { r } _ { R } } c \frac { d l } { v } - \rho = \int _ { \vec { r } _ { T } } ^ { \vec { r } _ { R } } ( n - 1 ) d l
+$$
+
+where $c = 2 9 9 7 9 2 4 5 8 ~ \mathrm { m / s }$ is the light speed in free space, $v$ is the actual transionospheric signal propagation velocity at the given place and $d l$ is the differential length element.
+
+# Effects on carrier phase data
+
+By neglecting the frictional force, assuming that we are in a cold, collisionless, magnetized plasma such as the ionosphere, the refractive index for the carrier phase, $n _ { p }$ , can be expressed by the Appleton expression, for both ordinary (upper sign) and extraordinary (lower sign) waves, see for instance Davies (1990) page 72:
+
+$$
+n _ { p } ^ { 2 } = 1 - \frac { X } { 1 - \frac { Y _ { T } ^ { 2 } } { 2 ( 1 - X ) } \pm \left[ \frac { Y _ { T } ^ { 4 } } { 4 ( 1 - X ) ^ { 2 } } + Y _ { L } ^ { 2 } \right] ^ { \frac { 1 } { 2 } } }
+$$
+
+where
+
+$$
+X = \frac { \omega _ { p } ^ { 2 } } { \omega ^ { 2 } } , \qquad Y _ { L } = - \frac { \omega _ { g } } { \omega } \cos \theta , \qquad Y _ { T } = - \frac { \omega _ { g } } { \omega } \sin \theta ,
+$$
+
+where $\theta$ is the angle between the magnetic field $\vec { B }$ and the electromagnetic (EM) propagation direction $\vec { k }$ , and where $\omega = 2 \pi f$ is the circular frequency corresponding to a frequency $f$ . This applies to the carrier circular frequency $\omega$ , and to the plasma $\omega _ { p }$ and gyro $\omega _ { g }$ circular frequencies associated to the free electrons of the ionosphere:
+
+$$
+\omega _ { p } ^ { 2 } = { \frac { N _ { e } q ^ { 2 } } { m _ { e } \epsilon _ { 0 } } } \qquad \omega _ { g } = { \frac { B q } { m _ { e } } }
+$$
+
+where $N _ { e }$ is the number density of free electrons and $B$ is the magnetic field modulus (both depending on time and position along the EM ray), $q \simeq 1 . 6 0 2 2 \times$ $1 0 ^ { - 1 9 } \mathrm { C }$ is the absolute value of the electron charge, $m _ { e } \simeq 9 . 1 0 9 4 \times 1 0 ^ { - 3 1 } \mathrm { k g }$ i s the electron mass and $\epsilon _ { 0 } \simeq 8 . 8 5 4 2 \times 1 0 ^ { - 1 2 } \mathrm { F / m }$ is the electric permittivity in free space (vacuum). Extraordinary waves (lower sign) can be typically associated to right hand polarized EM signals such as those of GPS antennas, and most $\mathrm { L }$ and S Band antennas that receive satellite signals.
+
+For signals with frequencies $\omega > > \omega _ { p }$ (and hence $\omega > > \omega _ { g }$ ) as for GNSS we may expand (9.15) into a second-order Taylor approximation and retain only terms up to $f ^ { - 4 }$ , similarly to the approach of Bassiri and Hajj (1993). The result is, see (Datta-Barua et al. 2008) for a detailed discussion of several approximation ways adopted by different authors:
+
+$$
+n _ { p } = 1 - { \frac { 1 } { 2 } } X \pm { \frac { 1 } { 2 } } X Y _ { L } - { \frac { 1 } { 8 } } X ^ { 2 } - { \frac { 1 } { 4 } } X \cdot Y ^ { 2 } ( 1 + \cos ^ { 2 } \theta )
+$$
+
+where $\begin{array} { r } { Y ^ { 2 } = Y _ { L } ^ { 2 } + Y _ { T } ^ { 2 } = \left( \frac { \omega _ { g } } { \omega } \right) ^ { 2 } } \end{array}$ and again upper sign represents ordinary wave, and lower sign represents extraordinary wave.
+
+The following explicit expression for $n _ { p }$ can be obtained for extraordinary EM signals in terms of the main physical constants and parameters, after substituting $X$ , $Y _ { L }$ and $Y _ { T }$ from equations (9.16):
+
+$$
+\begin{array} { c } { { n _ { p } = 1 - { \displaystyle \frac { q ^ { 2 } } { 8 \pi ^ { 2 } m _ { e } \epsilon _ { 0 } } } \cdot { \frac { N _ { e } } { f ^ { 2 } } } - { \displaystyle \frac { q ^ { 3 } } { 1 6 \pi ^ { 3 } m _ { e } ^ { 2 } \epsilon _ { 0 } } } \cdot { \frac { N _ { e } B \cos \theta } { f ^ { 3 } } } } } \\ { { - { \displaystyle \frac { q ^ { 4 } } { 1 2 8 \pi ^ { 4 } m _ { e } ^ { 2 } \epsilon _ { 0 } ^ { 2 } } } \cdot { \frac { N _ { e } ^ { 2 } } { f ^ { 4 } } } - { \displaystyle \frac { q ^ { 4 } } { 6 4 \pi ^ { 4 } m _ { e } ^ { 3 } \epsilon _ { 0 } } } \cdot { \frac { N _ { e } B ^ { 2 } ( 1 + \cos ^ { 2 } \theta ) } { f ^ { 4 } } } } } \end{array}
+$$
+
+Inserting equation (9.19) into (9.14) leads to the following ionospheric dependent terms in the carrier phase, up to third ( $f ^ { - 4 }$ ) order:
+
+$$
+\delta \rho _ { I , p } = - { \frac { s _ { 1 } } { f ^ { 2 } } } - { \frac { s _ { 2 } } { f ^ { 3 } } } - { \frac { s _ { 3 } } { f ^ { 4 } } }
+$$
+
+After substituting the physical constants, $m _ { e }$ , $q$ , $\epsilon _ { 0 }$ , with 5 significant digits the first, second and third order coefficients, $s _ { 1 }$ , $s _ { 2 }$ and $s _ { 3 }$ , read (note that the International System of Physical Units (SI) is used, e.g. magnetic field is expressed in Tesla):
+
+$$
+\begin{array} { l } { { s _ { 1 } = 4 0 . 3 0 9 \int _ { \tilde { \tau } _ { T } } ^ { \tilde { \tau } _ { R } } N _ { e } d l } } \\ { { \ } } \\ { { s _ { 2 } = 1 . 1 2 8 4 \cdot 1 0 ^ { 1 2 } \int _ { \tilde { \tau } _ { T } } ^ { \tilde { \tau } _ { R } } N _ { e } B \cos \theta d l } } \\ { { \ } } \\ { { \ } } \\ { { s _ { 3 } = 8 1 2 . 4 2 \int _ { \tilde { \tau } _ { T } } ^ { \tilde { \tau } _ { R } } N _ { e } ^ { 2 } d l + 1 . 5 7 9 3 \times 1 0 ^ { 2 2 } \int _ { \tilde { \tau } _ { T } } ^ { \tilde { \tau } _ { R } } N _ { e } B ^ { 2 } \left( 1 + \cos ^ { 2 } \theta \right) d l } } \end{array}
+$$
+
+These expressions are fully equivalent for instance to Equations (2) to (5) in Fritsche et al. (2005).
+
+It can be seen in the last expressions (9.20) to (9.23) that the ionospheric delay on the carrier phase is negative, indicating an increase of the phase velocity of the EM transionospheric signal propagation.
+
+In order to assess the importance of the different ionospheric terms for $\delta \rho _ { I , p }$ in Equation (9.20), we start with the first term, assuming a high value of Slant Total Electron Content (STEC, see Section 9.4.2 for more details) of $\begin{array} { r } { S = \int _ { \vec { r } _ { T } } ^ { \vec { r } _ { R } } N _ { e } d l \sim } \end{array}$ $3 0 0 \times 1 0 ^ { 1 6 } \mathrm { m ^ { - 2 } }$ :
+
+$$
+\delta \rho _ { I , p , 1 } = - \frac { 4 0 . 3 0 9 S } { f ^ { 2 } } \sim - \frac { 1 . 2 \times 1 0 ^ { 2 0 } } { f ^ { 2 } }
+$$
+
+In this case we obtain a first ionospheric order term $\delta \rho _ { I , p , 1 }$ of up to several km of delay for $f \simeq 1 5 0$ MHz (negative for the carrier phase), corresponding to the lower frequency of the NIMS satellite system (U.S. Navy Ionospheric Measuring System, formerly TRANSIT), and of up to several tens of meters for $f = 1 5 7 5 . 4 2$ MHz ( $L _ { 1 }$ GPS carrier frequency).
+
+The relative importance of the first $( \delta \rho _ { I , p , 1 } = - s _ { 1 } / f ^ { 2 } $ ), second $( \delta \rho _ { I , p , 2 } = - s _ { 2 } / f ^ { 3 } )$ and third order terms $\dot { \delta } \rho _ { I , p , 3 } = - s _ { 3 } / f ^ { 4 } )$ also depends on the frequency. The higher order terms are increasingly less important for increasing frequencies (e.g. for VLBI frequencies compared to GPS frequencies). Indeed, from Equations (9.20) to (9.23):
+
+$$
+\frac { \delta \rho _ { I , p , 2 } } { \delta \rho _ { I , p , 1 } } = \frac { 2 . 7 9 9 4 \times 1 0 ^ { 1 0 } } { f } \cdot \frac { \int _ { \vec { r } _ { T } } ^ { \vec { r } _ { R } } N _ { e } B \cos \theta d l } { \int _ { \vec { r } _ { T } } ^ { \vec { r } _ { R } } N _ { e } d l }
+$$
+
+By taking typical values reflecting the order of magnitude of $| B _ { 0 } \cos \theta _ { 0 } | \simeq 1 0 ^ { 4 } \mathrm { n T }$ at a given effective height to evaluate both integrals, the order of magnitude of the ratio of second to first order ionospheric term can be approximated by:
+
+$$
+\frac { \delta \rho _ { I , p , 2 } } { \delta \rho _ { I , p , 1 } } \simeq \frac { 2 . 7 9 9 4 \times 1 0 ^ { 1 0 } } { f } \vert B _ { 0 } \cos \theta _ { 0 } \vert \sim \frac { 2 . 8 \times 1 0 ^ { 5 } } { f }
+$$
+
+The value of $\delta \rho _ { I , p , 2 }$ is thus typically only $1 \%$ of that of $\delta \rho _ { I , p , 1 }$ for $f \simeq 1 5 0$ MHz (NIMS), and only $0 . 1 \%$ for $f = 1 5 7 5 . 4 2$ MHz (GPS $L _ { 1 }$ carrier).
+
+Similarly, the order of magnitude of the relative value between third and second order ionospheric terms can be estimated as:
+
+$$
+\frac { \delta \rho _ { I , p , 3 } } { \delta \rho _ { I , p , 2 } } = \frac { 7 . 1 9 9 8 \times 1 0 ^ { - 1 0 } } { f } \cdot \frac { \int _ { \vec { r } _ { T } } ^ { \vec { r } _ { R } } N _ { e } ^ { 2 } d l } { \int _ { \vec { r } _ { T } } ^ { \vec { r } _ { R } } N _ { e } B \cos \theta d l } + \frac { 1 . 3 9 9 6 \times 1 0 ^ { 1 0 } } { f } \cdot \frac { \int _ { \vec { r } _ { T } } ^ { \vec { r } _ { R } } N _ { e } B ^ { 2 } \left( 1 + \cos ^ { 2 } \theta \right) d l } { \int _ { \vec { r } _ { T } } ^ { \vec { r } _ { R } } N _ { e } B \cos \theta d l }
+$$
+
+Considering the typical values used above reflecting order of magnitude of $\left| B _ { 0 } \cos \theta _ { 0 } \right|$ $\mathrm { \simeq 1 0 ^ { 4 } n T }$ at a given effective height to evaluate the integrals, an intermediate aneffective electron density fulfilling N0 · R \~rR\~rT gle of $\theta _ { 0 } = 4 5$ deg, and taking $N _ { 0 } \simeq 1 0 ^ { 1 2 } \mathrm { m ^ { - 3 } }$ $\begin{array} { r } { N _ { 0 } \cdot \int _ { \vec { r } _ { T } } ^ { \vec { r } _ { R } } N _ { e } d l = \int _ { \vec { r } _ { T _ { . } } } ^ { \vec { r } _ { R } } N _ { e } ^ { 2 } d l } \end{array}$ a raw order of magnitude value of , we get the following relative order of magnitude value between third and second order ionospheric terms:
+
+$$
+\begin{array} { r l r } {  { \frac { \delta \rho _ { I , p , 3 } } { \delta \rho _ { I , p , 2 } } \simeq \frac { 1 } { f } ( 7 . 1 9 9 8 \times 1 0 ^ { - 1 0 } \frac { N _ { 0 } } { | B _ { 0 } \cos \theta _ { 0 } | } + 1 . 3 9 9 6 \times 1 0 ^ { 1 0 } \cdot \frac { 3 } { 2 } | B _ { 0 } \cos \theta _ { 0 } | ) } } \\ & { } & { \sim \frac { 7 . 2 \times 1 0 ^ { 7 } + 2 . 1 \times 1 0 ^ { 5 } } { f } \qquad ( \mathbb { S } _ { \varepsilon } \times 1 0 ^ { - 1 0 } \cdot \frac { 1 } { 2 } ) \qquad \mathrm { ( } \varepsilon \times 1 0 ^ { - 1 0 } \cdot \frac { 3 } { 2 } | B _ { 0 } \cos \theta _ { 0 } | ) } \end{array}
+$$
+
+The order of magnitude of the ratio between third and second order ionospheric terms can thus be as high as about 50% for NIMS frequency $f \simeq 1 5 0$ MHz but less than $1 0 \%$ for $f = 1 5 7 5 . 4 2$ MHz, the $L _ { 1 }$ GPS carrier frequency.
+
+Another conclusion from this approximation is that the second integral in (9.23) can typically be neglected compared to the first integral depending only on the electron density, as it is typically two orders of magnitude smaller, see Equation (9.28):
+
+$$
+s _ { 3 } \simeq 8 1 2 \int _ { \vec { r } _ { T } } ^ { \vec { r } _ { R } } N _ { e } ^ { 2 } d l
+$$
+
+Finally, in order to show that third order ionospheric approximation should be adequate for most of the radio astronomic-geodetic techniques, we can consider the fourth order term $\delta \rho _ { I , p , 4 }$ in the carrier phase delay. It can be deduced in a similar way as the first to third order terms, but now keeping the terms $f ^ { - 5 }$ in the Taylor expansion of Equation (9.15) in the corresponding fourth order term $\delta n _ { p , 4 }$ of the carrier phase ionospheric refraction index term
+
+$$
+\delta n _ { p , 4 } = - \frac { 1 } { 2 } X Y _ { L } \left( \frac { X } { 2 } + Y ^ { 2 } \left[ 1 + \frac { 1 } { 8 } \sin ^ { 2 } \theta \tan ^ { 2 } \theta \right] \right)
+$$

@@ -1,0 +1,82 @@
+# 学术书籍智能下载系统 - 配置文件
+
+# 数据库配置
+database:
+  path: "data/books.db"
+
+# 文件路径配置
+paths:
+  excel_file: "行星运行轨道理论的相关书籍(1).xlsx"
+  download_dir: "downloads"
+  log_dir: "logs"
+
+# 下载配置
+download:
+  concurrent_downloads: 3  # 并发下载数
+  timeout: 60  # 超时时间（秒）
+  retry_times: 3  # 重试次数
+  retry_delay: 1  # 重试间隔（秒）
+  delay_between_requests: 1  # 请求间隔（秒）
+  chunk_size: 8192  # 下载块大小（字节）
+
+# 搜索源配置（按优先级排序）
+search_sources:
+  # 合法开放资源
+  - name: "arXiv"
+    enabled: true
+    priority: 1
+    base_url: "https://export.arxiv.org/api/query"
+    delay: 0
+    max_results: 3
+
+  - name: "Google Scholar"
+    enabled: true
+    priority: 2
+    base_url: "https://scholar.google.com"
+    delay: 0
+
+  - name: "Internet Archive"
+    enabled: true
+    priority: 3
+    base_url: "https://archive.org/advancedsearch.php"
+    metadata_url: "https://archive.org/metadata"
+    delay: 0
+    max_results: 3
+
+  # 学术资源库
+  - name: "Library Genesis"
+    enabled: true
+    priority: 4
+    base_url: "http://libgen.rs"
+    delay: 1
+
+  - name: "Anna's Archive"
+    enabled: false
+    priority: 5
+    base_url: "https://annas-archive.org"
+    delay: 3
+
+# 文件验证配置
+validation:
+  min_file_size: 102400  # 最小文件大小（100KB）
+  max_file_size: 524288000  # 最大文件大小（500MB）
+  allowed_formats: ["pdf", "epub", "djvu"]
+  first_page_min_title_similarity: 0.2  # PDF第一页标题最低匹配阈值
+  first_page_min_author_similarity: 0.2  # PDF第一页作者最低匹配阈值
+
+# 命名规范
+naming:
+  pattern: "[{category}]{title}_{author}.{ext}"
+  max_filename_length: 200
+
+# 日志配置
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/app.log"
+
+# 用户代理列表（随机选择）
+user_agents:
+  - "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+  - "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  - "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"

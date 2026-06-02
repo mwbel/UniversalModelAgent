@@ -1,0 +1,17 @@
+Chapter 6 is devoted to discussions ofBruns's and Poincare's theorems. The generality ofBruns's proof of the theorem of the nonexistence of new algebraic integrals is extended from three bodies to $_ { n }$ bodies.The proof of Painleve's extension of Bruns's theorem is given.The integrals of the restricted three-body problem are discussed with special reference to the ergodic theorem.Poincaré's theorem concerning the nonexistence of new uniform integrals is proved and discussed in full detail. Exceptions to Poincaré's theorem are also dealt with.The top motions of Euler, Lagrange,and Kowalewski are discussed from the point of view of Bruns's and Poincaré's theorems,and the solution,given with integrals, is based on the theory of algebraic functions, especially on the Riemann $\vartheta .$ -functions and the hyperelliptic functions.
+
+Volume II,which will be published shortly after Volume I, will contain perturbation theories in classical celestial mechanics for the motions of planets,asteroids, satellites, comets, and the moon, that is, theories of Laplace, Lagrange,Delaunay, von Zeipel, Hansen,Gylden, Hill, Brown,and others,and their applications to the motions of artifcial celestial bodies. Questions will be raised on the gaps in the asteroidal distribution and on the capture of comets.
+
+In Volume III, the form of the solutions of these perturbation theories and the convergence of the series expansions for the solutions will be discussed on mathematical grounds. The question of the third integral of motion will be touched upon.Differential equations with periodic coefficients and with quasi-periodic coefficients will be used in connection with perturbation theory.Krylov-Bogoliubov's averaging method and Diliberto's periodic surface theory will be applied to the motion of celestial bodies.
+
+In Volume IV,Poincaré's theory of periodic solutions will be discussed in full with various modern versions of the theory and with practical applications to the three- and many-body problems.Periodic solutions will be dealt with on the basis ofWintner's nonlinear infinite analysis and Lichtenstein's nonlinear integral equations.Motions in the neighborhood of an equilibrium point will be discussed according to the theories of Birkhoff and Siegel. The conditional existence of quasi-periodic solutions in the manner of Kolmogorov, Arnold, and Moser will be shown. The stability theory of Liapounov and its modern development will be described.
+
+Volume V will contain proofs of the existence of the solution of the three-body problem by Sundman,Levi-Civita,Chazy,and Merman,as well as the proof of the rigorous capture theory of Merman; finally, there will be discussed the topological theory of Poincaré and Birkhoff, including the theory of characteristics,manifolds of motion，surface transformations, the invariant-point theorem, the ergodic theorem,and almost periodic motions.
+
+The author wishes to express his appreciation for a unique editorial collaboration:Dr. Peter Musen of the National Aeronautics and Space Administration's Goddard Space Flight Center (GSFC) kindly read the manuscript and offered aid and encouragement as the work progressed. Subsequently, Dr. Musen gave generously of his time and wisdom to Mr.R.L. Tanner, chief editor of GSFC, and his associate Mr. P. Barr, who with NASA support jointly prepared the work for the publishers.
+
+# Contents
+
+Introduction I
+
+# PART I DYNAMICAL PRINCIPLES 13

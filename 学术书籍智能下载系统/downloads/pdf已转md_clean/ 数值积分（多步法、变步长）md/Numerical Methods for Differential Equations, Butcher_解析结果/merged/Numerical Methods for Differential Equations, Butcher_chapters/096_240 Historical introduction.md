@@ -1,0 +1,5 @@
+# 240 Historical introduction
+
+The idea of extending the Euler method by allowing the approximate solution at a point to depend on the solution values and the derivative values at several previous step values was originally proposed by Bashforth and Adams (1883). Not only was this special type of method, now known as the Adams–Bashforth method, introduced, but a further idea was suggested. This further idea was developed in detail by Moulton (1926). Other special types of linear multistep methods were proposed by Nystr¨om (1925) and Milne (1926, 1953). The idea of predictor–corrector methods is associated with the name of Milne, especially because of a simple type of error estimate available with such methods. The ‘backward difference’ methods were introduced by Curtiss and Hirschfelder (1952), and these have a special role in the solution of stiff problems.
+
+The modern theory of linear multistep methods was developed in large measure by Dahlquist (1956), and has become widely known through the exposition by Henrici (1962, 1963).

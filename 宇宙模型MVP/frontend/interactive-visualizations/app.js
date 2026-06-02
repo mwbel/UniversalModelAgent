@@ -32,16 +32,31 @@ const legacyPages = [
   {
     id: "modern-moon-phase",
     badge: "现代天文学",
-    title: "实时月相页面",
-    summary: "已实现的月相交互页，支持日期滑块、照明比例、相位名称，以及嵌套 Python 生成视图。",
-    src: "./legacy/modern-original/lunar_phase.html",
-    source: "AlVisualization / astronomy / original",
-    category: "月相交互",
-    stack: "Canvas + AstroMath + Iframe 组合视图",
+    title: "地月月相与月食演示",
+    summary: "基于 Skyfield 与 Plotly 的地月系统联动页面，左侧展示地月绕日关系，右侧同步展示月相变化。",
+    src: "./legacy/generated/moon-eclipse-slider.html",
+    source: "AlVisualization / astronomy / sun_earth_moon_phase_slider.v6",
+    category: "月相与地月系统联动",
+    stack: "Python + Skyfield + Plotly + 纹理月相渲染",
     notes: [
-      "左侧可调日期与位置，右侧实时绘制月相圆盘。",
-      "页面下方还内嵌了 Python 生成的相位滑块页。",
-      "适合测试复合布局和控件响应。",
+      "左侧是太阳、地球、月球的空间关系，右侧同步显示月相圆盘。",
+      "支持播放、暂停、日期滑块与年份切换。",
+      "当前月食相关推荐已替换为这份 Plotly 实现。",
+    ],
+  },
+  {
+    id: "kepler-third-law",
+    badge: "现代天文学",
+    title: "开普勒第三定律实验台",
+    summary: "通过半长轴滑块、轨道对比和 T²-a³ 曲线直观理解开普勒第三定律。",
+    src: "./legacy/generated/kepler-third-law.html",
+    source: "UniverseModel / generated / kepler-third-law",
+    category: "概念关系实验台",
+    stack: "HTML + Canvas + SVG",
+    notes: [
+      "拖动半长轴即可看到轨道周期如何按幂律增长。",
+      "左侧轨道视图强调直观空间感，右侧关系曲线强调公式关系。",
+      "适合问答中内嵌，用于解释开普勒第三定律。",
     ],
   },
   {
@@ -108,12 +123,18 @@ const legacyPages = [
 
 const state = {
   activePageId: legacyPages[0].id,
+  embedMode: false,
 };
 
 function initialize() {
+  const params = new URLSearchParams(window.location.search);
+  state.embedMode = params.get("embed") === "1";
+  if (state.embedMode) {
+    document.body.classList.add("embed-mode");
+  }
+
   document.getElementById("pageCount").textContent = String(legacyPages.length);
   buildPageRail();
-  const params = new URLSearchParams(window.location.search);
   const pageId = params.get("page");
   if (pageId && legacyPages.some((page) => page.id === pageId)) {
     state.activePageId = pageId;
@@ -154,8 +175,11 @@ function setPage(pageId) {
   document.getElementById("previewFrame").src = page.src;
   document.getElementById("openPageButton").href = page.src;
   renderNotes(page.notes);
-  syncActiveState();
-  updateDeepLinkSummary();
+  if (!state.embedMode) {
+    syncActiveState();
+    updateDeepLinkSummary();
+  }
+  document.title = state.embedMode ? `${page.title} · 交互式可视化` : "Epic F · 已实现交互式可视化页面展厅";
 }
 
 function renderNotes(notes) {

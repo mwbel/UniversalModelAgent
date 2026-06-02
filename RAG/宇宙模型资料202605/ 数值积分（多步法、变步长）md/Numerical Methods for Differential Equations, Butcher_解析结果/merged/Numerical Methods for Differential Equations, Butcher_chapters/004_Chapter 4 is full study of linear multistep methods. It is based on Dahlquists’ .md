@@ -1,0 +1,11 @@
+Chapter 4 is full study of linear multistep methods. It is based on Dahlquists’ classic work on consistency, stability and order and includes analysis of linear and nonlinear stability. In both Chapters 3 and 4 the use of order stars to resolve order and stability questions is complemented by the introduction of order arrows. It is probably a good idea to read through most of Chapter 4 before embarking on Chapter 5. This is not because general linear methods are intrinsically inaccessible, but because an appreciation of their overarching nature hinges on an appreciation of the special cases they include.
+
+General linear methods, the subject of Chapter 5, treat well-known methods in a unified way, but it is hoped they do more than this. There really seem to be new and useful methods buried amongst them which cannot be easily motivated in any other way. Thus, while this chapter needs to be put aside to be read as a culmination, it should not be put off too long. There is so much nice mathematics already associated with these methods, and the promise of more to come provides attraction enough. It is general linear methods, and the stability functions associated with them that really put order arrows in their rightful place.
+
+# Internet support pages
+
+For additional information and supporting material see http://www.math.auckland.ac.nz/\~butcher/ODE-book-2008
+
+# Reacknowledgements
+
+I have many people to thank and to rethank in my efforts to produce an improved edition. My understanding of the stability and related properties of general linear methods has been sharpened by working with Adrian Hill and Laura Hewitt. Helmut Podhaisky has given me considerable help and advice especially on aspects of general linear method implementation. My special thanks to Jane HyoJin Lee for her assistance with the final form of the manuscript. A number of people have made comments and provided corrections on the first edition or made constructive suggestions on early drafts of this new version. In addition to people acknowledged in some other way, I would like to mention the names of Ian Gladwell, Dawoomi Kim, Yoshio Komori, Ren´e Lamour, Dione O’Neale, Christian Perret, Higinio Ramos, Dave Simpson, Steve Stalos, Caren Tischendorf, Daniel Weiß, Frank Wrona and Jinsen Zhuang.

@@ -1,0 +1,91 @@
+# LEAST SQUARES ADJUSTMENT
+
+Gabriel F. T. Obenson
+
+To cite this article: Gabriel F. T. Obenson (1971) LEAST SQUARES ADJUSTMENT, Survey Review, 21:159, 44-45
+
+To link to this article: http://dx.doi.org/10.1179/sre.1971.21.159.44
+
+![](images/bffb1ca6bc93dc20796260a26cff059d4e14648c989be7c14d9a3f64a37d9c9d.jpg)
+
+Published online: 19 Jul 2013.
+
+![](images/12cb691b3f14dcea006833e7cceaa77ffc2bd36a166112a6434576eae369e147.jpg)
+
+Submit your article to this journal
+
+![](images/4fbd1206a66e7111699327e4408d2ee57a8e0e29e6f4f9799c9007e7e92e0c25.jpg)
+
+Article views: 8
+
+![](images/9ec59c95a1b82c8322c2b17feacb894dc63464ca4f1f5669815fa350f25eb405.jpg)
+
+View related articles
+
+# CORRESPONDENCE
+
+# ASTRONOMICAL NOTATION
+
+SIR,-Since my student days I have felt that the symbols for the astronomical triangle should be standardised, if not inlproved. I was very interested in what Mr. L. P. Lee had to say on the subject in No. t 56 of this Review.
+
+A suitable symbol for a.ltitude is the main need. "H" or " h " should preferably be -discontinued altogether and therefore I suggest " J' ", because, as far as I know, it is not used anywhere in astrononlY, either in pure astrononlY or in surveying. Being next to the letter" Z " in the alphabet it goes naturally as a pair with this already acceptable symbol" z" for co-altitude (zenith distance). Presumably" " " came about originally as the initial of" height". "E" for elevation is equally unsatisfactory because it is already in use for the Equation of Tinle. Equally the Greek epsilon is n<;>better because t.he upper case looks exactly the same. Maybe the lower cases" e " and" {;" could be considered, but I prefer" y "; and" e " is already used for" the Obliquity of the Ecliptic" (lAU).
+
+Double letters of course should be avoided, and so " A " for azimuth should have no alternative.
+
+With regard to hour angle, the other unsatisfactory one, all of " H ", " H.A. " and " t " should be .discontinued. I have already covered the reasons for rejecting the first two, and·" t ". is in use in pure observational astronomy for "time of observation" (lAD) " T" is used for temperature, so I suggest the unused lower c~se of tau $\left( \tau \right)$ .
+
+Lower case lambda is also in double use in astronomy for wavelength (IAU) as well as longitude. Furthermore I would prefer the exclusive use of plus and minus signs for latitude and longitude, thus rejecting N., S., E. and W.
+
+So nlY list is as follows:-
+
+AZIMUTH: A
+
+ALTITUDE: y
+
+ZENITH DISTANCE: z
+
+LATITUDE: $\phi$ (NORTH $\phi +$ SOUTH ¢J-)
+
+LONGITUDE: ). (EAST $\lambda +$ , WEST $\lambda -$ ）
+
+HOUR ANGLE: r
+
+DECLINATION: c5
+
+PARALLACTIC ANGLE: '7
+
+Yours faithfully,
+
+H. C. NIGHTINGALE.
+
+M.I.S. Aust., F.R.A.S.
+
+Regional. Surveyor,
+
+P.O. Box 85,
+
+Mzuzu,
+
+Malawi.
+
+13th September, 1970.
+
+# LEAST SQUARES ADJUSTMENT
+
+SIR,-In Survey Review No. 156 of April 1970, Mr. Allman attempted to " restate the fundamentals of adjustment". He indicated that the minimization of the sum of squares of the corrections to the original observations, or least-squares method of adjustment, is the minimum variance technique. This cannot be generally true. If we define least squares adjustment as the minimization of the quadratic form V' PV, where P, the weight matrix of the observations, can either be the Identity matrix, a diagonal matrix or a full matrix (that is, taking into· account the correlation between the observations), and if this weight matrix is formed by taking the inverse of the covariance matrix of the observations, or some proportional representation of it, then the two methods are equivalent.
+
+In other words one can perform a least squares adjustment which is not minimunl variance. However if the observations had a Normal type distribution then all the theoretical methods: least squares, minimum variance, maximum likelihood estimates, etc., should give the same results.
+
+The Ohio State University
+
+July 24th, 1970.
+
+Yours faithfully, GABRIEL F. T. OBENSON.
+
+# REVIEWS
+
+INTRODUCTION TO GEODESY. Clair E. Ewing and Michael M. Mitchell. 304 $+ \mathbf { x }$ pages, $2 4 \times 1 6$ cm. American Elsevier Publishing Company Inc., New York, 1970. Price 155s.   
+There is an undoubted need for a text book on geodesy intermediate between Bomford's " Geodesy" or Heiskanen and Moritz' " Physical Geodesy", and text books on surveying, and this book was written to fill this gap. According to the Preface" the goal of the book is to provide the reader with a means for understanding the basic concept of the science" (of Geodesy), " it is intended for the student at the upper undergraduate or lower graduate level when used as a text book", and it "is not a manual of doing geodesy". Unfortunately the authors' interpretation of this goal is not only to write in a very chatty and colloquial style but also to produce many imprecise or superficial statements, some of which are positively misleading, some just not true. A few instances are: pages 6 and 88, " If a mass were suspended in the vicinity of a mountain, it would be deflected away from the vertical ... ", and " ... gravity anomalies which deflect the plumb line away from the true vertical"; page 8, after describing the geoid in the usual way by cutting narrow channels through the continents down to sea level, "This undisturbed water surface is known as the bounding equipotential surface of the earth or, more commonly, the geoid."   
+The deliberate omission of any detailed description of field work also has many unfortunate consequences. The chapter on geodetic astronomy, perhaps the most superficial of the book, describes observations by the Talcott method without any mention of the Talcott levels, and the method of meridian transits for longitude and its computation (including diurnal aberration) is described without any mention of a striding or suspension level while azimuth error is stated to be eliminated by reversal of the instrument. Accuracies of the astronomical determination of latitude and longitude are quoted in feet.   
+One of the longest chapters is entitled" Electronic Surveying". Unfortunately 43 of the 60 pages are devoted almost entirely to navigation systems, such as the war-time Gee-H and Oboe, Loran and Decca, with some pages on Shoran and Hiran. The only refractive index formula quoted (with reference to Shoran) is one used by Aslakson in his Shoran work in the early 1950's; no mention of this is made in the section on the geodimeter or electrotape, but in the section on the tellurometer it is merely stated that a refraction correction must be made. The whole chapter is perhaps suitable for those who are curious about geodesy but not for those who wish to study it.   
+There are many other errors of omission and comnlission. To mention just two, " the famous deflection-of-the-vertical equations" (sic) are given with signs applicable to longitudes positive East, while it is explicitly stated that longitudes are positive West and the reader is warned to beware of just such errors; and, in the description of the use of the pendulum to determine absolute gravity, mention is made of three sources of error but not of the most important one due to the determination of its length.

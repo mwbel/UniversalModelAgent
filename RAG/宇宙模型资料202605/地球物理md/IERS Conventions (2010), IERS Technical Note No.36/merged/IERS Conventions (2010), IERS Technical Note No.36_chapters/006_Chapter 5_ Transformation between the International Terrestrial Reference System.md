@@ -1,0 +1,3 @@
+# Chapter 5: Transformation between the International Terrestrial Reference System and Geocentric Celestial Reference System
+
+The chapter (with a new title) has been significantly rewritten, with N. Capitaine and P. Wallace as the primary authors, in order to make the chapter compliant with the IAU 2000/2006 resolutions and the corresponding terminology. A presentation of the IAU 2006 resolutions has been added, and a description of the models, procedures and software to implement the IAU 2000/2006 resolutions has been included. The organization of the chapter has been modified in order to clarify the successive steps to be followed in the coordinate transformation. Additional contributors include A. Brzezi´nski, G. Kaplan and S. Lambert.

@@ -1,0 +1,1 @@
+Chapter 3 focuses on the lunar environment as a set of boundary conditions for the designer. Values for physical parameters of the lunar surface are presented. The critical data on radiation and temperature are also covered. This information is adequate for planning a wide variety of surface operations.

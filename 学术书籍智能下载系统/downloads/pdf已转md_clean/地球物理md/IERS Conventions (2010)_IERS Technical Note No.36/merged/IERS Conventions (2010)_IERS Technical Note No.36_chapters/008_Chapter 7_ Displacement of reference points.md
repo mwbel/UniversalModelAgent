@@ -1,0 +1,3 @@
+# Chapter 7: Displacement of reference points
+
+A new conventional mean pole model, to be referenced as the IERS (2010) mean pole model, is given consistently with Chapter 6. The section on ocean loading has been rewritten and new sections describe the oceanic pole tide loading and the S1-S2 atmospheric loading. The section “Models for the displacement of reference points of instruments” has been updated: It contains models for a reference temperature, the thermal expansion of VLBI antennas and GNSS antenna phase center offsets and variations. The primary contributors are D. Agnew, J. Boehm, M. Bos, T. van Dam, S. Desai, D. Gambis, A. Nothnagel, G. Petit, J. Ray, H.-G. Scherneck, R. Schmid, and J. Wahr.

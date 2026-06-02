@@ -1,0 +1,1811 @@
+铅垂线是天文经、纬度和天文方位角的量度基准，椭球面法线是大地经、纬度和大地方位角的量度基准。因此，可以通过垂线偏差将这两种量联系起来，下面就来推导它们之间的关系。为了推导方便，假定椭球的短轴平行于地轴，大地起始子午面与天文起始子午面互相平行。
+
+![](images/5991df39fe5096c2b3621638b4f72cdd4a8cbc47130f7932a03efb8fadff96b2.jpg)  
+图11.2
+
+“如图11.2所示，以地面上的研究点 $\mathrm { P }$ 为中心，取单位长度为半径作一辅助球。 $\mathsf { P P } _ { \mathrm { 3 } }$ 表示相互平行的椭球短轴与地轴。P点的铅垂线与辅助球交于 $Z _ { \mathrm { : : } } { } _ { \mathrm { : } }$ ，它是天文天顶；P点的法线与辅助球相交于 $Z _ { \star }$ ·它是大地天顶。连接 $Z _ { \star }$ 和 $Z _ { \mathcal { F } }$ 的大圆弧长就是 $\mathrm { P }$ 点的垂线偏差 $\dot { \mathbf { u } }$ 。 $\widehat { \mathbf { P } _ { \circ } Z _ { \star } }$ 和 $\widehat { \mathrm { P } _ { \circ } ^ { \circ } Z _ { \sharp } }$ 分别为 $\dot { \mathbf { P } }$ 点的大地子午面和天文子午面与辅助球的相交线。若以 $( \lambda , \varphi )$ 和 $( \mathrm { L } _ { \mathrm { \bullet } } \mathrm { B } )$ 分别表示 $\mathrm { \bf P }$ 点的天文经、纬度和大地经、纬度，则 $\widehat { \mathrm { P } _ { \circ } , \mathrm { Z } _ { \mathfrak { F } } } ^ { * } = 9 0 ^ { \circ } - \varphi , \widehat { \mathrm { P } _ { \circ } \mathrm { Z } _ { \mathfrak { F } } } = 9 0 ^ { \circ } -$
+
+B,两个子午面的夹角∠ZPZ关=λ一L。自Z关向大地子午面作垂线ZZ',则ZZ'是垂线偏差的子午分量 $\tt { \tt S } , \tt { \dot { Z } } _ { \mathcal { F } } \vec { Z ^ { \prime } }$ 是垂线偏差的卯酉分量 $\eta$
+
+因为垂线偏差是一个小量，可以把球面三角形Z天乙大Z'视为平面三角形，故有
+
+$$
+\left. \begin{array} { r } { \tilde { \varepsilon } = \mathbf { u c o s } \theta } \\ { \eta = \mathbf { u s i n } \theta } \end{array} \right\}
+$$
+
+式中 $\dot { \pmb \theta }$ 如图11.2所示为 $\angle { \bf { Z } } _ { \Re } \ : { \bf { Z } } _ { \bf { \& } } \ : { \bf { Z ^ { \prime } } }$ 。由 $( 1 1 \cdot 3 )$ 式可得
+
+$$
+\left. \begin{array} { l } { \displaystyle \mathbf { \Delta t g \theta } { = } \frac { \eta } { \xi } } \\ { \displaystyle \mathbf { \Delta u } = \sqrt { \xi ^ { 2 } + \eta ^ { 2 } } } \end{array} \right\}
+$$
+
+由球面直角三角形 $\mathbf { Z } _ { \Re } \mathbf { Z } ^ { \prime } \mathbf { P } _ { 0 }$ 可以写出
+
+$$
+\begin{array} { r l } & { \cos { ( \lambda { - } \mathrm { L } ) } = \mathrm { c t } \mathrm { g } ( \mathrm { B } { + } \tilde { \varsigma } ) \mathrm { t } \mathrm { g } \varphi } \\ & { \sin { \eta } = \sin { ( \lambda { - } \mathrm { L } ) } \sin { ( 9 0 ^ { \circ } - \varphi ) } } \end{array}
+$$
+
+因 $\lambda { - } \mathbf { L }$ 和 $\eta$ 都很小，可以认为
+
+$$
+\cos { ( \lambda - L ) } = 1 \qquad \sin { ( \lambda - L ) } = \lambda - L
+$$
+
+因此可得
+
+$$
+\left. \begin{array} { l } { \Delta \tilde { \varsigma } = \varphi - \mathrm { B } } \\ { \eta = ( \lambda - \mathrm { L } ) \cos \varphi } \end{array} \right\}
+$$
+
+(11·5)式给出了垂线偏差、天文经纬度和大地经纬度三者之间的关系。如果在地面点进行了天文经纬度的测定，再求得它的绝对垂线偏差的两分量，则可由下式求得该点的地心大地经纬度：
+
+$$
+\left. \begin{array} { l } { { \bf B . } _ { \sf c } = \boldsymbol { \varphi } - \boldsymbol { \xi } - 0 . 1 7 1 ^ { \prime } { \bf H } \mathrm { s i n } 2 { \bf B } } \\ { { \bf L } _ { \sf c } = \lambda - \eta { \bf s e c } \boldsymbol { \varphi } } \end{array} \right\} .
+$$
+
+如果知道天文大地垂线偏差，则可由下式求得该点的属于相应参考椭球的大地经纬度：
+
+$$
+\scriptstyle \left. { \begin{array} { l } { \mathrm { B } = \varphi - \xi ^ { * } } \\ { \mathrm { L } = \lambda - \eta ^ { * } \sec \varphi } \end{array} } \right\}
+$$
+
+，在图11.2中，M是观测目标 $\pmb { \mathrm { m } }$ 在辅助球上的投影。当用经纬仪对此方向进行观测时，是以铅垂线(PZ美)为基准的；而在大地测量计算时是以法线(PZ)为基准的。垂线偏差的存在使得它们存在一个差值NN'=β一β。在直角球面三角形 MNN'中可得
+
+$$
+\sin \widetilde { \mathrm { N N } } ^ { \prime } { = } \cos 2 \sin \ b q
+$$
+
+式中Z是 $\dot { \bf M }$ 点的天顶距 $( \mathbb { M } Z _ { \# }$ )q是 $\angle \mathrm { N } ^ { \prime } \mathbf { M N }$ 。由三角形 $M Z _ { \cdot } Z _ { \cdot }$ 可以写出
+
+$$
+\mathrm { s i n q } = { \frac { \sin \left( \mathbf { A } - { \boldsymbol { \theta } } \right) } { \sin \mathbf { Z } } } \mathrm { s i n } \dot { \mathbf { u } }
+$$
+
+式中 $\mathbf { A } ^ { \prime }$ 为 $\mathbf { M }$ 点的大地方位角。由上两式可得
+
+$$
+\sin \mathrm { N N ^ { \prime } } { = } \sin \mathrm { u s i n } ( \mathbf { A } - \theta ) \mathrm { c t g } { \mathrm { } } Z
+$$
+
+考虑到 $\widehat { \mathrm { N N } } ^ { \prime } = \hat { \beta } _ { 1 } - \beta$ 和 $\mathbf { u }$ 是小量，并运用 $( 1 1 \cdot 3 )$ 式得到
+
+$$
+\beta _ { 1 } - \beta = ( \hbar \mathrm { \Omega } \mathfrak { s i n A } - \eta \mathrm { c o s A } ) \mathrm { c t g } Z
+$$
+
+$( 1 1 \cdot 8 )$ 式表明，在地面上所完成的水平方向观测值归算到参考椭球面上时，要加一个垂线偏差改正 $\eth _ { 1 }$ ，其计算公式为
+
+$$
+\delta _ { 1 } = - ( \hbar ^ { * } \sin \mathrm { A } - \eta ^ { * } \cos \mathrm { A } ) \mathrm { c t g } Z
+$$
+
+用 ${ \pmb { \alpha } } _ { \pmb { \kappa } }$ 表示 $\mathbf { M }$ 点的天文方位角，由图 $( 1 1 \cdot 2 )$ 可以写出
+
+$$
+\mathfrak { a } _ { \mathfrak { X } } = \partial _ { \mathfrak { i } } \mathfrak { - } \{ \beta _ { \mathfrak { i } }
+$$
+
+而对于大地方位角A有
+
+$$
+\mathbf { A } { = } { \boldsymbol { \theta } } { + } { \boldsymbol { \beta } }
+$$
+
+因而可得
+
+$$
+\alpha _ { \mathfrak { F } } \mathrm { - } \mathrm { A } = ( \theta _ { 1 } \mathrm { - } \theta ) + ( \beta _ { 1 } \mathrm { - } \beta )
+$$
+
+在直角球面三角形 $\mathbf { P } _ { 0 } \mathbf { H } \mathbf { H } ^ { \prime }$ 中， $\mathrm { H H ^ { \prime } }$ 就是 $\theta _ { 1 } - \theta$ ，因而有
+
+$$
+\sin ( \theta _ { 1 } - \theta ) = \sin ( \lambda - \operatorname { L } ) \sin \varphi
+$$
+
+考虑到 $\theta _ { 1 } - \theta$ 和 $\lambda { - } \mathbf { l } .$ 是小量，可得
+
+$$
+\theta _ { 1 } - \theta = ( \lambda \mathrm { - } \mathrm { L } ) \sin \varphi
+$$
+
+将 $( 1 1 \cdot 1 1 )$ 和 $( 1 1 \cdot 8 )$ 式代入 $( 1 1 \cdot 1 0 )$ 式右端，得到
+
+$$
+\alpha _ { \ast } - \mathrm { A } = ( \lambda - \mathrm { L } ) \mathrm { s i n } \varphi + ( \ddagger \mathrm { s i n } \mathrm { A } - \eta \mathrm { c o s A } ) \mathrm { c t g } \mathrm { Z }
+$$
+
+利用 $( 1 1 \cdot 5 )$ 的第二式变换右端第一项后可得
+
+$$
+\alpha _ { \mathbb { X } } - \mathrm { A } { = } \eta \mathrm { t g } \varphi { + } ( \mathsf { \tilde { c } s i n A - } \eta { \cos A } ) { \mathrm { c t g } } Z
+$$
+
+$( 1 1 \cdot 1 2 )$ 式给出了垂线偏差、天文方位角和大地方位角之间的关系。通常用 $( 1 1 \cdot 1 2 )$ 式把天文方位角归算为大地方位角，依据所需大地方位角应属于何种大地座标系，在计算改正值时应采用相应的垂线偏差值。
+
+由上面的论述可知，垂线偏差对于大地测量来说是一个必不可少的量。本章研究的内容就是运用重力场的理论给出依据地球重力场已知信息推求垂线偏差的具体方法。
+
+# 11.2运用重力和地形数据计算垂线偏差
+
+第九章中导出了利用地面重力数据计算地面垂线偏差的莫洛琴斯基公式（9.36）、布洛瓦尔公式和解析延拓公式(9.113)等，并论述了在顾及到一次项时这几个公式的结果是等值的。然而，在将这些公式应用于实际计算时，都需要有密集的地面重力数据这一前题条件，从而使它们的应用遇到困难。在重力数据不足的情况下，即使运用这些公式计算，也不能得到较高精度的地面垂线偏差值，在地形起伏激烈的地区精度更差。为了弥补这一缺陷，用地形数据来替补是一种最为现实可行的措施。因此，本节讨论的是联合运用地形和重力数据按(9.192)式计算地面垂线偏差的具体方法。
+
+将地面垂线偏差分解为四项计算，即
+
+$$
+\left. \begin{array} { l } { \hat { \sf E } = \hat { \sf E } _ { \mathrm { s } } + \ \ \delta \hat { \sf E } + \hat { \sf \delta } \hat { \sf \sf \sf 5 } _ { \mathrm { b } } + \ \hat { \sf \delta } \hat { \sf \sf 5 } _ { \mathrm { h } } } \\ { \eta = \eta _ { \mathrm { s } } + \ \delta \eta + \delta \eta _ { \mathrm { 0 } } + \delta \eta _ { \mathrm { h } } } \end{array} \right\}
+$$
+
+第一项 ${ \boldsymbol { \mathsf { E } } } _ { \mathbf { S } }$ 和 $\eta _ { \mathrm { s } }$ 是利用已知的高阶位系数模型算出的垂线偏差的低频和中频部份。它的计算公式是 $( 1 0 \cdot 4 )$ 式，在 $\ S 1 0 . 7$ 中已讲过它的具体计算方法。它也相当于用下列积分式算得的结果：
+
+$$
+\begin{array}{c} \left. \begin{array} { c } { \hat { \mathsf { \mathsf { \mathsf { \mathsf { \mathsf { \mathsf { \mathsf { c } } } } } } } } _ { \mathrm { s } } } \\ { \eta _ { \mathrm { s } } } \end{array} \right\} { = } \frac { 1 } { 4 \pi \mathsf { Y } } \frac { \iint \Delta \mathbf { g } _ { \mathrm { s } } } { \mathsf { \varpi } } \frac { \mathrm { d } \mathbf { S } ( \boldsymbol { \Psi } ) } { \mathrm { d } \boldsymbol { \Psi } } \left\{ \begin{array} { c } { \cos \mathbf { A } } \\ { \sin \mathbf { A } } \end{array} \right\} \mathrm { d } \boldsymbol { \omega }  \end{array}
+$$
+
+式中 $\Delta { \bf g } _ { \sf s }$ 是用位系数算得的重力异常值，它也只含有重力异常的低、中频成份。
+
+第二项品和 $\delta \eta$ 的计算式为
+
+$$
+ \begin{array} { c } { \hat { \delta } \hat { \sf c } } \\ { \hat { \delta } \eta } \end{array} \} = \frac { 1 } { 4 \pi } \bigg \iint _ { \omega } ( \Delta { \bf g } - \Delta { \bf g } _ { \mathrm { s } } ) \frac { \mathrm { d } { \mathrm { S } } ( \psi ) } { \mathrm { d } \psi } - \{ \begin{array} { c } { \cos \mathrm { A } } \\ { \sin \mathrm { A } } \end{array} \} \mathrm { d } \omega
+$$
+
+式中 $\Delta { \bf g } - \Delta { \bf g } _ { \bf s }$ 是由实际的重力异常值减去由位系数算得的重力异常值，它是重力异常的高频部份，所算出的 $\mathfrak { F }$ 和 $\delta \eta$ 也是垂线偏差值中的高频部份。它的实际计算可以采用 $\ S 8 . 1 1$ 中所述的方法，只是其中的平均异常 $\widehat { \Delta \mathbf { g } _ { \mathsf { k } } }$ 用残差平均异常 $( \overline { { \Delta \mathbf { g } } } - \overline { { \Delta \mathbf { g } } } \overline { { \mathbf { s } } } ) _ { \mathbf { k } }$ 替代即可。由于函数 $\frac { \mathrm { d } \mathrm { \bf S } ( \Psi ) } { \mathrm { d } \Psi }$ 的数值随 $\boldsymbol { \psi }$ 的增大而迅速减小，靠近计算点的重力异常对垂线偏差的贡献大。因此，在计算点附近应用小网格的平均异常值计算，如 $1 ^ { \prime } \times 1 ^ { \prime }$ 网格。随着与计算点距离的增大，可逐渐扩大为 $5 ^ { \prime } \times$ $5 ^ { \prime }$ 和 $2 0 ^ { \prime } \times 2 0 ^ { \prime }$ 网格。
+
+假设计算时在 $\psi _ { 1 }$ 范围内用 $1 ^ { \prime } \times 1 ^ { \prime }$ 网格的平均异常，在 $\psi _ { 1 } { \sim } \psi _ { ? }$ 范围内用 $5 ^ { \prime } \times 5 ^ { \prime }$ 网格的平均异常，在 $\psi _ { ? } - \psi _ { 3 }$ 范围内用 $2 0 ^ { \prime } \times 2 0 ^ { \prime }$ 网格的平均异常，在 $\phi _ { 3 } - \pi$ 的范围内用180阶次位系数计算。因为用不同网格的平均重力异常表示扰动重力场相应于用展至不同阶次的位系数模型表示扰动重力场，网格的大小（边长 $\Delta \theta = \Delta \lambda$ )与位系数模型最高阶次 $\mathbf { N }$ 之间的关系为$\Nu = 1 8 0 ^ { \circ } / \Delta \theta ^ { \circ }$ 。由此可得到 $1 ^ { \prime } \times 1 ^ { \prime }$ 网格相应的最高阶次为 $1 0 8 0 0 , 5 ^ { \prime } \times 5 ^ { \prime }$ 网格相应的最高阶次为$2 1 6 0 , 2 0 ^ { \prime } \times 2 0 ^ { \prime }$ 网格相应的最高阶次为540。这样一来，8和 $\delta \eta$ 的计算式可以改写为
+
+$$
+\stackrel { \partial \hat { \mathsf { S } } } { \partial \Psi } = \frac { 1 } { 4 \pi \hat { Y } } [ \int _ { 0 } ^ { 1 } \int _ { 0 } ^ { 1 } ( \sum _ { n = 2 } ^ { \infty } \Delta \mathsf { g } _ { \mathrm { n } } ) \frac { \mathrm { d } \mathsf { S } ( \phi ) } { \mathrm { d } \phi } \left\{ \mathsf { c o s A } \atop \mathrm { s i n A }  \right\} \mathrm { d } \boldsymbol { \omega } + \int _ { 0 } ^ { 2 \pi \hat { \mathsf { d } } _ { 1 } } ( \sum _ { n = 2 } ^ { 2 \pi \mathrm { f o s i } } \Delta \mathsf { g } _ { \mathrm { n } } ) \frac { \mathrm { d } \mathsf { S } ( \phi ) } { \mathrm { d } \phi } \left\{ \mathsf { c o s A } \atop \mathrm { s i n A }  \right\} \mathrm { d } \boldsymbol { \omega }
+$$
+
+$$
++ \int \limits _ { 0 } ^ { 2 \pi ^ { b } } { \int _ { \frac { 5 4 0 } { 9 } . ~ \sin ^ { 2 } \frac { 5 4 0 } { 1 0 \psi _ { \mathrm { a } } } } \mathrm { d } \mathrm { S } ( \psi ) \left\{ \begin{array} { l } { { \cos \mathrm { A } } } \\ { { \sin \mathrm { A } } } \end{array} \right\} } \mathrm { d } \omega + \ M \int \int \limits _ { 0 } ^ { 2 \pi } { \big ( \sum _ { n = 2 } ^ { 1 8 0 } \Delta _ { \mathrm { g } _ { n } } \big ) \frac { \mathrm { d } \mathrm { S } ( \psi ) } { \mathrm { d } \psi } \left\{ \begin{array} { l } { { \cos \mathrm { A } } } \\ { { \sin \mathrm { A } } } \end{array} \right\} } \mathrm { d } \omega
+$$
+
+式中
+
+$$
+\Delta \mathbf { g } _ { \mathrm { n } } \mathrm { = } \Upsilon ( \mathrm { n } \mathrm { - } 1 ) \sum _ { \mathbf { n } \mathrm { = 0 } } \big ( \overline { { \mathbf { C } } } _ { \mathrm { n } \mathrm { m } } ^ { \ast } \mathrm { c o s m } \lambda \mathrm { + } \overline { { \mathbf { S } } } _ { \mathrm { n } \mathrm { m } } \mathrm { s i n m } \lambda \big ) \overline { { \mathbf { P } } } _ { \mathrm { n } \mathrm { m } } ( \mathrm { c o s } \theta )
+$$
+
+很显然，按(11·16)式算得的8和是含有误差的，若以8和8表示其误差，则有
+
+$$
+\frac { \partial \hat { \bar { \mathbf { e } } } ^ { \prime } } { \partial \eta ^ { \prime } } \Big | = \frac { 1 } { 4 \pi \hat { Y } } [ \displaystyle \int \int \Big ( \sum _ { 0 = 1 = 1 0 8 0 1 } ^ { \infty } \Delta g _ { n } ) \frac { \mathrm { d } \mathrm { S } ( \phi ) } { \mathrm { d } \phi } \left\{ \displaystyle \cos \hat { \mathrm { A } } \atop \mathrm { s i n A } \right\} \mathrm { d } \omega + \displaystyle \int \int \mathrm { ( \sum _ { 0 = 2 1 6 1 } ^ { \infty } \Delta \Delta \Sigma g _ { n } ) \frac { \mathrm { d } \mathrm { S } ( \phi ) } { \mathrm { d } \phi } \left\{ \displaystyle \sum _ { \mathrm { s i n A } } ^ { \mathrm { c o s A } } \right\} \mathrm { d } \omega }
+$$
+
+$$
++ \int \int \limits _ { 0 } ^ { 2 \pi ^ { b } \lambda } ( \sum _ { n = 5 + 1 } ^ { \infty } \Delta \mathbf { g } _ { n } ) \frac { \mathrm { d } \mathbf { S } ( \psi ) } { \mathrm { d } \psi } \left\{ \begin{array} { l } { { \cos \mathbf { A } } } \\ { { \sin \mathbf { A } } } \end{array} \right\} { \mathrm { d } \omega } + \int \int \limits _ { 0 } ^ { 2 \pi } ( \sum _ { n = 1 } ^ { \infty } \Delta \mathbf { g } _ { n } ) \frac { \mathrm { d } \mathbf { S } ( \psi ) } { \mathrm { d } \psi } \left\{ \begin{array} { l } { { \cos \mathbf { A } } } \\ { { \sin \mathbf { A } } } \end{array} \right\} { \mathrm { d } \omega }
+$$
+
+它又可以改写为：
+
+$$
+\hat { \otimes } \hat { \mathbf { \Psi } } ^ { \prime }  \\  \qquad \hat { \otimes } \hat { \mathbf { \Psi } } ^ { \prime } \Big [ = \frac { 1 } { 4 \pi \hat { \gamma } } [ \stackrel { 2 \approx } { \int _ { 0 } ^ { 1 } } ( \sum _ { \mathrm { ~ \tiny ~ a ~ o ~ n ~ 1 ~ 2 ~ i ~ o ~ g ~ n ~ } } ^ { \infty } ) \frac { \mathrm { d } \mathrm { S } ( \psi ) } { \mathrm { d } \psi } \Big \{ { \cos \mathrm { A } \atop \mathrm { i n ~ A } } \Big \} \mathrm { d } \omega + \int \int \int \mathrm { ( } \sum _ { \mathrm { ~ \tiny ~ c ~ a ~ 2 ~ l ~ 6 ~ 1 ~ } } ^ { \infty } \mathrm { d } \mathrm { S } _ { \mathrm { ~ \tiny ~ d ~ f ~ } } ) \frac { \mathrm { d } \mathrm { S } ( \psi ) } { \mathrm { d } \psi } \Big \{ { \cos \mathrm { A } \atop \mathrm { i n A } \Big \} \mathrm { d } \omega }
+$$
+
+$$
++ \int \limits _ { 0 } ^ { 2 \pi } { \int _ { \mathbb { R } } } ( \sum _ { n = 5 + 1 } ^ { \infty } \Delta \mathbf { g _ { n } } ) \frac { \mathrm { d } \mathbf { S } ( \psi ) } { \mathrm { d } \psi } \left\{ { \cos \mathbf { A } } \atop \mathrm { s i n A }  \right\} \mathrm { d } \omega + \int \int \limits _ { 0 } ^ { 2 \pi } { \langle \sum _ { n = 1 } ^ { \infty } \Delta \mathbf { g _ { n } } \rangle } \frac { \mathrm { d } \mathbf { S } ( \psi ) } { \mathrm { d } \psi } \left\{ { \cos \mathbf { A } } \atop \mathrm { s i n A }  \right\} \mathrm { d } \omega
+$$
+
+依据球谐函数知识[4]有
+
+$$
+\int _ { 0 } ^ { 2 \pi } \Delta \mathbf { g } _ { \mathrm { n } } \left\{ \begin{array} { l } { \mathrm { c o s } \mathsf { A } } \\ { \mathrm { s i n A } } \end{array} \right\} \mathrm { d } \mathbf { A } = \frac { 2 \pi } { \mathrm { n } ( \mathrm { n } + 1 ) } \left\{ \begin{array} { l } { \displaystyle - ( \frac { \partial \Delta \mathbf { g } _ { \mathrm { n } } } { \partial \theta } ) _ { \mathrm { 0 } } } \\ { \displaystyle \mathrm { c s c } \theta _ { \mathrm { 0 } } ( \frac { \partial \Delta \mathbf { g } _ { \mathrm { n } } } { \partial \mathbf { A } } ) _ { \mathrm { 0 } } \right\} ^ { \circ } } \end{array} \mathrm { P } _ { \mathrm { n } 1 } \left( \mathrm { c o s } \phi \right)
+$$
+
+式中右下脚标 $\dot { } 0 \ d s ^ { \ast }$ 表示该量属于计算点的。这样一来，由 $( 1 1 \cdot 1 8 )$ 式可得
+
+$$
+\begin{array} { r l } & { \hat { \bar { \xi } } _ { \mathcal { I } } ^ { \prime } \Big \rangle = \cfrac { 1 } { \gamma } \Big [ \underset { { \mathrm { \tiny ~ n = 1 0 s o 1 } } } { \overset { > } { \sum } } \cfrac { 1 } { { \mathrm { \tiny ~ n - 1 } } } \left( - ( \frac { \partial \Delta \mathbf { g } _ { \mathrm { \tiny ~ n } } } { \partial \theta } ) _ { \mathrm { \tiny ~ 0 } } \right) _ { \mathrm { \tiny ~ 0 } } \Big ] + \underset { { \mathrm { \tiny ~ n = 2 1 6 i } } } { \overset { > } { \sum } } \frac { 1 } { { \mathrm { \tiny ~ n = 2 1 } } } \left( \frac { 1 } { \Omega + 1 } \right) \Bigg \{ - ( \frac { \partial \Delta \mathbf { g } _ { \mathrm { \tiny ~ n } } } { \partial \theta } ) _ { \mathrm { \tiny ~ 0 } } } \\ & { \qquad + \underset { { \mathrm { \tiny ~ n = 5 4 1 } } } { \overset { > } { \sum } } \frac { 1 } { { \mathrm { \tiny ~ n } } ( \Omega + 1 ) } \left\{ - ( \frac { \partial \Delta \mathbf { g } _ { \mathrm { \tiny ~ n } } } { \partial \theta } ) _ { \mathrm { \tiny ~ 0 } } \right\} _ { \mathrm { \tiny ~ 0 } } \Bigg \} \mathrm { Q } _ { \mathrm { \tiny ~ n } } ( \phi _ { 2 } ) + \underset { { \mathrm { \tiny ~ n = 1 8 ~ 1 0 } } } { \overset { > } { \sum } } \frac { 1 } { { \mathrm { \tiny ~ n ( n + 1 ) } } } \left\{ - ( \frac { \partial \Delta \mathbf { g } _ { \mathrm { \tiny ~ n } } } { \partial \theta } ) _ { \mathrm { \tiny ~ 0 } } \right\} _ { \mathrm { \tiny ~ 0 } } \mathrm { Q } _ { \mathrm { \tiny ~ n } } ( \phi _ { 3 } ) \cdot } \\ &  \qquad + \underset { { \mathrm { \tiny ~ n = 5 4 1 } } } { \overset { > } { \sum } } \frac { 1 } { { \mathrm { \tiny ~ n ( n + 1 ) } } } \left\{ \mathrm { c s c } \theta _ { 0 } ( \frac { \partial \Delta \mathbf { g } _ { \mathrm { \tiny ~ n } } } { \partial \mathbf { k } } ) _ { \mathrm { \tiny ~ 0 } } \right\} \mathrm { Q } _ { \mathrm { \tiny ~ n } } ( \phi _ { 2 } ) + \underset { { \mathrm { \tiny ~ n = 1 8 ~ 1 0 } } } { \overset { < } { \sum } } \frac  \partial \Delta \mathbf { g } _ { \mathrm { \tiny ~ n } }  \end{array}
+$$
+
+式中
+
+$$
+\dot { \mathbf { Q } } _ { \mathfrak { n } } ( \dot { \psi _ { \mathrm { i } } } ) = \frac { 1 } { 2 } \int _ { \dot { \psi _ { \mathrm { i } } } } ^ { \ddot { \mathfrak { n } } } \frac { \mathrm { d } \mathrm { S } ( \psi ) } { \mathrm { d } \psi } \mathbf { P } _ { \mathfrak { n } \mathfrak { l } } ( \mathrm { c o s } \psi ) \mathrm { s i n } \psi \mathrm { d } \Psi \quad \quad \mathrm { ( i = 1 , 2 , 3 ) }
+$$
+
+象 $\ S 1 0 . 7$ 那样取全球均方值，则得误差的全球均方值为
+
+$$
+\begin{array}{c} \begin{array} { l } { { \displaystyle \overrightarrow { \otimes ^ { \prime } } ^ { 2 } = \mathbf { M } \{ \vartheta \widehat { \mathsf { S } } ^ { \prime } { } ^ { 2 } + \delta \eta ^ { \prime } { } ^ { 2 } \} = \displaystyle \frac { 1 } { \gamma ^ { 2 } } \big [ \displaystyle \sum _ { n = 1 0 8 0 1 \atop { \mathrm { \tiny ~ e \equiv ~ } } 1 } ^ { \infty } \frac { \boldsymbol { \mathrm { n } } ( { \bf n } + 1 ) } { ( { \bf n } - 1 ) ^ { 2 } } \mathsf { C } _ { n } + \displaystyle \sum _ { n = 2 1 6 1 } ^ { \infty } \frac { 1 } { \boldsymbol { \mathrm { n } } ( { \bf n } + 1 ) } \mathrm { C } _ { n } \mathsf { Q } _ { n } ^ { 2 } ( \psi _ { 1 } ) } \end{array} }  \\ { ~ \displaystyle ~ \cdot ~ \sum _ { n = 5 4 1 } ^ { \infty } \frac { 1 } { \boldsymbol { \mathrm { n } } ( { \bf n } + 1 ) } \mathrm { C } _ { n } \mathsf { Q } _ { n } ^ { 2 } ( \psi _ { 2 } ) + \displaystyle \sum _ { n = 1 8 1 } ^ { \infty } \frac { 1 } { \boldsymbol { \mathrm { n } } ( { \bf n } + 1 ) } \mathrm { C } _ { n } \mathsf { Q } _ { n } ^ { 2 } ( \psi _ { 3 } ) \big ] . } \end{array}
+$$
+
+取 $\psi _ { 1 } = 5 ^ { \prime } . \psi _ { 2 } = 2 0 ^ { \prime }$ 和 $\psi _ { 3 } = 1 ^ { \circ }$ ，重力异常的阶方差 $\mathrm { C } _ { \mathfrak { n } }$ 用 $( 1 0 \cdot 4 9 )$ 式表示的阶方差模型计算，最后算得
+
+$$
+\overline { { \delta \mathfrak { v } ^ { \prime } } } = \sqrt { 0 ^ { 2 } + ( 0 . 0 8 ) ^ { 2 } + ( 0 . 2 8 ) ^ { 2 } + ( 0 . 2 6 ) ^ { 2 } } = \pm 0 . 3 \mathfrak { s } ^ { \prime }
+$$
+
+这个数值是一个可以接受的量级。为此，在每个计算点的周围所用的重力数据的范围应该是：以计算点所在的那个 $2 0 ^ { \prime } \times 2 0 ^ { \prime }$ 网格为中心， $7 \times 7$ 个 $2 0 ^ { \prime } \times 2 0 ^ { \prime }$ 个网格所辖的区域。如图11.3所示，在中央 $3 \times 3$ 个 ${ \bf 2 0 ^ { \prime } } \times { \bf 2 0 ^ { \prime } }$ 网格以外的区域内用 $2 0 ^ { \prime } \times 2 0 ^ { \prime }$ 网格平均重力异常值值计算；以计算点所在的 $5 ^ { \prime } \times 5 ^ { \prime }$ 网格为中心的 $\mathfrak { 3 } \times \mathfrak { 3 }$ 个 $5 ^ { \prime } \times 5 ^ { \prime }$ 网格区内用 $1 ^ { \prime } \times 1 ^ { \prime }$ 网格平均异常值计算；剩下的区域内都用 $5 ^ { \prime } \times 5 ^ { \prime }$ 网格平均异常值计算。这样就能保证满足或优于获得 $( 1 1 \cdot 2 3 )$ 式时所要求的条件。
+
+![](images/3ea2891e9269d34ec3f4ce2ba5191af8496a93d27e199f96876512a5272e57fa.jpg)  
+图11.3
+
+因此，和 $\delta \eta$ 的实用计算式为
+
+$$
+\begin{array} { l } { { \hat { \hat { \ s } } \hat { \bar { \ s } } \ } } \\ { { \hat { \delta } \eta \displaystyle = \frac { 1 } { 4 \pi \gamma } \big \{ \ \sum _ { \mathrm { i } } ( \overline { { { \Delta \mathbf { g } } } } - \overline { { { \Delta \mathbf { g } } } } _ { \mathrm { s } } ) _ { 1 ^ { \prime } \times 1 ^ { \prime } } [ \overline { { { \ \frac { \mathrm { d } S \left( \psi \right) } { \mathrm { d } \psi } } } } ] _ { \ast } \left\{ \begin{array} { l } { { \mathrm { c o s } \mathbf { A } _ { \mathrm { i } } } } \\ { { \mathrm { s i n A } _ { \mathrm { i } } } } \end{array} \right\} \Delta \boldsymbol \omega _ { \mathrm { i } } } } \\  { \hat { \iota } ( \overline { { { \Delta \mathbf { g } } } } - \overline { { { \Delta \mathbf { g } _ { \mathrm { s } } } } } ) _ { 5 ^ { \prime } \times 5 ^ { \prime } } [ \overline { { { \frac { \mathrm { d } S \left( \psi \right) } { \mathrm { d } \psi } } } } ] _ { \ast } \left\{ \begin{array} { l } { { \mathrm { c o s } \mathbf { A } _ { \mathrm { i } } } } \\ { { \mathrm { s i n A } _ { \mathrm { i } } } } \end{array} \right\} \Delta \boldsymbol \omega _ { \mathrm { i } } + \sum _ { \mathrm { i } } \left( \overline { { { \Delta \mathbf { g } } } } - \overline { { { \Delta \mathbf { g } _ { \mathrm { s } } } } } \right) _ { 2 0 ^ { \prime } \times 2 \mathrm { e } : [ \overline { { { \mathrm { L } \left( \psi \right) } } } ] _ { \ast } \left\{ \begin{array} { l } { { \mathrm { c o s } \mathbf { A } _ { \mathrm { i } } } } \\ { { \mathrm { s i n A } _ { \mathrm { i } } } } \end{array} \right\} \Delta \boldsymbol \omega _ { \mathrm { i } } \big \} } } \end{array}
+$$
+
+式中((g-△g)为第i个网格的残差平均重力异常,△w为该网格在单位球上的面积,:和Ai分别为由该网格中点的座标算得的角距和方位角。
+
+第三项 $\delta ^ { \tt S } { \tt _ { D } }$ 和 $\delta \eta _ { \mathrm { D } }$ 为重力的局部地形改正对垂线偏差的影响，即
+
+$$
+\left. \begin{array} { c } { \hat { \delta } \hat { \mathsf { \mathsf { \mathsf { E } } } } _ { \mathrm { D } } } \\ { \hat { \delta } \eta _ { \mathrm { D } } } \end{array} \right\} = \frac { 1 } { 4 \pi \gamma } \overset { \mathrm { \vartriangle } } { \underset { \omega } { \parallel } } \hat { \otimes } \mathbf { g } _ { \mathrm { D } } \frac { \mathsf { d } \mathbf { S } ( \psi ) \cdot \left\{ \mathsf { c o s } \mathsf { A } \atop \mathsf { d } \psi \right. } \mathrm { d } \omega  { \mathsf { d } \psi } \overset { \mathrm { \vline } { } \mathrm { { c o s } \mathsf { A } } } { \mathrm { i n } } \mathrm { A } { } ^ { \mathrm { d } \omega }
+$$
+
+式中8gp为地面点重力值的局部地形改正，在\$8.6中已经讲述了它的计算方法。显然，通过计算也只能已知一些离散点的&g值。因此,与其它量的计算类似,在实际计划和δmp时，也是将积分变为有限求知的形式，即
+
+$$
+\frac { \delta \hat { \mathsf { E } } _ { \mathrm { D } } } { \delta \eta _ { \mathrm { D } } } \bigg \{ = \frac { 1 } { 4 \pi \gamma } \sum _ { \mathrm { i } } \frac { \delta \mathrm { g } _ { \mathrm { D i } } } { \delta \mathrm { g } _ { \mathrm { D i } } } \Big [ \frac { \mathrm { d } \mathrm { S } ( \psi ) } { \mathrm { d } \psi } \Big ] _ { \psi _ { \mathrm { i } } } \bigg \{ _ { \mathrm { s i n } \mathsf { A } _ { \mathrm { i } } } ^ { \mathrm { c o s } \mathbf { A } _ { \mathrm { i } } } \bigg \} \Delta \omega _ { \mathrm { i } }
+$$
+
+其中gp为第i个网格的&g平均值。由于在大面积情况下8gpi的值很小,可以忽略。因此，其积分范围也不需要很大，取与计算8和δn时相同的范围和分块法即可。
+
+在8.6中讲的δg的计算方法是用圆模板,它对于大规模计算δgp时有很多的不便。目前都用快速富里叶变换(FFT)方法来计算，为此需要有计算区域及其周围地区的数字地形模型。所谓数字地形模型,就是等间距格网交叉点的地形高程数据，其间隔一般应小于1km。这可以直接从大比例尺的地形图上直接逐点读取，也可以用扫描仪输入计算机，由计算机自动读取，形成数据文件。应用FFT方法可以很迅速地同时计算出各个网格交叉点的8gn值，因此较适用于大规模的计算。
+
+第四项8和8m是点周围地区的地形起伏对垂线偏差的高频影响，即
+
+$$
+ \begin{array} { l } {  \frac { \mathfrak { d } \tilde { \mathfrak { E } } _ { \mathrm { D } } } { \mathfrak { d } \mathfrak { p } _ { \mathrm { D } } }  =  \frac { \mathrm { f D } } { 2 \gamma } \mathrm { R } ^ { 2 }  ( \frac { \mathrm { h } ^ { 3 } } { \mathfrak { r } _ { 0 } ^ { 4 } } - \frac { 3 } { 4 } \frac { \mathrm { h } ^ { 5 } } { \mathfrak { r } _ { 0 } ^ { 6 } } + \cdots \cdots )  ^ { \mathrm { c o s A } } _ { \mathrm { s i n A } }  \mathrm { d } \omega } \end{array}
+$$
+
+其中h为相对于计算点的高差。为此，该项计算也要应用数字地形模型。
+
+# $\ S$ 11.3推求三角点天文大地垂线偏差的原理
+
+前面已经讲到，在大地网的数据处理中必需已知每个三角点的天文大地垂线偏差。如果在三角点上也进行了天文经、纬度的测量，则该点的天文大地垂线偏差可以由(11·5)式算得，其中的(L、B)用通过概算得到的该点的相对于参考椭球的大地经、纬度。但在实际工作中不可能在每个三角点上进行天文经、纬度的测量，因此就不能用(11·5)式求得天文大地垂线偏差。如果对每一个三角点都按上一节所述的方法先算出它们的地面垂线偏差和η的数值，则可由(11·2)式算出它们的天文大地垂线偏差\*和η"。但其工作量很大。人们从理论分析并经实际数据验证，对于相距不很远的几个计算点，一定范围以外(称为远区域)的重力异常对他们的垂线偏差的贡献是接近于线性变化的。这样一来，和n可以分为两部份，即
+
+$$
+\left. \begin{array} { c } { { \hat { \sf 5 } = \hat { \sf 5 } _ { 8 } + \hat { \sf 5 } _ { \mathrm { j } \bar { \tau } } } } \\ { { \eta = \eta _ { g } + \eta _ { \mathrm { i j } \bar { \tau } } } } \end{array} \right\}
+$$
+
+其中 $E _ { g }$ 和 $\pmb { \eta _ { \pmb { \mathrm { z } } } }$ 为近区域重力异常所引起的垂线偏差，称它为重力垂线偏差； $\xi _ { \breve { \imath } \breve { \jmath } }$ 和 $\eta _ { \mathrm { j } }$ 为远区域重力异常所引起的垂线偏差，它们在三角点之间可视为线性变化。另一方面， $( 1 1 \cdot 2 )$ 式中的$\Delta \mathbf { B }$ 和 $\Delta \mathrm { L }$ 要用 $( 1 1 \cdot 1 )$ 式计算，此时要用到椭球中心的质心坐标 ${ \Delta \mathrm { X } _ { 0 } , \Delta \mathrm { Y } _ { 0 } }$ 和 $\Delta Z _ { 0 }$ ，这在刚处理大地网时是不可能知道的，因此不能用 $( 1 1 \cdot 1 )$ 式求出 $\Delta \mathrm { B }$ 和 $\Delta \mathrm { L }$ 的数值。但从 $( 1 1 \cdot 1 )$ 式可以看出，对于相距不太远的点， $\Delta \mathrm { B }$ 和 $\Delta \mathrm { L }$ 也可以看成随点位而线性变化。因此，它们可以分别与$\pmb { \hat { \varepsilon } } _ { \ast }$ 和 $\eta _ { \overline { { \pi } } }$ 合并在一起处理。令
+
+$$
+\left. \begin{array} { r } { \Delta \tilde { \mathsf { \varepsilon } } = \tilde { \mathsf { \varepsilon } } _ { \mathrm { i } \tilde { \varepsilon } } \ P \Delta \mathbf { B } } \\ { \Delta \eta = \eta _ { \mathrm { i } \tilde { \varepsilon } } + \Delta \mathbf { L } } \end{array} \right\}
+$$
+
+则由 $( 1 1 \cdot 2 ) , ( 1 1 \cdot 2 8 )$ 和 $( 1 1 \cdot 2 9 )$ 式可以得到
+
+$$
+\left. \begin{array} { l } { { \hat { \sf { \sf { f } } } ^ { * } = \hat { \sf { \sf { f } } } _ { g } + 0 . 1 7 1 \mathrm { H s i n } 2 \mathrm { B } + \Delta \hat { \sf { \sf { t } } } } } \\ { { \eta ^ { * } = \eta _ { \mathrm { e } } + \Delta \eta } } \end{array} \right\}
+$$
+
+这就是利用局部重力数据推求三角点天文大地垂线偏差的实用公式。其中重力垂线偏差 $\pmb { \xi } _ { \pmb { \mathrm { g } } }$ 和$\pmb { \eta _ { \pmb { z } } }$ 利用一定区域内的重力异常数据推求之，具体的计算方法已在 $\ S 8 . 1 1$ 中讲过了； $\Delta \hat { \sf { z } }$ 和 $\Delta \eta$ 是远区域重力异常引起的垂线偏差与椭球体不同的改正之和，它在相距不太远的点之间是线性变化的，可以利用线性内插的方法推求之。
+
+为此，在计算点周围的一定范围内，需有几个进行了天文经、纬度测定的三角点。对于它们，可以用 $( 1 1 \cdot 5 )$ 式算得天文大地垂线偏差值。如果这些点的重力垂线偏差也已算得，则按公式
+
+$$
+\left. \begin{array} { r l } & { \Delta \hat { \boldsymbol { \xi } } = \hat { \boldsymbol { \xi } } ^ { * } - \hat { \boldsymbol { \xi } } _ { \boldsymbol { \mu } } - 0 . 1 7 1 ^ { \prime } \mathrm { { H s i n 2 B } } } \\ & { \Delta \eta = \eta ^ { * } - \eta _ { \mathrm { g } } } \end{array} \right\}
+$$
+
+即可求得它们的 $\Delta \hat { \sf { s } }$ 和 $\Delta \eta$ 的数值。然后根据这些已知值就可内插出三角点的 $\pmb { \Delta \xi }$ 和 $\Delta \eta$ 的数值。再用重力数据算出三角点的重力垂线偏差，就可由 $( 1 1 \cdot 3 0 )$ 式求得三角点的天文大地垂线偏差。
+
+从数学的观点，线性变化就是点位的一次函数，因此有
+
+$$
+\begin{array} { r } { \Delta \mathfrak { E } { = } l _ { \mathfrak { s } } { + } \mathfrak { m _ { \mathfrak { s } } } \mathrm { B } { - } \mathfrak { n _ { \sharp } } \quad \quad \quad } \\ { \Delta \eta { = } l _ { \mathfrak { n } } { + } \mathfrak { m _ { \eta } } \mathrm { B } { + } \mathfrak { n _ { \eta } } \mathrm { L } \left. \right\} } \end{array}
+$$
+
+式中 $l _ { 5 } , \mathrm { m } _ { 5 } , \mathrm { n } _ { 5 }$ 和 $l _ { \eta } \cdot \mathbf { m } _ { \eta , \bar { \nu } } \hat { \mathbf { n } } _ { \eta }$ 是待定的常数，也可称为内插系数。对于每个天文大地点△和△η值及其点位都是已知的，因此对每一个点可以列出一组方程。只要有三个以上的天文大地点，就可从方程组中解出内插系数。有了这六个内插系数，利用三角点的坐标，就可按 $( 1 1 \cdot 3 2 )$ 式算得它们的 $\Delta \xi$ 和 $\Delta \eta$ 的数值。
+
+# 11.4积分半径的确定
+
+在按上一节所述的方法推求三角点的垂线偏差时，重力垂线偏差的计算不需要全球积分，只需要在围绕计算点的不大的范围内完成积分就可以了。把这个范围的外边缘至计算点的距离称为积分半径，它的数值的大小取决于一个标准，即保证积分半径以外的区域(远区域)中的重力异常所引起的垂线偏差在相距不太远的计算点之间成线性变化。显然·它与对计算结果的精度要求和计算点之间的距离等因素有关，下面就来研讨这个问题。
+
+为了方便起见，可以不对子午分量 $\pmb { \xi }$ 和卯酉分量 $\eta$ 分别进行讨论，而是对任意方向的分量$\boldsymbol { \upsilon }$ 进行讨论。如图11.4所示，有相距S的两个计算点 $\mathrm { \ o }$ 和K；闭合曲线所围的区域为近区域，用 $\pmb { \sigma }$ 表示；曲线以外的区域为远区域，用 $\pmb { \Sigma }$ 表示之。设 ${ \tt v } _ { \Sigma } ^ { 0 }$ 和 $\boldsymbol { \mathsf { v } } _ { \Sigma } ^ { \mathsf { K } }$ 分别为远区域的重力异常所引起的〇和 $\mathbf { K }$ 点的垂线偏差值，依据数学中的马克劳林级数，它们之间有如下的关系：
+
+$$
+v _ { \Sigma } ^ { \kappa } = v _ { \Sigma } ^ { \circ } + ( \frac { \alpha v _ { \Sigma } } { \alpha \mathrm { S } } ) _ { \circ } \mathrm { S } + \frac { 1 } { 2 ! } ( \frac { \partial ^ { \circ } v _ { \Sigma } } { \partial \mathrm { S } ^ { 2 } } ) _ { \circ } \mathrm { S } ^ { 2 } + \frac { 1 } { 3 ! } ( \frac { \partial ^ { \circ } v _ { \Sigma } } { \partial \mathrm { S } ^ { 3 } } ) _ { \circ } \mathrm { S } ^ { 3 } + \cdots .
+$$
+
+将 $\ S \ 9 . 3$ 所讲的垂线偏差与扰动位的关系应用于任意方向分量 ${ \bf \delta } _ { \bf v }$ 可以写出
+
+$$
+\mathsf { v } = - \frac { 1 } { \gamma } \frac { \partial \boldsymbol { \Gamma } } { \partial \mathbf { S } }
+$$
+
+再应用扰动位与高程异常的关系 $( 9 \cdot 1 2 )$ 式，不难得到
+
+$$
+v _ { 5 } = - \frac { 2 5 s } { 2 5 }
+$$
+
+这样一来， $( 1 1 \cdot 3 3 )$ 式可改写为
+
+$$
+v _ { \pm } ^ { \mathrm { K } } = v _ { \Sigma } ^ { \mathrm { 0 } } + ( \frac { \partial v _ { \Sigma } } { \partial \Sigma } ) _ { \circ } \mathsf { S } + \frac { 1 } { 2 ! } ( \frac { \partial ^ { 3 } \zeta _ { \Sigma } } { \partial \mathsf { S } ^ { 3 } } ) _ { \circ } \mathsf { S } ^ { 2 } + \frac { 1 } { 3 ! } ( \frac { \partial ^ { 4 } \zeta _ { \Sigma } } { \partial \mathsf { S } ^ { 4 } } ) _ { \circ } \mathsf { S } ^ { 3 } + \cdots \cdots
+$$
+
+认为 $\upsilon _ { \Sigma }$ 在 $\mathrm { ^ o }$ 和 $\mathbf { K }$ 之间成线性变化，就是只顾及了 $( 1 \dot { 1 } \cdot 3 6 )$ 式中的前两项，所忽略的以后各项的数值总和就是认为 $\upsilon _ { \Sigma }$ 成线性变化所引起的误差。为了估算误差的大小，首先要推求其
+
+![](images/1c3f3e1711247a111a18e370a7ef3f621e17dcf82a309a189a66b1c7f11c5554.jpg)  
+图11.4
+
+中的的n阶偏导数。此时可用高程异常的平面公式，类似于 $( 8 \cdot { \dot { 1 } } 2 4 )$ 式有
+
+$$
+\boldsymbol { \xi } _ { \mathrm { { s } } } = \frac { 1 } { 2 \pi \gamma } \iint _ { \frac { \cdot } { 2 } } \frac { \Delta g } { \mathrm { ~ r ~ } } \mathrm { d } \boldsymbol { \Sigma }
+$$
+
+因而可以写出
+
+$$
+\frac { \partial ^ { n } \zeta _ { \Sigma } } { \partial \mathbb { S } ^ { n } } { = } \frac { 1 } { 2 \pi \gamma } \int _ { \Sigma } \int _ { \Sigma } \Delta \mathbf { g } ~ \frac { \partial ^ { n } } { \partial \mathbb { S } ^ { n } } ( \frac { 1 } { \mathbf { \Gamma } } ) \mathbf { d } \Sigma
+$$
+
+式中r是面元素d≥至O点的距离。如图11.4所示，当计算点由O沿S方向移动距离S.至 $\mathbf { K } .$ 点， $\pmb { \mathrm { r } }$ 就变为 $\pi _ { \ K \circ }$ 依据马克劳林级数有如下的关系式：
+
+$$
+\frac { 1 } { { \bf r } _ { \mathrm { K } } } { = } \frac { 1 } { { \bf r } } + \sum _ { { \bf n } = 1 } ^ { \in } [ \frac { \partial ^ { \mathrm { n } } } { \partial \mathrm { S } ^ { \mathrm { n } } } ( \frac { 1 } { \mathrm { \bf \Gamma } } ) ] \frac { { \bf S } ^ { \mathrm { n } } } { { \bf n } ! } ( - 1 ) ^ { \mathrm { n } }
+$$
+
+若以α表示r与S方向的夹角，又可用cosa的勒戎德多项式级数表示为
+
+$$
+\frac { 1 } { { \bf r } _ { \bf K } } { = } \sum _ { { \bf n } = 0 } ^ { \infty } \frac { { \bf S } ^ { n } } { { \bf r } ^ { n + 1 } } { \bf P } _ { \bf \dot { n } } ( \cos \alpha )
+$$
+
+比较这两个式子的右端S”的乘数，可以得到
+
+$$
+\frac { \partial ^ { \mathrm { n } } } { \partial \mathrm { S } ^ { \mathrm { n } } } ( \frac { 1 } { \mathrm { \bf ~ r } } ) = ( - 1 ) ^ { \mathrm { n } } \mathrm { n } ! \frac { \mathrm { \bf ~ P } _ { \mathrm { n } } ( \cos \alpha ) } { \mathrm { \bf ~ r } ^ { \mathrm { n } + 1 } }
+$$
+
+将 $( 1 1 \cdot 3 8 )$ 式代入 $( 1 1 \cdot 3 7 )$ 式，则得
+
+$$
+\frac { \partial ^ { n } \zeta _ { \Sigma } } { \partial \mathbf { S } ^ { n } } = \frac { ( - 1 ) ^ { n } \dot { \mathbf { n } } ! } { 2 \pi \mathcal { Y } } \iint \frac { \Delta \mathbf { g } } { \tau ^ { n + 1 } } \mathbf { P _ { n } } ( \cos \alpha ) \mathrm { d } \Sigma
+$$
+
+先讨论(11·36)式中右端的S²项。令
+
+$$
+\delta _ { 2 } = ( \frac { \partial ^ { 3 } \zeta _ { \Sigma } } { \partial \mathbf { S } ^ { 3 } } ) _ { 0 } \ : . \frac { \mathbf { S } ^ { 2 } } { 2 ! }
+$$
+
+由 $( 1 1 \cdot \bullet \cdot 3 9 )$ 式有
+
+$$
+\frac { \partial ^ { 3 } \zeta _ { \Sigma } } { \partial \mathbf { S } ^ { 3 } } = \frac { - 3 } { \pi \gamma } \iint _ { \frac { 2 } { 2 } } \frac { \Delta \mathbf { g } } { \mathbf { r } ^ { 4 } } \mathrm { P } _ { 3 } ( \cos \alpha ) \mathrm { d } \Sigma
+$$
+
+因为只有估算其数值，负号可以不计。因此可得
+
+$$
+\delta _ { 2 } = \frac { 3 \mathsf { S } ^ { 2 } } { 2 \pi \mathsf { Y } } \iint \frac { \Delta \mathbf { g } } { \mathsf { r } ^ { 4 } } \mathbb { P } _ { 3 } ( \cos \alpha ) \mathrm { d } \Sigma
+$$
+
+考虑到 $\mathtt { d } \Sigma \mathrm { = r d r } \mathrm { d } \alpha$ ，则可写为
+
+$$
+\partial _ { 2 } = \frac { 3 \mathrm { S } ^ { 2 } } { 2 \pi \gamma } \int \frac { 1 } { \mathrm { \bf \vec { r } } ^ { 3 } } [ \int _ { 0 } ^ { \mathrm { a } } { \bf \vec { s } } \mathrm { P } _ { ; } ( \mathrm { \bar { c } o s } \dot { \alpha } ) \mathrm { d } \alpha ] \mathrm { d } \mathrm { \bar { r } }
+$$
+
+式中R为远区域Σ和近区域σ的分界线至计算点的最小距离。由于△g与a和r的函数关系不知，不可能严格完成积分运算。将积分不等式
+
+$$
+\begin{array} { r l r } & { \underset { \mathbf { \theta } } { \overset { \mathbf { b } } { \operatorname { \mathop { [ \mathbf { \Lambda } ] } } } } \mathbf { \Theta } } & { = \underset { \mathbf { \theta } } { \overset { \mathbf { b } } { \operatorname { \mathop { [ \mathbf { \Lambda } ] } } } } \mathbf { \Theta } } \\ & { \underset { \mathbf { \theta } } { \overset { \mathbf { b } } { \operatorname { \mathop { [ \mathbf { \Lambda } ] } } } } \mathbf { \Theta } ( \mathbf { \mathbf { x \Lambda } } ) \mathbf { g } ( \mathbf { \mathbf { x \Lambda } } ) \mathbf { d } \mathbf { x } \ ) ^ { 2 } { \overset { \mathbf { b } } {  } } \underset { \mathbf { \theta } } { \overset { \mathbf { b } } { \operatorname { \mathop { [ \mathbf { \Lambda } ] } } } } \mathbf { \Lambda } \underset { \mathbf { \theta } } { \overset { \mathbf { b } } { \operatorname { \mathop { [ \mathbf { \Lambda } ] } } } } \mathbf { \Lambda } \underset { \mathbf { \theta } } { \overset { \mathbf { b } } { \operatorname { \mathop { [ \mathbf { \Lambda } ] } } } } \mathbf { \Lambda } } & \\ & { \underset { \mathbf { \theta } } { \overset { \mathbf { a } } { \operatorname } } } & \end{array}
+$$
+
+运用于(11·40）式中的对α的积分，可以得到
+
+$$
+\int \limits _ { 0 } ^ { 2 \pi } \Delta \mathrm { g } P _ { 3 } ( \cos \alpha ) \mathrm { d } \alpha \leq \langle \int \Delta \mathrm { g } ^ { 2 } \mathrm { d } \alpha \int \limits _ { 0 } ^ { 2 \pi } [ \mathrm { P } _ { 3 } ( \cos \alpha ) ] ^ { 2 } \mathrm { d } \alpha \mid ^ { 1 } \frac { 2 \pi } { b }
+$$
+
+设△gm是在一个圆周上重力异常△g的均方根值，即
+
+$$
+\Delta \mathbf { g } _ { \mathrm { n } } ^ { 2 } = \frac { 1 } { 2 \pi } \overset { ? } { \int } \Delta \mathbf { g } ^ { 2 } \mathrm { d } \alpha
+$$
+
+而
+
+$$
+\stackrel { 2 \pi } { \int } [ \mathrm { \bf P } _ { 3 } ( \cos \alpha ) ] ^ { 2 } { \mathrm { d } } \alpha = \frac { 1 7 } { 3 2 } \pi
+$$
+
+所以由 $( 1 1 \cdot 4 2 )$ 式得到
+
+$$
+\int _ { 0 } ^ { 2 \pi } \Delta \mathbf { g } \mathbf { P } _ { 3 } \left( \cos \alpha \right) \mathrm { d } \alpha { \leq } \frac { \sqrt { 1 7 } } { 4 } \pi \Delta \mathbf { g } _ { \mathrm { m } }
+$$
+
+将这个结果代入(11·40)式，则得
+
+$$
+\partial _ { 2 } \leqslant \frac { 3 \sqrt { 1 7 } } { 8 7 } \mathbf { S } ^ { 2 } \int \displaylimits _ { \textmd R } ^ { \Delta } \frac { \mathbf { \Delta g } _ { \mathrm { m } } } { { \bf r } ^ { 3 } } \mathrm { d } \mathbf { r }
+$$
+
+依据△gm的含意,它的数值随r而变,但不能找出它们之间的函数关系。为了估算δ的数值，将它视为一个常数，即取其最大值△gm。考虑到
+
+$$
+\int \limits _ { \bf R } ^ { \zeta \mathrm { d } \mathrm { } \tau } \frac { \mathrm { d } \tau } { \tau ^ { 3 } } = \frac { 1 } { 2 { \bf R } ^ { 3 } }
+$$
+
+由 $( 1 1 \cdot 4 3 )$ 式得到
+
+$$
+\delta _ { 2 } < \frac { 3 \sqrt { 1 7 } } { 1 6 } \frac { \overline { { \Delta \mathbf { g } _ { \mathrm { m } } } } } { \gamma } \frac { \mathbf { S } ^ { 2 } } { \overline { { \mathbb { R } ^ { 2 } } } }
+$$
+
+利用类似的方法还可求得
+
+$$
+\delta _ { 3 } = \left( \frac { \partial ^ { 4 } \zeta _ { \mathrm { { s } } } } { \partial \bar { \mathbf { S } } ^ { 4 } } \right) , \frac { \mathbf { S } ^ { 3 } } { 3 ! } < \frac { 5 } { 8 } \frac { \overline { { \Delta } } \bar { \mathbf { g } } _ { \mathrm { { m } } } } { \gamma } \frac { \mathbf { S } ^ { 3 } } { \mathbf { R } ^ { 3 } }
+$$
+
+将8与δ的极限值相对比看出,它要小很多。假如，设 $\frac { \mathsf { S } } { \mathsf { R } } { = } \frac { 1 } { 4 } , \delta _ { 3 }$ 的极限值只是 $\delta _ { 2 }$ 的极限值的十分之二。如果 $\frac { \mathsf { S } } { \mathsf { R } }$ 的值再小，则其比值就更小。这说明，在估算认为远区域影响成线性变化所造成的误差可以只顾及δ项。在(11·44)式中，取Y=9.8ms-,并化为以角秒为单位，则得
+
+$$
+\partial { < } 0 . 1 6 ^ { \prime \prime } \overline { { \Delta { \bf g } _ { \mathrm { m } } } } ( \frac { { \bf S } } { \overline { { \bf R } } } ) ^ { 2 }
+$$
+
+式中gm的单位是毫伽。（11·45)式表明，认为远区域影响线性变化所造成的误差的大小取决于三个因素：①计算垂线偏差的点之间的距离S,它的值越小，造成的误差越小；②近区域的半径R,它的值越大，造成的误差越小；③远区域空间异常值的大小，若gm的数值小，则造成的误差就小。由（11·45）式又可导出：
+
+$$
+\mathbf { R } { < } 0 . 4 \mathbf { S } \sqrt { \frac { \Delta \mathbf { g } _ { \mathrm { m } } } { \delta ^ { \prime \prime } } }
+$$
+
+利用(11·46)式，可以依据对8"的要求算得在计算重力垂线偏差时应采用的积分半径的最大值。例如,对8的要求是士0.2",计算点间的距离S=100km,由重力异常图上估算出△gm=35
+
+毫伽，由(11·46)式可以算得R<529km。这说明，在按图(8·20)的模板计算重力垂线偏差时，只需算至第XVⅢ环，再远的四个环可以不算。
+
+# $\ S$ 11.5精度估算方法
+
+按 $( 1 1 \cdot 3 0 )$ 式算得的三角点天文大地垂线偏差 $\tilde { \mathfrak { c } } ^ { * }$ 和 $\eta ^ { * }$ 的误差由两部分组成：重力垂线偏差分量的 ${ \hat { \mathsf { c } } } _ { \mathbf { s } }$ 和 $\eta _ { \tt g }$ 的误差与内插分量 $\Delta \bar { \sf z }$ 和 $\Delta \eta$ 的误差。 $0 . 1 7 1 ^ { \prime } \mathrm { H s i n 2 B }$ 这一项数值很小，不会含有需要顾及的误差。因此，依据误差传播定律可以写出：
+
+$$
+\left. \begin{array} { l } { \mathrm { m } _ { \hat { \mathfrak { s } } ^ { \prime } } = \sqrt { \mathrm { m } _ { \hat { \mathfrak { s } } _ { g } } ^ { \sharp } + \mathrm { m } _ { \ F } ^ { 2 } } } \\ { \mathrm { m } _ { \hat { \mathfrak { s } } ^ { \prime } } = \sqrt { \mathrm { m } _ { \hat { \mathfrak { s } } _ { g } } ^ { \sharp } + \mathrm { m } _ { \hat { \mathfrak { s } } _ { \eta } } ^ { \sharp } } } \end{array} \right\}
+$$
+
+式中 $\mathbf { m } _ { \widetilde { \mathbf { \Gamma } } }$ 和 $\mathbf { m } _ { \eta } \cdot$ 分别为天文大地垂线偏差子午分量和卯酉分量的中误差， $\mathbf { m } _ { \tilde { \mathsf { g } } _ { g } }$ 和 $\mathfrak { m } _ { \mathfrak { r } _ { \mathrm { g } } }$ 分别为重力垂线偏差两分量的中误差， $\mathbf { m } _ { \Delta \hat { \varsigma } }$ 和 $\mathfrak { m } _ { \mathtt { \Delta \eta } }$ 分别为内插部份两分量的中误差。
+
+对于三角点和天文大地点的重力垂线偏差采用相同的局部重力数据和相同的方法算得，可以认为它们的误差是相同的，因此可以通过分析天文大地点的误差情况导出其计算式。对于已知点：是按 $( 1 1 \cdot 3 1 )$ 式推求内插分量，故误差关系为：
+
+$$
+( \mathbf { m } _ { \mathsf { a } \widehat { \mathfrak { s } } } ) _ { \mathfrak { u } } = \sqrt { ( \mathbf { m } _ { \widehat { \mathfrak { s } } } \mathfrak { s } ) _ { \mathfrak { u } } ^ { \sharp } + ( \mathbf { m } _ { \widehat { \mathfrak { s } } _ { \mathfrak { u } } } ) _ { \mathfrak { u } } ^ { \sharp } }
+$$
+
+$$
+\begin{array} { r } { ( \mathbf { m } _ { \Delta \eta _ { i } } ) _ { i } = \sqrt { ( \mathbf { \ r } \mathbf { \eta } _ { \eta _ { i } } \ast \mathbf { \xi } ) _ { i } ^ { 2 } + ( \mathbf { \ r } \mathbf { \eta } _ { \eta _ { g } } \mathbf { \xi } ) _ { i } ^ { 2 } } } \end{array}
+$$
+
+式中右下角标0表示该量属于已知点。由此可得重力垂线偏差分量的中误差的计算式
+
+$$
+\begin{array} { r } { \mathbf { \mathop { m } } _ { \hat { \mathbf { \xi } } _ { \mathrm { g } } } = ( \mathbf { \mathop { m } } _ { \hat { \mathbf { \xi } } _ { \mathrm { g } } } ) _ { \mathrm { c } } = \sqrt { ( \mathbf { \mathop { m } } _ { \hat { \mathbf { \xi } } _ { \mathrm { g } } } ) _ { \mathrm { c } } ^ { 2 } - ( \mathbf { \mathop { m } } _ { \hat { \mathbf { \xi } } } \cdot \mathbf { \nabla } ) _ { \mathrm { i t } } ^ { 2 } } \Bigg \downarrow } \\ { \mathbf { \mathop { m } } _ { \hat { \mathbf { \xi } } _ { \mathrm { g } } } = ( \mathbf { \mathop { m } } _ { \hat { \mathbf { \xi } } _ { \mathrm { g } } } ) _ { \mathrm { o } } = \sqrt { ( \mathbf { \mathop { m } } _ { \partial \hat { \mathbf { \eta } } } ) _ { \mathrm { i t } } ^ { 2 } - ( \mathbf { \mathop { m } } _ { \hat { \mathbf { \eta } } } \cdot \mathbf { \nabla } ) _ { \mathrm { i t } } ^ { 2 } } \Bigg \} } \end{array}
+$$
+
+天文大地点的天文大地垂线偏差分量是由 $( 1 1 \cdot 5 )$ 式算得的，由于大地坐标的误差比天文坐标的误差要小得多，因此可仅视为天文坐标的误差所引起的，即
+
+$$
+\begin{array} { l } { { \mathfrak { m } } _ { \sharp } \cdot = { \mathfrak { n } } { \mathfrak { a } } _ { \sharp } } \\ { { \mathfrak { m } } _ { \eta ^ { * } } = { \mathfrak { m } } _ { \mathrm { { a } } } { \mathrm { c o s } } \varphi \ j ^ { * } } \end{array}
+$$
+
+其中 $\mathbf { m } _ { \varphi }$ 和 $\mathbf { m } _ { \lambda }$ 分别为天文纬度和天文经度的中误差，它们是已知值。对于Ⅰ等天文点，其值不大于士 $0 . 3 "$ ；对于 $\mathbb { I }$ 等天文点，其值不大于士 $0 . 5 ^ { \prime \prime }$ 。 $( \mathbf { m } _ { \Delta \hat { \mathbf { c } } } ) _ { \beta }$ 和 $( \mathfrak { m } _ { \mathfrak { n } } \cdot \mathbf { \mu } ) _ { \mathfrak { o } }$ 分别为求解内插方程中的系数 $l _ { \tt S } , \tt m _ { \tt S } , n _ { \tt S }$ 和 $l _ { \eta } , \mathbf { m } _ { \eta } , \mathbf { n } _ { \eta }$ 时导出的单位权中误差，即
+
+$$
+\scriptstyle \left. { \begin{array} { l } { ( \mathbf { m } _ { \partial { \hat { \mathsf { c } } } } ) _ { ( i } = { \sqrt { \frac { \left[ { \mathsf { V } } _ { \sharp } { \mathsf { V } } _ { \sharp } \right] } { \mathbf { n } - 3 } } } } \\ { ( \mathbf { m } _ { \partial { \overline { { \mathsf { c } } } } } ) _ { ( i } = { \sqrt { \frac { \left[ { \mathsf { V } } _ { \eta } { \mathsf { V } } _ { \eta } \right] } { \mathbf { n } - 3 } } } } \end{array} } \right\} 
+$$
+
+式中
+
+$$
+\begin{array} { r l } & { \mathrm { V } _ { \mathrm { : } } = ( \xi ^ { \ast } - \frac { \mathtt { s } } { \mathtt { c } _ { \mathrm { g } } } - 0 . 1 7 1 \mathrm { H s i n } 2 \mathrm { B } ) - ( l _ { \mathrm { : } } + \mathrm { m } _ { \mathrm { : } } \mathrm { B } + \mathrm { n } _ { \mathrm { : } } \mathrm { L } ) } \\ & { \mathrm { V } _ { \eta } = ( \eta ^ { \ast } - \eta _ { \mathrm { s } } ) - ( l _ { \eta } + \mathrm { m } _ { \eta } \mathrm { B } + \mathrm { n } _ { \eta } \mathrm { L } ) } \end{array}
+$$
+
+对于用于答解内插系数的每个点都可以算出一个值； $\mathfrak { n }$ 为所用已知点的个数。因此，由
+
+$( 1 1 \cdot 4 8 )$ 式完全可以求得重力垂线偏差分量的中误差。
+
+再讨论 $( 1 1 \cdot 4 7 )$ 式中的 $\mathbf { m } _ { \Delta \hat { \varepsilon } }$ 和 $\mathbf { m } _ { \Delta \eta }$ 的计算方法。因为三角点的 $\Delta \xi$ 和 $\Delta \eta$ 是按 $( 1 1 \cdot 3 2 )$ 式计算的，它的误差与点位(B,L)有关。从平差理论知，它们相当于平差值。对于用于平差的已知点，平差值的中误差与单位权中误差有如下的关系：
+
+$$
+\begin{array} { r } { ( \mathbf { m } _ { \Delta \mathfrak { s } } ) _ { \mathrm { i } } ^ { 2 } = ( \mathbf { m } _ { \Delta \mathfrak { s } } ) _ { \mathrm { i } } ^ { 2 } \mathbf { Q } _ { \mathrm { i } } } \\ { ( \mathbf { m } _ { \Delta \eta } ) _ { \mathrm { i } } ^ { 2 } = ( \mathbf { m } _ { \Delta \eta } ) _ { \cap } ^ { 2 } \mathbf { Q } _ { \mathrm { i } } } \end{array}
+$$
+
+式中
+
+$$
+\mathrm { \bf Q _ { i } } = \frac { 1 } { \mathrm { \bf n } } + \frac { [ \mathrm { B \cdot 1 } ] _ { i } ^ { 2 } } { [ \mathrm { B B \cdot 1 } ] } + \frac { [ \mathrm { L \cdot 2 } ] _ { i } ^ { 2 } } { [ \mathrm { L L } . ~ \cdot ~ 2 ] } = { \tt q } _ { \mathrm { i i } } + { \tt q } _ { \mathrm { 2 i } } + { \tt q } _ { \mathrm { 3 i } }
+$$
+
+称为权倒数，注脚 $\mathbf { i }$ 表示点号。现分别用 $\mathbf { n }$ 个已知点的 $( \mathbf { m } _ { \Delta \hat { \mathbf { e } } } ) _ { \mathrm { i } } ^ { 2 }$ 和 $( \mathtt { m } _ { \mathtt { A } \mathtt { 7 } } ) _ { \mathtt { i } } ^ { 2 }$ 的平均值 $( \mathbf { m } _ { \Delta \sharp } ) _ { \mathfrak { m } } ^ { \sharp }$ 和$( \mathbf { m _ { \Delta \gamma _ { \lambda } } } ) _ { \mathbf { m } } ^ { 2 }$ 作为计算点的 $\mathfrak { m } _ { \Delta \mathfrak { s } } ^ { 2 }$ 和 $\mathfrak { m } _ { \Delta \mathfrak { q } } ^ { 2 }$ ，则
+
+$$
+\mathrm { m } _ { \mathsf { a } \hat { \mathsf { c } } } ^ { 2 } = ( \mathrm { m } _ { \mathsf { a } \hat { \mathsf { c } } } ) _ { \mathrm { m } } ^ { 2 } = \frac { 1 } { \mathsf { n } } \sum _ { \mathsf { i } = 1 } ^ { \mathsf { n } } ( \mathrm { m } _ { \mathsf { a } \hat { \mathsf { c } } } ) _ { \mathrm { i } } ^ { 2 } = ( \mathrm { m } _ { \mathsf { a } \hat { \mathsf { c } } } ) _ { \mathrm { 0 } } ^ { 2 } \frac { 1 } { \mathsf { n } } \sum _ { \mathsf { i } = 1 } ^ { \mathsf { n } } ( \mathrm { q } _ { \mathsf { i } \mathrm { i } } + \mathrm { q } _ { 2 \mathrm { i } } + \mathrm { q } _ { \mathsf { i } \mathrm { i } } )
+$$
+
+$$
+\mathbf { m } _ { \Delta \eta } ^ { 2 } = ( \mathbf { m } _ { \Delta \eta } ) _ { \mathrm { m } } ^ { 2 } = \frac { 1 } { \textrm { n } } \sum _ { \mathrm { i = 1 } } ^ { \mathrm { n } } ( \mathbf { m } _ { \Delta \eta } ) _ { \mathrm { i } } ^ { 2 } = ( \mathbf { m } _ { \Delta \eta } ) _ { \mathrm { i } } ^ { 2 } \frac { 1 } { \textrm { n } } \sum _ { \mathrm { i = 1 } } ^ { \mathrm { n } } ( \mathbf { q } _ { \mathrm { i } \mathrm { i } } + \mathbf { q } _ { \mathrm { 2 i } } + \mathbf { q } _ { \mathrm { 3 i } } )
+$$
+
+在最小二乘法中已经证明
+
+$$
+\sum _ { \mathrm { i = 1 } } ^ { \mathrm { n } } { \bf q } _ { 1 \mathrm { i } } = \sum _ { \mathrm { i = 1 } } ^ { \mathrm { n } } { \bf q } _ { 2 \mathrm { i } } = \sum _ { \mathrm { i = 1 } } ^ { \mathrm { n } } { \bf q } _ { 3 \mathrm { i } } = 1
+$$
+
+因而得到
+
+$$
+\begin{array} { l } { \displaystyle \mathbf { m } _ { \Delta \ell } = ( \mathbf { m } _ { \Delta \ell } ) _ { \circ } \sqrt { \frac { 3 } { \mathsf { n } } } } \\ { \displaystyle \mathbf { m } _ { \Delta \eta } = ( \mathbf { m } _ { \Delta \eta } ) _ { \circ } \sqrt { \frac { 3 } { \mathsf { n } } } \left. \begin{array} { l } { \displaystyle . } \\ { \displaystyle \mathbf { m } _ { \Delta \eta } = ( \mathbf { m } _ { \Delta \eta } ) _ { \circ } \sqrt { \frac { 3 } { \mathsf { n } } } } \end{array} \right. . } \end{array}
+$$
+
+这就是按 $( 1 1 \cdot 3 2 )$ 算得的三角点的 $\Delta \hat { \sf { s } }$ 和 $\Delta \eta$ 的中误差计算式。
+
+将 $( 1 1 \cdot 4 8 )$ 和 $( 1 1 \cdot 5 1 )$ 式代入 $( 1 1 \cdot 4 7 )$ 式，并顾及 $( 1 1 \cdot 4 0 )$ 式，最后得到
+
+$$
+\left. \begin{array} { l } { { \displaystyle { \mathfrak { m } } _ { \mathfrak { s } ^ { \star } } = \sqrt { ( 1 + \frac { 3 } { \mathfrak { n } } ) ( { \mathfrak { m } } _ { \Delta \mathfrak { s } } ) _ { 0 } ^ { 2 } - { \mathfrak { m } } _ { \varphi } ^ { 2 } } } } \\ { { \displaystyle { \mathfrak { m } } _ { \mathfrak { n ^ { \star } } } = \sqrt { ( 1 + \frac { 3 } { \mathfrak { n } } ) ( { \mathfrak { m } } _ { \Delta \eta } ) _ { \mathfrak { o } } ^ { 2 } - { \mathfrak { m } } _ { \mathfrak { x } } ^ { 2 } { \cos ^ { 2 } } \varphi } } } \end{array} \right\}
+$$
+
+式中的 $( \mathbf { m } _ { \Delta \xi } ) _ { 0 }$ 和 $( \mathtt { m } _ { \Delta \mathfrak { n } } ) _ { 0 }$ 由 $( 1 1 \cdot 5 0 )$ 式算得。
+
+下面介绍一个计算三角点天文大地垂线偏差的实际算例。
+
+如图11.5所示,A、B、C、D和E是五个天文大地点，并且在此区域及其周围地区有了重力异常图。现在用这些数据来求定三角点1、2、3、4和5的天文大地垂线偏差。
+
+表11.1给出了已知的天文大地点的近似大地经纬度(L,B)和天文大地垂线偏差 $( \xi ^ { * } , \eta ^ { * } )$ 以及用重力异常数据算得的重力垂线偏差 $( \xi _ { z } , \eta _ { z } )$ 。
+
+表11. 1  
+
+<table><tr><td>点 名</td><td>B</td><td>L</td><td>m</td><td>n</td><td>E</td><td>m</td></tr><tr><td>A</td><td>29.67°</td><td>117.94°</td><td>+4.37″</td><td>4.55″</td><td>+6.94&quot;</td><td>-5.13&quot;</td></tr><tr><td>B.</td><td>28.99</td><td>118.03</td><td>+6.12</td><td>13.02</td><td>+.7..47</td><td>- 1.82</td></tr><tr><td>C</td><td>29,05</td><td>118.64</td><td>-12.66</td><td>-0.53</td><td>-12.98</td><td>+1.50</td></tr><tr><td>D</td><td>29.72</td><td>119.66</td><td>+ 2.65</td><td>+2.45</td><td>-- 3.26</td><td>+1.72</td></tr><tr><td>E</td><td>30.37</td><td>118.73</td><td>-7.67</td><td>-2.56</td><td>-9.83</td><td>-7.98</td></tr></table>
+
+![](images/4f0d1f6585799e5740b6c2c55ce3148043edd27ca4ab7cf4e6f6e890adf94974.jpg)  
+图11.5
+
+表11.2给出了天文大地点的—和η"—ng的数值，因为0.171"Hsin2B项的值很小，没有计入。以它们为观测量，组成误差方程，解出内插方程中的系数，得到如下的内插方程：
+
+$$
+\Delta \hat { \sf 5 } = - 2 . 1 7 7 5 + 0 . 5 4 5 1 ( { \mathrm B } - 2 9 ^ { \circ } ) + 4 . 6 0 3 7 ( { \mathrm L } - 1 1 8 ^ { \circ } )
+$$
+
+用它算得的 $\Delta \xi$ 和 $\Delta \eta$ 的单位为角秒。
+
+表11.2  
+
+<table><tr><td>点 名</td><td>m一</td><td>n-ng</td><td></td><td>n</td><td>V</td><td>Vn</td></tr><tr><td colspan="7">A</td></tr><tr><td rowspan="4">B C D</td><td>-2.57&quot; -1.37</td><td>+0.58″ -1.20</td><td>-2.09 -2.04</td><td>+1.57&quot; -1.94</td><td>-0.48&quot; +0.67</td><td>-0.99 +0.74</td></tr><tr><td></td><td>-2.03</td><td>+0.80</td><td>-1.92</td><td>-0.48</td><td>-0.11</td></tr><tr><td>+0.32</td><td></td><td>+5.86</td><td>+1.02</td><td>+0.05</td><td>-0.29</td></tr><tr><td>+5.91 +2.16</td><td>+0.73 +5.42</td><td>+1.93</td><td>+4.77</td><td>+0.23</td><td>+0.65</td></tr><tr><td colspan="5">E</td><td>M -0.01</td><td></td></tr></table>
+
+表11.3给出了五个三角点的大地经纬度近似值、用重力数据算得的重力垂线偏差分量和按内插方程算出的内插分量，最后算得了这几个三角点的天文大地垂线偏差值。
+
+表11.3  
+
+<table><tr><td>点 名</td><td>B</td><td>L</td><td>E</td><td>1</td><td></td><td>A</td><td>”</td><td>”</td></tr><tr><td>1</td><td>29.93</td><td>118.38°</td><td>+5.14&quot;</td><td>-5.66&quot;</td><td>+3.56&quot;</td><td>+3.11</td><td>+8.70&quot;</td><td>-2.55″</td></tr><tr><td>2</td><td>30.08</td><td>119.12</td><td>-1.54</td><td>-3.41</td><td>+0.08</td><td>+2.69</td><td>-1.46</td><td>-0.72</td></tr><tr><td>3</td><td>29.59</td><td>118.69</td><td>+0.91</td><td>+0.59</td><td>+1.32</td><td>+0.81</td><td>+2.23</td><td>+1.40</td></tr><tr><td>4</td><td>29.39</td><td>119.23</td><td>-7.82</td><td>-4.65</td><td>+3.70</td><td>-0.46</td><td>-4.12</td><td>-5.11</td></tr><tr><td>5</td><td>29.21</td><td>118.31</td><td>+1.23</td><td>-2.45</td><td>-0.63</td><td>-0.95</td><td>+0.60</td><td>-3.40</td></tr></table>
+
+为了估算精度，在表11.2中对每个天文大地点算出了△和 $\Delta \eta$ 的平差值及误差 $\mathtt { V } _ { \mathtt { s } }$ 和$\boldsymbol { \nabla } _ { \mathfrak { \eta } }$ 。由此可以算得 $( \mathfrak { m } _ { \Delta \mathfrak { s } } ) _ { 0 } ^ { 2 } { = } 0 . 4 8 2 6$ 和 $( \mathbf { m } _ { \Delta \eta } ) _ { 0 } ^ { 2 } { = } 1 . 0 2 3 2 ,$ 再取 $\mathbf { m } _ { \varphi } = \mathbf { m } _ { \lambda } = \pm 0 . 5 ^ { \prime \prime }$ ，按 $( 1 1 \cdot 5 2 )$ 式可以算出所求得的三角点的天文大地垂线偏差分量的中误差分别为 $\mathfrak { m } _ { \sharp } \cdot = \pm 0 . 7 2 ^ { \prime \prime }$ 和 $\mathbf { m } _ { \eta } { } ^ { * } =$ $\pm 1 . 2 0 ^ { \prime \prime }$ 。
+
+# 11.6重力垂线偏差的误差
+
+在上一节的精度估算中，虽然已经用到重力垂线偏差的误差，但它是通过间接途径(11.48)式求得的。既然重力垂线偏差由重力数据推求，它的误差大小必然与用于计算的重力数据的精度存在一定的关系。本节将以 $\xi _ { \tt { g } }$ 为例来研讨这个问题。
+
+由于误差分析只是一种估算，可以从垂线偏差的平面公式出发。由 $( 8 \cdot 1 2 5 )$ 式写出
+
+$$
+\hat { \boldsymbol { \xi } } _ { \mathrm { g } } = - \frac { \rho ^ { \prime \prime } } { 2 \pi \gamma } \int _ { 0 } ^ { \int } \frac { \Delta \mathbf { g } } { \tau } \mathrm { d } \mathbf { r } \mathrm { d } \mathrm { A }
+$$
+
+式中 $\mathbf { R }$ 是计算 $\pmb { \xi _ { \pmb { \mathrm { g } } } }$ 时所用的积分半径。
+
+如果将积分区域划分成许多小扇形，每个小扇形的内、外半径分别为 $\mathbf { r } _ { \mathrm { i } - 1 }$ 和 $\pmb { \mathrm { r } } _ { \mathrm { i } }$ ,边界方位角为 $\mathbf { A } _ { \mathbf { k } - 1 }$ 和 $\mathbf { A } _ { \mathbf { k } }$ ，则上式可写为
+
+$$
+\boldsymbol { \mathfrak { E } } _ { \mathrm { g } } = - \frac { \rho ^ { \prime \prime } } { 2 \pi \gamma } \sum _ { \mathrm { i } , \mathrm { k } } \int \displaylimits _ { \tau _ { \mathrm { i } - 1 } \mathrm { A } _ { \mathrm { k } - 1 } } ^ { \updownarrow } \frac { \Delta \mathbf { g } } { \tau } \mathrm { d } \mathbf { r } \mathrm { d } \mathbf { A }
+$$
+
+认为每个小扇形中重力异常为常数，即取其平均异常值 $\Delta _ { \mathbf { \delta } \mathbf { g } _ { \mathrm { i . k } } }$ ,则可将它抽出积分号外。但中央区域的积分由于它的不定性需要把它分开处理，先以 $\pmb { \xi } _ { 0 }$ 表示中央区域的积分值。这样可得
+
+$$
+\hat { \boldsymbol { \mathfrak { \varepsilon } } } _ { \mathrm { g } } = \hat { \mathsf { \varepsilon } } _ { 1 } + \hat { \mathsf { \varepsilon } } _ { 0 } = - \frac { \rho ^ { \eta } } { 2 \pi \gamma } \sum _ { \mathrm { i , k } } \Delta \mathbf { g } _ { \mathrm { i , k } } \int \int \frac { \mathrm { ~ d } \mathbf { r } } { \mathbf { r } } \mathrm { c o s } \mathrm { A } \mathbf { d } \mathsf { A } + \hat { \mathsf { \varepsilon } } _ { 0 }
+$$
+
+先讨论 $\mathfrak { E } _ { 1 }$ 。完成积分后得到
+
+$$
+\hat { \bf \varepsilon } _ { 1 } = - \mathrm { \frac { \beta ^ { \prime \prime } } { 2 \pi \gamma } } \sum _ { \mathrm { i , k } } \Delta { \bf g } _ { \mathrm { i , k } } \ln \frac { { \bf r } _ { \mathrm { i } } } { { \bf r } _ { \mathrm { i - 1 } } } 2 \mathrm { c o s } \frac { { \bf A _ { k } } + { \bf A _ { k - 1 } } } { 2 } \mathrm { s i n } \frac { { \bf A _ { k } } - { \bf A _ { k - 1 } } } { 2 }
+$$
+
+设平均异常 $\Delta _ { 8 : , k }$ 的中误差为 $\delta _ { \mathbf { g } _ { \mathrm { i } , \mathbf { k } } }$ ，则引起 $\pmb { \xi } _ { 1 }$ 的中误差 $\mathfrak { m } _ { \mathfrak { s } _ { 1 } }$ 为
+
+$$
+{ \bf m _ { \hat { \varepsilon } _ { \mathrm { l } } } } = \frac { \rho ^ { \prime \prime } } { 2 \pi \gamma } ( \sum _ { \mathrm { i } , \mathbf { k } } \hat { \otimes } \mathbf { g } _ { \mathrm { i } , \mathbf { k } } ^ { 2 } \mathbf { f } _ { \mathrm { i } , \mathbf { k } } ^ { 2 } ) ^ { 1 / 2 }
+$$
+
+式中
+
+$$
+\mathbf { f } _ { \mathrm { i . k } } { = } 2 \mathrm { l n } ~ \frac { \mathbf { r } _ { \mathrm { i } } } { \mathbf { r } _ { \mathrm { i - 1 } } } \mathrm { c o s } ~ \frac { \mathbf { A } _ { \mathrm { k } } { + } \mathbf { A } _ { \mathrm { k - 1 } } } { 2 } \mathrm { s i n } ~ \frac { \mathbf { A } _ { \mathrm { k } } { - } \mathbf { A } _ { \mathrm { k } - 1 } } { 2 }
+$$
+
+假定近区域如图11.6那样划分扇形：第i环带的内、外半径分别为 $( 2 \mathbf { i } \pm 1 ) l$ ，环带中划分的扇形数为8i个。此时，每个扇形的面积为
+
+$$
+\pmb { \sigma } _ { \mathrm { i , k } } = \frac { \pi } { 8 \mathrm { i } } \left\{ [ ( 2 \mathrm { i } + 1 ) l ] ^ { 2 } - [ ( 2 \mathrm { i } - 1 ) l ] ^ { 2 } \right\}
+$$
+
+计算结果为
+
+$$
+{ \pmb { \sigma } } _ { \mathrm { i } , \mathrm { k } } = \pi l ^ { 2 }
+$$
+
+![](images/16d8f474d9f6423e38eda83363d92778f3b375b9171072a818d6b2b7f76ed0ed.jpg)  
+图11.6
+
+这表明所有扇形的面积是相同的。因此，可以认为它们的平均异常的误差 $\delta _ { \mathbf { g } _ { \mathrm { i , k } } }$ 也是相同的，用 $\mathfrak { d } _ { \mathbf { g } }$ 表示之，则由(11.54)式可行
+
+$$
+{ \bf m } _ { 5 1 } = \frac { { \rho } ^ { \prime \prime } } { 2 { \pi } { \gamma } } \delta { \bf g } ( \sum _ { \mathrm { i } , \mathrm { k } } { \bf f } _ { \mathrm { i } , \mathrm { k } } ^ { \div } ) ^ { 1 / 2 }
+$$
+
+因为
+
+$$
+\sin { \frac { \mathrm { A } _ { \mathrm { k } } - \mathrm { A } _ { \mathrm { k } - 1 } } { 2 } } { \approx } { \frac { \Delta \mathrm { A } } { 2 } } { = } { \frac { 1 } { 2 } } { \frac { 2 \pi } { 8 \mathrm { i } } } { = } { \frac { \pi } { 8 \mathrm { i } } }
+$$
+
+故由 $( 1 1 \cdot 5 5 )$ 式可得
+
+$$
+\sum _ { \mathrm { i . k } } \mathbf { f } _ { \mathrm { i , k } } ^ { 2 } = \sum _ { \mathrm { i } } { ( \frac { \pi } { 4 \mathrm { i } } \mathrm { l n } \frac { 2 \mathrm { i } + 1 } { 2 \mathrm { i } - 1 } ) ^ { 2 } } \sum _ { \mathrm { k } } \cos ^ { 2 } { \frac { \mathbf { A } _ { \mathrm { k } } + \mathbf { A } _ { \mathrm { k } - 1 } } { 2 } }
+$$
+
+利用数学知识可以证明，在等分为8i个扇形时有
+
+$$
+\sum \limits _ { k } \cos ^ { 2 } \frac { \mathbf { A _ { k } } + \mathbf { A _ { k - 1 } } } { 2 } = \frac { 1 } { 2 } 8 : = 4 i
+$$
+
+考虑到这些关系，最后得到
+
+$$
+\mathrm { m } _ { \bar { \imath } _ { 1 } } { = } \frac { \rho ^ { \prime \prime } } { 2 \gamma } \hat { \otimes } \mathbf { g } [ \Sigma _ { \mathrm { ~ i ~ } } ^ { > } \frac { 1 } { 4 \mathrm { i } } ( \ln \frac { 2 \mathrm { i } + 1 } { 2 \mathrm { i } - 1 } ) ^ { 2 } ] ^ { 1 / 2 }
+$$
+
+以 $\mathbf { i } = 1 , 2$ ,…的数值代入，可算得表11.4所示的结果。
+
+表11.4  
+
+<table><tr><td>i</td><td>环带内外半径</td><td>该环带产生的误差</td><td>以前各环带产生的误差总和</td></tr><tr><td>1</td><td>~3l</td><td>±0.058″·8g·</td><td>±0.058&quot;·8g</td></tr><tr><td>2</td><td>31~5l</td><td>0.019·6g</td><td>0.061·8g</td></tr><tr><td>3</td><td>51~7</td><td>0.010·8g</td><td>0.062·8g</td></tr><tr><td>4</td><td>7~9</td><td>0.007·8g</td><td>0.062·8g</td></tr></table>
+
+如果将近区域划分为如图11.7所示的正方形，则需用直角坐标系表示，即
+
+$$
+\mathbf { m _ { 5 1 } } = \frac { \rho ^ { \prime \prime } } { 2 \pi \gamma } ( \sum _ { \mathrm { i } } \delta \mathbf { g } _ { \mathrm { i } } ^ { 2 } \mathbf { f } _ { \mathrm { i } } ^ { 2 } ) ^ { 1 / 2 }
+$$
+
+![](images/266d4a4ceb260ab8e7a0a9e73e6c93a19389a23f75fd30db77efa41ede97d20d.jpg)  
+图11.7
+
+其中
+
+$$
+\mathrm { f _ { i } = A r s h \ \frac { y _ { 2 i } } { x _ { 1 i } } - A r s h \ \frac { y _ { 1 i } } { x _ { 1 i } } - A r s h \ \frac { y _ { 2 i } } { x _ { 2 i } } + A r s h \ \frac { y _ { 1 i } } { x _ { 2 i } } }
+$$
+
+式中 $( \mathbf { x } _ { \mathrm { { i i } } } , \mathbf { y } _ { 2 \mathrm { { i } } } ) , ( \mathbf { x } _ { 2 \mathrm { { i } } } , \mathbf { y } _ { 2 \mathrm { { i } } } ) , ( \mathbf { x } _ { 1 \mathrm { { i } } } , \mathbf { y } _ { 1 \mathrm { { t } } } )$ 和 $( \mathbf { x } _ { \mathrm { 2 i } } , \mathbf { y } _ { \mathrm { 1 i } } )$ 分别为第 $\dot { \mathbf { \mu } }$ 个正方形的四个角点的直角坐标。由此可以算得表11.5所示的结果。
+
+表11.5  
+
+<table><tr><td>带 号</td><td>带 的 范 围</td><td>该带产生的误差</td><td>以前各带产生的误差总和</td></tr><tr><td>i</td><td>21~41</td><td>±0.030·8g</td><td>±0.030·8g</td></tr><tr><td>2</td><td>41~6l</td><td>0.013·8g</td><td>0.033·6g</td></tr><tr><td>3</td><td>61~8l</td><td>0.009·g</td><td>0.034·6g</td></tr><tr><td>4</td><td>81~10l</td><td>0.006·8g</td><td>0.034.8g</td></tr></table>
+
+从表11.4和表11.5的结果看出，随着与计算点的距离的增大，同样精度的重力异常所造成的误差影响迅速减小。因此，在计算重力垂线偏差时，离计算点越近，用于计算的平均重力异常的面积应当愈小，并增加实测重力点的数量，以减小平均重力异常的误差。
+
+对于 $( 1 1 \cdot 5 3 )$ 式中的 $\hat { \sf 5 } _ { 0 }$ ，如果由于缺乏精细的重力数据而不予计算的话，则它的值本身就是误差的大小。通常用下列算式近似估算忽略它所产生的中误差：
+
+$$
+\pm _ { 0 } = \pm \mathtt { k } \mathtt { r } _ { 0 } ^ { 3 / 4 }
+$$
+
+式中 $\boldsymbol { \mathsf { r } } _ { 0 }$ 为中央区域界圆的半径； $\mathbf { k }$ 为一常系数，它的大小与中央区域内重力异常变化的激烈程度有关。这样-来，总的重力垂线偏差的中误差 $\mathfrak { m } _ { \sharp _ { 8 } }$ 为
+
+$$
+\mathbf { m } _ { \mathfrak { k } _ { 8 } } { = } \sqrt { \mathbf { m } _ { \bar { \mathfrak { k } } _ { 1 } } ^ { 2 } + \tilde { \mathfrak { s } } _ { \mathrm { i } } ^ { 2 } }
+$$
+
+# S11.7代表误差
+
+为了得到一块(扇形或正方形)面积的平均异常值，在该面积内应测定重力点。显然，实测重力点越多,所求得的平均异常值精度越高。而最简便的处理办法是，在一块面积内只测一个重力点，以该点的重力异常值作为面积的平均异常值。这个平均值肯定是有误差的，其大小与该点在面积中的位置有关。如果这个点的异常值接近于该面积的平均异常，则误差就小，这样的点一般位于高程接近于面积平均高程的地方。如果这个点的异常值接近于该面积内重力异常的最大值或最小值，那末误差就大，这样的点一般位于该面积内最高或最低的地方。为了便于讨论，取其中误差作为衡量的标准，这就是所谓的“代表误差”。因此，代表误差的定义是：以面积内任一个点的异常值代表该面积的平均异常所具有的中误差。若以E表示代表误差，依据误差理论，它可以按下列公式推求之：
+
+$$
+\mathbf { E } = { \sqrt { \frac { \sum _ { i = 1 } ^ { n } ( \Delta \mathbf { g } _ { i } - { \overline { { \Delta } } } \mathbf { \bar { g } } ) } { \mathbf { n } - 1 } } }
+$$
+
+式中n为该面积内的实测重力点数;△g:为第i个点的异常值；g为这n个异常值的算术中数，把它视为该面积的平均异常值的最或然值。显然,当n的值越大时，所算得的E值越可靠。因为
+
+$$
+\overline { { \Delta \mathbf { g } } } = \frac { 1 } { \mathfrak { n } } \sum _ { \mathrm { i } = 1 } ^ { \mathfrak { n } } \Delta \mathbf { g } _ { \mathrm { i } }
+$$
+
+将它代入(11.62)式，可以导出计算代表误差的另一种形式表示的公式
+
+$$
+\mathbf { E } ^ { 2 } = \frac { 1 } { \mathbf { n } - 1 } \sum _ { \mathrm { i = 1 } } ^ { \mathbf { n } } \Delta \mathbf { g } _ { \mathrm { i } } ^ { 2 } - \frac { 1 } { \mathbf { n } ( \mathbf { n } - 1 ) } ( \sum _ { \mathrm { i = 1 } } ^ { \mathbf { n } } \Delta \mathbf { g } _ { \mathrm { i } } ) ^ { 2 }
+$$
+
+用(11.64)式计算代表误差要比用(11.62)式来得省事，尤其是在一个地区内同时计算不同大小面积的代表误差时更为突出，可减少很多工作量。很明显，只有对于有很多实测重力点的地区才能用上述的两个式子算得代表误差。另外，用于计算的△g;也还含有误差，它是由重力值测量误差、重力点位置和高程的误差所引起的。因此，按上述式子算得的代表误差E中还包含了重力异常的测定误差m。为了区别起见.把由公式算得的E值称为全代表误差，从中扣除了异常测定误差m以后所得的值称为纯代表误差，用E。表示之。显然，它们之间有如下的关系：
+
+$$
+\mathbf { E } ^ { 2 } = \mathbf { E } _ { 0 } ^ { 2 } + \mathbf { m } ^ { 2 }
+$$
+
+但从目前的重力测量精度来看，可以保证m的数值在E中占很小的比例，因而可忽略其影响，认为 $\mathbf { E } = \mathbf { E } _ { 0 }$ 。
+
+表11. 6  
+
+<table><tr><td colspan="2">区 域</td><td>！</td><td colspan="2">区 域</td><td>1</td><td></td></tr><tr><td>矩形面积（km²）</td><td>代表误差E(毫伽）</td><td>代表误差系数C</td><td>矩形面积(km²）</td><td>代表误差E(毫伽)</td><td>代表误差系数C</td><td></td></tr><tr><td>10×10</td><td>4.84</td><td>0.78</td><td>25×25</td><td>14.06</td><td></td><td>1.41</td></tr><tr><td>10×20</td><td>6.77</td><td>0.89</td><td>35×35</td><td></td><td>17.37</td><td>1.47</td></tr><tr><td>20×20</td><td>8.41</td><td>0.94</td><td>50×50</td><td></td><td>18.85</td><td>1.33</td></tr><tr><td>20×3</td><td>9.52</td><td>0.96</td><td>100×100</td><td></td><td>19.60</td><td>0.98</td></tr><tr><td>30×30</td><td>10.46</td><td>0.95</td><td></td><td></td><td></td><td></td></tr><tr><td>中数</td><td></td><td>0.9</td><td></td><td>中数</td><td></td><td>1.30</td></tr></table>
+
+表11.6中列出了两个区域根据实测重力数据算得的不同大小面积的空间异常的代表误差数值。分析这些结果，得出代表误差有如下的规律： $\textcircled{1}$ 对于同一地区，随着面积的增大代表误差的数值增大，这是因为重力异常的变化幅度一般都是随面积的增大而增大的，但当面积达到一定的数值后，再增大面积就不再引起重力异常变化幅度的扩大，故代表误差的数值也就不明显地增大了。
+
+$\textcircled{2}$ 对不同地形类别的地区，同样大小面积的代表误差的数值有明显的差别；地形起伏大的区域I与地形较为平坦的区域「相比，代表误差数值大，这是因为空间异常的变化幅度与地形起伏有很大的相关性的缘故。
+
+代表误差的概念是英国学者杰·格拉夫·享特(J.Graaff Hunfer)在1935年第一次引用的,它根据代表误差与面积的大小和面积内重力场复杂程度之间存在的相关性，给出了一个计算纯代表误差的经验公式
+
+$$
+\scriptstyle \mathbf { E } _ { 0 } = \mathbf { C } ( { \sqrt { \textbf { x } } } + { \sqrt { \textbf { y } } } )
+$$
+
+式中 $\mathbf { x }$ 和 $\mathbf { y }$ 分别为矩形面积的长和宽，C为一常数，通常称之为代表误差系数，它反映了面积内异常的变化幅度。格拉夫·享特当时用印度的数据求得 $C { = } 0 . 5 5$ 。显然，若有了E值，再利用面积的长和宽，由 $( 1 1 \cdot 6 6 )$ 式可以反算出C值。在表11.6中已经给出了相应的C值的计算结果。数据显示，当 $\mathbf { x }$ 或 $\mathbf { y } ) { \leqslant } 5 0 \mathbf { k } \mathbf { m }$ 时，在同一个区域内C值差别不大。这说明，在此种情况下用 $( 1 1 \cdot 6 6 )$ 式估算代表误差是合适的。而对于不同地形类别的地区，代表误差系数有明显的差别。一般说来，随着地形起伏的增大，代表误差系数的数值也随之增大。根据利用较多实测数据的计算结果表明，对于少数地形起伏特大的地区，空间异常代表误差系数的数值可能达到4.5以上。
+
+上面讨论了有较多实测重力数据的地区代表误差的计算方法。当按 $( 1 1 \cdot 6 2 )$ 或 $( 1 1 \cdot 6 4 )$ 式计算代表误差时，其准确性一方面与所用重力点的数目 $\mathbf { n }$ 有关，另一方面还与所用重力点在面积内的分布情况有关。如果点位分布不当，所算出的代表误差也不会准确。例如，本来是一个起伏较大的山区，但实测重力点都处于山谷中,山顶和山腰处都无实测重力点可用，则所求得的代表误差就会偏小，得出近似于丘陵地区的结果。
+
+对于尚未进行或只进行了少量重力测量的地区，就不能应用(11.62)和(11.64)式计算代表误差，而只能用(11.66)式估算。此时，式中需要已知的代表误差系数值只能借用地形条件相类似的地区所算得的值。由于实际的地形变化各不相同，完全找到相似的地区也是很难的。从实用的角度出发，通常归纳出几种较典型的地形类别,规定相应的代表误差系数的数值。实践中依据研究地区的地形情况，选取与其相类似的地形类别所规定的代表误差系数值，来估算代表误差。
+
+下面介绍一种依据面积内最大高差作为判定地形类别及确定相应的代表误差系数值的理论。
+
+在地形起伏的地区，在一定的范围内，空间重力异常与高程有明显的相关性。因此，可以假定空间异常 $\Delta \mathbf { g }$ 和高程 $\mathbf { H }$ 成线性变化，即
+
+$$
+\Delta \mathbf { g } { = } \mathbf { a } { + } \mathbf { b } \mathrm { H }
+$$
+
+式中a和 $\mathbf { b }$ 为常数。将 $( 1 1 \cdot 6 7 )$ 式代入 $( 1 1 \cdot 6 2 )$ 式，得到
+
+$$
+\dot { \mathbf { E } } = \mathbf { b } \sqrt { \frac { \sum _ { i = 1 } ^ { n } ( \mathrm { H } _ { i } - \overline { { \mathbf { H } } } ) ^ { 2 } } { \mathbf { n } - 1 } }
+$$
+
+式中 $\overline { { \mathbf { H } } }$ 为平均高程。令
+
+$$
+\mathbf { m } _ { \mathrm { H } } = { \sqrt { \frac { \displaystyle \sum _ { i = 1 } ^ { n } ( \mathbf { H } _ { i } - { \overline { { \mathbf { H } } } } ) ^ { 2 } } { \displaystyle \mathbf { n } - 1 } } }
+$$
+
+则得
+
+$$
+\mathbf { E } { = } \mathbf { b } \mathbf { m } _ { \mathsf { H } }
+$$
+
+mH就是“高程代表误差",它是以面积内任一点的高程代替其平均高程所产生的中误差。显然，它的大小与面积内地形起伏的幅度有着密切的关系。现假定它与面积内的最大高差 $\Delta \mathrm { H } _ { \operatorname* { m a x } }$ 之间的关系为
+
+$$
+\Delta \mathrm { H } _ { \mathrm { m a x } } { = } \mathrm { k m } _ { \mathrm { H } }
+$$
+
+式中 $\mathbf { k }$ 为一个常数。用 $( 1 1 \cdot 6 6 )$ 式和 $( 1 1 \cdot 7 1 )$ 式分别变换 $( \mathrm { i } 1 \cdot 7 0 )$ 式的两端，得到
+
+$$
+\displaystyle \mathbb { C } ( \sqrt { \textbf { x } } + \sqrt { \textbf { y } } ) { = } \frac { \mathrm { b } } { \mathrm { k } } \Delta \mathrm { H } _ { \mathrm { m a x } }
+$$
+
+该式给出了一个面积内的空间异常代表误差系数C与该面积内地形最大高差 $\Delta \mathrm { H } _ { \mathsf { m a x } }$ 之间的关系，其中要用到的 $\mathbf { b }$ 和 $\mathbf { k }$ 的数值可以利用实际数据求得。
+
+如果在一个面积内有很多的实测重力点，对每一个重力点都可以构成一个误差方程
+
+$$
+\mathrm { V _ { i } { = } \Delta \mathrm { g _ { i } { - } \mathrm { \Lambda ( { a + } b H _ { i } ) } } \qquad } ( \mathrm { i } { = } 1 , 2 , \cdots { \cdots } , \mathrm { n } )
+$$
+
+利用最小二乘法就可解算出 $\mathbf { b }$ 的数值。大量的计算结果表明，b值取 $0 . 1 \times 1 0 ^ { - 5 } { \bf s } ^ { - 2 }$ 为最适中。
+
+![](images/88f8074be8259ebba4405d3bcfdf393b001bb71fcd7e52ea601a256df5cacfe6.jpg)  
+图11.8
+
+为了较精确地求得 $\mathbf { k }$ 值，不用重力点的高程，而是从地形图上读取面积内均匀分布的很多点的高程。然后代入（11.69)式算出 $\mathbf { m _ { H } }$ ，并从中挑选出最大和最小高程求出 $\Delta \mathrm { H } _ { \mathfrak { m a x } }$ 。最后代入(11.71)式就可算得 $\mathbf { k }$ 值。依据大量计算结果的统计， $\mathbf { k }$ 值可以取为4.5。如果将任一点的高程与平均高程之差 $\mathbf { H } ; - \widetilde { \mathrm { H } }$ 视为偶然误差， $\mathfrak { m } _ { \mathtt { H } }$ 则是中误差。按误差理论，最大误差可以达到中误差的三倍，按此推理面积内两点的最大高差的允许值应是6倍 $\mathfrak { m } _ { \mathtt { H } }$ 。为什么解算结果是4.5呢？其理由是地形高程变化的特殊规律，使得 $\mathbf { H } _ { \mathrm { i } } - \overline { { \mathbf { H } } }$ 不完全像偶然误差那样呈正态分布。如图11.8所示的一个山·其平均高程并不在最大高程与最小高程的中数处，而是要偏低0.5个 $\mathfrak { m } _ { \mathtt { H } }$ 以上，这是因为地形表面上低于平均高程的点要比高于平均高程的点多
+
+$1 / 3$ 以上，这就使得 $\mathrm { H } _ { \mathrm { i } } { - } \overline { { \mathrm { H } } }$ 为负值的绝对值不可能达到 $3 \mathrm { m } _ { \mathrm { H } }$ 。从实际数据中看到，达到 $2 \mathrm { m _ { H } }$ 也很少。而 $\mathbf { H } _ { \mathrm { i } } - \overline { { \mathbf { H } } }$ 为正值的最大值有达到 $3 \mathrm { m _ { H } }$ 附近的。这就解释了 $\mathbf { k }$ 值为什么不等于6，而是取4.5。
+
+在(11.72)式中，取 $\mathsf { b } = 0 , 1$ 和 $\mathbf { k } = 4 , 5$ ，分别对 $5 ^ { \prime } \times 5 ^ { \prime }$ 和 $1 0 ^ { \prime } \times 1 0 ^ { \prime }$ 面积进行了计算，其结果如表11.7所示。它是一个以面积内最大高差查取代表误差系数的用表.所得的这个代表误差系数值就表征了该面积内空间异常的变化幅度，可以用于布点设计和估算误差。为了便于实际工作，不必像表11.7那样分得很细。现将地形依据起伏程度分为6个等级·并给出各级地形类别的判别标准和相应的代表误差系数值，详见表11.8。
+
+表11.7  
+
+<table><tr><td rowspan=1 colspan=2>Hmax       方块面积C</td><td rowspan=1 colspan=1>5&#x27;×5&#x27;</td><td rowspan=1 colspan=3>10&#x27;×10&#x27;</td><td rowspan=1 colspan=5>△Hmax        方块面积C</td><td rowspan=1 colspan=3>5&#x27;×5&#x27;</td><td rowspan=1 colspan=1>10&#x27;×10&#x27;</td></tr><tr><td rowspan=10 colspan=2>0.50.81.11.41.72.02.32.62.9</td><td rowspan=2 colspan=1>138.9m219.9</td><td rowspan=1 colspan=3>193.7m</td><td rowspan=2 colspan=5>3.23.5</td><td rowspan=1 colspan=3>876.6</td><td rowspan=2 colspan=1>1239.81356. 0</td></tr><tr><td rowspan=1 colspan=3>309.9</td><td rowspan=1 colspan=1></td><td rowspan=2 colspan=2></td><td rowspan=6 colspan=3>958.81041. 01123.21205.41287.6</td><td rowspan=6 colspan=1>1356. 01472.21588.51704. 71820.9</td></tr><tr><td rowspan=3 colspan=1>301.3383.5</td><td rowspan=3 colspan=3>426.1542. 4</td><td rowspan=1 colspan=2></td><td rowspan=1 colspan=4>3.8</td></tr><tr><td rowspan=2 colspan=2>4.1</td><td rowspan=2 colspan=4>4.1</td><td rowspan=2 colspan=2>11</td></tr><tr><td rowspan=1 colspan=1></td></tr><tr><td rowspan=1 colspan=1>1.7</td><td rowspan=1 colspan=1>465.7</td><td rowspan=1 colspan=3>658.6</td><td rowspan=1 colspan=2>4.4</td><td rowspan=2 colspan=7>4.44.7</td></tr><tr><td rowspan=1 colspan=1>2.0</td><td rowspan=1 colspan=1>547.9</td><td rowspan=1 colspan=3>774.8</td><td></td></tr><tr><td rowspan=1 colspan=1>630.1</td><td rowspan=1 colspan=3>891. 1</td><td rowspan=1 colspan=5>5.0</td><td rowspan=1 colspan=3>1369. 6</td><td rowspan=1 colspan=1>1937.2</td></tr><tr><td rowspan=1 colspan=1>712.3</td><td rowspan=1 colspan=3>1007.3</td><td rowspan=2 colspan=5>5.3</td><td rowspan=2 colspan=3>1452. 0</td><td rowspan=2 colspan=1>2053.4</td></tr><tr><td rowspan=1 colspan=1>794.4</td><td rowspan=1 colspan=3>1123.5</td></tr></table>
+
+表11.8  
+
+<table><tr><td rowspan=2 colspan=1>地形类别</td><td rowspan=2 colspan=1>空间异常代表误差系数</td><td rowspan=1 colspan=2>方块内允许的最大高差(米)</td></tr><tr><td rowspan=1 colspan=1>5X5&#x27;</td><td rowspan=1 colspan=1>10&#x27;× 10&#x27;</td></tr><tr><td rowspan=1 colspan=1>平原</td><td rowspan=1 colspan=1>0.5</td><td rowspan=1 colspan=1>小于150m</td><td rowspan=1 colspan=1>&lt;200</td></tr><tr><td rowspan=1 colspan=1>丘陵</td><td rowspan=1 colspan=1>0.8</td><td rowspan=1 colspan=1>150&lt;△Hmax≤300</td><td rowspan=1 colspan=1>200~100</td></tr><tr><td rowspan=1 colspan=1>小山区</td><td rowspan=1 colspan=1>1.4</td><td rowspan=1 colspan=1>300/△Hmsx≤500</td><td rowspan=1 colspan=1>400~700</td></tr><tr><td rowspan=1 colspan=1>中山区</td><td rowspan=1 colspan=1>2.3</td><td rowspan=1 colspan=1>500~800</td><td rowspan=1 colspan=1>700~1100</td></tr><tr><td rowspan=1 colspan=1>大山区</td><td rowspan=1 colspan=1>3.5</td><td rowspan=1 colspan=1>800~1100</td><td rowspan=1 colspan=1>1100~1600</td></tr><tr><td rowspan=1 colspan=1>特大山区</td><td rowspan=1 colspan=1>5.0</td><td rowspan=1 colspan=1>大于1100</td><td rowspan=1 colspan=1>大于1600</td></tr></table>
+
+将（11.62)式应用于布格异常，则可算得布格异常的代表误差。在 $\$ 9.8$ 中已经指出：在山区布格异常的变化幅度比空间异常的变化幅度小得多。因此，布格异常的代表误差必然比空间异常的代表误差要小。表11.9给出了表11.6中区域Ⅱ所相应的布格异常代表误差及其系数值的计算结果。将它与空间异常的相应结果作比较，完全证明了上述说法的正确性。
+
+表11.9  
+
+<table><tr><td>方块面积（km²）</td><td>布格异常代表误差</td><td>布格异常代表误差系数</td></tr><tr><td>25×25</td><td>5.55</td><td>0.56</td></tr><tr><td>35×35</td><td>7.47</td><td>0.63</td></tr><tr><td>50×50</td><td>8.57</td><td>0.61</td></tr><tr><td>中数</td><td></td><td>0.60</td></tr></table>
+
+表11.10  
+
+<table><tr><td>地形类别</td><td>.布格异常代表误差系数</td></tr><tr><td>小山区 中山区</td><td>0.8</td></tr><tr><td></td><td>1. 0</td></tr><tr><td>大山区</td><td>1. 3</td></tr><tr><td>特大山区</td><td>1.6</td></tr></table>
+
+大量的数值计算结果表明，对于各类山区，采用如表11.10所示的布格异常代表误差系数值是恰当的。
+
+# $\ S$ 11.8推求重力垂线偏差时重力点的最有利分布
+
+在地面上实测的重力点越多，掌握地面重力场的精细结构，则所求得的重力垂线偏差的精度越高，这是必然的。然而，为了减少野外困难的工作量，总是尽可能少测一些重力点。因此有必要研究这样一个问题：在推求重力垂线偏差时重力点的最有利分布是怎样的?所谓最有利分布，就是使得重力点的布测位置很适当，它们既能满足推求重力垂线偏差的精度要求，而且重力点的数目又是最少的。
+
+由 $( 1 1 \cdot 6 1 )$ 式有
+
+$$
+\mathbf { m } _ { \tilde { \varepsilon } _ { g } } ^ { 2 } = \mathbf { \dot { m } _ { \tilde { \varepsilon } _ { i } } ^ { 2 } } + \tilde { \varepsilon } _ { 0 } ^ { 2 }
+$$
+
+其中 $\pmb { \xi } _ { 0 }$ 按 $( 1 1 \cdot 5 6 )$ 式计算，而 $\mathbf { m } _ { \hat { \mathbf { e } } _ { 1 } }$ 按 $( 1 1 . \cdot 5 4 )$ 式推求。若在每个扇形中测一个重力点，以该点的重力异常作为该扇形的平均异常，此时平均异常的中误差 $\delta _ { \mathbf { g } _ { \mathrm { i } , \mathbf { k } } }$ 就等于该扇形的代表误差$\mathbf { E } _ { \mathrm { i } , \mathbf { k } }$ 。因此，由 $( 1 1 \cdot 5 4 )$ 式可得
+
+$$
+\mathfrak { m } _ { \mathfrak { c } _ { \mathrm { i } } } = \frac { \rho ^ { \prime \prime } } { 2 \pi \gamma } ( \sum _ { \mathrm { i } , \mathbf { k } } \mathbf { E } _ { \mathrm { i } , \mathbf { k } } ^ { 2 } \mathbf { f } _ { \mathrm { i } , \mathbf { k } } ^ { 2 } ) ^ { 1 / 2 }
+$$
+
+其中的 $\mathbf { f } _ { \mathrm { i } , \mathbf { k } }$ 按 $( 1 1 \cdot 5 5 )$ 式推求。代表误差E可用经验公式 $( 1 1 \cdots 6 6 )$ 估算，即
+
+$$
+{ \bf E } ^ { 2 } { = } { \bf C } ^ { 2 } ( \sqrt { \textbf { x } } { + } \sqrt { \textbf { y } } ) ^ { 2 }
+$$
+
+如图.11.9所示，将扇形近似地看成长方形，它的两边分别为
+
+$$
+{ \bf x } = { \bf r } _ { \mathrm { i } } - { \bf r } _ { \mathrm { i - 1 } }
+$$
+
+$$
+\mathbf { y } { = } \frac { \mathtt { r _ { i } } + \mathtt { r _ { i - 1 } } } { 2 } \frac { 2 \pi } { \mathtt { k } _ { \mathrm { i } } }
+$$
+
+![](images/e88c840242e94e608768d79c9cbc249744362febe3eba91ef48e22d9c4005eee.jpg)  
+图11.9
+
+其中 $\mathbf { k } _ { \mathrm { i } }$ 为第i环所等分的扇形数。从数学知识知道，在同样周长的条件下，正方形所占的面积要比长方形大。而从（11·75)式看出，在 $\mathbf { x } + \mathbf { y }$ 为常数时，正方形的E值为最小。因此，应当使 $\mathbf x = \mathbf y$ ,即
+
+$$
+\mathbf { r } _ { \mathrm { i } } - \mathbf { r } _ { \mathrm { i - 1 } } { = } \frac { \pi } { \mathbf { k } _ { \mathrm { i } } } ( \mathbf { r } _ { \mathrm { i } } { + } \mathbf { r } _ { \mathrm { i - 1 } } )
+$$
+
+这样一来，由 $( 1 1 \cdot 7 5 )$ 式可以写出
+
+$$
+\mathbf { E } _ { \mathrm { i } } ^ { 2 } { = } 4 \mathrm { C } ^ { 2 } ( \mathbf { r } _ { \mathrm { i } } { - } \mathbf { r } _ { \mathrm { i - 1 } } ) { = } 4 \mathrm { C } ^ { 2 } \mathbf { r } _ { \mathrm { i - 1 } } ( \mathbf { x } _ { \mathrm { i } } { - } 1 )
+$$
+
+式中，
+
+$$
+\mathbf { x } _ { \mathrm { i } } = { \frac { \mathbf { r } _ { \mathrm { i } } } { \mathbf { r } _ { \mathrm { i - 1 } } } }
+$$
+
+它是第i环的外半径与内半径的比值。将 $( 1 1 \cdot 7 7 )$ 式代入 $( 1 1 \cdot 7 4 )$ 式，同时顾及到同-环所有扇形的代表误差是相同的，得到
+
+$$
+\mathbf { m } _ { \tilde { \mathbf { \mu } } _ { 1 } } ^ { 2 } = \frac { \rho ^ { \prime \prime } } { 4 \pi ^ { 2 } \gamma ^ { 2 } } \sum _ { \mathrm { i } } 4 \mathrm { C } ^ { 2 } \mathbf { r } _ { \mathrm { i } - 1 } ( \mathbf { x } _ { \mathrm { i } } - 1 ) \sum _ { \mathbf { k } } \mathbf { f } _ { \mathrm { i } . \mathbf { k } } ^ { 2 }
+$$
+
+先用 $( 1 1 \cdot 5 5 )$ 式计算 $\sum \limits _ { k } \ f _ { i , k } ^ { 2 }$ ，由于对于同一环中的所有扇形都存在关系式：
+
+$$
+\frac { \mathrm { \bf A _ { k } } - \mathrm { \bf A _ { k - 1 } } } { 2 } = \frac { \pi } { \mathrm { \bf k _ { i } } } .
+$$
+
+因此有
+
+$$
+\sum _ { i , k } \dot { \mathrm { f } } _ { i , \mathrm { k } } ^ { 2 } = 4 ( \ln \mathrm { x } _ { \mathrm { i } } ) ^ { 2 } \dot { \mathrm { s i m } } ^ { 2 } \frac { \dot { \pi } } { \mathrm { k } _ { \mathrm { i } } } \sum _ { \mathrm { k } } \cos ^ { 2 } \frac { \mathrm { A } _ { \mathrm { k } } + \mathrm { A } _ { \mathrm { k } - 1 } } { 2 }
+$$
+
+依据数学知识，类似于 $( 1 1 \cdot 5 6 )$ 式有
+
+$$
+\sum \limits _ { k } \cos ^ { 2 } \frac { A _ { k } + A _ { k - 1 } } { 2 } = \frac { k _ { i } } { 2 }
+$$
+
+因而
+
+$$
+\sum _ { \bf k } f _ { \mathrm { i , k } } ^ { 2 } = 2 { \bf k } _ { \mathrm { i } } ( \ln { { \bf x } _ { \mathrm { i } } } ) ^ { 2 } \sin ^ { 2 } \frac { \pi } { { \bf k } _ { \mathrm { i } } }
+$$
+
+从(11·76)和(11·78)式可以导出;第i环的扇形数k：与该环的外、内半径比xi的关系式，即
+
+$$
+\mathbf { k } _ { \mathrm { i } } { = } \pi \frac { \mathbf { x } _ { \mathrm { i } } + 1 } { \mathbf { x } _ { \mathrm { i } } - 1 }
+$$
+
+将 $( 1 1 \cdot 8 1 )$ 式代入 $( 1 1 \cdot 8 0 )$ 式，得到
+
+$$
+\sum _ { \bf k } f _ { { \bf i } , { \bf k } } ^ { 2 } \equiv 2 \pi \frac { { \bf x } _ { \mathrm { i } } + 1 } { { \bf x } _ { \mathrm { i } } - 1 } ( \ln { \bf x } _ { \mathrm { i } } ) ^ { 2 } \sin ^ { 2 } \frac { { \bf x } _ { \mathrm { i } } - 1 } { { \bf x } _ { \mathrm { i } } + 1 } .
+$$
+
+将它代入 $( 1 1 \cdot 7 9 )$ 式，则得
+
+$$
+\mathbf { m } _ { \natural \mathrm { 1 } } ^ { 2 } = { \frac { 2 \mathrm { C ^ { 2 } } \rho ^ { \prime \prime 2 } } { \pi \gamma ^ { 2 } } } \sum _ { \mathfrak { i } } \dot { \mathbf { r } } _ { \mathfrak { i } - 1 } ( \mathbf { x } _ { \mathfrak { i } } + 1 ) ( \mathrm { l n } \mathbf { x } _ { \mathrm { i } } ) ^ { 2 } \mathrm { s i n } ^ { 2 } { \frac { \mathbf { x } _ { \mathfrak { i } } - 1 } { \mathbf { x } _ { \mathrm { i } } + 1 } }
+$$
+
+将 $( 1 1 \cdot 8 2 )$ 式和 $( 1 1 \cdot 5 4 )$ 式代入 $( 1 1 \cdot 7 3 )$ 式，得到
+
+$$
+\bf m _ { \ell _ { E } } ^ { 2 } = \frac { 2 C ^ { 2 } \rho ^ { \prime \prime 2 } } { \pi \gamma ^ { 2 } } \sum _ { i = 1 } ^ { n } r _ { i - 1 } Y ( \bf x _ { i } ) + k ^ { 2 } r _ { 0 } ^ { 3 / 2 }
+$$
+
+其中
+
+$$
+\mathbf { Y } ( \mathbf { x } _ { \mathrm { i } } ) { = } ( \mathbf { x } _ { \mathrm { i } } { + } 1 ) ( \mathrm { l n } \mathbf { x } _ { \mathrm { i } } ) ^ { 2 } { \sin } ^ { 2 } \frac { \mathbf { x } _ { \mathrm { i } } { - } 1 } { \mathbf { x } _ { \mathrm { i } } { + } 1 }
+$$
+
+从(11.83)式看出,m是r。和xi(i=1、2、…、n)的函数,也是r;(i=、1、2、.、n)的函数。它们的数值不同,所得的mg也不一样。为此,要找出一组r。和x、×、、xn的数值,使所算得的mg为最小。依据数学知识,这是一个求极小值的问题，必须先求出极值条件。对于这个具体问题，极值条件为
+
+$$
+\frac { \partial \mathrm { m } _ { \mathrm { f } } ^ { 2 } } { \partial \mathrm { r } _ { \mathrm { i } } } { = } \frac { \partial \mathrm { m } _ { \mathrm { f } _ { 1 } } ^ { 2 } } { \partial \mathrm { r } _ { \mathrm { i } } } { + } \frac { \partial \dot { \mathrm { \bf z } } _ { 0 } ^ { 2 } } { \partial \mathrm { r } _ { \mathrm { i } } } \qquad ( \mathrm { i } { = } 0 , 1 , 2 , \cdots \mathrm { . n } )
+$$
+
+因为
+
+$$
+\frac { \partial \mathbf { m } _ { \hat { \varepsilon } _ { 1 } } ^ { 2 } } { \partial \mathbf { r } _ { \mathrm { i } } } { = } \frac { \partial \mathbf { m } _ { \hat { \varepsilon } _ { 1 } } ^ { 2 } } { \partial \mathbf { x } _ { \mathrm { i } } } \frac { \partial \mathbf { x } _ { \mathrm { i } } } { \partial \mathbf { r } _ { \mathrm { i } } } { + } \frac { \partial \mathbf { m } _ { \hat { \varepsilon } _ { 1 } } ^ { 2 } } { \partial \mathbf { x } _ { \mathrm { i + 1 } } } \frac { \partial \mathbf { x } _ { \mathrm { i + 1 } } } { \partial \mathbf { r } _ { \mathrm { i } } }
+$$
+
+将(11.82)式分别对 $\mathbf { x } _ { \mathrm { i } }$ 和 $\mathbf { x } _ { \mathrm { i } + \cdot \mathrm { i } }$ 求导，并顾及到
+
+$$
+\scriptstyle { \frac { \partial \mathbf { x } _ { \mathrm { i } } } { \partial \mathbf { r } _ { \mathrm { i } } } } = { \frac { 1 } { \mathbf { r } _ { \mathrm { i - 1 } } } } \qquad { \frac { \partial \mathbf { x } _ { \mathrm { i + 1 } } } { \partial \mathbf { r } _ { \mathrm { i } } } } = - { \frac { \mathbf { r } _ { \mathrm { i + 1 } } } { { \dot { \mathbf { r } } } _ { \mathrm { i } } ^ { 2 } } }
+$$
+
+可以求得
+
+$$
+\frac { \partial \mathfrak { m } _ { \mathfrak { k } _ { 1 } } ^ { 2 } } { \partial \mathfrak { r } _ { \mathrm { i } } } { = } \frac { 2 \mathrm { C } ^ { 2 } \varrho ^ { m _ { 2 } } } { \pi \gamma ^ { 2 } } \lbrack \Phi ( \ddot { \mathfrak { x } } _ { \mathrm { i } } ) + \Psi ( \mathfrak { x } _ { \mathrm { i } + 1 } ) \rbrack ( \dot { \mathfrak { x } } { = } 1 , 2 , \cdots \cdots , \mathfrak { n } { - } 1 )
+$$
+
+其中
+
+$$
+\begin{array} { r l } & { \Phi ( \mathbf { x } _ { \mathrm { i } } ) = ( \sin \frac { \mathbf { x } _ { \mathrm { i } } - 1 } { \mathbf { x } _ { \mathrm { i } } + 1 } \mathrm { l n } \mathbf { x } _ { \mathrm { i } } ) ^ { 2 } + 2 \frac { \mathbf { x } _ { \mathrm { i } } + 1 } { \mathbf { x } _ { \mathrm { i } } } \mathrm { s i n } ^ { 2 } \frac { \mathbf { x } _ { \mathrm { i } } - 1 } { \mathbf { x } _ { \mathrm { i } } + 1 } \mathrm { l n } \mathbf { x } _ { \mathrm { i } } + \frac { 2 } { \mathbf { x } _ { \mathrm { i } } + 1 } \mathrm { s i n } 2 \frac { \mathbf { x } _ { \mathrm { i } } - 1 } { \mathbf { x } _ { \mathrm { i } } + 1 } ( \mathrm { l n } \mathbf { x } _ { \mathrm { i } } ) ^ { 2 } \qquad ( \mathrm { l } 1 \cdot \mathrm { a l } ) \mathrm { ~ a n } ( \mathrm { a n } ( \mathrm { b } ) ) } \\ & { = ( \sin \frac { \mathbf { x } _ { \mathrm { i } + 1 } - 1 } { \mathbf { x } _ { \mathrm { i } + 1 } + 1 } \mathrm { l n } \mathbf { x } _ { \mathrm { i } + 1 } ) ^ { 2 } - 2 ( \mathbf { x } _ { \mathrm { i } + 1 } + 1 ) \sin ^ { 2 } \frac { \mathbf { x } _ { \mathrm { i } + 1 } - 1 } { \mathbf { x } _ { \mathrm { i } } \cdot 1 + 1 } \mathrm { l n } \mathbf { x } _ { \mathrm { i } + 1 } - \frac { 2 \mathbf { x } _ { \mathrm { i } + 1 } } { \mathbf { x } _ { \mathrm { i } + 1 } + 1 } \mathrm { s i n } 2 \frac { \mathbf { x } _ { \mathrm { i } + 1 } - 1 } { \mathbf { x } _ { \mathrm { i } + 1 } + 1 } ( \mathrm { l n } \mathbf { x } _ { \mathrm { i } + 1 } ) } \end{array}
+$$
+
+$\natural _ { i = 1 } ^ { 2 }$ □是 $\mathfrak { r } _ { 0 }$ 的函数，故在 $\yen 0$ 时 $\frac { \partial \pmb { \xi } _ { 0 } ^ { 2 } } { \partial \pmb { r } _ { \mathrm { i } } } { = } 0$ 而
+
+$$
+\frac { \hbar \hbar } { \mathcal { K } _ { \ast } } = \frac { 3 } { 2 } \mathbf { k } ^ { 2 } \mathbf { r } _ { 0 } ^ { 1 / 2 }
+$$
+
+因此，在 $\dot { \mathfrak { i } } = 0$ 时，极值条件为
+
+$$
+\frac { 3 } { 2 } \mathbf { k } ^ { 2 } \mathbf { r } _ { 0 } ^ { 1 \prime 2 } + \frac { 2 \mathbf { C } ^ { 2 } \boldsymbol { \rho } ^ { \prime \prime 2 } } { \pi \gamma ^ { 2 } } \boldsymbol { \Psi } ( \mathbf { x } _ { 1 } ) = 0
+$$
+
+而在 $\mathrm { i } { = } 1 , 2 , \cdots , \mathrm { n } { - } 1$ 时的极值条件为
+
+$$
+\begin{array} { r l } & { \Phi ( \mathbf { x } _ { 1 } ) + \Psi ( \mathbf { x } _ { 2 } ) = 0 } \\ & { \Phi ( \mathbf { x } _ { 2 } ) + \Psi ( \mathbf { x } _ { 3 } ) = 0 } \end{array} ,
+$$
+
+$$
+\pmb { \mathfrak { P } } ( \mathbf { x } _ { \mathfrak { n } - 1 } ) + \pmb { \Psi } ( \mathbf { x } _ { \mathfrak { n } } ) = 0
+$$
+
+又因算出来的最后一环(第 $\mathbf { n }$ 环)的外半径 $\mathbf { r } _ { \mathfrak { n } }$ 应该与所规定的计算重力垂线偏差时用的积分半径 $\mathbf { R }$ 相等，即必需满足条件
+
+$$
+\mathbf { r } _ { 0 } \bullet \mathbf { x } _ { 1 } \bullet \mathbf { x } _ { 2 } \bullet \cdots \bullet \mathbf { x } _ {  n } = \mathbf { R }
+$$
+
+利用 $( 1 1 \cdot 9 0 )$ 、 $( 1 1 \cdot 9 1 )$ 和 $( 1 1 \cdot 9 2 )$ 式组成的 $\mathfrak { n } + \} .$ 个方程，就可以解出 ${ \mathfrak { r } } _ { i } , { \mathbf { x } } _ { 1 } , { \mathbf { x } } _ { 2 } , \cdots , { \mathbf { x } } _ { n }$ 等$\mathbf { n } { + } 1$ 个未知数。再按 $( 1 1 \cdot 7 8 )$ 和 $( 1 1 \cdot 8 1 )$ 式就可分别算得各环带的内、外半径及每个环带内的扇形数。然后在每个扇形中布测一个重力点，因而也就确定了点数。
+
+剩下的问题是怎样解这个方程组。显然，运用一般的代数方法求解它是非常困难的。依据方程的特点，可以在图上用逐次趋近的方法来求解。为此，在 $( 1 1 \cdot 8 8 )$ 、 $( 1 1 \cdot 8 9 )$ 和 $( 1 1 \cdot 8 4 )$ 式中代入一系列的 $\mathbf { x }$ 值，求出一系列的 $\Phi ( \mathbf { x } ) , - \Psi ( \mathbf { x } )$ 和 $\mathbf { Y } ( \mathbf { x } )$ 的数值，见表11.11；再将它们展示在米厘纸上，并连接成曲线，见图11.10。
+
+表11.11  
+
+<table><tr><td colspan="1" rowspan="1">×</td><td colspan="1" rowspan="1">(x）</td><td colspan="1" rowspan="1">-业(x)</td><td colspan="1" rowspan="1">Y(x）</td><td colspan="1" rowspan="1">X</td><td colspan="1" rowspan="1">(x）</td><td colspan="1" rowspan="1">-业(x)</td><td colspan="1" rowspan="1">Y(x）</td></tr><tr><td colspan="1" rowspan="1">1.3</td><td colspan="1" rowspan="1">0.032</td><td colspan="1" rowspan="1">0.039</td><td colspan="1" rowspan="1">0.003</td><td colspan="1" rowspan="1">2.7</td><td colspan="1" rowspan="1">1.153</td><td colspan="1" rowspan="1">2.396</td><td colspan="1" rowspan="1">0.718</td></tr><tr><td colspan="1" rowspan="1">1.4</td><td colspan="1" rowspan="1">0.066</td><td colspan="1" rowspan="1">1 0.085</td><td colspan="1" rowspan="1">0.007</td><td colspan="1" rowspan="1">2.8</td><td colspan="1" rowspan="1">1.255</td><td colspan="1" rowspan="1">2.676</td><td colspan="1" rowspan="1">0.838</td></tr><tr><td colspan="1" rowspan="1">1.5</td><td colspan="1" rowspan="1">0.111</td><td colspan="1" rowspan="1">0.150</td><td colspan="1" rowspan="1">0.016</td><td colspan="1" rowspan="1">2.9</td><td colspan="1" rowspan="1">1. 357</td><td colspan="1" rowspan="1">2.966</td><td colspan="1" rowspan="1">0.969</td></tr><tr><td colspan="1" rowspan="1">1.6</td><td colspan="1" rowspan="1">0.167</td><td colspan="1" rowspan="1">0.237</td><td colspan="1" rowspan="1">0.030</td><td colspan="1" rowspan="1">3.0</td><td colspan="1" rowspan="1">1. 459</td><td colspan="1" rowspan="1">3.266</td><td colspan="1" rowspan="1">1.110</td></tr><tr><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0.233</td><td colspan="1" rowspan="1">0.346</td><td colspan="1" rowspan="1">0.050</td><td colspan="1" rowspan="1">3.1</td><td colspan="1" rowspan="1">1.560</td><td colspan="1" rowspan="1">3.575</td><td colspan="1" rowspan="1">1.261</td></tr><tr><td colspan="1" rowspan="1">1.8</td><td colspan="1" rowspan="1">0.306</td><td colspan="1" rowspan="1">0.474</td><td colspan="1" rowspan="1">0.077</td><td colspan="1" rowspan="1">3.2</td><td colspan="1" rowspan="1">1. 661</td><td colspan="1" rowspan="1">3.892</td><td colspan="1" rowspan="1">1. 422</td></tr><tr><td colspan="1" rowspan="1">1.9</td><td colspan="1" rowspan="1">0.396</td><td colspan="1" rowspan="1">0.623</td><td colspan="1" rowspan="1">0.111</td><td colspan="1" rowspan="1">3.3</td><td colspan="1" rowspan="1">1. 760</td><td colspan="1" rowspan="1">4.216</td><td colspan="1" rowspan="1">1.593</td></tr><tr><td colspan="1" rowspan="1">2.0</td><td colspan="1" rowspan="1">0.472</td><td colspan="1" rowspan="1">0.790</td><td colspan="1" rowspan="1">0.154</td><td colspan="1" rowspan="1">3.4</td><td colspan="1" rowspan="1">1.859</td><td colspan="1" rowspan="1">4.549</td><td colspan="1" rowspan="1">1.774</td></tr><tr><td colspan="1" rowspan="1">X</td><td colspan="1" rowspan="1">(x）</td><td colspan="1" rowspan="1">-亚（x）</td><td colspan="1" rowspan="1">Y(x)</td><td colspan="1" rowspan="1">x</td><td colspan="1" rowspan="1">（x）</td><td colspan="1" rowspan="1">-Y(x)</td><td colspan="1" rowspan="1">Y(x)</td></tr><tr><td colspan="1" rowspan="1">2.1</td><td colspan="1" rowspan="1">0.562</td><td colspan="1" rowspan="1">0.975</td><td colspan="1" rowspan="1">0.206</td><td colspan="1" rowspan="1">3.5</td><td colspan="1" rowspan="1">1. 958</td><td colspan="1" rowspan="1">4.888</td><td colspan="1" rowspan="1">1.965</td></tr><tr><td colspan="1" rowspan="1">2.2</td><td colspan="1" rowspan="1">0.656</td><td colspan="1" rowspan="1">1. 176</td><td colspan="1" rowspan="1">0.267</td><td colspan="1" rowspan="1">3.6</td><td colspan="1" rowspan="1">2.055</td><td colspan="1" rowspan="1">5.233</td><td colspan="1" rowspan="1">2.165</td></tr><tr><td colspan="1" rowspan="1">2.3</td><td colspan="1" rowspan="1">0.752</td><td colspan="1" rowspan="1">1. 393</td><td colspan="1" rowspan="1">0.337</td><td colspan="1" rowspan="1">3.7</td><td colspan="1" rowspan="1">2.151</td><td colspan="1" rowspan="1">5.585</td><td colspan="1" rowspan="1">2.375</td></tr><tr><td colspan="1" rowspan="1">2.4</td><td colspan="1" rowspan="1">0.851</td><td colspan="1" rowspan="1">1. 625</td><td colspan="1" rowspan="1">0.417</td><td colspan="1" rowspan="1">3.8</td><td colspan="1" rowspan="1">2. 247</td><td colspan="1" rowspan="1">5.942</td><td colspan="1" rowspan="1">2.595</td></tr><tr><td colspan="1" rowspan="1">2.5</td><td colspan="1" rowspan="1">0.951</td><td colspan="1" rowspan="1">1.869</td><td colspan="1" rowspan="1">0.508</td><td colspan="1" rowspan="1">3.9</td><td colspan="1" rowspan="1">2.341</td><td colspan="1" rowspan="1">6.305</td><td colspan="1" rowspan="1">2.825</td></tr><tr><td colspan="1" rowspan="1">2.6</td><td colspan="1" rowspan="1">1.052</td><td colspan="1" rowspan="1">2.127</td><td colspan="1" rowspan="1">0.608</td><td colspan="1" rowspan="1">4.0</td><td colspan="1" rowspan="1">2.434</td><td colspan="1" rowspan="1">6. 673</td><td colspan="1" rowspan="1">3.064</td></tr></table>
+
+![](images/00810a49dab3d216e226e026f1ee7e9166d4d6e30bce7dee3ce921e26f32b1f1.jpg)  
+图11.10
+
+在求解时，先假定个r。值,由(11·90)式算出一亚(x)应该有的数值，其中的常数k和C值根据布点区域的地形类别选取恰当的数值。然后在图11。10的纵坐标轴上量取此值，再作横坐标轴的平行线与一Y(x)曲线相交于a点，则a点的横坐标值即为xi;再从a点作纵坐标轴的平行线，它与Φ(x)曲线的交点b的纵坐标值即为Φ(xi);根据(11·91)式，从b点再作横坐标轴的平行线，它与一 $\Psi ( { \bf x } )$ 曲线的交点 $\pmb { \mathrm { c } }$ 的横坐标值即为 $\mathbf { x } _ { 2 }$ ;依此一直做下去，取至 $\pmb { \mathrm { n } }$ 个$\mathbf { x }$ 值为止；再将 $\pmb { \mathrm { n } }$ 个 $\pmb { x }$ 值及开始采用的 $\pmb { \tau _ { 0 } }$ 值一起代入 $( 1 1 \cdot 9 2 )$ 式，看它是否合适。如果不合，可适当变动 $\pmb { \tau _ { 0 } } ^ { \prime }$ 值，再重覆上述做法，直至合适为止。
+
+但所得的结果是否可用，尚需通过计算 $\mathfrak { m } _ { \ell _ { 8 } } ^ { 2 }$ 的数值看它是否符合要求来判定。为此，依据所求得的 $\mathbf { x _ { i } }$ 值从图上查出相应的 $\mathbf { Y } ( \mathbf { x } _ { \mathrm { i } } )$ 的数值，并连同 $\mathbf { r } _ { \mathrm { i } }$ 值一起代入 $( 1 1 \cdot 8 3 )$ 式算出 $\mathfrak { m } _ { \sharp _ { g } } ^ { 2 }$ 。将它与重力垂线偏差要求达到的精度相比较。如果算出的 $\mathfrak { m } _ { \mathfrak { k } _ { \mathfrak { s } } }$ 大于所要求的，则需增多环带数$\pmb { \nhat { \mathbf { n } } }$ ，故需缩小 $\bf { \dot { r } } _ { 0 }$ 的数值重新做前面所做的工作；如果算出的 $\mathfrak { m } _ { \mathfrak { k } _ { \mathfrak { k } } }$ 小于所要求的，则可减少环带数 $\pmb { \Omega }$ ，即增大 $\scriptstyle \mathbf { r _ { 0 } }$ 的数值重新做前面所述的工作；直至所算得的 $\operatorname* { m } _ { \widehat { \mathbf { \xi } } _ { 8 } }$ 很接近于所要求的值为止。
+
+下面举一个例来进一步说明之。
+
+今欲以半径 $\pmb { \mathrm { R } } = 3 0 0 \mathbf { k m }$ 内的地面重力数据求得中误差为士 $0 . 5 ^ { \prime \prime }$ 的重力垂线偏差，问应该测多少个重力点，点位应怎样分布？设该地区 $\mathsf { C } = 0 . 5 4 , \mathsf { k } = 0 . 1 5$ 。此时， $( 1 1 \cdot 9 0 )$ 式具体化为
+
+$$
+4 . 1 0 \sqrt { \mathbf { r } _ { 0 } } = - \Psi ( \mathbf { x } _ { 0 } )
+$$
+
+解的步骤是：
+
+1．先给定一个 $\mathbf { r } _ { 0 }$ 值,如设 $\mathbf { r } _ { 0 } = 1 . 4 1 \mathrm { k m }$ ,由(11.93)式可算得一 $\pmb { \Psi } ( \mathbf { x } _ { 1 } ) = 4 , 8 8$ ，然后从这个数据开始,从图(11.10)获得一连串的 $\mathbf { x _ { i } }$ 值，填在表11.12的第2栏中；
+
+2.按 $\mathfrak { r } _ { \mathrm { i } } = \mathfrak { r } _ { \mathrm { i } - 1 } \mathbf { x } _ { \mathrm { i } }$ 算出各环带的半径，见表11.12的第3栏，并检查 $\mathbf { r _ { n } }$ 是否与规定的积分半径 $\mathbf { R }$ 相接近。这里 $\mathtt { r _ { \delta } } = 3 0 0 . 3 1 \mathtt { k m }$ ，与所要求的 $3 0 0 \mathbf { k m } .$ 可以认为是相符的；
+
+3.依据 $\mathbf { x } _ { \mathrm { i } }$ 从图11.10查取相应的 $\dot { \mathbf { Y } } ( \mathbf { x } _ { \mathrm { i } } )$ 值，填在表11.12的第.4栏中，并完成第五栏的计算，然后按 $( 1 1 \cdot 8 3 )$ 式计算 $\mathbf { m } _ { \hat { \mathbf { \mu } } _ { \perp } }$ ，并检查它与所要求的精度是否相符。这里算出的$\mathtt { m _ { \tilde { s } _ { g } } } = \pm 0 . 4 5 ^ { \prime \prime }$ ，与所要求的土 $0 . 5 "$ 很相近，可以认为相符。
+
+表11. 12  
+
+<table><tr><td rowspan=1 colspan=1>i</td><td rowspan=1 colspan=1>X1</td><td rowspan=1 colspan=1>r-</td><td rowspan=1 colspan=1>Y(x1)</td><td rowspan=1 colspan=1>r1-1Y（x1)</td><td rowspan=1 colspan=1>k</td></tr><tr><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>3.50</td><td rowspan=1 colspan=1>1.41</td><td rowspan=1 colspan=1>1.97</td><td rowspan=1 colspan=1>2.778</td><td rowspan=1 colspan=1>6</td></tr><tr><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>2.54</td><td rowspan=1 colspan=1>4.93</td><td rowspan=1 colspan=1>0.55</td><td rowspan=1 colspan=1>2.711</td><td rowspan=1 colspan=1>7</td></tr><tr><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>2. 11</td><td rowspan=1 colspan=1>12.52</td><td rowspan=1 colspan=1>0.21</td><td rowspan=1 colspan=1>2. 629</td><td rowspan=1 colspan=1>9 …</td></tr><tr><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>1.87</td><td rowspan=1 colspan=1>26.42</td><td rowspan=1 colspan=1>0.10</td><td rowspan=1 colspan=1>2.642</td><td rowspan=1 colspan=1>10</td></tr><tr><td rowspan=1 colspan=1>5</td><td rowspan=1 colspan=1>1.71</td><td rowspan=1 colspan=1>49.41</td><td rowspan=1 colspan=1>0.05</td><td rowspan=1 colspan=1>2.470</td><td rowspan=1 colspan=1>12</td></tr><tr><td rowspan=1 colspan=1>6</td><td rowspan=1 colspan=1>1. 61</td><td rowspan=1 colspan=1>84.49</td><td rowspan=1 colspan=1>0.03</td><td rowspan=1 colspan=1>2.535</td><td rowspan=1 colspan=1>14</td></tr><tr><td rowspan=1 colspan=1>7</td><td rowspan=1 colspan=1>1.52</td><td rowspan=1 colspan=1>136.23</td><td rowspan=1 colspan=1>0.02</td><td rowspan=1 colspan=1>2.725</td><td rowspan=1 colspan=1>15</td></tr><tr><td rowspan=1 colspan=1>8</td><td rowspan=1 colspan=1>1.45</td><td rowspan=1 colspan=1>207. 11</td><td rowspan=1 colspan=1>0.01</td><td rowspan=1 colspan=1>2. 071</td><td rowspan=1 colspan=1>17</td></tr><tr><td rowspan=1 colspan=4>r=300.31                                M</td><td rowspan=1 colspan=1>20.561</td><td rowspan=1 colspan=1>90</td></tr></table>
+
+$$
+\mathrm { i m } _ { \mathrm { i } _ { \mathrm { g } } } ^ { 2 } = 0 . 0 2 2 5 \times \mathrm { r } _ { 0 } ^ { 3 / 2 } + 0 . 0 0 8 2 3 \sum _ { \mathrm { i } } \mathrm { r } _ { \mathrm { i } - 1 } \mathrm { Y } ( \mathrm { x } _ { \mathrm { i } } ) = 0 . 2 0 7 0
+$$
+
+$$
+\mathtt { m _ { \ell _ { k } } } = \pm 0 . 4 5 ^ { \prime \prime }
+$$
+
+4.把 $\mathbf { x } _ { \mathrm { i } }$ 的数值代入 $( 1 1 \cdot 8 1 )$ 式，算出各环应划分的扇形数 $\mathbf { k } _ { \mathrm { i } }$ ,可按四舍五入取整数，填在表11.12的第六栏中。
+
+至此全部计算工作就完成了。计算结果给出了划分环带的半径及每个环带内应划分的扇形数，只要在一个扇形内布测一个重力点就可以了。因此，运用这个计算结果就可以进行加密重力测量的图上设计。其方法是：先在透明胶片上按所算出的环带半径 $\pmb { \mathrm { r } } _ { \mathrm { i } }$ 和各个环带内应等分的扇形数 $\mathbf { k } _ { \mathrm { i } }$ 制作图案，见图11.11（它只表示了最内的两环，其比例尺应与准备用于图上设计的地形图相同；然后将透明胶片压在地形图上，使其中心与要计算垂线偏差的那个点重合；最后在每一个扇形内选择一个适当的地点作为重力点位，一般应该把点放在扇形中央地区，其高程接近于扇形的平均高程，为了减轻测量工作量，重力点应尽量重台于各级三角点和水准点。这个设计图就可以作为实际作业及制定外业实施计划的依据。
+
+![](images/e8fbebd5bd07b9b218d54cecf9f14237f6d59b9c9241ac02ecccf8b538f8e835.jpg)  
+图11. 11
+
+# 11.9为推求平均空间异常的重力点密度
+
+上一节讲的进行加密重力测量的设计方案适用于在没有和很少有重力数据的地区，以便能在较短的时间内获得必要的数据满足应用。作为国家的基本建设，应当分期分批地逐步建立以等间距的经纬线所划分的网格的平均空间异常数据，以满足各种应用的需要。网格的面积可以由 $1 ^ { \circ } \times 1 ^ { \circ }$ 逐渐减小为 $2 0 ^ { \prime } \times 2 0 ^ { \prime }$ 和 $5 ^ { \prime } \times \dot { 5 } ^ { \prime }$ ，精度可以由士5毫伽逐渐提高为 $\pm 3$ 毫伽和士1毫伽。当网格的面积较大时，如果只测一个重力点，以它的空间异常值代表此网格的平均异常值，则误差就会太大，不能满足需要。例如，在空间异常代表误差系数为 $\mathrm { C } = 3 . \ 0$ 的地区，面积大约等于 $3 6 \mathrm { k m } \times 3 6 \mathrm { k m }$ 的 $2 0 ^ { \prime } \times 2 0 ^ { \prime }$ 网格的代表误差按 $( 1 1 \cdot 6 6 )$ 式可以算得 $\pm 3 6$ 毫伽。因此，如果要以 $\pm 5$ 毫伽的精度求得 $2 0 ^ { \prime } \times 2 0 ^ { \prime }$ 的平均空间异常，在此网格内必需测许多个重力点。那么到底要测多少个点呢？怎么测最好？这就是本节要研究的问题。
+
+假设A是格网的面积，并将它视为正方形。如果把它等分为 $\mathbf { n }$ 个小方块，则每个小方块的面积为 $\frac { \mathsf { A } } { \mathsf { n } }$ ，小方块的边长为 $\sqrt { \frac { \mathbf { A } } { \mathfrak { n } } }$ 。若在每个小方块中任意测定一个重力点，用它的异常值代表小方块的平均异常值，则其中误差是小方块的代表误差，即
+
+$$
+\mathrm { m } { = } 2 \mathrm { C } \sqrt [ \mathrm { \frac { A } { n } } ] ^ { \cdot }
+$$
+
+再将这 $\dot { \bf n }$ 个异常值取中数，得到网格的平均异常值，则其中误差按误差传播定律应为
+
+$$
+\mathbf { M } { = } \frac { \mathbf { m } } { \sqrt { \mathbf { \Omega } } \mathbf { n } }
+$$
+
+将 $( 1 1 \cdot 9 4 )$ 式代入 $( 1 1 \cdot 9 5 )$ 式，则得
+
+$$
+\mathbf { M } { = } \frac { 2 \mathbf { C } \mathbf { \Omega } \sqrt [ 4 ] { \mathbf { A } } } { \sqrt [ 4 ] { \mathbf { n } ^ { 3 } } }
+$$
+
+(11.96)式就是,当在一个网格内比较均匀测定 $\pmb { \mathrm { n } }$ 个重力点，用这 $\mathbf { n }$ 个点的重力异常的算术中数作为网格的平均异常，其中误差的计算式，式中C是网格所在地区的重力异常代表误差系数，A是网格的面积。对于这里讨论的问题， $\mathbf { M }$ 是已知的，它就是所要求的平均异常必需达到的精度；A是已知的，它可根据网格的经纬差算得;C可以根据网格内的最大高差从表11.8中查取；问题是要依据M、A和C的数值求出点数 $\pmb { \mathrm { n } }$ 。由 $( 1 1 \cdot 9 6 )$ 式很容易导出 $\mathbf { n }$ 的计算公式为
+
+$$
+\mathfrak { n } { = } \sqrt [ 3 ] { \mathrm { A } ( \frac { 2 \mathrm { C } } { \mathrm { M } } ) ^ { 4 } }
+$$
+
+例如：要以中误差小于士3毫伽的精度求定 $2 0 ^ { \prime } \times 2 0 ^ { \prime }$ 网格的平均空间异常，对应于表11.8所示的各种地形类别，每个 $2 0 ^ { \prime } \times 2 0 ^ { \prime }$ 网格内应均匀布测的重力点数如表11.13所示。
+
+表11:13  
+
+<table><tr><td rowspan=1 colspan=1>地形类别</td><td rowspan=1 colspan=1>应测点数</td><td rowspan=1 colspan=1>地形类别</td><td rowspan=1 colspan=1>应测点数</td></tr><tr><td rowspan=1 colspan=1>平原</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>中山区</td><td rowspan=1 colspan=1>19</td></tr><tr><td rowspan=1 colspan=1>丘陵</td><td rowspan=1 colspan=1>5</td><td rowspan=1 colspan=1>大山区</td><td rowspan=1 colspan=1>39</td></tr><tr><td rowspan=1 colspan=1>小山区</td><td rowspan=1 colspan=1>10</td><td rowspan=1 colspan=1>特大山区</td><td rowspan=1 colspan=1>54</td></tr></table>
+
+从表中所列的数值看到，当直接运用实测点的空间异常值计算网格的平均空间异常，对于地形起伏的山区，需要布测较多的重力点，它给实际工作带来较大的困难。
+
+在 $\ S \ 9 . \ 8$ 中已经讲到,推求平均空间异常可以用平均布格异常加平均高改正的方法，即
+
+$$
+\overline { { \Delta } } \mathbf { g } = \overline { { \Delta } } \mathbf { g } _ { \mathrm { B } } + 0 . 1 1 1 6 \overline { { \mathrm { H } } }
+$$
+
+式中 $\overline { { \Delta } } _ { \mathbf { g } _ { \mathtt { B } } }$ 是网格的平均布格异常； $\overrightarrow { \mathrm { H } }$ 是网格的平均高程，它可以通过从地形图上读取很多点的高程取中数求得。从 $( 1 1 \cdot 9 8 )$ 式可以导出如下的误差关系式：
+
+$$
+\mathrm { M } _ { \overline { { { \Delta \mathrm { g } } } } } = \sqrt { \mathrm { M } _ { \overline { { { \Delta \mathrm { g } } } } _ { \mathrm { b } } } ^ { 2 } + ( 0 . 1 1 1 6 \mathrm { m } _ { \overline { { { H } } } } ) ^ { 2 } }
+$$
+
+式中 $\mathbf { M } _ { \overline { { \Delta _ { \mathbf { g } } } } }$ 为按 $( 1 1 \cdot 9 8 )$ 式计算得到的网格平均空间异常的中误差； $\mathfrak { n } \mathfrak { q }$ 为网格的平均高程的中误差； $\mathbb { M } _ { \overline { { \Delta _ { \mathbb { R } _ { \mathsf { B } } } } } }$ 为网格平均布格异常的中误差。如果在网格内比较均匀地测定了 $\mathbf { n }$ 个重力点，用这n个点的布格异常值的算术中数作为该网格的平均布格异常，类似于(11·96)式可以得到$\mathbf { M } _ { \overline { { \Delta _ { \mathbf { R } _ { \mathrm { R } } } } } _ { \mathrm { p } } }$ 的计算式为
+
+$$
+\mathrm { { M } } _ { \overline { { \Delta } } g _ { B } } { = } \frac { 2 \mathrm { { C } ^ { \prime } \downarrow / \overline { { A } } } } { \sqrt [ 4 ] { \mathrm { { n } ^ { \mathrm { { 3 } } } } } }
+$$
+
+式中 ${ \sf C } ^ { \prime }$ 为网格所在地区的布格异常代表误差系数。
+
+对于这里讨论的问题，所要求的平均空间异常的精度M是已知的。由(11·99)式可以求出对平均布格异常的精度要求，即
+
+$$
+\mathbf { M } _ { \overline { { \Delta \mathbf { g } } } _ { \mathrm { b } } } = \sqrt { \mathbf { M } _ { \overline { { \Delta } } \mathbf { g } } ^ { 2 } - ( 0 . 1 1 1 6 \mathbf { m } _ { \overline { { \ H } } } ) ^ { 2 } }
+$$
+
+将按此式算得的 $\mathbf { M } _ { \overline { { \Delta \mathbf { g } } } _ { \mathrm { B } } }$ 代入 $( 1 1 \cdot 1 0 0 )$ 式就可求得需测的重力点数 $\mathbf { n }$ 。
+
+对于前面的算例，取mn=±10m(这在利用较好的十万分一或更大比例尺的地形图的条件下是完全可以保证的),由(11·101)式算得M≤±2.79毫伽。再将它代入(11·100)式，对应于表11.13算得表11.14所示的结果。对照这两个表可以看出，在相同网格大小和相同地形类别的情况下，通过平均布格异常和网格平均高改正间接求取网格平均空间异常的方法，可以少测很多的重力点。这对于尽早全面了解地面重力场的情况是非常有利的。
+
+表11.14  
+
+<table><tr><td rowspan=1 colspan=1>地   形   类   别</td><td rowspan=1 colspan=1>应   测   点   数</td><td rowspan=1 colspan=1>类   别</td><td rowspan=1 colspan=1>应   澳   点   数</td></tr><tr><td rowspan=1 colspan=1>小山区中山区</td><td rowspan=1 colspan=1>57</td><td rowspan=1 colspan=1>大山区特大山区</td><td rowspan=1 colspan=1>1013</td></tr></table>
+
+# $\ S$ 11.10重力点的重力值、高程和坐标的精度要求
+
+测定重力点的目的在于得到该点的空间异常值。依 $\ S \ 9 . 8$ 所讲，空间异常 $\Delta \pmb { \mathrm { g } }$ 按下式算得：
+
+$$
+\Delta \mathbf { g } = \mathbf { g } - \mathsf { Y } _ { 0 } + 0 . \mathsf { 3 0 8 6 } \mathsf { H }
+$$
+
+式中 $\pmb { \mathrm { g } }$ 是地面上的重力值； $\mathbf { H }$ 是该点的高程； $\gamma _ { \mathfrak { o } }$ 是正常椭球面上相应点的正常重力值，它可以由该点的纬度由正常重力公式
+
+$$
+\gamma _ { \mathrm { { \scriptscriptstyle 0 } } } = \gamma _ { \mathrm { { \scriptscriptstyle e } } } ( \mathrm { { \scriptscriptstyle 1 } } + \mathrm { { \beta s i n } } ^ { 2 } \mathrm { { \beta } } - \mathrm { { \beta } } _ { 1 } \mathrm { { s i n } } ^ { 2 } 2 \mathrm { { B } } )
+$$
+
+算得。因此，重力点不但要测定其重力值，还需测定其坐标和高程。
+
+由(11.102)式可以导出空间异常的中误差的计算式为
+
+$$
+\mathrm { m } _ { \mathrm { a g } } { = } \sqrt { \mathrm { m } _ { g } ^ { 2 } { + } \mathrm { m } _ { \gamma _ { \mathrm { { o } } } } ^ { 2 } { + } ( 0 . 3 \mathrm { m } _ { \mathrm { H } } ) ^ { 2 } }
+$$
+
+式中 ${ \mathfrak { m } } _ { \mathfrak { g } }$ 为重力值的误差； $\mathfrak { m } _ { \mathtt { H } }$ 为高程的误差； ${ \mathfrak { m } } _ { \mathfrak { r } _ { 0 } }$ 是按 $( 1 1 \cdot 1 0 3 )$ 式算得的 $\Upsilon _ { \mathfrak { d } }$ 值的误差，它是由于重力点纬度的误差引起的。由(11·103)式可得
+
+$$
+\begin{array} { r } { \mathfrak { m } _ { \mathfrak { r } _ { 0 } } = \gamma _ { \mathrm { a } } \beta \mathrm { s i n } 2 \mathrm { B } \mathfrak { m } _ { \mathrm { l } } , } \end{array}
+$$
+
+以 $\mathtt { \mathtt { Y _ { a } } } = 9 7 8 0 3 0$ 毫伽和 $\beta { = } 0 . 0 0 5 3 0 2$ 代入，并取 $\sin 2 \mathrm { B } { = } 1$ 、则得
+
+$$
+\mathtt { m } _ { \mathtt { Y _ { 0 } } } = 1 . 5 \mathtt { m } _ { \mathtt { b } }
+$$
+
+其中 $\mathbf { m } _ { \mathsf { B } }$ 是重力点纬度的误差，以分为单位，算得的 ${ \mathfrak { m } } _ { \mathfrak { r } _ { \mathfrak { o } } }$ 的单位为毫伽。将 $( 1 1 \cdot 1 0 5 )$ 式代入$( 1 1 \cdot 1 0 4 )$ 式，得到
+
+$$
+\mathrm { m } _ { \Delta \mathbf { g } } = \sqrt { \mathbf { m } _ { \mathbf { g } } ^ { 2 } + ( 1 . 5 \mathbf { m } _ { \mathbf { B } } ) ^ { 2 } + ( 0 . 3 \mathbf { m } _ { \mathrm { H } } ) ^ { 2 } }
+$$
+
+该式给出了重力点空间异常的中误差与观测重力值、点位和高程这三个量的测定误差之间的关系。根据对空间异常的精度要求，由 $( 1 1 \cdot 1 0 6 )$ 式可以对 $\mathfrak { m } _ { \mathtt { g } } , \mathfrak { m } _ { \mathtt { B } }$ 和 $\mathfrak { m } _ { \mathtt { H } }$ 作出各种安排。但在规定各项误差的限差时应考虑到：(1)点位的误差不能过大，因为点位误差大了必然影响异常图的质量，而且会使异常水平梯度的计算带来误差；(2)测定重力值、点位和高程各自的困难程度。经验表明，当在要求空间异常中误差为土1毫伽和士2毫伽时， $\mathbf { m _ { 8 } } \mathbf { , m _ { B } }$ 和 $\mathbf { m _ { H } }$ 按表11.15所示的限差是比较合理的。.
+
+表11.15  
+
+<table><tr><td rowspan=1 colspan=1>空间异常的精度</td><td rowspan=1 colspan=1>士1毫伽</td><td rowspan=1 colspan=1>士2毫伽</td></tr><tr><td rowspan=1 colspan=1>重力值的精度</td><td rowspan=1 colspan=1>±0.7毫伽</td><td rowspan=1 colspan=1>士1毫伽</td></tr><tr><td rowspan=1 colspan=1>高程的精度</td><td rowspan=1 colspan=1>±2m</td><td rowspan=1 colspan=1>±4m</td></tr><tr><td rowspan=1 colspan=1>坐标的精度</td><td rowspan=1 colspan=1>±0.1&#x27;(200m)</td><td rowspan=1 colspan=1>±0.1&#x27;(200m)</td></tr></table>
+
+# 第十二章高程异常
+
+# \$12.1大地高
+
+大地高是地面点到椭球面的距离，它与大地经纬度一起构成地面点的三维大地坐标。在地面上进行的水平方向观测和长度测量的结果必需归算到参考椭球面上才能进行大地位置的计算，此时大地高与垂线偏差一样也是一个必需已知的量。依据椭球大地测量学所讲，水平方向的观测值要加标高差改正
+
+$$
+\widetilde { \partial } _ { 2 } ^ { \prime \prime } { = } \frac { \mathrm { h } _ { 2 } \rho ^ { \prime \prime } } { 2 \mathrm { M } _ { 1 } } \widetilde { \eta } _ { 1 } ^ { 2 } { \mathrm { s i n } } 2 \mathrm { A } _ { 1 } \ .
+$$
+
+式中 $\mathsf { h } _ { 2 }$ 为照准点的大地高(包含照准标志的高度）， $\mathbf {M } _ { 1 }$ 和 $\eta _ { 1 }$ 分别为测站点的子午圈曲率半径和垂线偏差的卯酉分量， $\mathbf { A } _ { 1 }$ 为测站点至照准点方向的方位角；在地面上测量的基线长度（用基线尺丈量出的在地面上两点之间的距离)要加高程改正
+
+$$
+\Delta \mathbf { S } _ { \mathrm { H } } { = } \frac { \mathsf { h } _ { \mathrm { m } } } { \mathbf { R } + \mathsf { h } _ { \mathrm { m } } } \mathbf { S } _ { \mathrm { 0 } }
+$$
+
+式中R为基线方向的法截线曲率半径， ${ \sf S } _ { \mathfrak { d } }$ 为归算到平行于椭球面的一个辅助面上的基线长度， $\mathtt { h } _ { \mathtt { m } }$ 为辅助面的大地高；对于用电磁波测距仪器测得的地面两点的直线距离，在归算为椭球面上的长度时，也要加上类似的与大地高有关的改正。由此可见，在处理大地测量观测成果时，必需知道大地高。但所需求的精度并不很高，一般有士 $\mathsf { 3 m }$ 的精度即可满足应用。
+
+![](images/89071cb32742287f6ebaa562ba8196b25ae3764e95daacf9dd15011d2d9631f6.jpg)  
+图12.1
+
+地面上两个三角点之间的大地高差可以通过观测天顶距计算之。如图12.1所示， $\mathbf { P } _ { 1 }$ 和 $\mathbf { P } _ { 2 }$ 分别为大地高是 $\mathbf { h } _ { 1 }$ 和 $\mathbf { h } _ { 2 }$ 的两个三角点，由 $\mathbf { P } _ { 1 }$ 观测 $\mathbf { P } _ { 2 }$ 点得到天顶距 $\mathbf { Z } _ { 1 } ^ { \prime }$ ，由 $\boldsymbol { \mathsf { P } } _ { 2 }$ 点观测 $\mathbf { P _ { i } }$ 点得到天顶距 $\mathbf { Z _ { 2 } } ^ { \prime }$ 。由于观测天顶距是以铅垂线为基准的，在计算大地高差时要将它们化算为以法线为基准的椭球天顶距 $Z _ { \mathrm { 1 } }$ 和 $Z _ { ? }$ ，它们与$\mathbf { Z } _ { 1 } ^ { \prime }$ 和 $\mathbf { { Z } } _ { 2 } ^ { \prime }$ 之间的关系分别为
+
+$$
+\left. \begin{array} { r } { Z _ { 1 } = Z _ { 1 } { ' } + v _ { 1 } } \\ { Z _ { 2 } = Z _ { 2 } { ' } - v _ { 2 } } \end{array} \right\}
+$$
+
+式中 $\upsilon _ { 1 }$ 和 $\upsilon _ { 2 }$ 分别为 $\mathbf { P } _ { 1 }$ 和 $\mathbf { P _ { 2 } }$ 点的垂线偏差在 $\mathbf { P } _ { 1 } \mathbf { P } _ { 2 }$ 方向上的分量。在图12.1中已用球的弧代替了椭球的.：弧，球的半径为
+
+$$
+{ \displaystyle { \bf R } = \frac { 1 } { 2 } ( { \bf R } _ { 1 } + { \bf R } _ { 2 } ) }
+$$
+
+其中 $\scriptstyle \mathbf { R } _ { 1 }$ 和 $\mathbb { R } _ { 2 }$ 分别为 $\mathrm { { P } } _ { 1 }$ 和 $\mathrm { { P _ { 2 } } }$ 点上在 $\mathbf { P } _ { 1 } \mathbf { P } _ { \textrm { a } }$ 方向上的椭球面曲率半径，即
+
+$$
+\left. \begin{array} { r } { \frac { 1 } { \mathsf { R } _ { 1 } } { = } \frac { \cos ^ { 2 } \mathsf { A } } { \mathsf { M } _ { 1 } } { + } \frac { \sin ^ { 2 } \mathsf { A } } { \mathsf { N } _ { 1 } } } \\ { \frac { 1 } { \mathsf { R } _ { 2 } } { = } \frac { \cos ^ { 2 } \mathsf { A } } { \mathsf { M } _ { 2 } } { + } \frac { \sin ^ { 2 } \mathsf { A } } { \mathsf { N } _ { 2 } } \Bigg ] } \end{array} \right.
+$$
+
+式中 $\mathbf { A } _ { 1 }$ 为 $\mathbf { P } _ { 1 } \mathbf { P } _ { 2 }$ 方向的方位角， $\mathbf { M } _ { 1 } , \mathbf { N _ { 1 } }$ 和 $\mathbf { M } _ { 2 } , \mathbf { N } _ { 2 }$ 分别为 $\mathbf { P _ { 1 } }$ 和 $\mathbb { P } _ { 2 }$ 点的子午面和卯酉圈曲率半径。依据平面三角学中的正切公式，在 $\boldsymbol { \Delta } \mathbf { P } _ { 1 } 0 \mathbf { P } _ { 2 }$ 中有
+
+$$
+\frac { \mathbf { R } + \mathbf { h } _ { 2 } - \mathbf { R } - \mathbf { h } _ { 1 } } { \mathbf { R } + \mathbf { h } _ { 2 } + \mathbf { R } + \mathbf { h } _ { 1 } } = \frac { \mathbf { t g } \ \frac { 1 } { 2 } ( 1 8 0 ^ { \circ } - Z _ { 1 } - 1 8 0 ^ { \circ } + Z _ { 2 } ) } { \mathbf { t g } \ \frac { 1 } { 2 } ( 1 8 0 ^ { \circ } - Z _ { 1 } + 1 8 0 ^ { \circ } - Z _ { 2 } ) }
+$$
+
+因为
+
+$$
+\mathrm { t g } \ \frac { 1 } { 2 } ( 1 8 0 ^ { \circ } - Z _ { 1 } + 1 8 0 ^ { \circ } - Z _ { 2 } ) = \mathrm { t g } \ \frac { 1 } { 2 } ( 1 8 0 ^ { \circ } - \beta ) = \mathrm { c t g } \ \frac { \beta } { 2 }
+$$
+
+故由 $( 1 2 \cdot 6 )$ 式可得
+
+$$
+\frac { \mathtt { h } _ { 2 } - \mathtt { h } _ { 1 } } { 2 \mathtt { R } + \mathtt { h } _ { 2 } + \mathtt { h } _ { 1 } } = \mathtt { t g } \ \frac { \beta } { 2 } \mathtt { t g } \ \frac { 1 } { 2 } ( \mathsf { Z } _ { 2 } - \mathsf { Z } _ { 1 } ) .
+$$
+
+从图12.1式可以写出
+
+$$
+\beta { = } \frac { \mathsf { S } } { \mathsf { R } }
+$$
+
+式中S为 $_ { \textrm { \tiny i 1 } } ^ { \textrm { \tiny i 2 } }$ 和 $\mathbf { P } _ { 2 }$ 点在椭球面上的距离，因为与 $\mathbf { R }$ 相比它的值量很小的，故 $\beta$ 是个小值，因而有 心
+
+$$
+\mathrm { t g } \ { \frac { \beta } { 2 } } = { \frac { \beta } { 2 } } + { \frac { 1 } { 3 } } ( { \frac { \beta } { 2 } } ) ^ { 2 } + \cdots { \times } = = { \frac { \mathrm { S } } { 2 \mathrm { R } } } ( 1 + { \frac { \mathrm { S } ^ { 2 } } { 1 2 \mathrm { R } ^ { 2 } } } + \cdots { \times } \cdots ) ,
+$$
+
+代入 $( 1 2 \cdot 7 )$ 式后得到大地高差的计算式
+
+$$
+\dot { \mathrm { h } } _ { 2 } - \dot { \mathrm { h } } _ { 1 } = \mathrm { S } ( 1 + \frac { \mathrm { h } _ { \mathrm { m } } } { \mathrm { R } } + \frac { \mathrm { S } ^ { 2 } } { 1 2 \mathrm { R } ^ { 2 } } ) \mathrm { t g } [ \frac { \mathrm { Z } _ { 2 } \prime - \mathrm { Z } _ { 2 } \prime } { 2 } - \frac { \mathrm { v } _ { 2 } + \mathrm { v } _ { 1 } } { 2 } ]
+$$
+
+式中
+
+$$
+\mathtt { h } _ { \mathtt { m } } = \frac { 1 } { 2 } ( \mathtt { h } _ { 2 } + \mathtt { h } _ { 1 } )
+$$
+
+它只用近似值就可以了。从 $( 1 2 \cdot 8 )$ 式看到，为了计算两点的大地高差，除了对向作天顶距观测以外，还需知道两点的垂线偏差值，这给利用这种方法于实践造成困难，而如果忽略垂线偏差这一项，又会给结果带来较大的误差。
+
+在 $\ S \ 9 . 2$ 中讲到，大地高可以用似大地水准面将其分为两部份：地面点到似大地水准面的距离为正常高，用 $\mathbf { H } ^ { \pmb { \prime } }$ 表示；似大地水准面到椭球面的距离为高程异常，用表示。利用大地测量的多种观测成果，可以分别算得它们的数值，然而相加起来就得大地高。本章将就此作详细的论述。
+
+# $\ S$ 12.2正常高的计算
+
+由 $( 9 \cdot 7 )$ 式,地面上任意一点A的正常高为
+
+$$
+\mathbf { H } _ { \mathrm { A } } ^ { \gamma } = { \frac { 1 } { \gamma _ { \mathrm { m } } ^ { \mathrm { A } } } } { \overset { \underset { \mathrm { A } } { } } { \underset { 0 } { \left\{ \mathbf { g } \mathrm { d } \mathbf { h } \right. } } } 
+$$
+
+式中Y是由与A相应的近似地形面上的N点至椭球面U=U。上相应点C之间的正常重力平均值，参见图12.2;积分从高程起始点O开始直到A点，g和dh分别为沿线的地面重力值和水准面之间的距离。一站水准测量的高差可以看作是过两标尺点的水准面之间的距离，因此可以将水准测量高差改化为正常高。为了导出改化公式，以 $\boldsymbol { \mathsf { \pmb { \gamma } } }$ 表示近似地形面上点的正常重力值，将 $( 1 2 \div 9 )$ 式改写为
+
+![](images/2c97ac1754e6a957b0c31966674cf88e1d1a82da68e506b549abdd52a8598d4b.jpg)  
+图12.2
+
+$$
+\mathbb { H } _ { \mathrm { A } } ^ { \gamma } = \frac { 1 } { \mathbb { Y } _ { \mathrm { m } } ^ { \mathrm { A } } } \overset { \mathrm { A } } { \underset { 0 } { \cap } } ( \mathbf { g } - \gamma + \gamma - \gamma _ { \mathrm { m } } ^ { \mathrm { A } } + \gamma _ { \mathrm { m } } ^ { \mathrm { A } } ) \mathbb { d } \mathrm { h }
+$$
+
+由此可得
+
+$$
+\Psi _ { \mathrm { { A } } } ^ { \gamma } = \int _ { 0 } ^ { \mathrm { A } } ( \mathrm { d } \mathrm { h } + \frac { 1 } { \gamma _ { \mathrm { { m } } , 0 } ^ { \mathrm { A } } } \bigg ) ( \dot { \gamma } - \gamma _ { \mathrm { { m } } } ^ { \mathrm { A } } ) \mathrm { d } \mathrm { h } + \frac { 1 } { \gamma _ { \mathrm { { m } } , 0 } ^ { \mathrm { A } } } \bigg [ ( \mathrm { g } - \gamma ) \mathrm { d } \mathrm { h } \bigg ]
+$$
+
+考虑到
+
+$$
+\mathsf { \pmb { \gamma } } = \mathsf { \pmb { \gamma } } _ { \mathrm { 0 } } - 0 . 3 0 8 6 \mathsf { \pmb { H } } ^ { \dag }
+$$
+
+$$
+\pmb { \gamma _ { \mathrm { m } } ^ { \mathrm { A } } } { = } \pmb { \gamma _ { \mathrm { 0 } } ^ { \mathrm { A } } } { - } 0 . \dot { 3 } 0 8 6 \ \frac { \mathbf { H _ { A } ^ { \mathrm { \gamma } } } } { 2 }
+$$
+
+可以得出
+
+$$
+\int _ { 0 } ^ { \mathrm { A } } ( \gamma - \gamma _ { \mathrm { m } } ^ { \mathrm { A } } ) \mathrm { d } \mathrm { h } = \int _ { 0 } ^ { \mathrm { i } } ( \gamma - \gamma _ { \mathrm { o } } ^ { \mathrm { A } } ) \mathrm { d } \mathrm { h } - \left. 0 . 3 0 8 6 \right. { \mathrm { A } } { \underset { 0 } { \mathrm { A } } } ( \mathrm { H } ^ { \gamma } - \frac { \mathrm { H } _ { \mathrm { A } } ^ { \gamma } } { 2 } ) \mathrm { d } \mathrm { h }
+$$
+
+该式右端第二项的积分结果为零。因此，可将 $( 1 2 \cdot 1 0 )$ 式写为
+
+$$
+\mathbf { H } _ { \mathrm { A } } ^ { \gamma } = \int _ { 0 } ^ { \mathrm { A } } \mathrm { d } \mathbf { h } + \frac { 1 } { \gamma _ { \mathrm { n } , \mathrm { 0 } } ^ { \mathrm { A } } } \int ( \gamma _ { \mathrm {  o } } - \gamma _ { \mathrm { o } } ^ { \mathrm { A } } ) \mathrm { d } \mathbf { h } + \frac { 1 } { \gamma _ { \mathrm { m } , \mathrm { 0 } } ^ { \mathrm { A } } } \int ( \mathbf { g } - \gamma ) \mathrm { d } \mathbf { h }
+$$
+
+利用 $( 1 2 \cdot 1 1 )$ 式可以算得A点的正常高，需要用到的数据是：由起始点 $\mathrm { o }$ 至A点的水准测量高差和沿线的空间异常值。显然，对于在A点附近的另一点B，没有必要仿照 $( 1 2 \cdot 1 1 )$ 式直接计算其正常高 ${ \bf { H } } _ { \mathrm { { B } } } ^ { \gamma }$ ,而只需算出A、B两点的正常高差，就可以了。为此，需要导出计算正常高差的公式。
+
+依照 $( 1 2 \cdot 1 1 )$ 式，对于B点可以写出
+
+$$
+\mathrm { H _ { \mathrm { { B } } } ^ { \gamma } = \int _ { 0 } ^ { \mathrm { { B } } } \mathrm { d } \mathbf { h } + \frac { 1 } { \gamma _ { \mathrm { { m } } } ^ { \mathrm { { B } } } } \int _ { 0 } ^ { \mathrm { { f } } } ( \gamma _ { \mathrm { { o } } } - \gamma _ { \mathrm { { o } } } ^ { \mathrm { { B } } } ) d \mathbf { h } + \frac { 1 } { \gamma _ { \mathrm { { m } } , \mathrm { { 0 } } } ^ { \mathrm { { B } } } } \bigg | ( \mathbf { g } - \gamma ) \mathrm { d } \mathbf { h } }
+$$
+
+将它减去 $( 1 2 \cdot 1 1 )$ 式，并用平均正常重力 $\bar { \pmb { \gamma } }$ 代替分母的 $\pmb { \gamma _ { \pmb { m } } ^ { \mathbf { A } } }$ 和 $\gamma _ { \mathbf { m } } ^ { \ B { \ B } }$ ，则得A、B两点的正常高差为
+
+$$
+{ \bf H } _ { \mathrm { B } } ^ { \mathrm { r } } - { \bf H } _ { \mathrm { A } } ^ { \mathrm { r } } = \int _ { \mathrm { A } } ^ { \mathrm { B } } ( \mathrm { d } \mathrm { h } + \frac { 1 } { \widetilde { \gamma } } ( \widetilde { \underline { { \gamma } } } _ { \mathrm { 0 } } ^ { \mathrm { B } } \mathrm { d } \mathrm { h } + \int _ { \mathrm { 0 } } ^ { \mathrm { A } } \mathrm { d } \mathrm { h } + \displaystyle \int _ { \mathrm { A } } ^ { \mathrm { B } } \gamma _ { \mathrm { 0 } } \mathrm { d } \mathrm { h } ) + \frac { 1 } { \widetilde { \gamma } } \int _ { \mathrm { A } } ^ { \mathrm { B } } ( \mathrm { g } - \gamma ) \mathrm { d } \mathrm { h }
+$$
+
+$$
+\begin{array} { c } { \displaystyle \Delta { \mathbf { h } } = \overset { \mathbf { \tilde { a } } } { \underset { \mathbf { A } } { \mathbf { \tilde { a } } } } \mathbf { d h } = \overset { \mathbf { \tilde { a } } } { \underset { \mathbf { A } } { \sum } } \Delta { \mathbf { h } } _ { 1 } } \\ { \displaystyle \mathrm { ~ } \varepsilon = \frac { 1 } { \tilde { \gamma } } ( \int _ { 0 } ^ { \mathbf { \tilde { \gamma } } _ { \mathbf { { \tilde { \sigma } } } } } \mathbf { d h } - \int _ { 0 } ^ { \mathbf { \tilde { \gamma } } _ { \mathbf { { \tilde { \sigma } } } } } \mathbf { d h } + \int _ { \mathbf { \tilde { \gamma } } _ { \mathbf { { \tilde { \sigma } } } } } \mathbf { d h } ) } \\ { \displaystyle \qquad \lambda = \frac { 1 } { \tilde { \gamma } } \int ( \mathbf { \tilde { g } } - \gamma ) \mathrm { d } \mathbf { \tilde { h } } } \end{array}
+$$
+
+则由 $( 1 2 \cdot 1 2 )$ 式得到
+
+$$
+H _ { B } ^ { \gamma } - H _ { A } ^ { \gamma } = \Delta \mathbf { h } + \varepsilon + \lambda
+$$
+
+(12·16)式就是两个相邻的水准点之间正常高差的计算公式。右端第一项为水准测量高差，它是分站测量结果的总和，即已用有限求和代替了积分；入称为异常项改正，它是由于实际地球重力场与正常重力场不一致而必需顾及的改正，将测得的地球重力场中的水准面之间的距离加上此项改正后就得到假想的在正常重力场中的测量高差（正常水准面之间的距离)；e称为正常水准面不平行改正，因为正常重力场中的两个水准面之间是互不平行的，而测量高差是在假定水准面平行的条件下得到的，因此必需加上此项改正才能得到两点的真正高差。对$( 1 2 \cdot 1 4 )$ 式作一些改化后可得
+
+$$
+\varepsilon = \frac { \gamma _ { \scriptscriptstyle 0 } ^ { \tt B } - \gamma _ { \scriptscriptstyle 0 } ^ { \tt A } } { \overline { { \gamma } } } \mathrm { H } _ { \mathrm { m } } ^ { \gamma }
+$$
+
+式中H为A、B两点的高程中数，由于ε值很小,它用近似值代入即可。从(12·17)式看到，若Y=Y,则ε=0。这只有在A、B两点的纬度相等时才有可能。在6.7中已经讲到，同一纬度上两个不同高度的水准面是两个互相平行的平行圈，此时正常水准面不平行改正为零是理所当然的。而只要A、B两点的纬度不同，就必需加正常水准面不平行改正ε。
+
+由正常重力公式 $( 6 \cdot 4 7 )$ 可得
+
+$$
+\gamma _ { \scriptscriptstyle 0 } ^ { \scriptscriptstyle \mathrm { B } } - \gamma _ { \scriptscriptstyle 0 } ^ { \scriptscriptstyle \mathrm { A } } = \gamma _ { \scriptscriptstyle \mathrm { a } } \beta \frac { \Delta \mathrm { B ^ { \prime } } _ { \scriptscriptstyle \mathrm { A B } } } { \rho ^ { \prime } } \mathrm { s i n } 2 \mathrm { B } _ { \scriptscriptstyle \mathrm { m } }
+$$
+
+式Bm为A、B两点的纬度中数,△B'AB为以分为单位的B点纬度减A点的纬度。将此式代入 $( 1 2 \cdot 1 7 )$ 式，则得
+
+$$
+\begin{array} { r } { \hat { \mathbf { \ell } } = - \mathbf { A } \Delta \mathbf { B } ^ { \prime } \mathbf { H } _ { \mathrm { m } } ^ { \prime } } \end{array}
+$$
+
+其中
+
+$$
+\mathsf { A } = \frac { \gamma _ { \mathsf { _ a } } \beta } { \bar { \gamma } _ { \mathsf { _ { \rho ^ { \prime } } } } } \mathsf { s i n 2 B _ { \mathsf { _ m } } }
+$$
+
+取Y=978030毫伽,Y=98000毫伽,β=0.005302,p'=3437.7468,则可求得
+
+$$
+\mathrm { A } { = } 1 . 5 3 9 2 { \times } 1 0 ^ { - 6 } \mathrm { s i n } 2 \mathrm { B } _ { \mathrm { m } }
+$$
+
+按(12·18)式求得的ε的单位相同于H的单位。
+
+实际计算异常项改正时，两个相邻水准点之间作为一段计算，直接取两个水准点上空间异常的中数 $\Delta g _ { m }$ 来计算，即
+
+$$
+\lambda { = } \frac { \Delta \mathbf { g } _ { \mathrm { m } } } { \overline { { \gamma } } } \Delta \mathrm { h }
+$$
+
+式中△h为两水准点间的观测高差，γ取980000即可，所算出的入值的单位与△h的单位相同。如果由A点出发,沿一环线经B、C、D、等水准点再回到A点,分段计算出两个相邻
+
+<table><tr><td rowspan="2">水准点 ·</td><td colspan="2">测段</td><td></td><td></td><td></td><td></td><td>农12.1</td><td></td><td></td><td>典</td><td></td><td></td><td></td><td>正常高差</td><td></td><td>正常高</td><td></td></tr><tr><td>距离</td><td>水准点</td><td>观测高差△h</td><td>近似 高程</td><td>平均高 程Hm</td><td>相邻水 准点纬</td><td>Hm△B</td><td>A</td><td>6</td><td>（g-Y）m</td><td>入</td><td>e+</td><td>平差 改正</td><td></td><td></td><td></td></tr><tr><td>编号</td><td>(km）</td><td>纬度B</td><td>（mm）</td><td>H(m)</td><td>（m）</td><td>差△B</td><td></td><td></td><td>（mm）</td><td>（毫伽）</td><td>（mm）</td><td>（mm）</td><td>（mm）</td><td>（mm）</td><td>（mm）</td><td></td></tr><tr><td>1</td><td></td><td>40°0.1&#x27;</td><td></td><td></td><td></td><td></td><td>1516×10-9</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>18978.81</td><td></td></tr><tr><td>2</td><td>5.4</td><td>0.4</td><td>+10155.85</td><td>19</td><td>24</td><td>0.3&#x27;</td><td>7 ：</td><td></td><td>-- 0.01</td><td>-1.8</td><td>-0.02</td><td>--0.03</td><td>+0.04</td><td>+10155.86</td><td>29134.67</td><td></td></tr><tr><td>3</td><td>6.2</td><td>0.4</td><td>-915.02</td><td>29 28</td><td>28</td><td>0.0</td><td>0</td><td></td><td>0</td><td>-3.0</td><td>0</td><td>0</td><td>+0.04</td><td>-914.98</td><td>28219.69</td><td></td></tr><tr><td>4</td><td>7.8</td><td>1.2</td><td>-8538.55</td><td>20</td><td>24</td><td>0.8</td><td>19</td><td></td><td>-0.03</td><td>-4.4 +0.04</td><td>+0.01</td><td>+0.05</td><td></td><td>+8538.49</td><td>19681.20</td><td></td></tr><tr><td>5</td><td>8.8</td><td>3.1</td><td>+926.44</td><td>21</td><td>20</td><td>1.9</td><td>38</td><td></td><td>-0.06</td><td>-6.2 -6.01</td><td></td><td>-0.07</td><td>+0.06</td><td>+926.43</td><td>20607.63</td><td></td></tr><tr><td>6</td><td>5.5</td><td>4.9</td><td>+92508.52</td><td>113</td><td>67</td><td>1.8</td><td>121</td><td></td><td>-0.18</td><td>--1.2</td><td>-0.11</td><td>10.29</td><td>+0.04</td><td>+92508.27</td><td>113115.90</td><td></td></tr><tr><td>7</td><td>4.4</td><td>7.2</td><td>+100208.34</td><td>213</td><td>163</td><td>2.3</td><td>375</td><td></td><td>--0.57</td><td>+10.0</td><td>+1.02</td><td>+0.45</td><td>+0.03</td><td>+100208.82</td><td>213324.72</td><td></td></tr><tr><td>8</td><td>10.0</td><td>9.8</td><td>-33598.10</td><td>180</td><td>196</td><td>2.6</td><td>510</td><td></td><td>-0.77</td><td>+09.2</td><td>-0.32</td><td>-1.09</td><td>+0.07</td><td>-33599.12</td><td>179725.60</td><td></td></tr><tr><td>9</td><td>3.2</td><td>12.0</td><td>+21849.59</td><td>202</td><td>191</td><td>2.2</td><td>420</td><td></td><td>-- 0.64</td><td>+2.5</td><td>+0.06</td><td>-0.58</td><td>+0.02</td><td>+21849.03</td><td>201574.63</td><td></td></tr><tr><td>10</td><td>5.3</td><td>14.7</td><td>+33508.47</td><td>235</td><td>218</td><td>2.7</td><td>589</td><td></td><td>--0.89</td><td>+1.1</td><td>+0.04</td><td>-0.85</td><td>+0.03</td><td>+33507.65</td><td>235082.28</td><td></td></tr><tr><td>11</td><td>5.3</td><td>17.1</td><td>+39927.35</td><td>275</td><td>255</td><td>2.4</td><td>612</td><td></td><td>0.96</td><td>10.5</td><td>0.02</td><td>-0.95</td><td>+0.03</td><td>+39926.43</td><td>275008.71</td><td></td></tr><tr><td>12</td><td>5.2</td><td>19.3</td><td>+45184.68</td><td>320</td><td>298</td><td>2.2</td><td>656</td><td></td><td>-0.99</td><td>--2.2</td><td>-0.10</td><td>-1.09</td><td>+0.03</td><td>+45183.62</td><td>320192.33</td><td></td></tr><tr><td>13</td><td>6.3</td><td>22.4</td><td>+166218.12</td><td>486</td><td>403</td><td>3.1</td><td>1249</td><td></td><td>--1.89</td><td>+4.2</td><td>+0.71</td><td>-1.18</td><td>+0.04</td><td>+166216.98</td><td>486409.31</td><td></td></tr><tr><td>14</td><td>4.1</td><td>23.0</td><td>+154356.41</td><td>643</td><td>564</td><td>0.6</td><td>338</td><td></td><td>-0.51</td><td>+21.6</td><td>+3.45</td><td>+2.94</td><td>+0.03</td><td>+156359.38</td><td>642768.69</td><td></td></tr><tr><td>15</td><td>5.0</td><td>23.9</td><td>-102899.16</td><td>540</td><td>592</td><td>0.9</td><td>533</td><td></td><td>-0.81</td><td>+27.0</td><td>2.83</td><td>-3.64</td><td>+0.03</td><td>--102902.77</td><td>539865.92</td><td></td></tr><tr><td>16</td><td>12.4</td><td>24.1</td><td>-121264.52</td><td>419</td><td>480</td><td>0.2</td><td>96</td><td></td><td>~0.15</td><td>+17.2</td><td>2.13</td><td>--2.28</td><td>+0.08</td><td>--121266.72</td><td>418599.20</td><td></td></tr><tr><td>17</td><td>6.8</td><td>24.1</td><td>-50879.89</td><td>368</td><td>394</td><td>0.0</td><td>0</td><td></td><td>0</td><td>+9.2</td><td>-0.48</td><td>-0.48</td><td>+0.04</td><td>-50880.33</td><td></td><td></td></tr><tr><td>18</td><td>6.3</td><td>26.4</td><td>-8469.85</td><td>359</td><td>364</td><td>2.3</td><td>837</td><td></td><td>+1. 27</td><td>+3.6</td><td>-0.03</td><td>-1.30</td><td>+0.04</td><td>-- 8471.11</td><td>367718.87 359247.76</td><td></td></tr><tr><td>19</td><td>7.5</td><td>24.2</td><td>--121879.13</td><td>237</td><td>298</td><td>-2.2</td><td>656</td><td></td><td>+0.99</td><td>12.3</td><td>+0.29</td><td>+1.28</td><td>+0.05</td><td>-121877.80</td><td>237369.96</td><td></td></tr><tr><td>20</td><td>8.8</td><td>22.1</td><td>-- 54054.14</td><td>183</td><td>210</td><td>-2.1</td><td>-441</td><td></td><td>+0.67</td><td>-9.2</td><td>+0.51</td><td>+1.18</td><td>+0.06</td><td>--54054.90</td><td></td><td></td></tr><tr><td>21</td><td>6.2</td><td>21.7</td><td>-60670.59</td><td>123</td><td>153</td><td>-0.4</td><td>--61</td><td></td><td>+0.09</td><td>--15.7</td><td>十0.97</td><td>+1.06</td><td>+0.04</td><td> 60669.49</td><td>183317.06</td><td></td></tr><tr><td>22</td><td>7.3</td><td>19.3</td><td>+1841.05</td><td>124</td><td>124</td><td>-2.4</td><td>-298</td><td></td><td>+0.45</td><td>-17.0</td><td>+0.03</td><td>+0.42</td><td>+0.05</td><td>+1841.52</td><td>122647.57</td><td></td></tr><tr><td>23</td><td>8.8 10.9</td><td>16.2</td><td>--43478.87 -43666. 27</td><td>81</td><td>102 59</td><td>-3.1 -4.8</td><td>--316 --283</td><td>+0.43</td><td>+0.48</td><td>-14.0</td><td>+0.62</td><td>+1.10</td><td>+0.06</td><td>-43477.71</td><td>124489.09 81011.38</td><td></td></tr><tr></table>
+
+水准点之间的正常高差，其总和应该为零。据 $( 1 2 \cdot 1 6 )$ 式可以得到
+
+$$
+\sum _ { s } ^ { s } ( \Delta { \sf h } + \varepsilon + \lambda ) = 0
+$$
+
+它又可改写为
+
+$$
+\sum _ { \mathbf { A } } ^ { \mathsf { A } } \Delta \mathsf { h } = - \sum _ { \mathbf { A } } ^ { \mathsf { A } } ( \varepsilon + \lambda )
+$$
+
+该式右端是环线水准测量高差的总和， $( 1 2 \cdot 2 2 )$ 式表明.它不为零而是等于 $- \sum \limits _ { A } ^ { A } ( \varepsilon + \lambda ) = 0$ ，这个数值被称之为水准测量的理论闭合差。这就是说，做一环线的水准测量，即使没有观测误差，各段观测高差之总和也应与零有一个差值。因此，必需从实际的闭合差中扣除理论闭合差·才能得到真正的观测误差。这在水准测量的平差计算中是一个必需注意之点。
+
+表12.1给出了一个水准环线上各个水准点的正常高计算例。
+
+# 12.3水准路线上重力点的密度
+
+从上一节的论述中知道，为了将水准测量高差改化为正常高差，必需有沿水准路线的空间重力异常数据，以便计算异常项改正。如果在水准测量过程中·在每次设置水准仪的位置都进行重力测量，算得它们的空间异常值，则按
+
+$$
+\lambda = - \frac { 1 } { \bar { \gamma } } \sum _ { i } ^ { \mathsf { B } } \Delta \mathbf { g } _ { \mathrm { i } } \Delta \mathbf { h } _ { \mathrm { i } }
+$$
+
+可以精确求出异常项改正,式中 $\Delta \pmb { \mathrm { g } } _ { \mathrm { i } }$ 和 $\Delta \hslash _ { \mathrm { i } }$ 分别为第 $\dot { \mathbf { \eta } } _ { \mathbf { i } }$ 站的空间异常和测量高差。但在实际工作中不可能这样做，异常项改正 $\lambda$ 只对两个水准点之间作一次计算，即
+
+$$
+\lambda { = } \frac { 1 } { \check { \gamma } } \left( \mathbf { g } { - } \check { \gamma } \right) _ { \mathfrak { m } } \Delta \mathrm { h } _ { \mathrm { A B } }
+$$
+
+式中 $\Delta \mathsf { h } _ { \tt A B }$ 为A、B两点之间的水准测量高差。将 $( 1 2 \cdot 2 3 )$ 式与 $( 1 2 \cdot 1 5 )$ 式相对照，应该有
+
+$$
+( \mathbf { g } - \boldsymbol { \gamma } ) _ { \mathbf { \overline { { n } } } } = \frac { 1 } { \Delta \mathrm { h _ { A B } } } \bigg [ ( \mathbf { g } - \boldsymbol { \gamma } ) \mathrm { d } \mathrm { h }
+$$
+
+这就是说， $( 1 2 \cdot 2 3 )$ 式中所用的 $( \mathbf { g } - \boldsymbol { \gamma } ) _ { \mathfrak { n } } .$ 应该是空间异常在A、B两点间随高程的积分中数。如果在这段水准路线上，空间异常随高程线性变化，则利用两端点(A和B)的空间异常值取算术中数就等于积分中数。但实际上在一段水准路线上，空间异常不可能完全随高程线性变化，因此即使用这个算术中数来计算，也会使算得的 $\gimel$ 值含有一定的误差。
+
+运用误差传播定律，由 $( 1 2 \cdot 2 3 )$ 式可得
+
+$$
+\mathbf { m } _ { \mathrm { { \lambda } } } = \frac { \Delta \mathrm { h } } { \overline { { \gamma } } } \mathbf { m } _ { \Delta \mathrm { { g n } } }
+$$
+
+从此式看出，△h值越大，则要求△gm的精度越高。假说两相邻水准点之间的距离为6km（因为按水准测量规范水准点之间的距离应在2一6km之间),水准路线的平均坡度为千分之三十.则△h=180m,此时△g的变化量约为20毫伽。如果在两端点上都测定了重力，用这两点的空间异常值的算术中数代替积分中数，其误差magm小于士5毫伽是完全可以保证的。因为空间异常随高程的增高而增大是个普遍规律，只是变化率并不是一-常数而已,用算术中数实际上相当于采用平均变化率计算积分中数，差别只是不考虑变化率的变化，因而引起的误差不会太大。
+
+这样一来，可以得到
+
+$$
+\dot { \bf m } _ { \lambda } < \pm 1 . 0 { \bf m } { \bf m }
+$$
+
+根据水准测量规范的规定：一等水准路线的测量误差 $\pmb { \mathrm { m } } _ { \Delta \mathbf { h } }$ 应小于 $\pm 0 . 5 \sqrt { \mathsf { S } } \mathrm { m m }$ ；二等水准路线的测量误差 $\mathbf { m } _ { \Delta \mathbf { h } }$ 应小于士 $: 0 . 5 \ \sqrt { \mathsf { S } } \ \mathrm { m m }$ ；式中S为水准路线长度的公里数。以 ${ \bf { S } } = { \bf { 6 } }$ 代入，可以看出 $\mathbf { m } _ { \Delta \mathbf { h } } > \ddot { \mathbf { m } } _ { \bar { \mathbf { \xi } } }$ 。这说明以这样的精度求得的异常项改正不会损害水准测量的精度。对于较平坦的地区，Ah要小得多，异常变化也较小，在相同的重力点间距情况下 $\Delta \mathbf { g } _ { \mathrm { m } }$ 的误差也要小--些，因而 $\mathbf { m } _ { \lambda }$ 的数值也就更小了。
+
+归纳上面所讲，可以得到这样的结论：当水准路线的坡度达到千分之三十左右时，一般应在每个水准点上测定重力，至少隔一个水准点测一个重力点;对于起伏较小的水准路线，则重力点的间距可以扩展到 $\bf { 2 0 k m }$ 左右。还需指出，在用内插法推求未测重力的水准点的空间异常时，应考虑到高程因素；不能单纯从平面位置考虑来内插。例如，可以采用 $\ S \ 9 . 8$ 讲的间接内插法。
+
+# $\ S$ 12.4利用重力和地形数据计算高程异常
+
+为了求得地球表面点的大地高，必需先求得它们的高程异常值。在第九章中已经论述了利用地面重力异常数据推求高程异常的公式。在解大地测量边值问题时采用不同的解法导出的高程异常计算公式具有不甚一致的形式。莫洛琴斯基解得到的是 $( 9 \cdot 6 0 )$ 式，解析延拓解获得的是(9·111)式。后来，又论述了它们的等值性,说明无论用那个公式，所得结果都是一样的。然而，为了按 $( 9 ~ \div ~ 6 0 )$ 式计算高程异常，还需先算出地面点的 $\mathrm { G } _ { 1 } , \mathrm { G } _ { 2 } , \cdots$ 等的数值；若用(9·111)式计算,则需先算出 ${ \bf g } _ { 1 } , { \bf g } _ { 1 } , \cdots$ 等的数值。从这些量的计算公式中看出，它们都需要用到地面密集的重力数据，这在实践中还未能得到充分的满足。因此，目前要想以较高的精度求定高程异常，最可行的方法还是联合重力和地形数据，即利用 $\ S \ 9 . 1 1$ 中导出的(9.191)式。此时，高程异常的计算可以分解成四项分别完成，即
+
+$$
+5 = 5 . + 8 5 + 8 5 0 + 8 5 . + 8 5 .
+$$
+
+第一项 $\natural _ { \circ }$ 是用已知的高阶位系数模型算得的高程异常值中的低频和中频部份。它的计算公式是 $( 1 0 \cdot 3 )$ 式，在 $\ S \ i 0 . 7$ 中已经论述了它的具体计算方法。它也相当于用下列积分式算得的结果：
+
+$$
+\boldsymbol { \zeta } _ { \mathrm { s } } = . \frac { \mathrm { R } } { 4 \pi \gamma } \iint _ { \mathrm { \omega } } \mathrm { d } \mathbf { g } \mathbf { s } , \mathbf { S } ( \psi ) \mathrm { d } \omega
+$$
+
+式中 $\Delta \mathbf { g } ,$ 为用位系数模型算得的重力异常值。由于高程异常的高频成分的比重较小，当所用的位系数模型的最高阶数达到360时，所算得的高程异常值与实际值之差只有米级的量级，已就是用它代替 $\boldsymbol { \zeta }$ 值，精度一般可以达到±1米。
+
+第二项8的计算式为
+
+$$
+\delta \zeta = \frac { \mathrm { R } } { 4 \pi \gamma } \int _ { \omega } ( \Delta \mathbf { g } - \Delta \mathbf { g } _ { \mathrm { s } } ) \dot { \mathrm { S } } ( \psi ) \mathrm { d } \omega
+$$
+
+式中△g一△g.是由位系数模型算得的重力异常值与实际重力异常值之差，它是重力异常的高频部份,所算出的8也是高程异常值中的高频部份。它的实际计算可以采用＆8.11中所述的方法，只是其中的平均异常△g用残差平均异常(△g-gs)代替。由于函数S()随增大而减
+
+小的程度比 $\frac { \mathrm { d } \mathsf { S } ( \psi ) } { \mathrm { d } \psi }$ 慢，故计算 $\aleph \zeta$ 时所用局部重力异常数据的范围要比计算和 $\delta \eta$ 时的数据范围要大，一般应取至半径大于 $5 ^ { \circ }$ 的数据范围。
+
+第三项 $\delta \zeta _ { \tt D }$ 是重力的局部地形改正对高程异常的影响，即
+
+$$
+\delta \zeta _ { \mathrm { { D } } } = \frac { \mathsf { R } } { 4 \pi \gamma } \iint _ { \omega } \delta _ { \mathrm { { B } } } \mathsf { S } ( \psi ) \mathsf { d } \omega
+$$
+
+式中8gp为重力的局部地形改正。第四项8为点周围地形起伏对高程异常的高频影响，即
+
+$$
+\mathfrak { S } \zeta _ { \mathrm { h } } = - \frac { \mathrm { \Delta f D } } { 2 \gamma } \mathrm { R } ^ { 2 } \iint ( \frac { 1 } { 6 } \frac { \mathrm { \Delta h } ^ { 3 } } { \mathrm { \Delta r _ { 0 } ^ { 3 } } } - \frac { 3 } { 4 0 } \frac { \mathrm { \Delta h } ^ { 5 } } { \mathrm { \bf r } _ { 0 } ^ { 5 } } + \cdots ) \mathrm { d } \omega
+$$
+
+式中h是相对于计算差点的高差。这两项的具体计算方法分别类似于在11.2中讲到的计算$\delta \mathsf { E } _ { \mathrm { { D } } }$ 和 $\delta \hat { \varsigma } _ { \mathrm { h } }$ 的方法，在此就不再重复了。
+
+# \$12.5天文水准
+
+在大地测量中使用的大地高是地面点到参考椭球面的距离。因此，与正常高相加的高程异常应是似大地水准面到参考椭球面的距离。为区别起见，通常称它为“相对高程异常”，亦称“天文大地高程异常”。它与上一节讲到的高程异常之间有一个差值，它是由于正常椭球和参考椭球的大小和定位的不同而引起的。依据椭球大地测量学[7>知，当两个椭球的短轴和起始子午面相互平行时，差值可以由下式求得：
+
+$$
+\delta \zeta = - \mathrm { c o s B c o s L } \Delta \mathrm { X } _ { \mathrm { 0 } } - \mathrm { c o s B s i n L } \Delta \mathrm { Y } _ { \mathrm { 0 } } - \mathrm { s i n B } \Delta \mathrm { Z } _ { \mathrm { 0 } } - \mathrm { d a } + \mathrm { a s i n } ^ { 2 } \mathrm { B d } \alpha
+$$
+
+式中 $\Delta \mathrm { X } _ { 0 } , \Delta \mathrm { Y } _ { 0 } , \Delta Z _ { 0 }$ 是两个椭球中心的坐标差，da和 ${ \tt d } \alpha$ 是两个椭球的长半径和扁率之差。因此,按上一节中导出的高程异常是可以转化为相对高程异常的。但是，在着手建立天文大地网的时候，坐标差△X。、△Y、△Z。的数值-般还是个未知数，只能另找途径来推求地面点的相对高程异常。
+
+通常在推求相对高程异常时，应用类似于水准测量的处理方法，即不直接推求一点的相对高程异常值，而是求出两点的相对高程异常差。由于大地测量起算点(大地原点)的相对高程异常值在参考椭球定位时已经给定，因此只要有了点之间的差值，就可得到所有点的相对高程异常值。
+
+如图12.3所示，M和 $\mathbf { M } ^ { \prime }$ 为地面上相距很近的两个点，它们之间的水平距离为ds；过M点作参考椭球面的平行面 $\mathsf { M N }$ ，由 $\mathbf { M } ^ { \prime }$ 作该面的垂线 $\mathbf { \Delta } \mathbf { M } ^ { \prime } \mathbf { N }$ ，则 $\mathsf { M } ^ { \prime } \mathsf { N }$ 的长度就是 $\mathbf { M } ^ { \prime }$ 与 $\mathsf { M }$ 点的大地高差dH;过M点再作其重力位水准面ML，由 $\mathbf { M } ^ { \prime }$ 作其垂线 $\mathbb { M } ^ { \prime } \mathbb { L }$ ，则 $\mathbb { M } ^ { \prime } \mathbb { L }$ 就是 $\mathbb { M }$ 与 $\mathbb { M } ^ { \prime }$ 两点的水准面之间的距离,它就是水准测量高差dh;MN 与 $\mathbf { M }$ 点的参考椭球面法线 $\pmb { \Omega }$ 正交,而ML与M点的重力方向 $\overrightarrow { \bf g }$ 正交，因此ML与MN的夹角就等于法线与铅垂线的夹角在 $\mathbf { M M ^ { \prime } }$ 平面内的投影，也就是M点的天文大地垂线偏差在MM'方向上的分量，如用u"表示，则有
+
+$$
+\upsilon ^ { * } = \mathfrak { E } ^ { * } \cos \mathrm { A } + \eta ^ { * } \sin \mathrm { A }
+$$
+
+式中A是 $\mathbf { M M ^ { \prime } }$ 方向的方位角。从图12.3可以看出，有如下关系式成立：
+
+$$
+\mathrm { \bf d h } { = } \mathrm { \bf d s s i n } \upsilon ^ { * } + \mathrm { \bf d H s e c y } ^ { * }
+$$
+
+因为垂线偏差值一般不超过 $\pm 1 ^ { \prime }$ ，故可认为
+
+$$
+\begin{array} { c c c } { { \mathsf { s e c } \upsilon { } ^ { * } = 1 } } & { { } } & { { \mathsf { s i n } \upsilon ^ { * } = \upsilon ^ { * } } } \end{array} .
+$$
+
+![](images/f10424a49ea44496613cd4bda430bae453e3450d1e80e3c97030419ee5214c5b.jpg)  
+图12.3
+
+于是，由 $( 1 2 \cdot 3 2 )$ 式得到
+
+$$
+\mathrm { \ d h } { = } \mathrm { \ d H } { + } { \boldsymbol { \mathsf { v } } } ^ { * } \mathrm { \ d } { \boldsymbol { \mathsf { s } } } \ .
+$$
+
+因为大地高等于正常高加高程异常，故有
+
+$$
+d H { = } d \mathrm { H } ^ { \gamma } { + } d \zeta
+$$
+
+代入 $( 1 2 \cdot 3 3 )$ 式，则得
+
+$$
+\mathrm { d } { \boldsymbol { \zeta } } { = } \mathrm { d } { \mathbf { h } } { - } \mathrm { d } { \mathbf { H } } ^ { \boldsymbol { \gamma } } { - } { \boldsymbol { \upsilon } } ^ { \ast } \mathrm { d } { \mathbf { s } }
+$$
+
+从本章第二节所讲的正常高计算中可以找到，两个很接近的地面点之间的正常高差$\mathsf { d H ^ { \prime } }$ 与水准测量高差dh之差为
+
+$$
+\mathrm { d } \mathbf { h } - \mathrm { d } \mathbf { H } ^ { \gamma } { = } \frac { \mathrm { d } { \gamma } _ { \mathrm { 0 } } } { \tilde { \gamma } } \mathbf { H } ^ { \gamma } { - } \frac { \mathbf { g } - \gamma } { \tilde { \gamma } } \mathrm { d } \mathbf { h }
+$$
+
+将它代入 $( 1 2 ^ { \cdot } \cdot 3 4 )$ 式，则得
+
+$$
+\mathrm { d } \zeta = - \upsilon ^ { * } \mathrm { d } \mathbf { s } + \frac { \mathrm { d } \ Y _ { \circ } } { \overline { { \gamma } } } \mathrm { H } ^ { \gamma } \dot { - } \frac { \mathbf { g } - \gamma } { \overline { { \gamma } } } \mathrm { d } \mathbf { h }
+$$
+
+该式右端第二项中的 $\mathsf { d } \mathsf { Y } _ { \mathfrak { g } }$ 可由忽略 $\beta _ { 1 }$ 项的正常重力公式得到
+
+$$
+\mathrm { d } \gamma _ { \scriptscriptstyle 0 } = \gamma _ { \scriptscriptstyle \mathrm { a } } \beta \mathrm { s i n } 2 \mathrm { B d B }
+$$
+
+而
+
+$$
+\frac { \mathrm { R d B ^ { \prime } } } { \rho ^ { \prime \prime } } { = } \mathrm { d s c o s A }
+$$
+
+是M和 $\mathbf { M } ^ { \prime }$ 之间的水平距离在子面方向的投影，因此可得
+
+$$
+\mathrm { d } \gamma _ { \mathrm { \mathrm { \mathrm { 0 } } } } { = } \frac { \beta \rho ^ { \prime \prime } } { \mathrm { R } } \gamma _ { \mathrm { { a } } } { \mathrm { s i n } } 2 \mathrm { B } \mathrm { c o s } { \mathrm { A d s } }
+$$
+
+视 $\widetilde { \pmb { \Upsilon } }$ 与 $\gamma _ { \mathfrak { a } }$ 相等，则有
+
+$$
+\frac { \mathrm { d } \Upsilon _ { \mathrm { { o } } } } { \overline { { \gamma } } } \mathrm { H } ^ { \gamma } \mathrm { = } \frac { \beta \rho ^ { \prime \prime } } { \mathrm { R } } \mathrm { H } ^ { \gamma } \mathrm { s i n } \mathrm { 2 B c o s } { \mathrm { A d s } } \mathrm { = } 0 . 1 7 1 ^ { \prime \prime } \mathrm { H } ^ { \gamma } \mathrm { s i n } \mathrm { 2 B c o s } { \mathrm { A d s } }
+$$
+
+将此式代入 $( 1 2 \cdot 3 5 )$ 式，得到
+
+$$
+\mathrm { d } \zeta = - ( \bar { \xi } ^ { \ast } \cos A + \eta ^ { \ast } \sin A ) \mathrm { d } \mathbf { s } + 0 . 1 7 1 ^ { \prime \prime } \mathrm { H } ^ { \gamma } \mathrm { s i n } 2 \mathrm { B c o s } \mathrm { A d } \mathbf { s } - \frac { \mathbf { g } - \gamma } { \bar { \gamma } } \mathrm { d } \mathbf { h }
+$$
+
+$$
+( \xi ^ { * } - 0 . 1 7 1 ^ { \prime \prime } \mathrm { H } ^ { \gamma } \mathrm { s i n } 2 \mathrm { B } ) \mathrm { c o s } \mathrm { A } + \eta ^ { * } \mathrm { s i n } \mathrm { A } = \theta ^ { * }
+$$
+
+最后得到
+
+$$
+\mathsf { d } \mathsf { \Sigma } = - \theta ^ { \ast } \mathsf { d } \mathsf { s } - \frac { \mathsf { g } - \mathsf { \Sigma } ^ { \gamma } } { \mathsf { \bar { \gamma } } } \mathsf { d } \mathsf { h }
+$$
+
+这是相距微小距离的两点的相对高程异常差的计算式。对于相隔一定间距的A、B两点，由$( 1 2 \cdot 3 7 )$ 式通过积分就可得到它们之间的相对高程异常差，即
+
+$$
+\zeta _ { B } - \zeta _ { A } = \int \limits _ { A } ^ { B } d \zeta = - \int \limits _ { A } ^ { B } d s - \int \frac { \theta } { \zeta } \frac { - \gamma } { \zeta } d h
+$$
+
+这就是推求相对高程异常差的基本公式。从该式看出，要推求两点的相对高程异常差，必需具有沿线的垂线偏差和空间异常数据。
+
+求定相对高程异常差的天文水准方法是在应用(12·38)式时附带两项假定：①认为后一项数值很小，或由于缺乏重力数据无法计算，予以忽略；②认为在AB线段上0"成线性变化；因而有
+
+$$
+\int _ { \bf A } ^ { \tt B } \theta ^ { \star } \mathrm { d } { \bf s } = \frac { 1 } { 2 } ( \theta _ { \mathrm { A } } ^ { \tt A } + \theta _ { \mathrm { B } } ^ { \tt A } ) { \bf S } _ { \mathrm { A B } }
+$$
+
+式中和 $\theta _ { \mathbf { B } } ^ { * }$ 分别为A和B点按 $( 1 2 \cdot 3 6 )$ 式算得的天文大地垂线偏差在AB方向上的分量，$\ S _ { A B }$ 为A、B两点之间的水平距离。这样一来,相对高程异常差的计算公式为
+
+$$
+z _ { B } - z _ { A } = - \frac { 1 } { 2 } ( \theta _ { A } ^ { * } + \theta _ { B } ^ { * } ) S _ { A B }
+$$
+
+按 $( 1 2 \cdot 3 9 )$ 式推求两点的相对高程异常差的方法称为天文水准方法。因为它只需要在两端的大地点上作天文经纬度测量；因而得此名。 +
+
+天文水准方法由于其两项假定为前提使其应用范围大受限制，一般只能在比较平坦的地区使用，此时认为 $\pmb { \theta } ^ { \ast }$ 成线性变化和忽略异常项所引起的误差在可以忍受的范围内。但在山区就不同了；随着地形的起伏 $\theta ^ { \ast }$ 沿路线不成线性变化，又由于dh与 $\pmb { g } ^ { \top }$ 的值都较大，最后一项也不能忽略。
+
+为了估算垂线偏差非线性变化引起的误差大小，假设在线段上垂线偏差随距离成二次变化，即
+
+$$
+\theta ^ { * } = \theta _ { \mathrm { A } } ^ { * } + ( \frac { \partial \theta ^ { * } } { \partial \mathbf { s } } ) \mathbf { S } \mathbf { + } ( \frac { \partial ^ { 2 } \theta ^ { * } } { \partial \mathbf { s } ^ { 2 } } ) \frac { \mathbf { S } ^ { 2 } } { 2 }
+$$
+
+式中S为由端点A起算的距离。利用它可得
+
+$$
+- \int _ { \mathrm { ~ A ~ } } ^ { \mathrm { ~ B ~ } } \theta ^ { \ast } \mathrm { d } { \mathrm { s } } = - \mathrm { S } _ { \mathrm { A B } } [ \theta _ { \mathrm { A } } ^ { \ast } + ( \frac { \partial \theta ^ { \ast } } { \partial \mathrm { s } } ) , \frac { \mathrm { S } _ { \mathrm { A B } } } { 2 } + ( \frac { \partial ^ { 2 } \theta ^ { \ast } } { \partial \mathrm { s } ^ { 2 } } ) \frac { \mathrm { S } _ { \mathrm { A B } } ^ { z } } { 6 } ]
+$$
+
+若用天文水准公式计算，因为
+
+$$
+\theta _ { \mathrm { B } } ^ { * } = \theta _ { \mathrm { A } } ^ { * } + ( \frac { \partial \theta ^ { * } } { \partial \mathbf { s } } ) \mathrm { S } _ { \mathrm { A B } } + ( \frac { \partial ^ { 2 } \theta ^ { * } } { \partial \mathbf { s } ^ { 2 } } ) \frac { \mathrm { S } _ { \mathrm { A B } } } { 2 }
+$$
+
+故有
+
+$$
+- \frac { \mathbb { S } _ { \mathrm { A B } } } { 2 } ( \dot { \theta } _ { \mathrm { A } } ^ { * } + \theta _ { \mathrm { B } } ^ { * } ) = - \mathbb { S } _ { \mathrm { A B } } \big [ \theta _ { \mathrm { A } } ^ { * } + ( \frac { \partial \theta ^ { * } } { \partial \mathrm { s } } ) \frac { \mathbb { S } _ { \mathrm { A B } } } { 2 } + ( \frac { \partial ^ { 2 } \theta ^ { * } } { \partial \mathrm { s } ^ { 2 } } ) \frac { \mathbb { S } _ { \mathrm { A B } } ^ { 2 } } { 4 } \big ]
+$$
+
+用 $( 1 2 \cdot 4 1 )$ 式减 $( 1 2 \cdot 4 2 )$ 式，则可求得认为垂线偏差线性变化所造成的误差，即
+
+$$
+d \Delta \xi = \frac { \mathbb { S } _ { \mathrm { A B } } ^ { 3 } } { 1 2 } ( \frac { \mathcal { F } \theta ^ { \ast } } { { \partial \mathbb { s } ^ { 2 } } } )
+$$
+
+![](images/066dd6f48961d56effba3be8a16fec62a74d53fe306504083f19e71c987d8d3c.jpg)  
+图12.4
+
+下面用一个实际数例来看一下其数值的大小。如图12.4所示，在某地相距 $\dot { 4 } \mathbf { k } \mathbf { m }$ 的A和B点上，在AB方向上的垂线偏差分量分别为 ${ \mathfrak { 6 } } . 3 ^ { \prime \prime }$ 和 $4 . 5 "$ ;在其中央有一点C;该点在AB方向上的垂线偏差分量为 $0 . 5 "$ 。若用天文水准方法，则可求得A、B两点的相对高程异常差为
+
+$$
+\Delta \zeta _ { \mathrm { A B } } = \frac { 1 } { 2 } \left( 6 . 3 + 4 . 5 \right) \frac { 4 0 0 0 } { 2 0 6 2 6 5 } = - 0 . 1 0 4 7 \mathrm { m }
+$$
+
+将A、C、B三点的垂线偏差值按(12·40)式组成三个方程，则可解得
+
+$$
+( { \frac { \partial \theta ^ { * } } { \partial \mathbf { s } } } ) = - 5 . 3 5 ^ { \prime \prime } / \mathbf { k m } ( { \mathcal { \frac { \partial ^ { 2 } \theta ^ { * } } { \partial \mathbf { s } ^ { 2 } } } } ) = 2 . 4 5 ^ { \prime \prime } / \mathbf { k m ^ { 2 } }
+$$
+
+代入 $( 1 2 \cdot 4 1 )$ 式，可算得
+
+$$
+- \int \limits _ { A } ^ { B } \theta ^ { \star } d s = - 0 . 0 4 1 4 m
+$$
+
+两者的差值为 $+ 0 . 0 6 3 3 \mathrm { m }$ ，这与把 $( \frac { \partial ^ { 2 } \theta ^ { * } } { \partial \mathbf { s } ^ { 2 } } )$ 的数值代入 $( 1 2 \cdot 4 3 )$ 式所算得的结果是完全一致的。由此可见，利用垂线偏差的二次变化率 ）可以估算出用天文水准方法推求相对高程异常差时由于未顾及垂线偏差的非线性变化所引起的误差的大小。如果用A和C、C和B两段天文水准的结果相加，则得
+
+$$
+\Delta \zeta _ { \mathrm { A B } } = \Delta \zeta _ { \mathrm { A c } } + \Delta \zeta _ { \mathrm { c B } } = - 0 . 0 5 7 2 \mathrm { m }
+$$
+
+这个数值与考虑二次变化率的结果比较接近。这说明，为了减小垂线偏差非线性变化的影响，必需缩短天文点之间的距离。因此，如果用天文水准方法推求三角点的相对高程异常，则在天文大地网中需要测定大量的天文点。
+
+# 12.6天文重力水准
+
+依据上一节所讲，在按 $( 1 2 \cdot 3 8 )$ 式推求两点的相对高程异常差时，必须顾及 $\theta ^ { * }$ 沿线段的非线性变化，才能得到较好精度的结果，特别是在山区且两点相距较远时更为重要。按照上一章所讲，利用重力数据可以解决这个问题。这种同时利用天文和重力数据逐点推求相对高程异常差的方法被称为"天文重力水准"方法，它是前苏联学者M.C.莫洛琴斯基在1937年首次提出的(28。下面导出其基本公式
+
+将 $( 1 1 \cdot 3 0 )$ 式代入 $( 1 2 \cdot 3 6 )$ 式，得到
+
+$$
+\theta ^ { * } = ( \mathfrak { E } _ { \mathrm { g } } + \Delta \mathfrak { E } ) \mathrm { c o s } \mathrm { A } + ( \eta _ { \mathfrak { s } } + \Delta \eta ) \mathrm { s i n A }
+$$
+
+区
+
+$$
+\theta _ { \mathrm { g } } { = } \mathfrak { E } _ { \mathrm { g } } { \cos } \mathrm { A } + \eta _ { \mathrm { g } } { \sin } \mathrm { A }
+$$
+
+它是重力垂线偏差在AB方向上的分量；又令
+
+$$
+\Delta \theta = \Delta \hat { \sf { s c o s A } } + \Delta \eta \mathrm { { s i n A } }
+$$
+
+它是垂线偏差线性部分在AB方向上的分量。这样一来，由 $( 1 2 \cdot 4 4 )$ 式可得
+
+$$
+\theta ^ { * } = \theta _ { \mathrm { { s } } } + \Delta \theta
+$$
+
+将 $( 1 2 \cdot 4 7 )$ 式代入 $( 1 2 \cdot 3 8 )$ 式，则得
+
+$$
+\zeta _ { \mathrm { B } } - \zeta _ { \mathrm { A } } = - \int _ { \mathrm { A } } ^ { \mathrm { B } } \theta _ { \mathrm { g } } \mathrm { d } \mathbf { s } - \int _ { \mathrm { A } } ^ { \mathrm { B } } \Delta \theta \mathrm { d } \mathbf { s } - \int _ { \mathrm { A } } ^ { \mathrm { B } } { \frac { - \gamma } { \overline { { \gamma } } } } \mathrm { d } \mathbf { h }
+$$
+
+类似于 $( 1 2 \cdot 3 8 )$ 式， $( 1 2 \cdot 4 8 )$ 式右端第一、三项之和可以视为重力高程异常之差，即
+
+$$
+- \int \limits _ { A } ^ { B } \theta _ { g } \mathrm { d } s - \int \limits _ { A } ^ { B } \frac { - \gamma } { \gamma } \mathrm { d } \mathrm { h } = \zeta _ { e } ^ { B } - \zeta _ { e } ^ { A }
+$$
+
+因为 $\Delta \theta$ 在 $\mathbf { A } , \mathbf { B }$ 之间成线性变化，故有
+
+$$
+\int _ { \bf A } ^ { \bf B } \Delta \theta \mathrm { d } { \bf s } = \frac { \mathbb { S } _ { \mathrm { A B } } } { 2 } ( \Delta \theta ^ { { \bf A } } + \Delta \theta ^ { { \bf B } } )
+$$
+
+利用 $( 1 2 \cdot 4 7 )$ 式又可变换为
+
+$$
+\int \limits _ { A } ^ { B } \Delta \theta \mathrm { d } \mathbf { s } = \frac { \mathrm { S } _ { \Lambda B } } { 2 } [ ( \theta _ { \mathrm { A } } ^ { * } + \theta _ { \mathrm { B } } ^ { * } ) - ( \theta _ { \mathrm { g } } ^ { \mathrm { A } } + \theta _ { \mathrm { g } } ^ { \mathrm { B } } ) ]
+$$
+
+将(12·49)和(12·50)式一起代入(12·48)式，得到
+
+$$
+\zeta _ { \mathrm { b } } - \zeta _ { \mathrm { A } } = - \frac { \mathrm { S } _ { \mathrm { A B } } } { 2 } ( \theta _ { \mathrm { A } } ^ { * } + \theta _ { \mathrm { B } } ^ { * } \mathbf { \Theta } ) + \frac { \mathrm { S } _ { \mathrm { A B } } } { 2 } ( \theta _ { \mathrm { g } } ^ { \mathrm { A } } + \theta _ { \mathrm { g } } ^ { \mathrm { B } } ) + ( \zeta _ { \mathrm { g } } ^ { \mathrm { B } } - \zeta _ { \mathrm { g } } ^ { \mathrm { A } } \mathbf { \Theta } )
+$$
+
+这就是利用天文重力水准方法推求两点相对高程异常差的基本公式。第一项就是天文水准项，后两项合并在一起称为重力改正项，用△表示之，即
+
+$$
+\Delta \zeta _ { \mathrm { g } } = \frac { \mathrm { S _ { A B } } } { 2 } ( \theta _ { \mathrm { g } } ^ { \mathrm { A } } + \theta _ { \mathrm { g } } ^ { \mathrm { B } } ) + ( \zeta _ { \mathrm { g } } ^ { \mathrm { B } } - \zeta _ { \mathrm { g } } ^ { \mathrm { A } } )
+$$
+
+它可以利用局部重力数据算出。因此，其中的重力垂线偏差和重力高程异常可以采用平面公式。
+
+将 $( 8 \cdot 1 2 5 )$ 式代入 $( 1 2 \cdot 4 5 )$ 式，得到
+
+$$
+\theta _ { \mathrm { g } } ^ { \mathrm { A } } = - \left. \frac { 1 } { 2 \pi \mathcal { Y } } \right. \frac { \Delta \mathbf { g } } { \mathbf { r } _ { \mathrm { A } } ^ { 2 } } ( \cos \mathrm { A c o s A ^ { \prime } } + \sin \mathrm { A s i n A ^ { \prime } } ) \mathrm { d } \sigma
+$$
+
+其中A'为面元素dσ的方位角，参见图12.5。因为
+
+$$
+\cos \operatorname { A c o s } \mathrm { A ^ { \prime } } + \sin \mathrm { A s i n A ^ { \prime } } = \cos \alpha _ { \mathrm { A } }
+$$
+
+![](images/5542bea48b0350c8447ac63611c39f009467a42683ef68b7e5b5f42fe0599b43.jpg)  
+图12.5
+
+其中 ${ \pmb { \alpha } } _ { \bf A }$ 为 $\pmb { \tau _ { \Delta } }$ 与 AB方向的夹角,因而得到
+
+$$
+\hat { \theta } _ { \mathfrak { z } } ^ { \mathrm { A } } = - \left. \frac { 1 } { 2 \pi \gamma } \right. _ { \mathfrak { z } } \frac { \Delta \mathbf { g } } { \mathbf { r } _ { \mathrm { A } } ^ { 2 } } \mathrm { c o s } \alpha _ { \mathrm { A } } \mathrm { d } \sigma
+$$
+
+类似地有
+
+$$
+\theta _ { \mathrm { g } } ^ { \mathrm { B } } = - \left. \frac { 1 } { 2 \pi \gamma } \right] \int _ { \sigma } ^ { } \frac { \Delta \mathbf { g } } { \mathbf { r } _ { \mathrm { A } } ^ { 2 } } \mathrm { c o s } \alpha _ { \mathrm { b } } \mathrm { d } \sigma
+$$
+
+对于重力高程异常，类似于 $( 8 \cdot 1 2 4 )$ 式有
+
+$$
+\begin{array} { c } { { \displaystyle \xi _ { \ast } ^ { \Lambda } = \frac 1 { 2 \pi \gamma } \iint \frac { \Delta { \bf g } } { \tau _ { \Lambda } } \mathrm { d } \sigma } } \\ { { \displaystyle \xi _ { \ast } ^ { \mathrm { B } } = \frac 1 { 2 \pi \gamma } \iint \frac { \Delta { \bf g } } { \sigma } \mathrm { d } \sigma } } \end{array} \}
+$$
+
+将(12·53)、(12·54)和(12·55)式代入(12·52)式,则得重力改正项的计算式为
+
+$$
+\Delta \zeta _ { \mathrm { g } } = \frac { 1 } { 2 \pi \mathcal { Y } } \iint \Delta \mathbf { g } [ \frac { 1 } { \mathbf { r } _ { \mathrm { B } } } - \frac { 1 } { \mathbf { r } _ { \mathrm { A } } } - \frac { \mathrm { S } _ { \mathrm { A B } } } { 2 } ( \frac { \cos \alpha _ { \mathrm { B } } } { \mathbf { r } _ { \mathrm { B } } } + \frac { \cos \alpha _ { \mathrm { A } } } { \mathbf { r } _ { \mathrm { A } } } ) ] \mathrm { d } \sigma
+$$
+
+用天文重力水准方法求定相对高程异常差，由于顾及了垂线偏差的非线性变化，天文大地点的间距可以扩大到70～100km，它有利于在大块领土上传递相对高程异常值，为处理天文大地网提供大地高数据。因此，在我国天文大地网上每个长约 200km的一等三角锁段的中间都加测一至两个天文点，其目的在于满足用天文重力水准推求相对高程异常差的需要。
+
+# $\ S$ 12.7重力改正项的积分半径
+
+很明显，在计算重力改正项 $\triangle \xi _ { 8 }$ 值，积分范围 $\pmb { \sigma }$ 越大越好。但是积分范围越大，所需重力数据越多，计算的工作量也越大。为此，需要找到一个合适的积分半径，使积分范围具有小的数据量和计算工作量，又能保证所要求的精度。
+
+![](images/2e1869a74a5ea5232abe0c5c3ec9ab861e4e43b3c0318d77cf4db4bf5d9b72f0.jpg)  
+图12.6
+
+如图12.6所示，O为要计算相对高程异常差的A、B两点联线的中点,0到A和B点的距离为 $\displaystyle { l = \frac { \mathsf { S } _ { \mathrm { A B } } } { 2 } , \sigma }$ 为积分范围， $\pmb { \Sigma }$ 表示外区域。设 $\Sigma$ 区域内的重力异常引起的重力改正项为 $\Delta \pmb { \zeta } _ { \pmb { \Sigma } }$ ，显然有
+
+$$
+\Delta \zeta _ { \Sigma } { = } \zeta _ { \mathrm { e } \Sigma } ^ { \mathrm { B } } { - } \zeta _ { \mathrm { e } \Sigma } ^ { \mathrm { A } } { + } l ( \theta _ { \mathrm { g } \Sigma } ^ { \mathrm { A } } { + } \theta _ { \mathrm { g } \Sigma } ^ { \mathrm { B } } )
+$$
+
+利用 $( 1 1 \cdot 3 5 )$ 式，可以将它写为
+
+$$
+\Delta \zeta _ { \Sigma } { = } \zeta _ { \mathrm { e } ^ { \Sigma } } ^ { \mathrm { i } 3 } { - } \zeta _ { \mathrm { e } ^ { \Sigma } } ^ { \mathrm { A } } { - } l ( \frac { \partial \zeta _ { \mathrm { e } ^ { \Sigma } } ^ { \mathrm { A } } } { \partial l } { + } \frac { \partial \zeta _ { \mathrm { e } ^ { \Sigma } } ^ { \mathrm { B } } } { \partial l } )
+$$
+
+运用台劳级数可以将A、B点的值表示成0点值的级数式，
+
+即
+
+$$
+\begin{array} { r l } & { \zeta _ { \mathbf { s } \mathbf { z } } ^ { \mathrm { B } } = \zeta _ { \mathbf { s } \mathbf { z } } ^ { 0 } + l \frac { \partial \zeta _ { \mathbf { s } \mathbf { z } } ^ { 0 } } { \partial _ { 0 } } + \frac { l ^ { 2 } } { 2 ! } \frac { \partial \zeta _ { \mathbf { s } \mathbf { z } } ^ { 0 } } { \partial _ { 0 } ^ { 2 } } + \frac { l ^ { 3 } } { 3 ! } \frac { \partial \zeta _ { \mathbf { s } \mathbf { z } } ^ { 0 } } { \partial _ { 0 } ^ { 3 } } + \cdots } \\ & { \zeta _ { \mathbf { s } \mathbf { z } } ^ { \mathrm { A } } = \zeta _ { \mathbf { s } \mathbf { z } } ^ { 0 } - l \frac { \partial \zeta _ { \mathbf { s } \mathbf { z } } ^ { 0 } } { \partial } + \frac { l ^ { 2 } } { 2 ! } \frac { \partial \zeta _ { \mathbf { s } \mathbf { z } } ^ { 0 } } { \partial ^ { 2 } } - \frac { l ^ { 3 } } { 3 ! } \frac { \partial \zeta _ { \mathbf { s } \mathbf { z } } ^ { 0 } } { \partial ^ { 3 } } + \cdots \cdots } \\ & { \frac { \partial \zeta _ { \mathbf { s } \mathbf { z } } ^ { \mathrm { A } } } { \partial \mathcal { X } } = \frac { \zeta _ { \mathbf { s } \mathbf { z } } ^ { 0 } } { \partial \mathcal { X } } + l \frac { \partial \zeta _ { \mathbf { s } \mathbf { z } } } { \partial ^ { 2 } } + \frac { l ^ { 2 } } { 2 ! } \frac { \partial \zeta _ { \mathbf { s } \mathbf { z } } ^ { 0 } } { \partial ^ { 3 } } - \cdots } \\ & { \frac { \partial \zeta _ { \mathbf { s } \mathbf { z } } ^ { 0 } } { \partial \mathcal { X } } = \frac { \partial \zeta _ { \mathbf { s } \mathbf { z } } ^ { 0 } } { \partial \mathcal { X } } + l \frac { \partial \zeta _ { \mathbf { s } \mathbf { z } } ^ { 0 } } { \partial \mathcal { X } ^ { 2 } } + \frac { l ^ { 2 } } { 2 ! } \frac { \partial \zeta _ { \mathbf { s } \mathbf { z } } ^ { 0 } } { \partial \mathcal { X } ^ { 3 } } + \cdots } \end{array}
+$$
+
+将它们代入 $( 1 2 \cdot 5 8 )$ 式，则得
+
+$$
+\Delta \zeta _ { \Sigma } = - 2 [ \frac { 2 l ^ { 3 } } { 3 ! } \frac { \partial ^ { 3 } \zeta _ { \mathrm { g } \Sigma } ^ { 0 } } { \partial l ^ { 3 } } + \frac { 4 l ^ { 5 } } { 5 ! } \frac { \partial ^ { 5 } \zeta _ { \mathrm { g } \Sigma } ^ { 0 } } { \partial l ^ { 5 } } + \frac { 6 l ^ { 7 } } { 7 ! } \frac { \partial ^ { 7 } \zeta _ { \mathrm { g } \Sigma } ^ { 0 } } { \partial l ^ { 7 } } + \cdots \cdots ]
+$$
+
+将以 $( 1 1 \cdot 3 9 )$ 式表示的 $\frac { \partial ^ { 3 } \zeta _ { \mu \Sigma } ^ { 0 } } { \partial l ^ { 3 } } , \frac { \partial ^ { 5 } \zeta _ { \mu \Sigma } ^ { 0 } } { \partial l ^ { 5 } } , \frac { \partial ^ { 7 } \zeta _ { g \Sigma } ^ { 0 } } { \partial l ^ { 7 } } .$ 、…代人，得到
+
+$$
+| \Delta \zeta _ { \Sigma } | = | \frac { 1 } { \pi 8 } \int \int \Delta { \bf g } ( \frac { 2 l ^ { 3 } } { \bf r } { } ^ { 4 } \mathrm { P } _ { 3 } ( \cos { \bf A } ) + \frac { 4 l ^ { 5 } } { \bf r } \mathrm { P } _ { 5 } ( \cos \alpha ) + \frac { 5 l ^ { 7 } } { \bf r } \mathrm { P } _ { 7 } ( \cos \alpha ) + \cdots \mathrm { ~ } \cdot \mathrm { ~ } \cdot \mathrm { ~ } \cdot \mathrm { ~ } \cdot \mathrm { ~ } \mathrm { ~ } \mathrm { ~ } ) \mathrm { d } \Sigma |
+$$
+
+用 $\mathtt { d } \Sigma \mathrm { = r d r d } \alpha$ 代入，并设 $\mathbf { R }$ 为由0计算的积分半径，则可求得
+
+$$
+| \Delta \xi _ { \le } | \leqslant | \int _ { \mathbf { R } } ^ { \infty } \mathbf { \mathrm { J d } } \mathbf { r } |
+$$
+
+其中
+
+$$
+\mathrm { J = { \frac { 1 } { \pi \gamma } } ^ { 2 \pi } } \Big [ \Delta \mathrm { g } ( { \frac { 2 l ^ { 3 } } { \mathrm { r ^ { 3 } } } } \mathrm { P _ { 3 } } ( \mathrm { c o s } \alpha ) + { \frac { 4 l ^ { 5 } } { \mathrm { r ^ { 5 } } } } \mathrm { P _ { 5 } } ( \mathrm { c o s } \alpha ) + { \frac { 6 l ^ { 7 } } { \mathrm { r ^ { 7 } } } } \mathrm { P _ { 7 } } ( \mathrm { c o s } \alpha ) + \cdots \mathrm { \cdots } \mathrm { \cdots } ) \mathrm { d } \alpha
+$$
+
+对此积分式运用积分不等式 $( 1 1 \cdot 4 1 )$ ，可得

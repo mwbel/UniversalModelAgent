@@ -5,13 +5,14 @@ import mimetypes
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 from backend.catalog import VISUALIZATIONS
 from backend.config import SETTINGS
 from backend.services.chat_service import CHAT_SERVICE
 from backend.services.mineru_client import MINERU_CLIENT
 from backend.services.rag_client import RAG_CLIENT
+from backend.services.visualization_planner import VISUALIZATION_PLANNER
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_DIR = ROOT_DIR / "frontend"
@@ -30,6 +31,7 @@ class AppHandler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802
         parsed = urlparse(self.path)
+        query = parse_qs(parsed.query)
         if parsed.path == "/api/health":
             self._send_json(
                 {
@@ -46,6 +48,10 @@ class AppHandler(BaseHTTPRequestHandler):
         if parsed.path == "/api/visualizations":
             self._send_json({"items": VISUALIZATIONS})
             return
+        if parsed.path == "/api/visualizations/plan":
+            question = (query.get("question") or [""])[0]
+            self._send_json({"items": VISUALIZATION_PLANNER.plan(question=question)})
+            return
         if parsed.path == "/api/rag/strategies":
             self._send_json(RAG_CLIENT.get_strategies())
             return
@@ -56,6 +62,12 @@ class AppHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:  # noqa: N802
         parsed = urlparse(self.path)
+        if parsed.path == "/api/rag/upload":
+            raw_body = self._read_body()
+            content_type = self.headers.get("Content-Type", "")
+            self._send_json(RAG_CLIENT.upload_document(raw_body, content_type))
+            return
+
         payload = self._read_json()
         if parsed.path == "/api/chat":
             result = CHAT_SERVICE.ask(
@@ -75,13 +87,16 @@ class AppHandler(BaseHTTPRequestHandler):
         return
 
     def _read_json(self) -> dict:
-        content_length = int(self.headers.get("Content-Length", "0"))
-        if content_length <= 0:
-            return {}
-        raw = self.rfile.read(content_length).decode("utf-8")
+        raw = self._read_body().decode("utf-8")
         if not raw.strip():
             return {}
         return json.loads(raw)
+
+    def _read_body(self) -> bytes:
+        content_length = int(self.headers.get("Content-Length", "0"))
+        if content_length <= 0:
+            return b""
+        return self.rfile.read(content_length)
 
     def _send_json(self, payload: dict, status: HTTPStatus = HTTPStatus.OK) -> None:
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>开普勒第三定律实验台</title>
+  <style>
+    :root {
+      --bg: #05070b;
+      --panel: rgba(12, 18, 28, 0.92);
+      --panel-soft: rgba(24, 34, 50, 0.78);
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #edf2ff;
+      --muted: #93a2bf;
+      --accent: #7cc7ff;
+      --accent-2: #ffd36e;
+      --glow: rgba(124, 199, 255, 0.18);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", sans-serif;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(90, 134, 255, 0.16), transparent 28%),
+        radial-gradient(circle at 78% 18%, rgba(255, 196, 94, 0.1), transparent 22%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .shell {
+      width: min(1180px, calc(100vw - 24px));
+      margin: 0 auto;
+      padding: 20px 0 28px;
+    }
+
+    .hero {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 22px 24px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.34);
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+    }
+
+    .section-kicker {
+      margin: 0 0 8px;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .metric-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .metric {
+      background: var(--panel-soft);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 14px 16px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .metric-value {
+      margin-top: 6px;
+      font-size: 1.55rem;
+      font-weight: 700;
+    }
+
+    .controls {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: #83c8ff;
+    }
+
+    .canvas-card {
+      display: grid;
+      gap: 18px;
+    }
+
+    .orbit-wrap {
+      position: relative;
+      min-height: 360px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at center, rgba(255, 225, 120, 0.08), transparent 34%),
+        radial-gradient(circle at center, rgba(124, 199, 255, 0.08), transparent 52%),
+        #03060b;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .chart-wrap {
+      background: #04070d;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      padding: 14px;
+    }
+
+    svg {
+      width: 100%;
+      height: 280px;
+      display: block;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    .note {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .orbit-wrap {
+        min-height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <p class="section-kicker">Kepler's Third Law</p>
+      <h1>开普勒第三定律实验台</h1>
+      <p>拖动半长轴，观察轨道周期如何按 <strong>T² ∝ a³</strong> 变化。左侧是两条轨道的日心对比，右侧是关系曲线和当前参数点。</p>
+    </section>
+
+    <section class="layout">
+      <aside class="panel">
+        <p class="section-kicker">Controls</p>
+        <div class="controls">
+          <label>
+            目标轨道半长轴 a₁ = <span id="primaryAxisLabel">1.00 AU</span>
+            <input id="primaryAxis" type="range" min="0.4" max="12" step="0.1" value="1">
+          </label>
+          <label>
+            对比轨道半长轴 a₂ = <span id="secondaryAxisLabel">5.20 AU</span>
+            <input id="secondaryAxis" type="range" min="0.4" max="20" step="0.1" value="5.2">
+          </label>
+          <label>
+            动画进度
+            <input id="phaseSlider" type="range" min="0" max="1" step="0.002" value="0.16">
+          </label>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric">
+            <div class="metric-label">轨道 1 周期 T₁</div>
+            <div id="primaryPeriod" class="metric-value">1.00 年</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">轨道 2 周期 T₂</div>
+            <div id="secondaryPeriod" class="metric-value">11.86 年</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">T² / a³ 校验</div>
+            <div id="ratioLabel" class="metric-value">1.000</div>
+          </div>
+        </div>
+
+        <p class="note">
+          在归一化单位下，如果用天文单位表示半长轴，用地球年表示周期，那么开普勒第三定律会变成
+          <strong>T = √(a³)</strong>。所以轨道越大，周期增长得越快。
+        </p>
+      </aside>
+
+      <main class="canvas-card">
+        <section class="panel orbit-wrap">
+          <canvas id="orbitCanvas" width="900" height="500"></canvas>
+        </section>
+
+        <section class="panel chart-wrap">
+          <div class="legend">
+            <span class="legend-item"><span class="dot" style="background:#7cc7ff"></span>轨道 1 / 当前参数点</span>
+            <span class="legend-item"><span class="dot" style="background:#ffd36e"></span>轨道 2 / 对比参数点</span>
+            <span class="legend-item"><span class="dot" style="background:#ffffff"></span>T² = a³ 关系曲线</span>
+          </div>
+          <svg id="lawChart" viewBox="0 0 760 280" preserveAspectRatio="none"></svg>
+        </section>
+      </main>
+    </section>
+  </div>
+
+  <script>
+    const primaryAxisInput = document.getElementById("primaryAxis");
+    const secondaryAxisInput = document.getElementById("secondaryAxis");
+    const phaseSlider = document.getElementById("phaseSlider");
+    const primaryAxisLabel = document.getElementById("primaryAxisLabel");
+    const secondaryAxisLabel = document.getElementById("secondaryAxisLabel");
+    const primaryPeriodLabel = document.getElementById("primaryPeriod");
+    const secondaryPeriodLabel = document.getElementById("secondaryPeriod");
+    const ratioLabel = document.getElementById("ratioLabel");
+    const canvas = document.getElementById("orbitCanvas");
+    const context = canvas.getContext("2d");
+    const svg = document.getElementById("lawChart");
+
+    function formatNumber(value) {
+      return Number(value).toFixed(2);
+    }
+
+    function periodFromAxis(axis) {
+      return Math.sqrt(axis ** 3);
+    }
+
+    function orbitPoint(axis, phase) {
+      const angle = phase * Math.PI * 2;
+      return {
+        x: Math.cos(angle) * axis,
+        y: Math.sin(angle) * axis,
+      };
+    }
+
+    function drawOrbitView(primaryAxis, secondaryAxis, phase) {
+      const width = canvas.width;
+      const height = canvas.height;
+      const maxAxis = Math.max(primaryAxis, secondaryAxis, 2);
+      const scale = Math.min(width, height) * 0.34 / maxAxis;
+
+      context.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < 180; i += 1) {
+        context.fillStyle = `rgba(255,255,255,${i % 7 === 0 ? 0.12 : 0.04})`;
+        context.fillRect(
+          (Math.sin(i * 91.73) * 0.5 + 0.5) * width,
+          (Math.cos(i * 47.17) * 0.5 + 0.5) * height,
+          1.2,
+          1.2
+        );
+      }
+
+      const centerX = width / 2;
+      const centerY = height / 2;
+
+      context.save();
+      context.translate(centerX, centerY);
+
+      const axes = [primaryAxis, secondaryAxis];
+      const colors = ["#7cc7ff", "#ffd36e"];
+
+      axes.forEach((axis, index) => {
+        context.beginPath();
+        context.strokeStyle = colors[index];
+        context.lineWidth = 2;
+        context.setLineDash([index === 0 ? 0 : 8, 10]);
+        context.ellipse(0, 0, axis * scale, axis * scale, 0, 0, Math.PI * 2);
+        context.stroke();
+      });
+      context.setLineDash([]);
+
+      context.beginPath();
+      context.fillStyle = "#ffd15b";
+      context.shadowColor = "rgba(255, 210, 91, 0.45)";
+      context.shadowBlur = 18;
+      context.arc(0, 0, 24, 0, Math.PI * 2);
+      context.fill();
+      context.shadowBlur = 0;
+
+      const primaryPoint = orbitPoint(primaryAxis, phase);
+      const secondaryPoint = orbitPoint(secondaryAxis, phase / Math.max(periodFromAxis(secondaryAxis), 1));
+
+      [
+        { point: primaryPoint, color: "#7cc7ff", label: "轨道 1" },
+        { point: secondaryPoint, color: "#ffd36e", label: "轨道 2" },
+      ].forEach(({ point, color, label }) => {
+        const x = point.x * scale;
+        const y = point.y * scale;
+        context.beginPath();
+        context.strokeStyle = "rgba(255,255,255,0.16)";
+        context.lineWidth = 1.2;
+        context.moveTo(0, 0);
+        context.lineTo(x, y);
+        context.stroke();
+
+        context.beginPath();
+        context.fillStyle = color;
+        context.arc(x, y, 10, 0, Math.PI * 2);
+        context.fill();
+
+        context.fillStyle = color;
+        context.font = "600 16px Avenir Next, PingFang SC, sans-serif";
+        context.fillText(label, x + 14, y - 14);
+      });
+
+      context.restore();
+    }
+
+    function drawLawChart(primaryAxis, secondaryAxis) {
+      const width = 760;
+      const height = 280;
+      const padding = { top: 24, right: 24, bottom: 38, left: 56 };
+      const maxAxis = 12;
+      const maxPeriodSq = maxAxis ** 3;
+
+      function scaleX(value) {
+        return padding.left + (value / maxAxis) * (width - padding.left - padding.right);
+      }
+
+      function scaleY(value) {
+        return height - padding.bottom - (value / maxPeriodSq) * (height - padding.top - padding.bottom);
+      }
+
+      const values = [];
+      for (let axis = 0.4; axis <= maxAxis + 0.001; axis += 0.1) {
+        values.push(`${scaleX(axis).toFixed(2)},${scaleY(axis ** 3).toFixed(2)}`);
+      }
+
+      const primaryValue = primaryAxis ** 3;
+      const secondaryValue = secondaryAxis ** 3;
+
+      svg.innerHTML = `
+        <rect x="0" y="0" width="${width}" height="${height}" rx="18" fill="#04070d"></rect>
+        <line x1="${padding.left}" y1="${height - padding.bottom}" x2="${width - padding.right}" y2="${height - padding.bottom}" stroke="rgba(255,255,255,0.18)"></line>
+        <line x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${height - padding.bottom}" stroke="rgba(255,255,255,0.18)"></line>
+        <polyline fill="none" stroke="rgba(255,255,255,0.82)" stroke-width="2.4" points="${values.join(" ")}"></polyline>
+        <circle cx="${scaleX(primaryAxis)}" cy="${scaleY(primaryValue)}" r="6.5" fill="#7cc7ff"></circle>
+        <circle cx="${scaleX(secondaryAxis)}" cy="${scaleY(secondaryValue)}" r="6.5" fill="#ffd36e"></circle>
+        <text x="${scaleX(primaryAxis) + 10}" y="${scaleY(primaryValue) - 10}" fill="#7cc7ff" font-size="13">a₁=${formatNumber(primaryAxis)}, T₁²=${formatNumber(primaryValue)}</text>
+        <text x="${scaleX(secondaryAxis) + 10}" y="${scaleY(secondaryValue) - 10}" fill="#ffd36e" font-size="13">a₂=${formatNumber(secondaryAxis)}, T₂²=${formatNumber(secondaryValue)}</text>
+        <text x="${width / 2 - 44}" y="${height - 10}" fill="rgba(255,255,255,0.7)" font-size="13">半长轴 a (AU)</text>
+        <text x="8" y="18" fill="rgba(255,255,255,0.7)" font-size="13">T²</text>
+      `;
+    }
+
+    function update() {
+      const primaryAxis = Number(primaryAxisInput.value);
+      const secondaryAxis = Number(secondaryAxisInput.value);
+      const phase = Number(phaseSlider.value);
+      const primaryPeriod = periodFromAxis(primaryAxis);
+      const secondaryPeriod = periodFromAxis(secondaryAxis);
+
+      primaryAxisLabel.textContent = `${formatNumber(primaryAxis)} AU`;
+      secondaryAxisLabel.textContent = `${formatNumber(secondaryAxis)} AU`;
+      primaryPeriodLabel.textContent = `${formatNumber(primaryPeriod)} 年`;
+      secondaryPeriodLabel.textContent = `${formatNumber(secondaryPeriod)} 年`;
+      ratioLabel.textContent = formatNumber((primaryPeriod ** 2) / (primaryAxis ** 3));
+
+      drawOrbitView(primaryAxis, secondaryAxis, phase);
+      drawLawChart(primaryAxis, secondaryAxis);
+    }
+
+    [primaryAxisInput, secondaryAxisInput, phaseSlider].forEach((input) => {
+      input.addEventListener("input", update);
+    });
+
+    update();
+  </script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+Chapter 5 treats direct methods for sparse problems and corresponds to Chapter 6 in the first edition. New software,such as SuiteSparse QR,is surveyed.A notable addition is a section on methods for solving mixed sparse-dense least squares problems.
+
+Iterative methods for least squares and least-norm problems are treated in Chapter 6. The Krylov subspace methods CGLS and LSQR as well as the recently introduced LSMR are de-scribed. The section on preconditioners is completely revised and covers new results on, e.g., approximate Cholesky and QR preconditioners.A survey of preconditioners based on random sampling is also new. Section 6.4 now covers regularization by iterative methods, including methods for saddle point and symmetric quasi-definite (SQD) systems.

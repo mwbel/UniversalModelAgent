@@ -1,0 +1,33 @@
+# 1 Submanifolds of Kähler manifolds of nonpositive curvature
+
+After Gromov's discovery of the existence of exotic symplectic structures on $\mathbf { R } ^ { 2 n }$ one important problem has been the understanding of the standard symplectic structure itself. McDuff proved (in [8], [9]) a global version of the Darboux Theorem which states that
+
+Theorem 1.1 The Kahler form $\omega$ on a simply connected complete Kahler ${ \bf 2 } n$ -dimensional manifold $P$ of non-positive sectional curvature is diffeomorphic to the standard symplectic form $\omega _ { 0 }$ on $\mathbf { R } ^ { 2 n }$ ·
+
+This means in particular that the symplectic structure on a Hermitian symmetric space of non-compact type is standard. She also showed that
+
+Theorem 1.2 If $L$ is a totally geodesic connected properly embedded Lagrangian submanifold of such a manifold $P$ ，then $P$ is symplectomorphic to the cotangent bundle ${ \pmb T } ^ { * } { \pmb L }$ with its usual symplectic structure.
+
+Recall that a submanifold $Q$ of $P$ is said to be symplectic if $\omega$ restricts to a symplectic form on $Q$ and is said to be isotropic if the restriction of $\omega$ to $Q$ is identically zero.In the complex hyperbolic space $\mathbf { C H } ^ { \pmb { n } }$ of complex dimension $\pmb { n }$ ,the complex hyperbolic subspaces $\mathbf { C H } ^ { i }$ ， $0 \leq i \leq n$ , are examples of totally geodesic symplectic submanifolds and the real hyperbolic subspaces $\mathbf { H } ^ { n - i }$ ， $0 \leq i \leq n$ ,are examples of totally geodesic isotropic submanifolds.
+
+Throughout this section we assume that $Q$ is a totally geodesic connected properly embedded submanifold of $( P , \omega )$ . Then we have
+
+Theorem 1.3 The symplectomorphism constructed by McDuff takes a totally geodesic complex submanifold $Q$ into a complex linear subspace of $\mathbf { R } ^ { 2 n }$
+
+A simple example shows that this is no longer true when $Q$ is isotropic. Nevertheless, we prove in [2]
+
+Theorem 1.4 If $Q$ is isotropic of dimension $k$ ， then $( P , Q , \omega )$ is symplectomorphic to $\left( \mathbf { R } ^ { 2 n } , \mathbf { R } ^ { k } , \omega _ { 0 } \right)$ ， where $\mathbf { R } ^ { k }$ is an isotropic linear subspace of $\mathbf { R } ^ { 2 n }$
+
+McDuff's symplectomorphism: Pick a point $\pmb { x _ { 0 } }$ in $Q \subset P$ and let $\rho ( { \pmb x } )$ be the distance from $\pmb { x }$ to $\pmb { x _ { 0 } }$ .By using a Hessian comparison theorem for manifolds of nonpositive curvature McDuff shows that the 2-form $\omega _ { \rho } = - d ( J d \rho ^ { 2 } )$ is symplectic and that $G _ { \rho } \geq 4 G$ ，where $G _ { \rho }$ is the Levi form $G _ { \rho } ( X , Y ) =$ $\omega _ { \rho } ( X , J Y )$ and $G$ is the original Kahler metric.Applying Moser's method (see [10],[14]) to the family of forms $\tau _ { t } = t \omega + ( 1 - t ) \omega _ { \rho }$ ， $0 \leq t \leq 1$ , she obtains a sympletomorphism $\Phi _ { 1 }$ from $( P , \omega )$ to $( P , \omega _ { \rho } )$ .Then McDuff constructs a symplectomorphism $\Phi _ { 2 }$ from $( P , \omega _ { \rho } )$ to $( \mathbf { R } ^ { 2 n } , \omega _ { 0 } )$ . To do this,she shows that the Liouville vector feld $\xi _ { \rho }$ defined by $\xi _ { \rho  } \omega _ { \rho } = - J d \rho ^ { 2 }$ is diffeomorphic to the radial vector field $\pmb { \xi } _ { 0 }$ on $\mathbf { R } ^ { 2 n }$ given in polar coordinates by $\frac { r } { 2 } \frac { \partial } { \partial r }$ . Further this diffeomorphism takes $\omega _ { \pmb { \rho } }$ to a symplectic form which is linearly diffeomorphic to $\omega _ { 0 }$ . So $\Phi _ { 2 }$ is the composite of a map which linearizes the Liouville vector field $\xi _ { \rho }$ with a map which adjusts the form.
+
+Note Recall that the orthogonal space to the tangent space of $Q$ with respect to a form $\pmb { \Omega }$ ,at each point $\pmb q$ in $Q$ is defined to be
+
+$$
+( T _ { q } Q ) ^ { \perp _ { 0 } } = \{ v \in T _ { q } P \ : \ \Omega ( v , w ) = 0 \forall w \in T _ { q } Q \} .
+$$
+
+In order to prove that the diffeomorphisms $\Phi _ { 1 }$ and $\Phi _ { 2 }$ preserve the submanifold $Q$ we show that the $\omega \cdot$ and $\omega _ { \pmb { \rho } }$ -orthogonal spaces to the tangent space $\pmb { T } _ { \pmb { q } } Q$ are equal at each point $\pmb q$ of $Q$ ,i.e. $( T _ { q } Q ) ^ { \perp _ { \omega } } = ( T _ { q } Q ) ^ { \perp _ { \omega _ { \rho } } }$ . For details see [2] and [4].
+
+Example: Consider $\mathbf { R } ^ { 4 }$ with the metric $G$ given by the cartesian product of the Poincaré metric on $\mathbb { R } ^ { 2 }$ with the standard metric on $\mathbb { R } ^ { 2 }$ . Construct $\Phi : ( \mathbf { R } ^ { 4 } , \omega )  ( \mathbf { R } ^ { 4 } , \omega _ { 0 } )$ as above with ${ { x } _ { 0 } } = \left\{ 0 \right\}$ . Note that the rays through the origin are totally geodesic isotropic submanifolds of $( \mathbb { R } ^ { 4 } , G )$ ，however they are not mapped by $\Phi$ onto rays in $( \mathbf { R } ^ { 4 } , \omega _ { 0 } )$ . For the rays in $( \mathbf { R } ^ { 4 } , \omega _ { 0 } )$ are the integral curves of the Liouville vector feld $\pmb { \xi } _ { 0 }$ ， therefore $\xi = \Phi ^ { * } \xi _ { 0 }$ is a Liouville field on $( \mathbf { R } ^ { 4 } , \omega )$ . But it is easy to see that in $( \mathbb { R } ^ { 4 } , \omega )$ no Liouville vector field points in the direction of the rays.
+
+The isotropic case: In the example the symplectomorphism $\bar { \Phi } ^ { - 1 }$ fails to preserve the property of being totally geodesic. Consequently, to deal with the case of a totally geodesic isotropic submanifold we consider the distance function to the submanifold instead of the distance to a point in the submanifold. Observe that Theorem 1.4 can be viewed as a natural extension of the extreme cases considered by McDuf: the dimension of $Q$ is zero $( Q$ is a point） or maximal ( $Q$ is Lagrangian). To obtain a Levi form $\omega _ { \pmb { \rho } }$ which is connected to the geometry of $Q$ one takes $\pmb { \rho }$ to be the distance function from $Q$ . This gives rise to a map $\Phi _ { 1 }$ which preserves $Q$ ．But the second step is harder.One has to show that the Liouville vector feld ${ \pmb \xi }$ admits a $C ^ { 1 }$ -linearizing conjugation along $Q$ . In the case where $Q$ is a point McDuff uses a Sternberg linearization theorem [13] and when $Q$ is a Lagrangian submanifold she uses a linearization result of Nagano [11]. In the general case these theorems do not apply. However,in next section we show that although zero is an eigenvalue of the associated linear part of the vector field ${ \pmb \xi }$ and the non-zero eigenvalues are in resonance, $\pmb { \xi }$ is $C ^ { k }$ -conjugate, $k \geq 1$ to its linear part along $Q$

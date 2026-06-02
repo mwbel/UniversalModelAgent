@@ -1,0 +1,8 @@
+# 531 Local and global truncation errors
+
+Figure 531(i) shows the relationship between the action of a method $M$ with order $p$ , a non-degenerate starting method $S$ , and the action of the exact solution $E$ , related as in Definition 530C. We also include in the diagram the action of a finishing procedure $F$ which exactly undoes the work of $S$ , so that $S F = \mathrm { i d }$ . In this figure, $T$ represents the truncation error, as the correction that would have to be added to $S M$ to obtain $_ { E S }$ . Also shown is $\hat { T }$ , which is the error after carrying out the sequence of operations making up $S M F$ , regarded as an approximation to $E$ . However, in practice, the application of $F ^ { \dagger }$ to the computed result is deferred until a large number of steps have been carried out.
+
+Figure 531(i) illustrates that the purpose of a general linear method is to approximate not the exact solution, but the result of applying $S$ to every point on the solution trajectory. To take this idea further, consider Figure 531(ii), where the result of carrying the approximation over many steps is shown. In step $k$ , the method $M$ is applied to an approximation to $E ^ { k - 1 } S$ to yield an approximation to $E ^ { k } S$ without resorting to the use of the finishing method $F ^ { \dagger }$ . In fact the use of $F$ is postponed until an output approximation is finally needed.
+
+![](../chunks/Numerical Methods for Differential Equations, Butcher_part_0007_pages_0421-0484/auto/images/256d6c189cfa2a6a1c8a240c5eafaddd8ea41e4ba75287270e5ee89a2c1bcd4e.jpg)  
+Representation of global truncation error

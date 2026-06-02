@@ -1,0 +1,36 @@
+# Chapters Index
+
+- Source Markdown: [Accuracy and Stability of Numerical Algorithms, Second Edition (Nicholas J. Higham) (z-library.sk, 1lib.sk, z-lib.sk).md](../Accuracy and Stability of Numerical Algorithms, Second Edition (Nicholas J. Higham) (z-library.sk, 1lib.sk, z-lib.sk).md)
+- Chapter Count: 29
+
+## Chapters
+
+1. [前置内容](001_前置内容.md)
+2. [Chapter 1](002_Chapter 1.md)
+3. [Chapter 2](003_Chapter 2.md)
+4. [Chapter 3 Basics](004_Chapter 3 Basics.md)
+5. [Chapter 4 Summation](005_Chapter 4 Summation.md)
+6. [Chapter 5 Polynomials](006_Chapter 5 Polynomials.md)
+7. [Chapter 6](007_Chapter 6.md)
+8. [Chapter 7](008_Chapter 7.md)
+9. [Chapter 8 Triangular Systems](009_Chapter 8 Triangular Systems.md)
+10. [Chapter 9](010_Chapter 9.md)
+11. [Chapter 10](011_Chapter 10.md)
+12. [Chapter 11](012_Chapter 11.md)
+13. [Chapter 12](013_Chapter 12.md)
+14. [Chapter 13](014_Chapter 13.md)
+15. [Chapter 14](015_Chapter 14.md)
+16. [Chapter 15](016_Chapter 15.md)
+17. [Chapter 16](017_Chapter 16.md)
+18. [Chapter 17](018_Chapter 17.md)
+19. [Chapter 18 Matrix Powers](019_Chapter 18 Matrix Powers.md)
+20. [Chapter 19](020_Chapter 19.md)
+21. [Chapter 20](021_Chapter 20.md)
+22. [Chapter 21](022_Chapter 21.md)
+23. [Chapter 22](023_Chapter 22.md)
+24. [Chapter 23](024_Chapter 23.md)
+25. [Chapter 24](025_Chapter 24.md)
+26. [Chapter 25](026_Chapter 25.md)
+27. [Chapter 26](027_Chapter 26.md)
+28. [Chapter 27](028_Chapter 27.md)
+29. [Chapter 28](029_Chapter 28.md)

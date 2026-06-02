@@ -1,0 +1,726 @@
+# δV= +o"oo1C sin {0+j"J+i(J-T)+a°},Jupiter.
+
+<table><tr><td colspan="4">0=2D-l</td><td colspan="4">0=2D+l</td><td colspan="4">0=2l-2D</td></tr><tr><td>广</td><td>i</td><td>α</td><td>C</td><td>j</td><td>i</td><td>a</td><td>C</td><td>3</td><td>i</td><td>a</td></tr><tr><td>I</td><td>3</td><td>102</td><td>7</td><td>11</td><td>2 273</td><td></td><td>3</td><td>0 12</td><td>180</td><td>C 5</td></tr><tr><td>2</td><td>0</td><td>351</td><td>I</td><td>3</td><td>102</td><td>I</td><td></td><td>-1</td><td>2</td><td>II</td></tr><tr><td rowspan="8">2</td><td>1</td><td>237</td><td>6</td><td></td><td></td><td></td><td></td><td>1</td><td>0</td><td>3</td></tr><tr><td>2</td><td>344</td><td>3</td><td></td><td>0=4D-l</td><td></td><td></td><td>2</td><td>1797</td><td>53</td></tr><tr><td>2 一</td><td>196</td><td>4</td><td>。</td><td>I 358</td><td>9</td><td></td><td>1 2</td><td>170&#x27;9</td><td>94</td></tr><tr><td>-1</td><td>305</td><td>2</td><td></td><td>2 179</td><td></td><td>5</td><td>I -1</td><td>302</td><td>2</td></tr><tr><td>0</td><td>171</td><td>I</td><td>I</td><td>172 。</td><td>1</td><td></td><td>0</td><td>186</td><td>2</td></tr><tr><td>1</td><td>291</td><td>3</td><td></td><td>I 57</td><td>1</td><td></td><td>2 2</td><td>164</td><td>I</td></tr><tr><td></td><td></td><td></td><td></td><td>0 2</td><td>1</td><td></td><td></td><td></td><td></td></tr><tr><td>0=2D+l</td><td></td><td></td><td></td><td></td><td></td><td></td><td>0=2l-4D</td><td></td><td></td></tr><tr><td rowspan="5">。</td><td></td><td></td><td></td><td></td><td>0=21</td><td></td><td>I</td><td>2</td><td>171</td><td>I</td></tr><tr><td></td><td>1</td><td>5</td><td>0</td><td>-2</td><td>180</td><td>3</td><td></td><td></td><td></td></tr><tr><td>1</td><td>178</td><td>21</td><td>-1</td><td>2</td><td>II</td><td></td><td></td><td>0=2F-2D</td><td></td></tr><tr><td>2</td><td>359</td><td>8</td><td></td><td>I</td><td>178</td><td>12</td><td>。 -I</td><td>0</td><td></td></tr><tr><td>3</td><td>14</td><td>I</td><td>2</td><td>0</td><td>3</td><td></td><td>1</td><td>180</td><td>2 1</td></tr><tr><td rowspan="4">1</td><td>0</td><td>353</td><td>4</td><td>1</td><td>0 293</td><td>5</td><td></td><td></td><td></td><td></td></tr><tr><td>I</td><td>237</td><td>5</td><td>I</td><td>239</td><td>3</td><td></td><td></td><td></td><td></td></tr><tr><td>2</td><td>352</td><td>3</td><td></td><td>2 171</td><td>I</td><td></td><td></td><td>0=W</td><td></td></tr><tr><td>1</td><td>303</td><td>1</td><td>1</td><td></td><td>301</td><td>3</td><td>I 。</td><td>0</td><td>3</td></tr><tr><td></td><td>。</td><td>182</td><td>4</td><td>0</td><td>247</td><td>5</td><td>2</td><td>。</td><td>168</td><td>6</td></tr></table>
+
+$$
+3 6 5 . \ \delta V = + \mathrm { o } ^ { \prime \prime } { \cdot } \mathrm { o o n } C \sin \ \delta + i \mathrm { \prime \prime } \mathrm { \cdot } \ \delta + i \mathrm { ( S - \mathrm { T } ) } + a ^ { \circ } \} \ .
+$$
+
+<table><tr><td></td><td colspan="2">0=0</td><td></td><td>0=2D</td><td></td><td></td><td>0=2D-l</td><td></td><td></td></tr><tr><td>学</td><td>i</td><td>a</td><td>C</td><td></td><td>i α</td><td>C</td><td>j i</td><td>α</td><td>C</td></tr><tr><td>0</td><td>I</td><td>1796</td><td>42</td><td>1 I</td><td>257</td><td>3</td><td>。 12</td><td>180</td><td>5</td></tr><tr><td></td><td>2</td><td>0</td><td>8</td><td>2</td><td>270</td><td>2</td><td>-I</td><td>0</td><td>2</td></tr><tr><td>I</td><td>0</td><td>266:6</td><td>45</td><td>-I 0</td><td>255</td><td>4</td><td>I</td><td>180</td><td>14</td></tr><tr><td></td><td>I</td><td>257</td><td>13</td><td>2</td><td>280</td><td>2</td><td>2</td><td>。</td><td>4</td></tr><tr><td>2</td><td>2</td><td>270</td><td>2</td><td></td><td></td><td></td><td>0 I</td><td>271</td><td>6</td></tr><tr><td></td><td>0</td><td>297</td><td>3</td><td></td><td>0=l</td><td></td><td>2</td><td>257</td><td>3</td></tr><tr><td></td><td>1</td><td>171</td><td>2</td><td>。 1</td><td>180</td><td>1</td><td>-I -2</td><td>277</td><td>I</td></tr><tr><td></td><td></td><td></td><td></td><td>-I</td><td>0</td><td>6</td><td>0</td><td>267</td><td>6</td></tr><tr><td>。</td><td></td><td>0=2D</td><td></td><td>I</td><td>180</td><td>10</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td>6</td><td>I</td><td>I 0</td><td>265</td><td>15</td><td></td><td>0=2D+l</td><td></td></tr><tr><td></td><td>I</td><td>180</td><td>10</td><td>1</td><td>257</td><td>2</td><td>。 I</td><td>180</td><td></td></tr><tr><td>I</td><td>2</td><td>。</td><td>5</td><td>-1 -1</td><td>283</td><td>3</td><td></td><td></td><td>2</td></tr><tr><td></td><td>0</td><td>270</td><td>4</td><td>。</td><td>275</td><td>15</td><td></td><td></td><td></td></tr></table>
+
+# 366. All planets.
+
+Latitude.
+
+$$
+3 6 7 . \ \ \mathcal { S } U = + \mathcal { O } ^ { \prime \prime } \mathrm { { \cdot } O O 1 } C \sin \left\{ \theta + j \mathrm { T } + i ( \mathrm { { \bar { \iota } } } \mathrm { { \cdot } } \mathrm { { \nabla } } \mathrm { { \cdot } } \mathrm { { \nabla } } \mathrm { { \rangle } } + a _ { \ \right. } ^ { \circ } = + \mathcal { O } ^ { \prime \prime } \mathrm { { \cdot } O O 1 } C \sin \mathrm { { \downarrow } } ,
+$$
+
+<table><tr><td></td><td colspan="2">θ=±F</td><td colspan="6">0=F+2I)</td><td colspan="3">0=F+2D+l</td></tr><tr><td>j</td><td>i</td><td>a</td><td>C</td><td>j</td><td>i</td><td>α</td><td>C</td><td>j</td><td>i</td><td>a</td><td>C</td></tr><tr><td>。</td><td>1</td><td>0</td><td>4</td><td></td><td>1</td><td>180</td><td>2</td><td>。</td><td>I</td><td>0</td><td>I</td></tr><tr><td></td><td>2</td><td>180</td><td>7</td><td></td><td>I</td><td>0</td><td>5</td><td></td><td>2</td><td>180</td><td>2</td></tr><tr><td>I</td><td>2</td><td>273</td><td>6</td><td></td><td>2</td><td>180</td><td>9</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>3</td><td>272</td><td>2</td><td></td><td>3</td><td></td><td>I</td><td></td><td></td><td></td><td></td></tr><tr><td>2</td><td>3</td><td>201</td><td>2</td><td>I</td><td>2</td><td>271</td><td>2</td><td></td><td></td><td>0=±F+2D-l</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td>3</td><td>272</td><td>2</td><td>。</td><td></td><td>0</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td>2</td><td>268</td><td>I</td><td></td><td></td><td></td><td>3</td></tr><tr><td></td><td></td><td>0=-F+2D</td><td></td><td></td><td>I</td><td>101</td><td>I</td><td></td><td>1</td><td></td><td>3 6</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td>2</td><td>280</td><td>I</td><td></td><td>2</td><td>180</td><td></td></tr><tr><td>0</td><td>12</td><td>。</td><td>7</td><td>2</td><td>3</td><td>199</td><td>1</td><td>I</td><td>2</td><td></td><td>8</td></tr><tr><td></td><td>-I</td><td>180</td><td>14</td><td>12</td><td>-3</td><td>341</td><td>2</td><td></td><td>3</td><td>271</td><td>3</td></tr><tr><td></td><td>I</td><td>0</td><td>16</td><td></td><td></td><td></td><td></td><td></td><td>2</td><td>269</td><td>2</td></tr><tr><td></td><td>2</td><td>180</td><td>23</td><td></td><td></td><td>θ=±F±l</td><td></td><td>2</td><td>3</td><td></td><td>2</td></tr><tr><td></td><td>3</td><td></td><td>2</td><td></td><td></td><td></td><td></td><td></td><td></td><td>199</td><td>I</td></tr><tr><td>1</td><td>2</td><td>271</td><td>9</td><td>0</td><td>I</td><td>0</td><td>2</td><td></td><td>中</td><td></td><td></td></tr><tr><td></td><td>3</td><td>272</td><td>6</td><td></td><td>2</td><td>180</td><td>4</td><td></td><td>1+5T-3V+215°6</td><td></td><td>C</td></tr><tr><td></td><td>3</td><td>268</td><td>2</td><td>I</td><td>2</td><td>271</td><td>I</td><td></td><td>μ1-5T+3V+337&#x27;</td><td></td><td>77</td></tr><tr><td></td><td></td><td>269</td><td>6</td><td></td><td>3</td><td>272</td><td>1</td><td></td><td>1-2D+5T-3V+36°</td><td></td><td>30</td></tr><tr><td></td><td>I</td><td>101</td><td>1</td><td>2</td><td>3</td><td>199</td><td>I</td><td></td><td>u1+/+5T-3V+216</td><td></td><td>3</td></tr><tr><td></td><td>2</td><td>280</td><td>I</td><td></td><td></td><td></td><td></td><td></td><td>W1-1+5T-3V+36°</td><td></td><td>4 4</td></tr><tr><td>2</td><td>3</td><td>199</td><td>3</td><td></td><td></td><td>0=-F+2D+l</td><td></td><td></td><td>W1+8T-5V+125°</td><td></td><td>3</td></tr><tr><td>2</td><td>-3</td><td>341</td><td>5</td><td>。</td><td>2</td><td>0</td><td>1</td><td></td><td>u1- 8T+5V+67°</td><td></td><td>7</td></tr></table>
+
+368. δU= +o"o01Csin {θ+j"M+i(M-T)+a}, Mars.
+
+<table><tr><td colspan="4">θ=±F</td><td colspan="4">0=F-2D</td><td colspan="4">0=t1</td></tr><tr><td></td><td>i</td><td>α</td><td>C</td><td>V</td><td>i</td><td>a</td><td>C</td><td>i V</td><td>α</td><td></td></tr><tr><td>。</td><td>2</td><td>180</td><td>3</td><td>。</td><td></td><td>0 8</td><td></td><td>2 2</td><td></td><td>C</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td>2</td><td>180</td><td></td><td></td><td>269</td><td>2</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td>3</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td>0=±F+l-21)</td><td></td><td>I</td><td>[</td><td>223 5</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td>-I</td><td>-1</td><td>316</td><td></td><td></td><td></td><td></td></tr><tr><td>。</td><td>-2</td><td>。</td><td>3</td><td></td><td></td><td>5</td><td></td><td></td><td></td><td></td></tr></table>
+
+$$
+{ \bf \pi } _ { 3 } 6 9 . ~ \partial U = { \bf \pi } + { \bf \pi } ^ { \prime \prime } \mathrm { { c o o r } } C \sin { \bf \pi } \{ { \theta } + j ^ { \prime \prime } { \bf J } + i { \left( { \bf J - T } \right) } + { a } ^ { \circ } \} = { \bf \pi } + { \bf \pi } ^ { \prime \prime } \mathrm { { c o o r } } C \sin { \psi } ,
+$$
+
+<table><tr><td></td><td>θ=±F</td><td></td><td></td><td></td><td>0=F+2D</td><td></td><td></td><td>0=±F+l-2D</td><td></td></tr><tr><td></td><td>i</td><td>α</td><td>C</td><td>j</td><td>i a</td><td>C</td><td>j i</td><td>a</td><td>q</td></tr><tr><td>3 0</td><td>1</td><td>180</td><td>9</td><td>0</td><td>180 I</td><td>8</td><td>0 12</td><td>180</td><td>4</td></tr><tr><td>I</td><td>0</td><td>48</td><td>8</td><td></td><td>。 2</td><td>3</td><td>-1</td><td>0</td><td>II</td></tr><tr><td></td><td></td><td></td><td></td><td>I 0</td><td>350</td><td>1</td><td>I</td><td>180</td><td>2</td></tr><tr><td></td><td>0=-F+2D</td><td></td><td></td><td>I</td><td>237</td><td>2</td><td>2</td><td>0</td><td>15</td></tr><tr><td>0</td><td>12</td><td>0</td><td>3</td><td>2</td><td>352</td><td>2</td><td>I 0</td><td>357</td><td>2</td></tr><tr><td></td><td>-1</td><td></td><td>6</td><td>-I 0</td><td>0</td><td>2</td><td>2</td><td>171</td><td>6</td></tr><tr><td></td><td>I</td><td>180</td><td>29</td><td>2</td><td>273</td><td>2</td><td>-I</td><td>302</td><td>2</td></tr><tr><td></td><td>2</td><td>0</td><td>12</td><td>3</td><td>102</td><td>I</td><td>。</td><td>186</td><td>2</td></tr><tr><td>I</td><td>0</td><td>350</td><td>7</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>1</td><td>237</td><td>6</td><td></td><td>0=±F+l</td><td></td><td></td><td>0=±F+2l-21)</td><td></td></tr><tr><td></td><td>2</td><td>352</td><td>2</td><td></td><td></td><td></td><td>。 2</td><td>357</td><td>2</td></tr><tr><td></td><td></td><td>303</td><td>2</td><td>。 -2</td><td>0</td><td>2</td><td>I 2</td><td>354</td><td>4</td></tr><tr><td></td><td>0</td><td>181 4</td><td></td><td>~I</td><td></td><td>6</td><td></td><td></td><td></td></tr><tr><td></td><td>2</td><td>273</td><td></td><td>I</td><td>180</td><td>8</td><td>中</td><td></td><td>C</td></tr><tr><td></td><td></td><td>102</td><td>3</td><td>2</td><td></td><td>I</td><td>W+J</td><td></td><td>5</td></tr><tr><td></td><td>3</td><td></td><td>I</td><td>I 。</td><td>301</td><td>4</td><td>21+2J+168°</td><td></td><td>35</td></tr><tr><td></td><td></td><td></td><td></td><td>I</td><td>239</td><td>2</td><td>W1-2J+24° 101+3J+156°</td><td></td><td>18</td></tr><tr><td></td><td>0=F+2D</td><td></td><td></td><td>2</td><td>350</td><td>I</td><td>1C+l+2J+168°</td><td></td><td>2</td></tr><tr><td>。</td><td>1 2</td><td>。</td><td>4</td><td>I</td><td>301</td><td>2</td><td></td><td></td><td>2</td></tr><tr><td>I</td><td></td><td>180</td><td>3</td><td>0</td><td>240</td><td>4</td><td>W-l+2J+348°</td><td></td><td>2</td></tr></table>
+
+# 370. Terms added to the Elements.
+
+8w=+o"oo1Csinψ+5"82t²   
+C   
+13T-8V+313°8 234   
+l+16T-18V+331° 6\*   
+Q-4T+239° 3   
+8M-4T+310° 3   
+9M-5T+305° 8   
+I0M-6T+306° 2   
+11M-6T+335° 6   
+13M-7T+19° 6   
+15M-8T+43° 26   
+17M-9T+63° 4   
+Wg+276°2 289
+
+$$
+\begin{array} { r l } & { \delta ( w _ { 1 } - w _ { 2 } ) = + 1 6 ^ { \prime \prime } \epsilon _ { c } + 4 4 ^ { \prime \prime } \cdot 1 \epsilon _ { c } ^ { 2 } } \\ & { \qquad + 1 ^ { \prime \prime } \cdot 1 2 9 \sin \big ( w _ { 3 } + 2 7 6 ^ { * } \cdot 2 \big ) } \\ & { \delta ( w _ { 3 } = + 5 ^ { \prime \prime } \epsilon _ { c } + 6 ^ { \prime \prime } \cdot 4 6 t _ { c } ^ { 2 } } \\ & { \qquad + 1 5 ^ { \prime \prime } \cdot 5 9 \sin \big ( w _ { 3 } + 2 7 6 ^ { * } \cdot 2 \big ) } \\ & { \delta \gamma = + 9 ^ { \prime \prime } 6 9 8 \cos \big ( w _ { 3 } + 9 6 ^ { * } \cdot 2 \big ) } \\ & { \delta ( n ^ { \prime } t + \epsilon ^ { \prime } ) = + 1 ^ { \prime \prime } \cdot 8 9 \sin \big ( \Omega \cdot 3 \Gamma - 8 \nabla + \Omega _ { 4 } ^ { * } \big ) } \\ & { \qquad + \sigma ^ { \prime \prime } \cdot 2 0 \sin \big ( \Omega \cdot 8 \Gamma + 2 1 6 ^ { * } \big ) } \end{array}
+$$
+
+# CHAPTER XIII.
+
+ACTION OF THE FIGURES OF THE EARTH AND MOON.
+
+Section (i). The Disturbing Function for the Figure of the Earth.
+
+$3 7 ^ { \mathrm { I } }$ . Let A,B,C,I be the moments of iertia of the Earth's mass about its three principal axes at the centre of mass and about the line joining its centre of mass with that of the Moon； $E , M$ the masses of the Earth and Moon. Then it is well known that the disturbing function $\mathcal { R }$ is given,with suffcient approximation, by
+
+$$
+R = \left( E + M \right) ^ { \mathrm { A + B + C - 3 I } }
+$$
+
+since the next term of $\mathcal { R }$ will have an additional factor of the order $6 0 ^ { - 2 }$ ,this being the approximate ratio of the square of the radius of the Earth to the distance of the Moon. It is true that there is a term with a factor of the order $6 \mathrm { O } ^ { - 1 }$ ,but this term is exceed-ingly minute,owing to the approximate symmetry of the Earth about its principal axes.
+
+Let $V , \ U , \ a , \ \delta$ be the longitude on the ecliptic, the latitude, the right ascension reckoned from the $\mathcal { A }$ -axis,and the declination of the Moon; $\downarrow$ the precession, $\epsilon _ { 1 }$ the obliquity of the eeliptic.If $P$ be the pole of the eeliptic, $Q$ that of the Earth's equator, the parts of the spherical triangle $P Q M$ are:
+
+$$
+P E = \epsilon _ { 1 } , \quad Q M = { 9 0 } ^ { \circ } - \delta , \quad M P = { 9 0 } ^ { \circ } - U , \quad Q P M = { 9 0 } ^ { \circ } - V - \psi ,
+$$
+
+and therefore
+
+$$
+\sin \delta = \cos \epsilon _ { 1 } \sin U + \sin \epsilon _ { 1 } \cos U \sin \left( V + \psi \right) \quad \textrm { , }
+$$
+
+Also
+
+$$
+\mathrm { I } = \mathrm { A } \cos ^ { 2 } \alpha \cos ^ { 2 } \delta + \mathrm { B } \sin ^ { 2 } \alpha \cos ^ { 2 } \delta + \mathrm { C } \sin ^ { 2 } \delta ,
+$$
+
+so that
+
+$$
+\mathrm { A } + \mathrm { B } + \mathrm { C } - 3 \mathrm { I } = 3 \bigg ( \mathrm { C } - \frac { \mathrm { A } + \mathrm { B } } { 2 } \bigg ) ( \frac { 1 } { 3 } - \sin ^ { 2 } \mathrm { \ B } ) - \frac { 3 } { 2 } \big ( \mathrm { A } - \mathrm { B } \big ) \cos 2 a \cos ^ { 2 } \mathrm { \ B } \ .
+$$
+
+The second term of this is quite negligible : its principal arguments have daily mean motions of the order $3 . \mathrm { I O } ^ { 6 }$ seconds,and A-B is known to be very small compared with $\mathrm { C - \frac { 1 } { 2 } ( A + B ) }$ Hence
+
+$$
+R = \left( E + M \right) _ { \stackrel { \textstyle - } { \uparrow } ^ { 0 } } ^ { \alpha ^ { 2 } \mu } \left( { \bf \frac { 1 } { 3 } } - \sin ^ { 2 } \delta \right) , \quad \mathrm { w h e r e } ~ \alpha ^ { 2 } \mu = \frac { 3 } { 2 E } \Big ( \mathrm { C } - \frac { \mathrm { A } + \mathrm { B } } { 2 } \Big ) .
+$$
+
+$3 7 ^ { 2 }$ Transformation.-Since
+
+$$
+\rho \cos { \big ( } V - \mathrm { T } { \big ) } \pm \imath \rho \sin { \big ( } V - \mathrm { T } { \big ) } = u , s , \quad r \sin { } U = z , \quad r \cos { } U = \rho ,
+$$
+
+equation (2） gives
+
+$$
+\begin{array} { r l } & { \qquad r \sin \hat { \omega } = z \cos \epsilon _ { 1 } + \frac { \Pi } { 2 t } \sin \epsilon _ { 1 } \big ( u e ^ { ( \Pi + \psi ) _ { \star } } - s e ^ { - ( \Pi + \psi ) _ { \star } } \big ) , } \\ & { \qquad = \big ( \frac { 1 } { 3 r } r ^ { 2 } - z ^ { 2 } \big ) \big ( \mathbf { r } - \frac { s } { 2 } \sin ^ { 2 } \epsilon _ { 1 } \big ) + \frac { 1 } { 4 } \sin ^ { 2 } \epsilon _ { 1 } \big ( u ^ { 2 } e ^ { 2 ( \Gamma + \psi ) _ { \star } } + s ^ { 2 } e ^ { - 2 ( \Gamma + \psi ) _ { \star } } \big ) - \frac { z } { 2 i } \sin 2 \epsilon _ { 1 } \big ( u e ^ { ( \Gamma + \psi ) _ { \star } } - s e ^ { - ( \Gamma + \psi ) _ { \star } } \big ) . } \end{array}
+$$
+
+The last two terms are the real parts of $\begin{array} { r } { \frac { \mathbf { 1 } } { 2 } \sin ^ { 2 } \epsilon _ { 1 } } \end{array}$ $\mathcal { l } ^ { 2 } e ^ { 2 ( \mathbf { T } + \psi ) \mathfrak { c } }$ ， $z i$ .sin $2 \epsilon _ { 1 } \cdot \mathcal { U } e ^ { ( \mathrm { T } + \psi ) \mathfrak { L } }$ Hence $R$ is equal to the real part of
+
+$$
+{ \frac { 1 } { 4 } } \pi ^ { \prime 2 } \mathrm { a } ^ { 2 } \biggl [ \mu _ { 1 } \biggl \{ ( { \frac { a } { r } } ) ^ { 3 } { \frac { a ^ { 2 } } { \mathrm { a } ^ { 2 } } } - 3 \biggl ( { \frac { a } { r } } ) ^ { 5 } { \frac { z ^ { 2 } } { \mathrm { a } ^ { 2 } } } \biggr \} + \mu _ { 8 } \biggl ( { \frac { a } { r } } \biggr ) ^ { 5 } { \frac { u ^ { 2 } } { \mathrm { a } ^ { 2 } } } e ^ { 2 ( \mathbf { T } + \psi ) _ { i } } \biggr ) + \mu _ { 2 } \biggl ( { \frac { a } { r } } \biggr ) ^ { 5 } { \frac { u \cdot z i } { \mathrm { a } ^ { 2 } } } e ( \mathbf { T } + \psi ) _ { i } ^ { 2 } \biggr ] \quad .
+$$
+
+where
+
+$$
+\mu _ { 1 } = { \textstyle \frac { 4 } { 3 } } \frac { \mu } { m ^ { 2 } } \big ( { \mathrm { \bf ~ r } } - { \textstyle \frac { 5 } { 2 } } \sin ^ { 2 } \epsilon _ { 1 } \big ) , \qquad \mu _ { 3 } = \frac { 2 \mu } { m ^ { 2 } } \sin ^ { 2 } \epsilon _ { 1 } , \quad \mu _ { 2 } = \frac { 4 \mu } { m ^ { 2 } } \sin { \mathrm { \bf ~ 2 } } \epsilon _ { 1 } \qquad .
+$$
+
+$\mu$ being given in (4).
+
+The values of the Moon functions have been given in Sect. (v), Chap. X. All the terms have the factor $\mu$ ,which is treated as a small quantity of the first order,and we should properly put $\epsilon _ { 1 } = \mathrm { c o n s t }$ and $\begin{array} { r } { \Psi = 0 . } \end{array}$ But it is convenient to retain the mean motion of $\downarrow$ ,as this motion affects the arguments to a slight degree,and is retained without any increase of labour.The $\mu _ { i }$ are then constants which take the place of $m ^ { \prime \prime } / m ^ { \prime }$ in the equations of variations. In forming $j _ { 1 }$ ,it is to be remembered that $\mu _ { i }$ contains $\scriptstyle { \mathcal { n } } ^ { 2 }$
+
+# Section (ii). Numerical Results.
+
+373. Adopted values of the constants.-I take
+
+giving
+
+$$
+\mu _ { 1 } = + \left[ \overline { { { 5 } } } \cdot 9 2 5 { \bf { I } } \right] , \quad \mu _ { 2 } = + \left[ \overline { { { 4 } } } \cdot 3 8 3 6 \right] , \quad \mu _ { 3 } = + \left[ \overline { { { 5 } } } \cdot 4 { \bf { I } } 9 { \bf { I } } \right] \quad .
+$$
+
+The only one of these constants of which the value is doubtful, within the limits of accuracy required here, is $\mu$ .It will ultimately be determined by the coefficient of ithe argument $w _ { 1 } + \psi$ in latitude, the principal term arising fron the figure of the Eartl. I adopt a value here to correspond with that marked $( \beta )$ in my paper “ On the Degree of Accuracy,etc."\*； this is obtained by comparing Hansen's observational value with Hil's theoretical values (which closely agree with those obtained by me) for the coeffeient in question.
+
+374. Final results.-I omit terms whose coefficients are less than $0 ^ { \prime \prime } \mathrm { \cdot } \infty 3$ ，and obtain,for the terms in longitude,
+
+$$
+\delta V = + \mathcal { O } ^ { ' \prime } \mathfrak { o } 2 0 \sin \left( 2 \mathrm { D } - \vec { l } \right) + \mathcal { O } ^ { ' \prime } \mathfrak { o } 0 4 \sin \left( 2 \mathrm { F } - \vec { l } \right) - \mathfrak { o } ^ { \prime \prime } \mathfrak { o } 3 \delta \sin \left( 2 \mathcal { W } _ { 1 } + 2 \psi - 2 \mathrm { F } \right) ;
+$$
+
+\* Monthly Notices,vol.lxiv.p. 531.
+
+in latitude,
+
+$$
+\begin{array} { r l } & { \mathring { \delta } U = + \circ ^ { \prime \prime } \circ \vartheta _ { 3 } \sin \left( { { 2 w _ { 1 } } + { 2 \psi } - \mathrm { F } } \right) - \circ ^ { \prime \prime } \circ \circ _ { 3 } \sin \left( { { 2 w _ { 1 } } + { 2 \psi } - \mathrm { F } - { 2 \mathrm { D } } } \right) } \\ & { \qquad \pm \circ ^ { \prime \prime } \circ \circ _ { 5 } \sin \left( { { 2 w _ { 1 } } + { 2 \psi } - \mathrm { F } \pm { l } } \right) - \circ ^ { \prime \prime } \circ { \mathrm { r } \mathord { \operatorname { \ i n } } } \left( { { w _ { 1 } } + { \psi } } \right) - \circ ^ { \prime \prime } \circ \circ { \mathrm { 7 } } \sin \left( { { w _ { 1 } } + { \psi } - { 2 \mathrm { D } } } \right) ; } \end{array}
+$$
+
+and,added to the elements,
+
+$$
+\begin{array} { c c }  \hat { \delta } w _ { 1 } = + \gamma ^ { \prime \prime } { } _ { 3 } \mathbf { 1 } / \mathrm {  ~ \scriptstyle ~ \lambda ~ } / \mathrm {  ~ \scriptstyle ~ \lambda ~ } / \mathrm {  ~ \scriptstyle ~ \lambda ~ } / \mathrm {  ~ \scriptstyle ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \scriptstyle ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \scriptstyle ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm {  ~ \lambda ~ } / \mathrm  \end{array}
+$$
+
+of which $\delta n , \delta e$ may be neglected.
+
+The principal term in latitude which results from these valuesi $\mathrm { s } - 8 ^ { \prime \prime } { \cdot } _ { 3 } 5 5 \sin { \big ( } w _ { 1 } { + } \psi { \big ) } .$
+
+# Section (ii). The Action of the Figure of the Moon.
+
+375. The Disturbing Function is of the same form as'that for the figure of the Eartl.Let $a ^ { \prime }$ denote the lougitude from the $\mathrm { A } ^ { \prime }$ -axis on the Moon's equator of the projection of $\mathscr { r }$ on this plane,and $\tilde { \mathrm { d } ^ { \prime } }$ the inclination of $\mathcal { r }$ to the same plane. Then if $\mathrm { { A ^ { \prime } , \mathrm { { B ^ { \prime } , \mathrm { { C ^ { \prime } , } } } } } }$ $\mathrm { J } ^ { \prime }$ be the moments of inertia,the $\mathrm { C } ^ { \prime }$ -axis being that perpendicular to the Moon's equator,and $\mathrm { I ^ { \prime } }$ the moment of inertia about $r$ ,we have, as in $\ S \ S 7 ^ { \mathrm { I } }$ ，
+
+$$
+\mathrm { A ^ { \prime } + B ^ { \prime } + C ^ { \prime } - 3 I ^ { \prime } = 3 \Big ( C ^ { \prime } - \frac { A ^ { \prime } + B ^ { \prime } } { 2 } \Big ) ( \frac { 1 } { 4 5 } - \sin ^ { 2 } \delta ^ { \prime } ) + \frac { 3 } { 2 } ( B ^ { \prime } - A ^ { \prime } ) \cos 2 a ^ { \prime } \cos ^ { 2 } \delta ^ { \prime } . }
+$$
+
+$3 7 ^ { 6 }$ .Transformation.-Now the Moon always turns the same face to the Earth, and,if we neglect the small real (not apparent) librations,its angular velocity about the $\mathrm { C } ^ { \prime }$ -axis is therefore constant and equal to $\mathscr { n }$ .Moreover, it is well known that its equator and the ecliptic intersect in a line whose longitude is $w _ { 3 }$ ； call this point on the celestial sphere $\Omega$ .The mean angular distance of the $\mathrm { A } ^ { \prime }$ axis from $\Omega$ is therefore $w _ { 1 } - w _ { 3 } .$ Hence, from the right-angled spherical triangles having each a side,one on the ecliptic and the other on the equator,and a common hypotenuse $\Omega M ,$
+
+$$
+\cos \mathrm { ~ \AA ~ } ^ { \prime } \cos \left( a ^ { \prime } + w _ { 1 } - w _ { 3 } \right) = \cos \mathrm { ~ } U \cos \left( V - w _ { 3 } \right) .
+$$
+
+If we neglect $\delta ^ { \prime } , U ^ { \prime }$ ,this gives $a ^ { \prime } = V - w _ { 1 }$ Put $a ^ { \prime } = V - \mathcal { w } _ { 1 } + \delta a ^ { \prime }$ ； then $\delta \boldsymbol { a } ^ { \prime }$ depends on squares of $\delta ^ { \prime } , U ,$ and cos ${ } _ { 2 } \boldsymbol { a } ^ { \prime } = \cos 2 \left( \boldsymbol { V } - \boldsymbol { w } _ { 1 } \right) - { } _ { 2 } \delta \boldsymbol { a } ^ { \prime } \sin \left( \boldsymbol { V } - \boldsymbol { w } _ { 1 } \right)$ As we shall neglect quantities of an order higher than the second with respect to the eccentricities and inelination,and also the inclination multiplied by $m ^ { 2 }$ ,we can neglect the second term of this last expression.Also if $\gamma = \sin { \frac { 1 } { 2 } } i$ ,and if $- i _ { 1 }$ be the inclination of the lunar equator to the eeliptic (it being well known that the ecliptic lies between the mean lunar orbit and the lunar equator), we have with sufficient accuracy
+
+$$
+\sin \delta ^ { \prime } = \sin \left( i + i _ { 1 } \right) \sin \left( V - w _ { 3 } \right) = \sin \left( i + i _ { 1 } \right) \sin \left( w _ { 1 } - w _ { 3 } \right) .
+$$
+
+Substituting, we have, for the disturbing function
+
+$$
+\lambda = \left( E + \mathcal { M } \right) \frac { \partial ^ { 2 } \mu ^ { \prime } } { \tau ^ { 3 } } \Bigg [ \frac { 1 } { 3 } - \sin ^ { 2 } \left( i + i _ { 1 } \right) \sin ^ { 2 } \left( w _ { 1 } - w _ { 5 } \right) + \left( \mu ^ { \prime \prime } / \mu ^ { \prime } \right) \cos 2 \left( V - w _ { 1 } \right) \left\{ \mathrm { I } - \sin ^ { 2 } \left( i + i _ { 1 } \right) \sin ^ { 2 } \left( w _ { 1 } - w _ { 5 } \right) \right\} \Bigg ] ,
+$$
+
+where
+
+$$
+\alpha ^ { 2 } \mu ^ { \prime } = \frac { 3 } { 2 M } \biggl ( \mathrm { C ^ { \prime } } - \frac { \mathrm { A ^ { \prime } } + \mathrm { B ^ { \prime } } } { 2 } \biggr ) , \quad \alpha ^ { 2 } \mu ^ { \prime \prime } = \frac { 3 } { 4 M } \bigl ( \mathrm { B ^ { \prime } } - \mathrm { A ^ { \prime } } \bigr ) .
+$$
+
+377. Form for computation.-The principal periodic terms have all short periods, and we need only consider the constant parts which give small constant additions to $b _ { \odot } , \ b _ { \odot }$ Now, if we retaill quantities of the orders previously noted, that is, those parts which are of the second order with respect to $e , \gamma$ ，the portions depending on $e ^ { 2 }$ will alone affect $\displaystyle \boldsymbol { b } _ { \mathrm { 3 } } ,$ and those depending on $\gamma ^ { 2 }$ will alone affect $b _ { 3 }$ Hence for the former we can put
+
+$$
+R = ( \mathit { L } ^ { \prime } + M ) \frac { a ^ { 2 } } { \rho ^ { 3 } } \big [ \frac { 1 } { 3 } \mu ^ { \prime } + \mu ^ { \prime \prime } \cos \sf { \sf { 2 } } \big ( V - w _ { 1 } \big ) \big ] ;
+$$
+
+and for the latter,
+
+$$
+R = \left( \ddot { L } + M \right) \frac { a ^ { 2 } } { r ^ { 3 } } \Big [ - \frac { 1 } { 2 } \mu ^ { ' } - \frac { 1 } { 2 } \mu ^ { ' } \Big ] \sin ^ { 2 } \left( \dot { \iota } + \dot { \iota } _ { \mathrm { i } } \right) ,
+$$
+
+in which terms of the order $\gamma ^ { 2 } \lambda \lambda ^ { 2 }$ have been neglected.
+
+Let $\rho _ { e }$ be the coefficient of $e ^ { 2 }$ in ${ \boldsymbol { \it ( l ^ { 3 } ) } } ^ { \prime } { \boldsymbol { \rho } } ^ { 3 }$ ， $\rho _ { c }$ that in $\alpha ^ { 3 } \rho ^ { - 3 } \cos ^ { 2 } \left( V - w _ { 1 } \right)$ or in $a ^ { 3 } \rho ^ { - 5 } \iota t ^ { 2 } \zeta ^ { - 2 }$ Then,referring to the disturbing function for the figure of the Earth, and remembering the formule for obtaining $\delta { \cal { b } } _ { ; ; } \delta { \cal { b } } _ { 3 }$ $\$ 270$ , Chap. X.), we see that the values of $\delta { \boldsymbol { b } } _ { 2 } , \delta { \boldsymbol { b } } _ { 3 }$ for the figures of the Moon and Earth are respectively in the ratios
+
+$$
+\mu ^ { \prime } \rho _ { e } + 3 \mu ^ { \prime \prime } \rho _ { e } : \mu ( \tau - \frac { \cdot \rangle } { z } \sin ^ { 2 } \epsilon _ { 1 } ) \rho _ { e } \quad \mathrm { a n d } \quad ( \mu ^ { \prime } + \mu ^ { \prime \prime } ) \frac { d } { \hat { \mathcal { M } } } \sin ^ { 2 } \left( \dot { \iota } + \dot { \iota } _ { 1 } \right) : \mu ( \tau - \frac { \cdot \rangle } { z } \sin ^ { 2 } \epsilon _ { 1 } ) \frac { d } { d \dot { \iota } } \sin ^ { 2 } \dot { \iota } .
+$$
+
+$\therefore 5 7 - 8$ Numerical results.-From the results in Sect. (v), Chap. $\mathrm { X } .$ ,and in the first foction of this chapter we have
+
+$$
+{ \tiny \begin{array} { c c c c c c } { - \div 3 8 6 , } & { \rho _ { \circ } = - \cdot 6 \gamma 8 , } & { \mu = + \left[ \bar { \gamma } ^ { - } 6 6 5 8 \right] , } & { \tau - \frac { \pi } { 2 } \sin ^ { 2 } \epsilon _ { 1 } = + \cdot \forall 6 2 3 , } & { \delta b _ { 2 } \cos { + 6 ^ { \prime \prime } } _ { 4 } { \bf r } , } & { \delta b _ { 3 } = - \ : 6 ^ { \prime \prime } \cos \phi , } \end{array} }
+$$
+
+the last two being the values for the figure of the Earth. Hence,for the figure of the Moon, the annual mean motions in seconds of arc are
+
+$$
+\hat { s } b _ { \underline { { { \hat { \imath } } } } } = 8 ^ { \prime \prime } \cdot _ { \mp } \operatorname { I r } \frac { \mu ^ { \prime } } { \mu } - 4 4 ^ { \prime \prime } 3 \frac { \mu ^ { \prime \prime } } { \mu } , \qquad \hat { 8 } b _ { \underline { { { 3 } } } } = - 7 ^ { \prime \prime } { \cdot } 8 _ { \tilde { \imath } } ^ { } \frac { \mu ^ { \prime } + \mu ^ { \prime \prime } } { \mu } \frac { \sin 2 ( i + i _ { 1 } ) } { \sin 2 i } ,
+$$
+
+I -hall now assume that the Earth and Moon are of similar constitution, so that $( : 1 ) 1 : \mathbb { C } : E$ in that ratio of the squares of their diameters, that is, as $\left( \cdot _ { 2 7 3 } \right) ^ { 2 } : \mathrm { ~ I ~ }$ .Ialso take
+
+$$
+\mathrm {  ~ l ~ } - \frac { \dot { \Lambda } + \mathrm {  ~ l ~ } } { 2 \dot { \left( \dot { \mathrm {  ~ \Lambda ~ } } \right) } } = \dot { \bf \cdot } \circ \circ 3 2 8 , \dot { \mathrm {  ~ \Lambda ~ } } i = \dot { \mathrm {  ~ \Im ~ } } \dot { \bf \cdot } \mathrm {  ~ I ~ } , \dot { i } _ { \mathrm {  ~ I ~ } } = \mathrm {  ~ I ~ } ^ { \circ } \dot { \mathrm {  ~ \Im ~ } } \left( \dot { \mathrm {  ~ \ S ~ } } 3 \dot { \mathrm {  ~ \Im ~ } } 9 \right) .
+$$
+
+Hence
+
+$$
+\begin{array}{c} \delta ^ { j } h _ { 2 } = \mathrm { r \cdot j \ r } ^ { \prime \prime } ( 1 - \{ \begin{array} { c } { { \bar { A } ^ { * } \cdot \frac { 1 } { \varepsilon } \cdot \mathbf { B } ^ { \prime } } } \\ { { 2 \cdot \{ \prime \} } } \end{array} \} - 5 9 3 ^ { \prime \prime } \Big ( \frac { \mathrm { B } ^ { \prime } - \mathrm { A } ^ { \prime } } { \varepsilon } \Big ) , \ \begin{array} { c } { { \delta \tilde { b } _ { \mathrm { a } } = - \mathrm {  ~ \nabla ~ } ^ { 2 } 3 \odot ^ { \prime \prime } ( \mathrm {  ~ r ~ } - \frac { \lambda ^ { \prime } } { \mathrm { C } ^ { \prime } } ) . } } \end{array}  \end{array}
+$$
+
+379. Adopted ralues for the mechunical ellipticities.-The results of Dr. F. HAys.\* for the lunar librations, give
+
+$$
+i _ { 1 } = 1 ^ { \prime } \cdot _ { 5 } \underline { { { \circ } } } ^ { \prime } , \quad \mathrm { B } ^ { \prime } - \mathrm { A } ^ { \prime } = \cdot \mathrm { \cdot } \circ \circ \circ \intercal 5 \mathrm { \widetilde { \tau } } ^ { \mathrm { C } ^ { \prime } } , \quad \mathrm { C } ^ { \prime } - \mathrm { A } ^ { \prime } = + \cdot \mathsf { o c o } 6 . 2 9 \mathrm { C } ^ { \prime } .
+$$
+
+If we accept these values, we obtain for the annual mean motions
+
+$$
+\delta b _ { \underline { { { \cdot } } } \underline { { { \cdot } } } } = \ + \circ ^ { \prime \prime } \cdot _ { 0 . 3 } , \delta b _ { \underline { { { \cdot } } } } = \ - \circ ^ { \prime \prime } \cdot _ { 1 } .
+$$
+
+In order to obtain these quantities accurately to $\mathrm { o } ^ { \prime \prime } \mathrm { \cdot _ { O I } }$ , it is necessry to know the tw $\Im \Im \mathrm { \uparrow }$ chanical ellipticities within 5 per cent. of their true values.
+
+\* Abh.der Math.-Phys. Kl. der R.-Sachs. Gess. der Wiss, vol. xxx. (19o7) p. 69.
+
+# CHAPTER XIV.
+
+THE REMAINING PERTURBATIONS.
+
+Section (i). Corrections due to the Masses of the Earth and Moon.
+
+$3 ^ { 8 0 }$ Correction due to the substitution of m' instead of $m ^ { \prime } + E + \mathcal { M }$ for ${  { \mathcal { R } } ^ { \prime } } { ^ { 2 } } {  { \mathcal { Q } } ^ { \prime } } { ^ { 3 } }$ This is noted in $\ S \ 4 \ ( a )$ ,Chap.I. It amounts to diminishing the disturbing function due to the Sun by the factor $\mathfrak { r } - ( E + \mathcal { M } ) / m ^ { \prime }$ The method of Sect. (ii), Chap. XII., might be used,but it turns out to be troublesome. It is more simple to use the ordinary method for the indirect inequalities by putting $\mathring { \boldsymbol { \mathrm { d } } } \rho ^ { \prime } = ( E + \mathcal { M } ) / 3 \boldsymbol { m } ^ { \prime }$ ， $\ S V ^ { \gamma } { = } \infty$ for periodic terms,and $R _ { 0 } = - ( E + \mathcal { M } ) F _ { 0 } / m ^ { \prime }$ for the constant term，where $\mathcal { F } _ { 0 }$ is the constant part of the disturbing function due to the Sun.
+
+$3 ^ { 8 \mathrm { I } }$ . Results.--I find, as in an earlier paper,\* for the annual mean motions,
+
+$$
+\delta b _ { 2 } = - \circ ^ { \prime \prime } { } ^ { * } { } 6 9 , \quad \delta b _ { 3 } = + \circ ^ { \prime \prime } { } ^ { * } { } ^ { * } { } ! 9 ,
+$$
+
+the constant changes of $ { \boldsymbol { \mathscr { n } } } , \ e , \  { \boldsymbol { \gamma } }$ being insensible in the coefficients of the periodic terms.
+
+The periodic changes are :
+
+$$
+\delta V = - \mathrm {  ~ \ o ~ } ^ { \prime \prime } \cdot \mathrm { o o } 7 \mathrm {  ~ \sin ~ } 2 \mathrm { D } - \mathrm {  ~ \ o ~ } ^ { \prime \prime } \cdot \mathrm { o } 2 \mathrm { o } \sin \left( \mathrm { 2 D } - \mathit { l } \right) + \mathrm { o } ^ { \prime \prime } \cdot \mathrm { o o } 3 \sin \mathrm {  ~ } \mathit { l } ^ { \prime } + \mathrm { o } ^ { \prime \prime } \cdot \mathrm { o o t } \sin \left( \mathit { l } + \mathit { l } ^ { \prime } - \mathrm { \imath } \mathrm { D } \right) ,
+$$
+
+$3 8 2$ Corrections noted in $\ S ~ 2 , \ S ~ 4 ~ ( c )$ of Chap. $I .$ --The former gives $\partial b _ { 2 } = - \mathrm { o } ^ { \prime \prime } \cdot _ { \textrm { O I } }$ ， and the latter $\delta \bar { b } _ { 2 } = + \mathrm { o } ^ { \prime \prime } \cdot _ { 0 2 }$ ， $\Delta \bar { b } _ { 3 } = - \mathrm { o } ^ { \prime \prime } \cdot _ { \mathrm { O 1 } }$
+
+Section (ii). The Terms of the Second and Higher Orders.
+
+$3 8 3$ . Sources of the terms.-In the four last chapters we have computed the perturbations due to various causes,on the assumption that certain factors which multiplied the disturbing functions were so small that their squares could be neglected. It remains to examine with some care to what extent this assumption is justifable, and to correct the expressions in the cases where it is not true.
+
+Let $R ( r ^ { \prime } , \ V ^ { \prime } , z ^ { \prime } )$ be the disturbing function due to solar action, $R _ { P }$ that due to a planet, $R _ { E }$ that due to the figures of the Earth and Moon, and ${ \mathcal R } _ { e }$ that due to the motion of the eliptic. Then if $\vartheta ^ { 2 } \gamma ^ { \prime } , \vartheta ^ { 2 } V ^ { \prime \prime }$ $\vartheta z ^ { \prime }$ be the terms of the second order in the motion of the Sun, the complete disturbing function for actions from all sources,except that in the main problem，is
+
+$$
+\delta R = R ( r ^ { \prime } + \hat { s } r ^ { \prime } + \hat { s } ^ { 2 } r ^ { \prime } , V ^ { \prime } + \delta V + \delta ^ { 2 } V ^ { \prime } , z ^ { \prime } + \hat { s } z ^ { \prime } ) - R ( r ^ { \prime } , V , \diamond ) + \Sigma R _ { P } + R _ { E } + R _ { e } , 
+$$
+
+We have previously neglected quantities of the order $( \delta R ) ^ { 2 }$ ， and have used elliptic expansions for the coordinates of the Sun and planets in the last three terms.
+
+$\it { 3 8 4 }$ .It is convenient to divide the perturbations of the second order into classes according to their nature or the sources from which they arise. I denote by $\hat { \partial }$ a perturbation of the first order,and by $\ S ^ { 2 }$ one of the second order. The several portions of $\delta ^ { 2 } R$ to be considered are as follows :-
+
+$( \mathrm { \ r A } )$ Terms due to the substitution of $c _ { i } + \delta c _ { i }$ ， $w _ { i } + \delta w _ { i }$ instead of $\textit { c } _ { i } , \textit { w } _ { i }$ in the right-hand members of the equations of variations.   
+(B) $\begin{array} { l } { { \displaystyle { \delta ^ { 2 } r ^ { \prime } , \stackrel { \widehat { c } } { \cdot } \frac { \hat { c } R } { \hat { \sigma } r ^ { \prime } } + \delta ^ { 2 } V ^ { \prime } \cdot \stackrel { \widehat { c } R } { \hat { c } V ^ { \prime } } + \delta z ^ { \prime } \cdot \stackrel { \widehat { c } R } { \hat { \sigma } z ^ { \prime } } } } } \\ { { \displaystyle { \frac { 1 } { \hat { c } } \biggl ( \delta { r ^ { \prime } } \cdot \hat { \stackrel { c } { \circ } } r ^ { \prime } + \delta V ^ { \prime } \cdot \stackrel { \widehat { \sigma } } { \hat { c } V ^ { \prime } } + z ^ { \prime } \cdot \stackrel { \widehat { \sigma } } { \hat { \sigma } z ^ { \prime } } \biggr ) ^ { 2 } R } . } } \end{array}$   
+（C）   
+(D) Additions due to periodic perturbations of the solar and planetary coordinates i $\Sigma R _ { P }$   
+(E） Changes in $\delta { R }$ due to secular or quasi-secular variations of quantities which have been treated as constants.   
+(F) Changes due to the secular variations of tle solar and planetary argunents.   
+(G) Third-order terms due to large second-order terms in the solar and planetary coordinates.   
+(H) Secular variatious of the second order in general.
+
+It is obvious,in the first place,that the only possibilities we have to consider are secular terms in $w _ { 1 } , \ w _ { 2 } ,$ $w _ { 3 }$ , and terms whose primaries are of very long period. In the second place, it is to be remembered that the variations of the elements contain terms of two kinds--those multiplied by the period of the primary,and those multiplied by the square of the period；and that the latter,for terms of very long period,are large compared with the former. Hence, except in the cases of arguments independent of thc $w _ { i }$ (in whicl case the latter terms will be shown to disappear), it is suffcient to discuss only these latter terms.Finally,the greatest efeet of these terms on the coordinates ocurs through the change in $w _ { 1 } ,$ so that it is generally suficient to discuss $\vartheta ^ { 2 } u _ { 1 } ^ { \prime }$
+
+The various classes are considered in the following paragraphs.
+
+385. (A) The canonical equations of Sect. (i), Clap. X., will be used and developed in a general manner for the second-order terms. The chief results obtained under thishending,namely,aproof thatsuch termsare insensible,practicallyconsistsin showing that a given argument arises in two ways,and that, whenever the two parts might be separately sensible, they are opposite in sign and nearly equal in magnitude.
+
+Let $\vartheta ^ { 2 } c _ { i }$ ， $\vartheta ^ { 2 } w _ { i }$ be the additions to $c _ { i }$ ， $w _ { i }$ due to the substitution of $\boldsymbol { c } _ { i } + \mathrm { \delta } \dot { \boldsymbol { \phi } } _ { i }$ $w _ { i } + \delta w _ { i }$ instead of $c _ { i }$ ， ${ \boldsymbol { \mathit { u } } } _ { i }$ in the right-hand members. Then the equations for the determination of these additions are
+
+$$
+\begin{array} { r } { \begin{array} { l } { d _ { l } ^ { 2 } \mathfrak { z } ^ { \mathrm { a } } c _ { i } = \delta \frac { \hat { \alpha } R } { \hat { \alpha } w _ { i } } , \quad \displaystyle \frac { d } { d t } \mathfrak { d } ^ { 2 } w _ { i } = \left. - \delta \frac { \hat { \alpha } R } { \hat { \alpha } c _ { i } } + \Sigma _ { k } \Bigl ( \frac { d \hat { b } _ { i } } { d c _ { k } } \hat { a } ^ { 2 } c _ { k } \Bigr ) + \frac { 1 } { 2 } \Bigl ( \Sigma _ { k } \hat { \alpha } c _ { k } \frac { d } { d c _ { k } } \Bigr ) ^ { 2 } b _ { i } \qquad . \right.} \end{array}  } \end{array}
+$$
+
+Let the first-order variations $\delta c _ { i } , \ \delta w _ { i }$ be due to a term \* in $\mathcal { R }$
+
+where $\downarrow$ is independent of the $w _ { i }$ Then
+
+$$
+\partial c _ { i } = j _ { i \atop p } ^ { \lambda } \cos \phi \ , \quad \delta w _ { i } = \left( { \frac { \lambda } { p ^ { 2 } } } \ { \frac { d p } { d c _ { i } } } - { \frac { \bf I } { p } } \ { \frac { d \lambda } { d c _ { i } } } \right) \sin \phi \ .
+$$
+
+Let any other term of $\mathcal { R }$ be
+
+$$
+\lambda ^ { \prime } \cos \phi ^ { \prime } = \lambda ^ { \prime } \cos ( p ^ { \prime } t + a ^ { \prime } ) = \lambda ^ { \prime } \cos ( { j _ { 1 } } ^ { \prime } w _ { 1 } + j _ { 2 } ^ { \prime } w _ { 2 } + j _ { 3 } ^ { \prime } w _ { 3 } + \psi ^ { \prime } ) ,
+$$
+
+where $\psi ^ { \prime }$ is independent of the $w _ { i }$ Let us consider these two terms alone； then the terms in $\vartheta ^ { 2 } { c } _ { i } , \vartheta ^ { 2 } { w } _ { i }$ will have the arguments $\phi \neq \phi ^ { \prime }$
+
+Put
+
+$$
+j _ { 1 } \frac { \hat { \sigma } } { \hat { \sigma } c _ { 1 } } + j _ { 2 } \frac { \hat { \sigma } } { \hat { \sigma } c _ { 2 } } + j _ { 3 } \frac { \hat { \sigma } } { \hat { \sigma } c _ { 3 } } = \frac { \hat { \sigma } } { \hat { \sigma } c } , \quad j _ { 1 } ^ { \prime } \frac { \hat { \sigma } } { \hat { \sigma } c _ { 1 } } + j _ { 2 } ^ { \prime } \frac { \hat { c } } { \hat { c } c _ { 2 } } + j _ { 3 } ^ { \prime } \frac { \hat { \sigma } } { \hat { c } c _ { 3 } } = \frac { \hat { c } } { \hat { c } c ^ { \prime } } \qquad .
+$$
+
+Then
+
+$$
+\begin{array} { r l } & { \delta \frac { \partial R } { \partial \psi _ { i } } = \Sigma _ { \boldsymbol { \mathscr { k } } } \Big ( \frac { \partial ^ { 2 } R } { \partial w _ { i } } \hat { c } c _ { \boldsymbol { k } } \delta c _ { \boldsymbol { k } } + \frac { \hat { c } ^ { 2 } R } { \hat { c } w _ { i } } \hat { \omega } w _ { \boldsymbol { k } } \Big ) } \\ & { \qquad = - j _ { i } ^ { \prime } \frac { \lambda } { p } \cdot \frac { d \lambda ^ { \prime } } { d c } \sin \phi ^ { \prime } \cos \phi - j _ { i } ^ { \prime } \Big ( \frac { \lambda \lambda ^ { \prime } } { p ^ { \frac { 2 } { 2 } } } \cdot \frac { d p } { d c ^ { \prime } } - \frac { \lambda ^ { \prime } } { p } \cdot \frac { d \lambda } { d c ^ { \prime } } \Big ) \cos \phi ^ { \prime } \sin \phi . } \end{array}
+$$
+
+To this must be added the term arising by making $\delta w _ { i } , \delta c _ { i }$ depend on $\phi ^ { \prime }$ and the derivatives of $\mathcal { R }$ on $\phi$ ,that is, by changing the accents.
+
+We thus get
+
+$$
+\frac { d } { d t } \tilde { \partial } ^ { 2 } \mathcal { O } _ { i } = \left[ \lambda \frac { d \lambda ^ { \prime } } { d \mathcal { O } } \left( \frac { j _ { i } } { p ^ { \prime } } - \frac { j _ { i } ^ { \prime } } { p } \right) - j _ { i } \frac { \lambda \lambda ^ { \prime } } { p ^ { \prime 2 } } \cdot \frac { d p ^ { \prime } } { d c } \right] \sin \phi ^ { \prime } \cos \phi + \ \left\{ \begin{array} { l l } { \mathrm { s i m i l a r ~ t e r m ~ w i t h } } \\ { \mathrm { a c c e n t s ~ c h a n g e d } } \end{array} \right\} ,
+$$
+
+and therefore, since $d b _ { i } / d c _ { k } = d b _ { k } / d c _ { i } ,$
+
+$$
+\frac { \ i } { \tilde { t } } \sum _ { k } \frac { d \boldsymbol { b } _ { i } } { d c _ { k } } \hat { s } ^ { 2 } e _ { k } = \frac { 1 } { 2 } \Bigg [ \bigg ( \lambda \frac { d \lambda } { d \hat { c } } , \mp \lambda \frac { d \lambda ^ { \prime } } { d c } \bigg ) \bigg ( \frac { \mathrm {  ~ I ~ } } { p } \cdot \frac { d p ^ { \prime } } { d \hat { c } _ { i } } - \frac { \mathrm {  ~ I ~ } } { p ^ { \prime } } \cdot \frac { d p } { d \alpha _ { V } } \bigg ) - \lambda \lambda \bigg ( \frac { \mathrm {  ~ I ~ } } { p ^ { 2 } } \cdot \frac { d p } { d \hat { c } } \cdot \frac { d p ^ { \prime } } { d \hat { c } _ { i } } \pm \frac { \mathrm {  ~ I ~ } } { p ^ { 2 } } \cdot \frac { d p ^ { \prime } } { d \hat { c } } \cdot \frac { d p } { d \hat { c } _ { i } } \bigg ) \Bigg ] \sin \left( \phi \pm \phi ^ { \prime } \right) ,
+$$
+
+Denote the right-hand member of this equation by $F _ { i } \sin { ( \phi + \phi ^ { \prime } ) } + F _ { i } ^ { \prime } \sin { ( \phi - \phi ^ { \prime } ) } ,$
+
+\* The symbols $j _ { 1 } , j _ { 2 } , j _ { 3 }$ are the same as the $i _ { 1 9 } \ i _ { 2 9 } \ i _ { 3 }$ of Chap. X.； the $j _ { 1 9 } \ j _ { 2 } , \ j _ { 3 }$ of that chapter are not needed here.
+
+Again,
+
+$$
+\begin{array} { r l } & { \delta \frac { \partial R } { \partial \hat { c } _ { i } } = \sum _ { a } \left( \frac { \hat { c } ^ { 2 } R } { \hat { c } \hat { c } _ { i } \hat { c } \hat { c } _ { k } } \delta ^ { a } { _ k } + \frac { \hat { a } ^ { 2 } R } { \hat { c } \hat { c } _ { i } \hat { c } w _ { k } } \delta w _ { k } \right) } \\ & { \quad = \frac { d ^ { 2 } \lambda ^ { \prime } } { \hat { d } c \hat { d } c _ { i } } \frac { \lambda } { p } \cos \phi \cos \phi - \frac { d \lambda ^ { \prime } } { d c _ { i } } \Bigl ( \frac { \lambda } { p ^ { 2 } } \cdot \frac { d p } { \hat { d } c ^ { \prime } } - \frac { \bf I } { p } \cdot d \Bigr ) \sin \phi \sin \phi ^ { \prime } + \mathrm { t w o ~ s i m i l a r ~ t e r m s } } \\ & { \quad = \frac { 1 } { 2 } \biggl [ \frac { \lambda } { p } \cdot \frac { d ^ { 2 } \lambda ^ { \prime } } { d c \hat { d } c _ { i } } + \frac { \lambda ^ { \prime } } { p ^ { \prime } } \cdot \frac { d ^ { 2 } \lambda } { \hat { d } ^ { 2 } \cdot d c _ { i } } \pm \left\{ \frac { d \lambda ^ { \prime } } { \hat { d } c _ { i } } \Bigl ( \frac { \lambda } { p ^ { 2 } } \cdot \frac { d p } { \hat { d } c ^ { \prime } } - \frac { \bf I } { p } \cdot \frac { d \lambda } { \hat { d } c ^ { \prime } } \Bigr ) + \mathrm { \frac { s i m i l a r ~ } { \hat { \Pi } } } \right\} \biggr ] \cos \left( \phi \pm \phi ^ { \prime } \right) , } \end{array}
+$$
+
+which is denoted by $G _ { i } \cos { ( \phi + \phi ^ { \prime } ) } + G _ { i } ^ { \prime } \cos { ( \phi - \phi ^ { \prime } ) } .$
+
+Finally,
+
+$$
+\scriptstyle { \frac { 1 } { 2 } } \Big ( \sum _ { \lambda } \delta e _ { k } \frac { d } { d c _ { k } } \Big ) ^ { 2 } \bar { b } _ { i } = \frac { \lambda \lambda ^ { \prime } } { \gamma p ^ { \prime } } \Big ( \sum _ { i } j _ { k } ^ { \prime } \frac { d } { d c _ { k } } \Big ) \Big ( \sum _ { k } j _ { k } \frac { d } { d e _ { k } } \Big ) b _ { i } = \frac { \lambda \lambda ^ { \prime } } { p p ^ { \prime } } \frac { d ^ { 2 } p ^ { \prime } } { d c d e _ { k } } \cos \phi \cos \phi ^ { \prime } = H _ { i } \cos \left( \phi \pm \phi ^ { \prime } \right) .
+$$
+
+Substituting these results in the second three of equations $\left( 2 \right)$ ，we obtain
+
+$$
+\begin{array} { r l r } {  { \hat { \delta } ^ { 2 } w _ { i } = \int ( H _ { i } - G _ { i } ) \cos { \big ( \phi + \phi ^ { \prime } \big ) } d t + \int \int F _ { i } \sin { \big ( \phi + \phi ^ { \prime } \big ) } d t + \mathrm { t w o ~ s i m i l a r ~ t e r m s } } } \\ & { } & { = \bigg ( \frac { H _ { i } - G _ { i } } { p + p ^ { ' } } - \frac { F _ { i } } { ( p + p ^ { ' } ) ^ { 2 } } \bigg ) \sin { \big ( \phi + \phi ^ { \prime } \big ) } + \bigg ( \frac { H _ { i } - G _ { i } ^ { ' } } { p - p ^ { ' } } - \frac { F _ { i } ^ { ' } } { ( p - p ^ { ' } ) ^ { 2 } } \bigg ) \sin { \big ( \phi - \phi ^ { \prime } \big ) } \quad . } \end{array}
+$$
+
+Since we have only to search for terms of very long period, the most important terms are those which acquire the squares of the small divisors $p { \pm } p ^ { \prime }$ ,and therefore the coefficients $F$ ， $F ^ { \prime }$ are of cliief importance.
+
+$\leavevmode { 3 8 6 }$ $\left( \alpha \right)$ Ifp, $p ^ { \prime }$ are independent of the $w _ { i } ,$ we have $\ S ^ { 2 } c _ { i } = 0$ $\vartheta ^ { 2 } w _ { i } = 0$ $3 8 7$ $( \beta )$ If $j _ { i } = j _ { i } ^ { \prime }$ and $\boldsymbol { p } \doteq \boldsymbol { p } ^ { \prime }$ ， the argument $\phi - \phi ^ { \prime }$ is of long period.In this case we have
+
+$$
+\frac { d p ^ { \prime } } { d c _ { i } } = \frac { d p } { d c _ { i } } , \quad \frac { d p } { d c } = \frac { d p ^ { \prime } } { d c } = \frac { d p } { d c ^ { \prime } } = \frac { d p ^ { \prime } } { d c } .
+$$
+
+Hence $F ^ { \prime }$ contains the factor $\boldsymbol { p } - \boldsymbol { p } ^ { \prime }$ and $\vartheta ^ { 2 } w _ { i }$ ouly acquires the first power of the small dlivisor $p - p ^ { \prime }$
+
+In no case, therefore, can the small divisor appear in its second power for terms independent of the lunar angles.
+
+$\hat { \mathsf { 3 } } ^ { \mathrm { 8 8 } }$ （） $I f j _ { i } { = } j _ { i } ^ { \prime }$ and $p \doteq - \boldsymbol { p } ^ { \prime }$ ,the argument $\phi + \phi ^ { \prime }$ is of long period. Then the possible combinations from the first-order terms show that one of two things must happen : cither $\mathit { p } , \mathit { p } ^ { \prime }$ are not small, in which case $\lambda$ ， $\lambda ^ { \prime }$ are so minute that there is no possibility of a sensible coefficient ； or $\mathit { p } , \mathit { p } ^ { \prime }$ are themselves small. In the latter case, the second term of $F _ { i }$ is the principal one,and it gives for the coeffcient,since $p \doteq - p ^ { \prime }$ ，
+
+$$
+\bar { \bar { z } } \frac { \lambda \lambda ^ { \prime } } { ( p + p ^ { \prime } ) ^ { 2 } } \Big ( \frac { \mathbf { r } } { p ^ { 2 } } + \frac { \mathbf { r } } { p ^ { \prime } } \Big ) \Big ( \frac { d p } { d \kappa } \Big ) \frac { d p } { d \kappa _ { i } } \dot { = } - \Big ( \frac { \lambda } { p ^ { 2 } } \cdot \frac { d p } { d \alpha } \Big ) \Big ( \frac { \lambda ^ { \prime } } { p ^ { \prime } \cdot \bar { z } } \cdot \frac { d p ^ { \prime } } { d c _ { i } } \Big ) \frac { p ^ { 2 } } { ( p + p ^ { \prime } ) ^ { 2 } } .
+$$
+
+This is of the order $\vartheta w _ { i } \cdot \vartheta ^ { \prime } w _ { i } \cdot p ^ { 2 } / ( p + p ^ { \prime } ) ^ { 2 }$ ，where $\boldsymbol { \delta u } _ { i } , \ \boldsymbol { \delta ^ { \prime } } _ { i } \boldsymbol { v } _ { i }$ are the frst-order terms with the arguments $\phi , \phi ^ { \prime }$ f $\boldsymbol { C }$ $C ^ { \prime }$ are the coefficients of $\delta w _ { i } , \delta w _ { i } ^ { \prime }$ expressed in seconds of are,the order of the new coefficient, also expressed in seconds of arc, is
+
+$$
+\underset { 2 0 6 2 { \bar { 6 } } } { \underbrace { \mathcal { C } \tilde { \mathcal { C } } } } _ { 5 } \left( _ { \bar { \jmath } ^ { \prime } + \bar { p ^ { \prime } } } ^ { \prime } \right) ^ { 2 } .
+$$
+
+$\mathfrak { z } ^ { 8 9 }$ (@）If $j _ { 1 } = j _ { 1 } ^ { ^ { \prime } }$ and $\boldsymbol { \wp } \doteq \boldsymbol { p } ^ { \prime }$ ,the terms in $F _ { \mathrm { 1 } } ^ { \prime }$ which have the divisor ${ \{ \boldsymbol { \jmath } - \boldsymbol { p } ^ { \prime } \} ^ { 2 } }$ have also as a factor one of the derivatives of $b _ { 2 }$ or $b _ { 3 }$ to $c _ { 2 }$ or ${ \mathcal { C } } _ { 3 } ,$ that is, the factor $\boldsymbol { \mathscr { m } } ^ { 2 }$ $\mathcal { P } \stackrel { \circ } { = } - \mathcal { p } ^ { \prime }$ ,the argument in $\{ \gamma \}$ still holds for the principal parts of $\vartheta ^ { 2 } \iota v _ { 1 }$ ,the most important variation.
+
+390. (e) $I f j _ { i } ^ { \prime } { = } 0 ,$ and $\mathcal { P } \overset { \circ } { = } \mathcal { p } ^ { \prime }$ then $-  { F _ { i } } ^ { \prime } / ( p - p ^ { \prime } ) ^ { 2 }$ becomes
+
+$$
+\frac { \lambda } { p ^ { \prime } } \cdot \frac { d \lambda ^ { \prime } } { d c } \cdot \frac { d p } { d e _ { i } } \cdot \frac { \texttt { I } } { ( p - p ^ { \prime } ) ^ { 2 } } = ( j _ { 1 } \delta ^ { \prime } w _ { 1 } + j _ { 2 } \delta ^ { \prime } w _ { 2 } + j _ { 3 } \delta ^ { \prime } w _ { 3 } ) \Big ( - \frac { \lambda } { p ^ { 2 } } \cdot \frac { d p } { d e _ { i } } \Big ) \Big ( \frac { p } { p - p ^ { \prime } } \Big ) ^ { 2 } ,
+$$
+
+$\tilde { \mathscr { H } } _ { i } = \mathrm { O }$ and
+
+$$
+- \frac { G _ { i } ^ { \prime } } { p - p ^ { \prime } } = - \frac { 1 } { 2 } \biggl [ \frac { \lambda } { p } \cdot \frac { d ^ { 2 } \lambda ^ { \prime } } { d c d c _ { i } } + \frac { d \lambda } { d c _ { i } } \cdot \frac { \mathrm {  ~ r ~ } } { p ^ { \prime } } \cdot \frac { d \lambda ^ { \prime } } { d c } \biggr ] \frac { \mathrm {  ~ r ~ } } { p - p ^ { \prime } } = - \frac { 1 } { 2 } \frac { p } { p - p } \cdot \frac { d } { d c _ { i } } \biggl ( \frac { \lambda } { p ^ { \prime } { \mathrm {  ~ r ~ } } ^ { 2 } } \cdot \frac { d \lambda ^ { \prime } } { d c } \biggr ) .
+$$
+
+The principal term is the former of these two.
+
+Other cases are treated in like manner. The net result is that terms independent of the lunar arguments only acquire the small divisor P-p', while those containing the lunar arguments are at most of order $( \mathrm { \delta } w _ { i } ) ( \mathrm { \delta } ^ { \mathrm { \tiny { \beta } } ^ { \prime } } w _ { i } ) p ^ { 2 } / ( p - p ^ { \prime 2 } )$ A somewhat closer examination is only necessary when the latter class of terms cannot be neglected at this first test. No sensible terms have been found.
+
+391. $( \zeta )$ For secular terms, we have $\delta { { c } _ { i } } = 0$ $\partial k ^ { \ i } / \partial w _ { i } = 0$ and therefore $\begin{array} { r } { \vartheta ^ { 2 } \mathcal { C } _ { i } = \boldsymbol { \mathrm { O } } _ { \vartheta } } \end{array}$ 8W;=o. However,certain changes have been made in the arbitrary constants giving changes $\boldsymbol { \delta } _ { 0 } \boldsymbol { c } _ { i }$ .But these only produce constant changes in the $d \vartheta ^ { 2 } w _ { i } / d t$ and therefore further changes in the arbitraries ； the latter are insensible.
+
+But secular terms may arise from the combination of two terms of the first order of the form $( a + b t )$ sin $\phi$ $( a ^ { \prime } + b ^ { \prime } t ) \sin \phi ^ { \prime }$ where $\phi , \phi ^ { \prime }$ are either equal or where their periods differ by so small an amount that $\phi - \phi ^ { \prime }$ may be treated as secular, and $a , \ a ^ { \prime } , \ b , \ b ^ { \prime }$ are constants. Owing to the minuteness of $\bar { b } , \bar { b } ^ { \prime }$ ， such terms are entirely insensible.
+
+392. (B) These terms are treated in exactly the same way as the indirect terms of the first order. They are computed in $\ S \ 4 0 2$ below. There are no sensible portions depending on $\tilde { \mathrm { d } } z ^ { \prime }$
+
+393. (C) These terms are of the order of the indirect disturbing function of Chap. XII. multiplied by $3 ^ { \vartheta \rho ^ { \prime } }$ 0r $\ S V ^ { \prime }$ If $p$ be the mean motion of a term obtained in that chapter, and $p ^ { \prime }$ that of a term in $\delta \boldsymbol { \rho } ^ { \prime }$ or $\delta \mathcal { V } ^ { \prime }$ ,the worst case is easily seen to be of the order
+
+$$
+{ \frac { 3 \cdot \mathrm { I } \circ } { 2 \circ 6 2 6 } } _ { 5 } \cdot { \frac { p } { 1 ^ { \prime } - p ^ { \prime } } } = { \frac { \mathrm { I } } { 7 \circ \circ \circ } } \cdot { \frac { p } { p - p ^ { \prime } } } { \mathrm { ~ s e c o n d s ~ o f ~ a r c } } ,
+$$
+
+for terms independent of the lunar angles, since the largest term in $\delta \rho ^ { \prime }$ or $\ 8 \mathcal { V } ^ { \prime }$ is less than $\mathrm { ~ I ~ O ~ } ^ { \prime \prime } ,$ , and there is no term due to indirect action having a coeficient so great as ${ 2 ^ { \prime \prime } }$
+
+For terms dependent on the lunar angles we obtain the order
+
+$$
+\frac { \mathbf { \phi } ^ { \mathrm { ~ I ~ } } } { 7 0 0 0 } \bigg ( \frac { p } { p - \mathit { p } ^ { \prime } } \bigg ) ^ { 2 } \ : \mathrm { s e c o n d s } \ : ,
+$$
+
+and a brief examination is necessary. It is easy to see that,if ${ \ w } _ { \mathfrak { T } }$ is present, $\delta \boldsymbol { \rho } ^ { \prime }$ ， $\vartheta \mathcal { V } ^ { \prime }$ must have periods comparable with the month, and must, therefore, have coeffcients
+
+too minute to produce sensible effects. When $w _ { 1 }$ is not present, there are only one or two terms to consider (the most probable of which arise from the action of Jupiter); these were examined and were found to be quite insensible.
+
+394. (D） These inequalities cause additions
+
+$$
+\begin{array} { r l } & { \hat { \mathfrak { s } } ^ { 2 } R = \bigg [ \hat { \mathfrak { s } } \rho ^ { \prime } ( - 3 - I ) + \hat { \mathfrak { s } } \rho ^ { \prime \prime } \cdot I + \hat { \mathfrak { s } } ( V ^ { \prime } - V ^ { \prime \prime } ) \bigg ( \frac { d } { d \epsilon } + \frac { d } { d \overline { { \varpi } } ^ { \prime } } \bigg ) \bigg ] \mathfrak { L } R _ { P } \quad \mathrm { f o r ~ i n n e r ~ p l a n e t s } , \quad \mathrm { ~ . } } \\ & { \hat { \mathfrak { s } } ^ { 2 } R = \bigg [ \hat { \mathfrak { s } } \rho \cdot I + \hat { \mathfrak { s } } \rho ^ { \prime \prime } ( - 3 - I ) + \hat { \mathfrak { s } } ( V ^ { \prime } - V ^ { \prime \prime } ) \bigg ( \frac { d } { d \epsilon } + \frac { d } { d \overline { { \varpi } } ^ { \prime } } \bigg ) \bigg ] \mathfrak { L } R _ { P } \quad \mathrm { f o r ~ o u t e r ~ p l a n e t s } , \quad \mathrm { ~ . } } \end{array}
+$$
+
+where $\delta \rho ^ { \prime \prime } , \delta V ^ { \prime \prime }$ refer,in any term, to the same planet as that to which the $R _ { P }$ for that term belongs ; $R _ { P }$ is confined to that part independent of $a / a ^ { \prime }$ ，and $I$ is defined in $\ S \ 2 9 6$ ,Chap. XI.
+
+To obtaiu the order of magnitude of the coeficient it will be sufficient to consider terms for which $\boldsymbol { I }$ or the derivatives with respect to $\epsilon ^ { \prime } , \varpi ^ { \prime }$ produce a factor not greater than 2o.Also,since $\delta \rho ^ { \prime }$ ， $\delta \rho ^ { \prime \prime }$ are of the same or of higher order of small quantities than $\vartheta V ^ { \prime } , \vartheta V ^ { \prime \prime }$ ,we use the latter. Proceeding as in case (C), we obtain for the maximum order of $\vartheta ^ { 2 } \mathcal { w } _ { 1 }$
+
+$$
+{ _ { 2 \odot } } ^ { \delta V \cdot \delta ( V ^ { \prime } - V ^ { \prime \prime } ) } { \binom { p } { p - p ^ { \prime } } } ^ { 2 } \doteq ^ { \delta V \cdot \delta ( V ^ { \prime } - V ^ { \prime \prime } ) } { \binom { p } { p - p ^ { \prime } } } ^ { 2 } ,
+$$
+
+in which every term, as well as the result, is expressed in seconds of arc.
+
+For inequalities independent of the Moon angles, the factor $\mathcal { P } _ { / } ^ { / ( p - p ^ { \prime } ) }$ only occurs in its first power, and we use $\delta \rho ^ { \prime }$ or $\delta \rho ^ { \prime \prime }$ in the place of $\delta ( V ^ { \prime } - V ^ { \prime \prime } )$
+
+This method provides for terms which arise with a sensible first-order term,that is, with a term in $\delta V$ already obtained. But there may be other combinations due to terms in $\delta V$ previously neglected. Since $\delta ( V ^ { \prime } - V ^ { \prime \prime } )$ must be very minute for terms of short period relative to the year, we need only consider terms of long period in $\delta V$ relative to the month,and from such terms those containing multiples of $w _ { 1 }$ higher than the first can be certainly excluded.A detailed consideration (which will be omitted) of the manner in which the various quantities enter into $\delta V$ gives a maximum value for $\vartheta ^ { 2 } \vartheta _ { 1 } ,$ in the case of Venus, of about $2 \mathrm { O } \vec { \mathrm { o } } ( V ^ { \prime } - \mathrm { F } ^ { \prime \prime } ) / \mathrm { s } ^ { 2 }$ ，where s is the number of seconds in the daily motion of the angles $\phi \pm \phi ^ { \prime }$ ,and $\ B ^ { \parallel } ( ) ^ { \parallel }$ ， $\vartheta V ^ { \prime \prime }$ express the number of seconds of arc in the coefficients of the terms in $V ^ { \prime }$ ， $V ^ { \prime \prime }$ under consideration.
+
+395. First let us exclude from $\delta V ^ { \prime \prime }$ all perturbations but those produced by the Earth.Then the maximum value of $\delta ( V ^ { \prime } - V ^ { \prime \prime } )$ is $\mathrm { ~ I ~ O ~ } ^ { \prime \prime }$ and if we neglect coefficients in ${ \vec { \mathcal { G } } } ^ { 2 } { } _ { i } { \ell _ { \mathrm { ~ I ~ } } ^ { 3 } }$ less than $\mathrm { O } ^ { \prime \prime \cdot _ { \mathrm { I } } }$ , we obtain a maximum value for s of $4 4 ^ { \prime \prime }$ Similar considerations for all the planets give numbers exhibited in the folowing table, which shows the maxinum value of s for different combinations of $\vartheta V ^ { \prime }$ with $R _ { P }$ or $R _ { \mathrm { E } }$ .In the principal diagonal, where the suffixes are the same, $\delta ( V ^ { \prime } - V ^ { \prime \prime } )$ must be understood；the suffixes denote the sources of the terms. Values of s less than $\mathrm { ~ I ~ } ^ { \prime \prime }$ are put down as zeros.The last row refers to the elipticity terms; $R _ { e }$ is too small to give anything sensible.
+
+Maxima of s for a Coeffcient in $\delta V$ of $\mathrm { o } ^ { \prime \prime \cdot _ { \mathtt { I } } }$
+
+<table><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>8V</td><td rowspan=1 colspan=1>8V</td><td rowspan=1 colspan=1>8V</td><td rowspan=1 colspan=1>6V</td><td rowspan=1 colspan=1>8V</td></tr><tr><td rowspan=1 colspan=1>R</td><td rowspan=1 colspan=1>44</td><td rowspan=1 colspan=1>44</td><td rowspan=1 colspan=1>24</td><td rowspan=1 colspan=1>24</td><td rowspan=1 colspan=1>2</td></tr><tr><td rowspan=1 colspan=1>Rv</td><td rowspan=1 colspan=1>44</td><td rowspan=1 colspan=1>60</td><td rowspan=1 colspan=1>24</td><td rowspan=1 colspan=1>24</td><td rowspan=1 colspan=1>2</td></tr><tr><td rowspan=1 colspan=1>B</td><td rowspan=1 colspan=1>7</td><td rowspan=1 colspan=1>7</td><td rowspan=1 colspan=1>7</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>。</td></tr><tr><td rowspan=1 colspan=1>Rg</td><td rowspan=1 colspan=1>14</td><td rowspan=1 colspan=1>14</td><td rowspan=1 colspan=1>7</td><td rowspan=1 colspan=1>7</td><td rowspan=1 colspan=1>0</td></tr><tr><td rowspan=1 colspan=1>R</td><td rowspan=1 colspan=1>7</td><td rowspan=1 colspan=1>7</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>2</td></tr><tr><td rowspan=1 colspan=1>R</td><td rowspan=1 colspan=1>44</td><td rowspan=1 colspan=1>44</td><td rowspan=1 colspan=1>7</td><td rowspan=1 colspan=1>14</td><td rowspan=1 colspan=1>7</td></tr></table>
+
+Since the coeffcient in $\delta ^ { 2 } V$ varies inversely as the square of s, this table shows that for a coefficient of 1" in 8²V the value of s must be less than 6", or the period greater than 6oo years.
+
+The numbers in this table are only rough approximations； but even if they ought to have been twice as great,it would simply have meant that the corresponding coefficient in &² V should be taken as O"'4 instead of o"1. It will in any case retain any sensible coefficients. In fact,for periods of over Ioo years or so,the minimum sensible coeficient will certainly be less than $\mathrm { O } ^ { \prime \prime \cdot } \mathrm { \bar { \mathrm { \Omega } } } _ { \mathrm { I } } t _ { c } ,$ where $t _ { c }$ is the number of centuries in the period.
+
+The various combinations have been considered in the same manner as that employed in Sect. (ii), Chap. XI. There appeared to be only one which might give a sensible coefficient, namely, the combination
+
+$$
+( l + \mathrm { { r 6 T } - \mathrm { { r 8 V } ^ { \circ } } } ) - ( \mathrm { { r 3 T } - 8 V } ) = l + \mathrm { { 3 T } - \mathrm { { r 0 V } , } }
+$$
+
+which has a period of I9oo years. This is therefore a second approximation to a tern due to direct action and given in Chap. XI.
+
+There are no sensible combinations of terms independent of the lunar angles.
+
+396. In the above,all terms in $\vartheta V ^ { \prime \prime }$ ， $\delta \rho ^ { \prime \prime }$ which arise from planets other than the Earth have been omitted,but for these omitted terms the mutual perturbations in the lunar disturbing function cancel one another very nearly. For example,the great in-equalities in Jupiter and Saturn with argument $\mathrm { 5 ^ { S - 2 J } }$ appear in both $R _ { \mathrm { { S } } }$ and $R _ { s }$ Now, LEVERRIER has shown \* that the effect of such terms on the motion of the Earth may be neglected provided we take J, S to represent the mean longitude, as affected by the great inequality instead of the mean longitude alone. But, for such terms, the lunar disturbing function for the direct action only differs from the Earth's disturbing fuiction by certain constant factors and by certain operators $k _ { 0 } + k _ { 1 } a ^ { \prime } d _ { \prime } d a ^ { \prime } + k _ { 2 } ( { a ^ { \prime } d } / { d a ^ { \prime } } ) ^ { 2 }$ $k _ { 0 }$ ， $k _ { 1 }$ ， $k _ { 2 }$ ,.. being certain constants independent of the disturbing functions (Sect. (i). Chap. XI.). The terms produced by ko nearly cancel one another, while Jupiter and Saturn are so far away that the other terms are very small. A rough calculation shows that terms from this source are quite insensible.
+
+Ann. Obs. Paris, vol. ii.
+
+Hence,the terms of this nature are sufficiently acceounted for by adding the danetary perturbations to the mean motions of the arguments of the planets.
+
+397. (E) For these secular terms, the investigation of Sect. (ii), Chap. XII., shows hat it is suffcient to insert the disturbed values in the final results.The only term which can be affected is the great inequality due to Venus. Tbis depends chiefly on rand $\vartheta \gamma ^ { \prime \prime } / \gamma ^ { \prime \prime } = t _ { c } / 3 4 0 0$ where $t _ { c }$ is the number of centuries from $1 8 5 0 \mathrm { { \cdot } } 0$ The naximum change is therefore less than $\mathrm { { \odot } ^ { \prime \prime } { \cdot } _ { \bigcirc 1 } }$ per century and is quite inappreciable.
+
+398.(F) These motions should properly be inserted in the arguments before livision by s or $\mathsf { S } ^ { 2 }$ ，and this is sufficient to account for them. There are only two erms:which can be sensibly affected， those with arguments $l + \mathrm { { 1 6 T - \mathrm { { 1 8 V } } } }$ and +3T-1oV. The term with argument $2 \psi + 2 \varpi ^ { \prime }$ period $_ { 1 } \mathrm { o } , \mathrm { o o o }$ years, due to the gure of theEarth,hasa coeficient less than $\mathrm { { { o } ^ { \prime \prime } { \cdot _ { \mathrm { { O } 1 } } } } }$ (according to Dr Hill,\* $0 ^ { \prime \prime } { \cdot } _ { \infty 0 2 5 } )$
+
+399. (G) There are a few second-order terms in the motions of the planets which, heninserted in the disturbing function for the direct action,might produce sensible hird-order terms in the Moon's motion. A list of these was made and the possible ombinations considered, but nothing sensible was found.
+
+400. (H) Secular variations.-It is a fact well known in the planetary theory hatthe secular variatious of the planetary elements do not produce secular variations the function which is the inverse distance between the planets. But the disturbing unetion which has.been used for the direct action depends mainly on derivatives of heplanetary disturbing function with respect to the Earth's distance and mean ongitude.Hence tle secular motions of the planetary perihelia and nodes can roduce no secular changes in the Moon's motions through the direct action. In the me way the part arising through $\delta \boldsymbol { \omega } ^ { \prime }$ in the indirect action is insensible.
+
+We have then tle ellpticity terms to consider.Here we have taken $\epsilon _ { 1 }$ tle nelination of the ecliptic (whicli was considered as fixed) to the equator, to be constant. Vhen the motion is referred to the moving plane of reference,it might be thought iatthis would introduce a secular term of the second order. But the principal part the motion of the ecliptic only produces a periodic term of period equal to that of eMoon's node,and the principal perturbation produced by the figure of the rth is also a periodic term whose period is that of the Moon's node plus the reession.The term of the secold order which might be sensible is therefore nehaving a period wlich is the difference between these periods,that is,a term lependent of the lunar angles and of period equal to that of the precession；it therefore quasi-secular.But it is easier to treat it by the method of§385,and aenthe theorem that the first power of its period will be the only multiplier nding to make the coefficient large comes into play.If we expand the term in form a+bte+cte²+..,the portion α+bt is only a slight alteration to the mean mgitude (an observed quantity),and thesecular part $c t _ { c } ^ { \mathrm { ~ 2 ~ } }$ will therefore have the first wer of the period as a divisor,andconsequently may be expected to bevery small.
+
+The period is somewhat altered owing to the motion of T,but the argument is unaffected, since $\tau$ is only present with $w _ { 3 }$
+
+I have computed this term in the following scction,and have found $\mathrm { O } ^ { \prime \prime . } \mathrm { I } \ 5$ for the coefficient of the periodic term, and consequently,for the secular acceleration during historic times, $\mathrm { O } ^ { \prime \prime } \mathrm { \overleftarrow { \mathrm { 0 0 0 1 } } } t _ { e } ^ { \mathrm { ~ 2 ~ } }$ , a quantity quite insensible.
+
+The theorem that periodic terms of the first and second orders independent of the lunar angles can never receive multipliers higher than the first power of the long period practically enables one to reject any possibilities of secular or quasi-secular terms arising from perturbations of the second order, whatever may be the source.
+
+401. Summary.-We have to find :
+
+Case (B). The indirect efect of the solar terms whose arguments are $4 ^ { \mathrm { M } - } 7 ^ { \mathrm { T } + } 3 ^ { \mathrm { V } } ,$ $3 ^ { \mathrm { J } } - 8 \mathrm { M } + 4 \mathrm { T }$ In longitude these are, according to NEwcoMB,\*
+
+$$
+\begin{array} { r } { \hat { \delta } ^ { 2 } V ^ { \prime } = + \mathrm { o } ^ { \prime \prime \prime _ { * } } 2 6 6 \sin \left( 3 3 2 ^ { \circ _ { * } } 3 + \mathrm { \pi } \mathrm { I } 9 ^ { \circ _ { * } } \circ t _ { c } \right) + 6 ^ { \prime \prime } { \boldsymbol { * } } _ { \mathrm { 4 } } \circ \sin \left( 2 2 \mathrm { \pi } ^ { \circ _ { * } } \mathrm { _ { I } } + 2 \mathrm { o } ^ { \circ _ { * } } 2 t _ { * } \right) , } \end{array}
+$$
+
+where t, is the number of centuries from 18500.
+
+Case (D). The term of argument l+3T- 1oV due to substitution of the periodic variations of the coordinates of the Earth and Venus of period 13T-8V in the disturbing function for the direct action.
+
+Case (F). The insertion of the motions of the perihelia and nodes in the arguments l+16T-18V,l+3T-1oV,with the resulting changes in the divisors s² and the coefficeients of the terms.
+
+Section (ii). Calculation of the Terms.
+
+402. Case (B). We require $\vartheta ^ { 2 } \rho ^ { \prime }$ and we only know $\vartheta ^ { 2 } \vartheta ^ { \prime }$ Now， $\vartheta ^ { 2 } \rho ^ { \prime }$ depends mainly on d'/d',and for terms of very long period we have
+
+$$
+\begin{array} { r } { \delta ^ { 2 } V ^ { \prime } = \delta ^ { \mathrm { 2 } } \mathrm { T } ^ { \prime } = - \frac { \ast } { 2 } \displaystyle \int \frac { \hat { \delta } ^ { 2 } a ^ { \prime } } { a ^ { \prime } } n ^ { \prime } d t , } \end{array}
+$$
+
+so that, approximately,
+
+$$
+\delta ^ { 2 } \rho ^ { \prime } = { \frac { \delta ^ { 2 } a ^ { \prime } } { \it 4 ^ { ' } } } = - { \frac { \it 2 } { \it 3 } } { \frac { 1 } { n ^ { \prime } } } { \frac { d } { d t } } ( \delta ^ { 2 } V ^ { \prime } ) \cdot
+$$
+
+But the methods of Sect. (i), Chap. X.,and of Sect. (i), Chap. XI1., give
+
+$$
+\begin{array} { r l } & { \hat { \delta } ^ { \mathrm { 2 } } \mathrm { T } = \frac { 1 } { \bar { \alpha } ^ { \mathrm { 2 } } \bar { \beta } } \displaystyle \int \frac { \bar { d } } { { d } n } \hat { \delta } ^ { \mathrm { 2 } } R d t = - \frac { 3 } { 4 } \frac { n ^ { \prime 2 } } { \bar { \alpha } ^ { \mathrm { 2 } } \bar { \beta } } \displaystyle \int \hat { \delta } ^ { \mathrm { 2 } } \rho ^ { \prime } \frac { \bar { d } } { \bar { d } n } \{ ( M _ { 1 } + \frac { 5 } { 2 } M _ { \mathrm { 2 } } ) _ { 0 } { \mathbf a } ^ { \mathrm { 2 } } \} d t } \\ & { \qquad \quad = \frac { 1 } { 2 } \frac { n ^ { \prime } } { n } \cdot \displaystyle \frac { 1 } { \bar { \beta } a ^ { \mathrm { 2 } } } \cdot n \frac { d } { d n } \{ ( M _ { 1 } + \frac { 3 } { 2 } M _ { \mathrm { 2 } } ) _ { 0 } { \mathbf a } ^ { \mathrm { 2 } } \} \hat { \delta } ^ { \mathrm { 2 } } V ^ { \prime } = - \left[ \overline { { { \mathbf T } } } \cdot { \mathbf I } \operatorname { I } \operatorname { J } { \mathbf 3 } \right] \hat { \delta } ^ { \mathrm { 2 } } V ^ { \prime } , } \end{array}
+$$
+
+approximately ； here the sufix $\bigcirc$ denotes the values of $M _ { 1 } , M _ { 2 }$ from Sect. (v), Chap. X. corresponding to $\theta = \mathrm { O } ,$
+
+This formula, similar to that obtained for first-order terms by RADAU,t who however, neglects Mz, gives for the two terms mentioned in the previous section
+
+$$
+\delta ^ { 2 } w _ { 1 } = + \mathrm { o } ^ { \prime \prime } { \scriptstyle * _ { 0 4 } } \sin \left( \mathrm { \tt { r } } { \scriptstyle \xi _ { 2 } } ^ { \circ } + \mathrm { \tt { r } } { \mathrm { \tt { 1 9 } } } ^ { \circ } { \scriptstyle * _ { 0 \ell _ { c } } } \right) + \mathrm { o } ^ { \prime \prime } { \scriptstyle \xi _ { 4 } } \sin \left( 4 \mathrm { \tt { r } } ^ { \circ } { \scriptstyle * _ { \mathrm { { I } } } } + 2 0 \mathrm { \Lambda } ^ { \circ } { \scriptstyle * _ { 2 \ell _ { c } } } \right) .
+$$
+
+Case (D). The term of argument l+16T-18V+151°O= arises from a this argument in Rp. The term of argument l+3T-1oV+a°=-Φ'arises from a term in $\vartheta ^ { 2 } R$
+
+$$
+\Bigl ( \frac { d R \mathrm { v } } { d \epsilon ^ { ' } } + \frac { d R \mathrm { v } } { d \widetilde { \omega } ^ { \prime } } \Bigr ) \delta ( \mathrm { T } - \mathrm { V } ) ,
+$$
+
+T is the term of argument $\phi ^ { \prime }$ in the Earth's mean longitude,and $\delta \mathbb { V }$ a term of me argument in the mean longitude of Venus.
+
+om NEwcOMe's computations \* $\delta \mathrm { V } = - \left( 1 { } ^ { \cdot } 9 2 / \mathrm { I } { } ^ { \cdot } 4 4 \right) \delta ^ { \prime } \mathrm { I }$ , s0 that
+
+$$
+{ \delta \mathrm { T - } \delta \mathrm { V } = + \frac { 3 ^ { \cdot } 3 6 } { \mathrm { \bf ~ r } ^ { \prime } 4 4 } \mathrm { \bf ~ r } ^ { \prime \prime } { \cdot } 8 9 \sin { \left( \mathrm { \bf ~ r } 3 \mathrm { \bf T } - 8 \mathrm { \bf V } + \mathrm { \bf ~ r } 3 4 ^ { \circ } \right) } = + 4 ^ { \prime \prime } 4 \mathrm { \bf ~ r } \sin { \left( \mathrm { \bf ~ r } 3 \mathrm { \bf T } - 8 \mathrm { \bf V } + \mathrm { \bf ~ r } 3 4 ^ { \circ } \right) } . }
+$$
+
+duce the new term from that with argument \$ which has a coeficient in δV of we must multiply by -16 to account for d/de'+0/0w',by (13o1/1:85)² for the ein the value of s², by δT-δV,by for the change of the product of two sines He eosine of the difference of Φ,Φ',and divide by 2o6265 for the reduction to This gives
+
+$$
+\begin{array} { r l } { \mathfrak { S } ^ { \mathrm { 2 V } } = } & { \ ( - \mathfrak { x } 6 ) \big ( \mathfrak { x } 4 ^ { \cdot } \mathfrak { S } \big ) \bigg ( \frac { \mathfrak { I } _ { 3 } ^ { \cdot } \circ \mathfrak { I } } { \mathfrak { x } ^ { \cdot } \mathfrak { S } _ { 5 } } \bigg ) ^ { 2 } \binom { \mathfrak { x } } { \mathfrak { T } } \big ( 4 ^ { \cdot } 4 \mathfrak { I } \big ) \frac { \mathfrak { I } } { 2 0 6 2 6 } \sin \big ( { l } + { 3 \mathbf { \bar { T } } } - \mathfrak { x } \circ \nabla + \mathfrak { x } { 7 } ^ { \circ } \big ) } \\ & { \ \qquad = - \mathfrak { o } ^ { \prime \prime } \mathfrak { x } 2 \sin \big ( { l } + { 3 \mathbf { \bar { T } } } - \mathfrak { r } \circ \nabla + \mathfrak { x } { 7 } ^ { \circ } \big ) . } \end{array}
+$$
+
+This reduces the term of this period (see $\ S \ S ^ { \ 6 } )$ to $+ \mathrm { O } ^ { \prime \prime \cdot _ { 2 3 } }$ sin $( { \mathit { l } } + 3 \mathrm { { T } } - \mathrm { { r o } } \nabla + 2 \mathrm { { r } } ^ { \circ } )$ . 4: Case (F). The principal part of the term with argument l + 16T-18V + 151°°O tained from $l + \mathrm { { r 6 T - 1 8 V + 2 } } h ^ { \prime \prime }$ where $\bar { \hbar } ^ { \prime \prime }$ is the longitude of the node of Venus. node has a daily motion of $- \mathrm { O } ^ { \prime \prime } \mathrm { \cdot } _ { \mathrm { O } 5 }$ , so that the daily motion of the argument is IIi instead of - 13"o1. The coefficient (14"49) must therefore be diminished ratio of the squares of these two numbers, that is, by $\mathrm { O } ^ { \prime \prime . } 2 2$ .This is the only le effect that terms of the second order have on the great Venus inequality.
+
+he coefficient of the other term depends chiefly on $l + 3 \mathrm { T } - 1 0 \mathrm { V } + \varpi ^ { \prime } + 6 h ^ { \prime \prime }$ The motion of the two latter terms of this argument, which were the parts previously ted,is $\ldots \mathrm { O } ^ { \prime \prime \bullet } 2 6$ ,and of the former three, $\mathrm { ~ + ~ I ~ } ^ { \prime \prime \cdot } 8 5$ Hence the coefficient must be sed in the ratio $( \mathrm { \Delta I } \cdot 8 5 / 1 \cdot 5 9 ) ^ { 2 }$ It was found in case (D) to be $\mathrm { O } ^ { \prime \prime . } 2 3$ ；its final istherefore $+ \textnormal { O } ^ { \prime \prime , } \textnormal { \textmu }$
+
+he motion of $\gamma ^ { * }$ in the argument $w _ { 3 } \cdots \tau$ due to the motion of the ecliptic was ted. It has a daily mean motion of $+ \mathrm { o } ^ { \prime \prime \cdot } \mathrm { o } 9$ ， so that the coefcients must be shed by about $\mathrm { ~ I ~ } / \mathrm { ~ I ~ } 8 0 0$ of their value.
+
+25 $A$ special term in the secular acceleration due to the motion of the ecliptic figure of the Earth.-The arguments of the principal terms due to the motion ecliptic and the figure of the Earth are respectively $\phi = w _ { 8 } + 9 6 ^ { \circ } \cdot 2 - \mathrm { o } ^ { \prime \prime } \cdot _ { 0 9 } t$ ， +o"14t,where the coefficientsof $t$ are the daily motions of $\boldsymbol { \tau }$ and of the Son respectively.The argument $\phi - \phi ^ { \prime }$ is therefore $- \boldsymbol { \mathrm { O } } ^ { \prime \prime } { } ^ { * } 2 3 ^ { t } + 9 6 ^ { \circ } { } \cdot 2$ Thisis eeular,but it is more easily treated as periodic by the formule of case (A) of the previous section. It is independent of the $n _ { i }$ ，and therefore only receives the first power of the period as a large multiplier.
+
+We have $j _ { 1 } = j _ { 2 } = { j _ { 1 } } ^ { \prime } = { j _ { 2 } } ^ { \prime } = 0 , { j _ { 3 } } = { j _ { 3 } } ^ { \prime } = 1 , { p = b _ { 3 } } - \mathrm { o } ^ { \prime \prime } \cdot \mathrm { o } 9 , \mathrm { ~ } p ^ { \prime } = b _ { 3 } + \mathrm { o } 9 ,$ .Since $b _ { 3 }$ has a daily motion $\mathrm { { 0 f - 1 9 0 } ^ { \prime \prime } { \cdot 8 } }$ ,we can put $\mathcal { P } = \mathcal { p } ^ { \prime } = \mathcal { b } _ { 3 }$ ，except when they occur in the combination $\boldsymbol { p } - \boldsymbol { p } ^ { \prime }$
+
+Substituting in the formulae of $\ S \ 3 8 5$ ,and remembering that we only need $\vartheta ^ { 2 } w _ { 1 } ,$
+
+$$
+\frac { - F _ { 1 } ^ { \prime } } { ( p - p ^ { \prime } ) ^ { 2 } } = \frac { 1 } { : } \cdot \frac { 1 } { p - p ^ { \prime } } \Big ( \lambda ^ { \prime } \frac { d \lambda } { d c _ { 3 } } + \lambda \frac { d \lambda ^ { \prime } } { d c _ { 3 } } \Big ) \frac { \mathrm {  ~ r ~ } } { b _ { 3 } ^ { ~ 2 } } \frac { d \bar { b } _ { 3 } } { d c _ { 1 } } - \frac { \lambda \lambda ^ { \prime } } { p - p ^ { \prime } } \cdot \frac { \mathrm {  ~ r ~ } } { b _ { 3 } ^ { ~ 2 } } \cdot \frac { d \bar { b } _ { 3 } } { d c _ { 1 } } \cdot \frac { d \bar { b } _ { 3 } } { d c _ { 3 } } .
+$$
+
+Now $\lambda , \lambda ^ { \prime }$ contain the factor $\mathrm { k }$ and $c _ { 3 } = - 2 \mathrm { k } ^ { 2 } \eta a ^ { 2 }$ approximately. Hence
+
+$$
+\frac { - F _ { 1 } ^ { \prime } } { ( p - p ^ { \prime } ) ^ { 2 } } { = } \frac { \lambda \lambda ^ { \prime } } { 2 { b _ { 0 } } ^ { 2 } ( p - p ^ { \prime } ) } \frac { \mathrm { ~  ~ r ~ } } { c _ { 3 } } \frac { d \mathit { l } _ { 3 } } { d c _ { 1 } } \overline { { \left[ \mathrm { ~ \bf ~ I ~ } - \frac { 2 c _ { 3 } } { b _ { 3 } } \cdot \frac { d \mathit { l } _ { 3 } } { d c _ { 3 } } \right] } } .
+$$
+
+The second term in the square bracket is of order $\mathrm { k ^ { 2 } }$ comparcd with the first,and may therefore be neglected.
+
+Treating $G _ { 1 } ^ { \prime }$ in the same manner, and neglecting the terms factored by $d b _ { 3 } / d c _ { 3 } ,$ which are of order $\mathrm { k ^ { 2 } }$ compared with the others,we find,after some reductions,
+
+$$
+\frac { G _ { 1 } ^ { \prime } } { p - p ^ { \prime } } = \frac { 1 } { \ F _ { 3 } } \cdot \frac { 1 } { c _ { 3 } b _ { 3 } ( p - p ^ { \prime } ) } \bigg ( \lambda \frac { d \lambda ^ { \prime } } { d c _ { 1 } } + \lambda ^ { \prime } \frac { d \lambda } { d c _ { 1 } } \bigg ) = \frac { 1 } { \Theta } \cdot \frac { 1 } { c _ { 3 } b _ { 3 } ( p - p ^ { \prime } ) } \cdot \frac { \iota ^ { \prime } } { d c _ { 1 } } \left( \lambda \lambda ^ { \prime } \right) .
+$$
+
+Also, $H _ { 1 }$ is of order $\mathrm { k ^ { 2 } }$ compared with these terms， Hence
+
+$$
+\hat { \delta } ^ { 2 } w _ { 1 } = \frac { 1 } { 2 \left( p - { \ell ^ { \prime } } \right) } \cdot \frac { 1 } { b _ { s } c _ { 3 } } \left[ \frac { \lambda \lambda ^ { \prime } } { b _ { 3 } } \cdot \frac { d b _ { 3 } } { d c _ { 1 } } + \frac { d } { d c _ { 1 } } ( \lambda \lambda ^ { \prime } ) \right] \sin \left( \phi - \phi ^ { \prime } \right) .
+$$
+
+Now,by Sect. (i),Chap. X.，approximately,
+
+$$
+\frac { d } { d c _ { 1 } } = - \frac { \mathbf { r } } { \alpha ^ { 2 } \beta } \frac { d } { d \eta } , \beta = \ ' _ { 3 3 } , \frac { d b _ { 3 } } { d \eta } = + \ ' _ { 0 0 3 7 } , b _ { 3 } = - \ ' _ { 0 0 4 9 } .
+$$
+
+Also, $\lambda = \operatorname { k } a ^ { 2 } n \mu , \lambda ^ { \prime } = \operatorname { k } n ^ { 2 } \mu ^ { \prime }$ where $\mu , \mu ^ { \prime }$ are independent of the $c _ { i }$ for the terms o lowest order,so that $\lambda \lambda ^ { \prime } = k ^ { 2 } \alpha ^ { 2 } \eta ^ { 3 } \mu \mu ^ { \prime } \doteq c _ { 3 } \eta ^ { 2 } \mu ^ { \prime \prime }$ where $\mu ^ { \prime \prime }$ is defined like $\mu , \mu ^ { \prime }$ Hence
+
+$$
+\hat { 8 } ^ { 2 } w _ { 1 } = \textstyle { \frac { 1 } { 2 } } \cdot \frac { p } { p - p ^ { \prime } } \frac { \lambda \lambda ^ { \prime } } { b _ { 3 } ^ { 2 } c _ { 3 } n \alpha ^ { 2 } } \big [ 3 - 6 \big ] \sin \big ( \phi - \phi ^ { \prime } \big ) .
+$$
+
+But, approximately,
+
+$$
+- 4 ^ { n \alpha ^ { 2 } } \gamma \hat { \delta } \gamma = \hat { \delta } c _ { 3 } = \frac { \lambda } { b _ { 3 } } \cos \phi , \quad - 4 ^ { n \alpha ^ { 2 } } \gamma \hat { \delta } ^ { \prime } \gamma = \frac { \lambda ^ { \prime } } { b _ { 3 } } \cos \phi ^ { \prime } ;
+$$
+
+and $\begin{array} { r } { \mathring { \partial } \gamma = + \operatorname { o } ^ { \prime \prime \prime } \gamma \circ \cos \phi \ ( \mathring { \ S } \ 3 7 0 ) , \mathcal { S } ^ { \prime } \gamma = - 4 ^ { \prime \prime } \cdot 3 5 \cos \phi ^ { \prime } \ ( \mathring { \ S } \ 3 7 4 ) , p = b _ { 3 } = - 1 9 \operatorname { o } ^ { \prime \prime } \cdot \ S , } \end{array}$ $p - p ^ { \prime } = - \mathrm { o } ^ { \prime \prime } { \cdot } _ { 2 } _ { 3 }$ ， $\phi - \phi ^ { \prime } = 9 6 ^ { \circ } \cdot { } _ { 2 } - \mathrm { O } ^ { \prime \prime } \cdot { } _ { 2 } { } _ { 3 } t .$ Hence
+
+$$
+\mathfrak { d } ^ { 2 } w _ { 1 } = - \textnormal { \texttt { I 2 } } \cdot \frac { \mathtt { I 9 0 } ^ { \circ } \mathfrak { S } } { - \cdot 2 _ { 3 } } \cdot \frac { ( \cdot \gamma \circ ) ( 4 ^ { \prime \prime } \cdot 3 \mathfrak { S } ) } { 2 0 6 2 6 5 } \sin \big ( 9 6 ^ { \circ } \cdot 2 - \mathfrak { d } ^ { \prime \prime } \cdot 2 \mathfrak { z } \mathfrak { z } \big ) = \mathfrak { o } ^ { \prime \prime } \cdot \mathtt { I } \mathfrak { S } \sin \big ( 9 6 ^ { \circ } \cdot 2 - 2 ^ { \circ } \cdot 3 \mathfrak { l } _ { c } \big ) ,
+$$
+
+which is equivalent to a modern secular acceleration of $\mathrm { O } ^ { \prime \prime } \mathrm { \overbrace { O \mathrm { O } O I } } t _ { c } ^ { \mathrm { ~ 2 ~ } }$ ,and therefore entirel insensible.
+
+406.It might still be thought that terms of the second order in the disturbing function of Sect. (iv), Chap. XI., will give rise to sensible secular terms.But $\theta _ { 3 }$ is of the third order,and therefore any terms which arise will either depend on the $w _ { i }$ or will be constants. It is also to be remembered that arguments in $x , y$ containing odd multiples of $w _ { 3 }$ ,and arguments in $ { z }$ containing even multiples of $w _ { \mathfrak { z } } ,$ only arise through he disturbing fuuctions $\delta R , \vartheta ^ { 2 } R ,$ ,and much the largest of the combinations with a long beriod and of the second order is that just computed.
+
+# Section (iv). Perturbations with Unknown Constants.
+
+407. The attractions of the minor planets.-No one of these is large enough to roduce any sensible effect on the motion of the Moon, but their aggregate mass may gossibly be comparable with the mass of the Earth. The chief force would be that of a ingof matter of diameter between two and three times that of the Earth's orbit,and heprincipal efect would be constant additions to the mean motions of the perigee and ode of the Moon's orbit. But on any supposition which would fit in with the sniall liferences between theory and observation for the motions of the planets, these constant dditions cannot exceed two or three hundredths of a second of arc in the annual mean notions of the Moon's node and perigee.
+
+Periodic effects would be smaller,and the chief of them would have a period ol year,with a coefficient less than one-thousandth of a second of arc.
+
+408. Other mater in the solar system.-There is undoubtedly a large number of neteoric bodies distributed through the solar system and revolving mainly round the The most reasonable supposition is that this matter may be considered as rranged in rings of varying density round the Sun as centre, so that the effect would ethat of a thin plate with its centre at the Sun,and of density increasiug towards the entre. If this density varied as the $q$ th power of the distance from the Sun, where $q$ some negative number,the effect would again be to add to the apparent mass of the Sun,to add something to the mean motions of the perigee and node,and to produce ditions to the known periodic terms. The effect on the Earth would be of a similar aature. No secular terms arise. Professor NEwcomB has discussed such hypotleses.\* In any case, the effect on the Moon can be neglected.
+
+409. The action of the tides.-First, neglecting friction,the action of the lunar deehiefly produces a standing wave with reference to the line joining the Earth and Woon. Its effect is therefore similar to that of the figure of the Moon,and there can little doubt that it is quite negligible. The action of the solar tide must chiefly roduce a term depending on the difference of longitudes of the Sun and Moon,and is imilarly too small to be considered. The reaction of tidal friction produces a real eeular retardation of the Moon's motion, as well as the apparent acceleration due to he slowing down of the Earth's rotation. The former is nearly equal to the latter,and hereal retardation would be between two and three times the observed acceleration. here being no data on which to base any exact numerical estimates of either of these Hantities,the secular acceleration will be considered as an observed quantity, the nagnitude of the apparent value being not very diferent from that $\left( 5 ^ { \prime \prime . } 8 \right)$ found from heattractions of the planets.
+
+THE FINAL EXPRESSION FOR THE MOON'S COORDINATES.
+
+410. In this concluding chapter I gather together all the perturbations which have been found in detail in Chaps. X.-XIV., so that the expressions for the coordinates of the Moon in terms of the time are obtained by adding the results given below to those at the end of Chap. IX.
+
+411. The values of the mean motions of the perigee and node are collected in the following scheme with the references.
+
+<table><tr><td>Annual mean motion of the</td><td>Perigee,</td><td>Nodc.</td></tr><tr><td>Principal solar action (S 195）</td><td>+14642692 tf</td><td>-6967204 t</td></tr><tr><td>Mass of the Earth (Ss 381,382)</td><td>1 68</td><td>十 19</td></tr><tr><td>Direct planetary action (S 316)</td><td>+ 2:69</td><td>Jv 142</td></tr><tr><td>Indirect ，(S 370） ；</td><td>1 16</td><td>+ 05</td></tr><tr><td>Figure of the Earth (S 374)</td><td>+ 641</td><td>600</td></tr><tr><td>Moon (s379) ； </td><td>十 03</td><td>14</td></tr><tr><td>Final values (epoch 18500)</td><td>+14643521</td><td>-69679&#x27;36</td></tr></table>
+
+[The small differences from the values given in $1 9 0 4 ^ { \ast }$ are chiefly due to the somewhat doubtful parts depending on the figure of the Moon； these were neglected in the earlier paper. The value of the cllipticity of the Earth adopted here is that correspond-ing to the result marked $( \beta )$ in the paper.]
+
+412. Notation.-I now use $w _ { 1 }$ $w _ { 2 } , \ w _ { 3 }$ to represent the mean longitude and the mean lougitudes of the perigee and node with the motions just given; $\varpi ^ { \prime }$ ,the mean longitude of the perihelion of the Earth's orbit at epoch ; $\mathrm { Q }$ ,V,T,M, J,S, the mean longitudes of the planets. These will receive additions in $\ S \ 4 ^ { \textrm { I } } 3$ below，denoted by the symbol δ. Thus
+
+$$
+\begin{array} { r } { \mathrm { D } = w _ { 1 } + \delta w _ { 1 } - \mathrm { T } - \delta \mathrm { T } , \quad { l } = w _ { 1 } + \delta w _ { 1 } - w _ { 2 } - \delta w _ { 2 } , \quad \mathrm { F } = w _ { 1 } + \delta w _ { 1 } - w _ { 3 } - \delta w _ { 3 } , \quad { l } ^ { \prime } = \mathrm { T } + \delta \mathrm { T } - \varpi ^ { \prime } - \delta \varpi ^ { \prime } . } \end{array}
+$$
+
+The constants $\gamma , \ e ^ { \prime }$ also receive additions $\mathring { \mathrm { d } } \gamma , \ \mathring { \mathrm { d } } e ^ { \prime }$ ， given below. The changes in the Moon's coordinates are accounted for if we multiply the terms containing the arguments iF, $i l ^ { \prime }$ by the variable factors
+
+$$
+\mathrm { ~  ~ { ~ \cal ~ I ~ } ~ } + \mathrm { ~  ~ { ~ \cal ~ i ~ } ~ } \frac { \delta \gamma } { \gamma } \cdot \frac { \mathrm { ~  ~ { ~ \cal ~ I ~ } ~ } } { 2 0 0 2 6 5 } , \mathrm { ~  ~ { ~ \cal ~ I ~ } ~ } + \mathrm { ~  ~ { ~ \cal ~ i ~ } ~ } \frac { \delta e ^ { \prime } } { e ^ { \prime } } ,
+$$
+
+speetively.All other variations of the constants present in the coeficients are ather insensible or have been included in the expressions for the coordinates.
+
+The number of centuries from $\mathrm { 1 8 5 0 ^ { \cdot } O }$ is represented by $t _ { c }$
+
+The arrangement of the tables is the same as that of Chaps. XI., XII.
+
+All final coefficients below $\mathrm { O } ^ { \prime \prime } { \cdot } _ { \mathrm { O O } 3 }$ have been dropped.
+
+A star instead of a number in the last place denotes that the last figure has not kcomputed.
+
+$$
+\begin{array} { r } { \delta ^ { \prime \prime } \boldsymbol { v } _ { 1 } = + \boldsymbol { 5 } ^ { \prime \prime } \cdot 8 \boldsymbol { t } _ { r } ^ { \ 2 } + \boldsymbol { \Sigma } \boldsymbol { \circ } ^ { \prime \prime } \cdot \boldsymbol { \circ } \boldsymbol { \circ } \mathbf { I } C \sin \psi ; } \end{array}
+$$
+
+$$
+\begin{array} { r l } & { \delta w _ { 2 } = - \ 3 ^ { 8 ^ { \prime \prime } } 3 ^ { \ell _ { c } ^ { 2 } } - \circ ^ { \prime \prime } \cdot \mathrm { \tau } \mathrm { { 1 } } 8 \ \sin \ ( \mathit { l } + \mathrm { { r } } 6 \mathrm { { T } } - \mathrm { { r } } 8 \mathrm { { V } } + \mathrm { { r } } 5 { \mathrm { { \bar { \tau } } } } ^ { \circ } \cdot \circ ) } \\ & { \qquad + \circ ^ { \prime \prime } { \cdot } 8 _ { 4 } \circ \sin \ ( w _ { 3 } + 2 7 6 ^ { \circ } \cdot 2 ) - \ : 2 ^ { \prime \prime } { \cdot } \circ { 9 } 2 \ \sin \ ( w _ { 3 } + \mathrm { { r } } ^ { \circ } \cdot 4 \ell _ { c } ) } \\ & { \qquad + \mathrm { { t h e ~ t e n ~ p e r i o d i c ~ t e r m s ~ i n ~ } } \delta \dprime v _ { 1 } \ \mathrm { { w h o s e ~ a n g l e s ~ a r e ~ i n ~ } } } \end{array}
+$$
+
+$$
+\begin{array} { r l } & { \delta \mathcal { n } _ { 3 } = + 6 ^ { \prime \prime } \mathfrak { s } \mathfrak { t } _ { c } ^ { 2 } + \mathfrak { o } ^ { \prime \prime } \mathfrak { t } 7 2 \sin \left( \mathit { l } + \mathfrak { r } 6 \mathsf { T } - \mathfrak { r } 8 \mathsf { V } + \mathfrak { r } \mathsf { 5 } \mathsf { r } ^ { \circ } \mathfrak { o } \right) + \mathfrak { r } ^ { \prime \prime } \mathfrak { s } 6 \sin \left( \mathfrak { w } _ { 3 } + 2 \mathfrak { s } \mathfrak { o } ^ { \circ } \mathfrak { t } \right) } \\ & { \qquad + \mathfrak { r } \mathfrak { s } ^ { \prime \prime } \mathfrak { s } ^ { 8 } \sin \left( \mathfrak { w } _ { 3 } - \mathfrak { o } ^ { \circ } \mathfrak { s } \mathfrak { g } _ { \epsilon } + 2 \gamma \mathsf { d } ^ { \circ } \mathfrak { a } _ { 2 } \right) + \mathfrak { g } 6 ^ { \prime \prime } \mathfrak { s } 6 \mathfrak { g } \sin \left( \mathfrak { w } _ { 3 } + \mathfrak { r } ^ { \circ } \mathfrak { 4 } \mathcal { t } _ { c } \right) ; } \end{array}
+$$
+
+$$
+\begin{array} { r l } & { \delta \mathrm { T } = + \mathrm { r } ^ { \prime \prime } { \cdot } 8 9 \sin \big ( \mathrm { r } _ { 3 } \mathrm { T } - 8 \mathrm { V } + \mathrm { r } _ { 3 4 } \big \circ ^ { \circ } \big ) + \mathrm { o } ^ { \cdot \prime \prime } 2 0 \sin \big ( \mathrm { r } _ { 5 } \mathrm { 3 } \mathrm { 1 } - 8 \mathrm { T } + \mathrm { 2 } \mathrm { r } 6 ^ { \circ } \big ) } \\ & { \qquad - 6 ^ { \prime \prime } { \cdot } 4 9 \sin \big ( 2 \mathrm { o } ^ { \circ } { \cdot } 2 t _ { c } + 4 \mathrm { r } ^ { \circ } \big ) - \mathrm { o } ^ { \prime \prime } { \cdot } 2 7 \sin \big ( \mathrm { r } \mathrm { 1 } 2 9 ^ { \circ } { \cdot } \mathrm { o } t _ { c } + \mathrm { 1 } 5 2 ^ { \circ } \big ) ; } \end{array}
+$$
+
+$$
+\begin{array} { r l } & { \hat {  { \delta } }  { \mathbf { J } } = +  { \operatorname { o } ^ { \circ } } \cdot 3 3 \sin \left( 3 8 ^ { \circ } \cdot 5  { t _ { c } } +  { \operatorname { I } \mathrm {  ~ r ~ } }  { \bar { \operatorname { s } } } ^ { \circ } \right) , \quad \hat {  { \delta } }  { \mathrm { S } } = -  { \operatorname { o } ^ { \circ } } \cdot 8 3 \sin \left( 3 8 ^ { \circ } \cdot 5  { t _ { c } } +  { \operatorname { I } \mathrm {  ~ r ~ } }  { \bar { \operatorname { s } } } ^ { \circ } \right) ; } \\ & { \hat {  { \delta } } \gamma = -  { \operatorname { o } ^ { \prime \prime } } \cdot  { \operatorname { o } } 8 3 \cos \left(  { w _ { 3 } } + 2 9  { \operatorname { o } ^ { \circ } } \cdot  { \operatorname { I } } \right) -  { \operatorname { o } ^ { \prime \prime } } \cdot 6 9 8 \cos \left(  { w _ { 3 } } -  { \operatorname { o } ^ { \circ } } \cdot 9  { t _ { c } } + 2 7  { \operatorname { f } ^ { 6 } }  { \bar { \operatorname { s } } } _ { 2 } \right) } \\ & { \qquad -  { \operatorname { d } ^ { \prime \prime } } \cdot 3 5  { \operatorname { I } } \cos \left(  { w _ { 3 } } +  { \mathrm { I } ^ { \circ } } \cdot 4  { t _ { c } } \right) ; } \end{array}
+$$
+
+<table><tr><td rowspan=2 colspan=1></td><td rowspan=2 colspan=3>0=0</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=3>0=2D</td><td rowspan=1 colspan=2>0l</td><td rowspan=1 colspan=1></td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2>福</td><td rowspan=1 colspan=1>C</td><td rowspan=1 colspan=1>j    i</td><td rowspan=1 colspan=2>a         C</td><td rowspan=1 colspan=2>j   i          α</td><td rowspan=1 colspan=1>C</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2>00</td><td rowspan=1 colspan=1>822</td><td rowspan=1 colspan=1>。     6</td><td rowspan=1 colspan=2>0       II</td><td rowspan=1 colspan=1>0  7</td><td rowspan=1 colspan=1>180</td><td rowspan=1 colspan=1>4</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>1798</td><td rowspan=1 colspan=1>307</td><td rowspan=1 colspan=1>5</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>II</td><td rowspan=1 colspan=2>6     180</td><td rowspan=1 colspan=1>5</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>359&#x27;3</td><td rowspan=1 colspan=1>42</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>8</td><td rowspan=1 colspan=2>15     r80</td><td rowspan=1 colspan=1>6</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2>0</td><td rowspan=1 colspan=1>46</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>180</td><td rowspan=1 colspan=1>34</td><td rowspan=1 colspan=2>14     180</td><td rowspan=1 colspan=1>6</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2>0</td><td rowspan=1 colspan=1>33</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>。</td><td rowspan=1 colspan=1>36</td><td rowspan=1 colspan=2>3     180</td><td rowspan=1 colspan=1>8</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2>0</td><td rowspan=1 colspan=1>24</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>180</td><td rowspan=1 colspan=1>23</td><td rowspan=1 colspan=2>2        00</td><td rowspan=1 colspan=1>61</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2>0</td><td rowspan=1 colspan=1>17</td><td rowspan=1 colspan=1>I</td><td rowspan=1 colspan=1>00</td><td rowspan=1 colspan=1>99</td><td rowspan=1 colspan=2>I     1800</td><td rowspan=1 colspan=1>129</td></tr><tr><td rowspan=1 colspan=1>8</td><td rowspan=1 colspan=2>0</td><td rowspan=1 colspan=1>12</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>179&#x27;5</td><td rowspan=1 colspan=1>136</td><td rowspan=1 colspan=2>I        00</td><td rowspan=1 colspan=1>152</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2>0</td><td rowspan=1 colspan=1>8</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>178</td><td rowspan=1 colspan=1>13</td><td rowspan=1 colspan=2>2     1800</td><td rowspan=1 colspan=1>48</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2>。</td><td rowspan=1 colspan=1>6</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>180</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=2>3     1800</td><td rowspan=1 colspan=1>127</td></tr><tr><td rowspan=1 colspan=1>x</td><td rowspan=1 colspan=2>0</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>18</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>180</td><td rowspan=1 colspan=1>II</td></tr><tr><td rowspan=1 colspan=1>21</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>1      1</td><td rowspan=1 colspan=1>232</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>1      2</td><td rowspan=1 colspan=1>258</td><td rowspan=1 colspan=1>4</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>254</td><td rowspan=1 colspan=1>10</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>2710</td><td rowspan=1 colspan=1>40</td><td rowspan=1 colspan=1>I</td><td rowspan=1 colspan=1>75</td><td rowspan=1 colspan=1>8</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>84</td><td rowspan=1 colspan=1>16</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>271&#x27;5</td><td rowspan=1 colspan=1>37</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>271</td><td rowspan=1 colspan=1>46</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>82</td><td rowspan=1 colspan=1>42</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>89</td><td rowspan=1 colspan=1>5</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>272</td><td rowspan=1 colspan=1>40</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>272&#x27;9</td><td rowspan=1 colspan=1>348</td><td rowspan=1 colspan=1>20</td><td rowspan=1 colspan=1>273</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>272</td><td rowspan=1 colspan=1>5</td></tr><tr><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>2717</td><td rowspan=1 colspan=1>176</td><td rowspan=1 colspan=1>-1 ~II</td><td rowspan=1 colspan=1>78</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>5</td><td rowspan=1 colspan=1>92</td><td rowspan=1 colspan=1>4</td></tr><tr><td rowspan=1 colspan=1>5</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>271</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>0</td><td rowspan=1 colspan=1>78</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>23</td><td rowspan=1 colspan=1>272</td><td rowspan=1 colspan=1>6</td></tr><tr><td rowspan=1 colspan=1>6</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>272</td><td rowspan=1 colspan=1>6</td><td rowspan=1 colspan=1>9</td><td rowspan=1 colspan=1>78</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>-I  13</td><td rowspan=1 colspan=1>268</td><td rowspan=1 colspan=1>32</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>272</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>！8</td><td rowspan=1 colspan=1>78</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>264</td><td rowspan=1 colspan=1>46</td></tr><tr><td rowspan=1 colspan=1>x8</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>209</td><td rowspan=1 colspan=1>50</td><td rowspan=1 colspan=1>7</td><td rowspan=1 colspan=1>78</td><td rowspan=1 colspan=1>5</td><td rowspan=1 colspan=1>I</td><td rowspan=1 colspan=1>104</td><td rowspan=1 colspan=1>9</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2>27</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>6</td><td rowspan=1 colspan=1>78</td><td rowspan=1 colspan=1>5</td><td rowspan=1 colspan=1>1</td><td rowspan=1 colspan=1>102</td><td rowspan=1 colspan=1>3</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2>25</td><td rowspan=1 colspan=1>5</td><td rowspan=1 colspan=1>15</td><td rowspan=1 colspan=1>84</td><td rowspan=1 colspan=1>7</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>282</td><td rowspan=1 colspan=1>7</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2>33</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>+4</td><td rowspan=1 colspan=1>78</td><td rowspan=1 colspan=1>7</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>280</td><td rowspan=1 colspan=1>7</td></tr><tr><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=2>1990</td><td rowspan=1 colspan=1>92</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>27</td><td rowspan=1 colspan=1>19</td><td rowspan=1 colspan=1>2 -18</td><td rowspan=1 colspan=1>209</td><td rowspan=1 colspan=1>3</td></tr><tr><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=2>204</td><td rowspan=1 colspan=1>26</td><td rowspan=1 colspan=1>I</td><td rowspan=1 colspan=1>98</td><td rowspan=1 colspan=1>9</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>210</td><td rowspan=1 colspan=1>14</td></tr><tr><td rowspan=1 colspan=1>5</td><td rowspan=1 colspan=2>17</td><td rowspan=1 colspan=1>9</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=1>281</td><td rowspan=1 colspan=1>13</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>205</td><td rowspan=1 colspan=1>4</td></tr><tr><td rowspan=1 colspan=1>6</td><td rowspan=1 colspan=2>207</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>281</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>5</td><td rowspan=1 colspan=1>19</td><td rowspan=1 colspan=1>3</td></tr><tr><td rowspan=1 colspan=1>5</td><td rowspan=1 colspan=2>114</td><td rowspan=1 colspan=1>26</td><td rowspan=1 colspan=1>2      3</td><td rowspan=1 colspan=1>199</td><td rowspan=1 colspan=1>11</td><td rowspan=1 colspan=1>6</td><td rowspan=1 colspan=1>198</td><td rowspan=1 colspan=1>16</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2></td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=2>202       3</td><td rowspan=1 colspan=1>2  15</td><td rowspan=1 colspan=1>161</td><td rowspan=1 colspan=1>3</td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2>0=21）</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>5</td><td rowspan=1 colspan=2>20        4</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>336</td><td rowspan=1 colspan=1>4</td></tr><tr><td rowspan=1 colspan=1>x</td><td rowspan=1 colspan=2>0</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>-2     6</td><td rowspan=1 colspan=1>162</td><td rowspan=1 colspan=1>6</td><td rowspan=1 colspan=1>3</td><td rowspan=1 colspan=1>331</td><td rowspan=1 colspan=1>15</td></tr><tr><td rowspan=1 colspan=1>Lo</td><td rowspan=1 colspan=3>0         5</td><td rowspan=1 colspan=1>m3</td><td rowspan=1 colspan=1>342</td><td rowspan=1 colspan=1>15</td><td rowspan=1 colspan=1>3     5</td><td rowspan=1 colspan=1>115</td><td rowspan=1 colspan=1>4</td></tr><tr><td rowspan=1 colspan=1>9</td><td rowspan=1 colspan=3>0         6</td><td rowspan=1 colspan=1>2</td><td rowspan=1 colspan=2>7       3</td><td rowspan=1 colspan=1>-3     5</td><td rowspan=1 colspan=1>65</td><td rowspan=1 colspan=1>4</td></tr><tr><td rowspan=1 colspan=1>8</td><td rowspan=1 colspan=3>0         8</td><td rowspan=1 colspan=1>15</td><td rowspan=1 colspan=2>151       4</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1></td></tr><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=4>。         8                  18</td><td rowspan=1 colspan=1>8</td><td rowspan=1 colspan=1>18</td><td rowspan=1 colspan=1>151      10</td><td rowspan=1 colspan=2>151      10</td></tr></table>
+
+<table><tr><td colspan="4">0=2D-1</td><td colspan="3">0=2D-1</td><td colspan="4">0=2l-2D</td></tr><tr><td>1</td><td>；</td><td>a</td><td>C</td><td>J</td><td></td><td>C</td><td></td><td>i</td><td>福</td><td>g</td></tr><tr><td>。</td><td>-10</td><td>180</td><td>3</td><td>-2</td><td>340</td><td>24</td><td></td><td>4</td><td>0</td><td></td></tr><tr><td></td><td>9 一</td><td>180</td><td>6</td><td></td><td></td><td>3</td><td></td><td>4</td><td>92</td><td>4</td></tr><tr><td></td><td>1 8</td><td>180</td><td>8</td><td></td><td>151</td><td>25</td><td></td><td>~3</td><td>268</td><td>3</td></tr><tr><td></td><td>7 1</td><td>180</td><td>13</td><td>3</td><td>L4</td><td></td><td></td><td>-2</td><td>268</td><td>3</td></tr><tr><td></td><td>6</td><td>180</td><td>22</td><td></td><td></td><td></td><td>2</td><td>6</td><td>17&#x27;4</td><td>6</td></tr><tr><td></td><td>5</td><td>180</td><td>38</td><td colspan="3">0=2D+1</td><td></td><td colspan="2"></td><td></td></tr><tr><td></td><td>4</td><td>1800</td><td>83</td><td>。 ~5</td><td></td><td></td><td>。</td><td colspan="2">0=2l-4D</td><td></td></tr><tr><td></td><td>3 2</td><td>1800</td><td>658</td><td></td><td></td><td></td><td></td><td>3</td><td>0</td><td>8</td></tr><tr><td></td><td></td><td>00</td><td>137</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>I</td><td>180</td><td>13</td><td></td><td></td><td>I</td><td></td><td></td><td>0=3/-2D</td><td></td></tr><tr><td></td><td>1</td><td>00</td><td>133</td><td></td><td></td><td></td><td></td><td>3</td><td>180</td><td>3</td></tr><tr><td></td><td>2</td><td>1796</td><td>157</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>3</td><td>178</td><td>14</td><td>1</td><td></td><td></td><td></td><td></td><td>0=-4D</td><td>7</td></tr><tr><td></td><td>4</td><td>180</td><td>3</td><td></td><td></td><td></td><td></td><td>3</td><td>。</td><td></td></tr><tr><td></td><td>18</td><td>。</td><td>II</td><td>I</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>I</td><td>2</td><td>259</td><td>3</td><td></td><td>269</td><td></td><td></td><td></td><td>0=~D</td><td></td></tr><tr><td></td><td>I</td><td>270</td><td>3</td><td colspan="3">0=4D-1</td><td>I</td><td>3</td><td>273</td><td>5</td></tr><tr><td></td><td>2</td><td>2714</td><td>65</td><td>。</td><td>180</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>3</td><td>271&#x27;9</td><td>49</td><td></td><td></td><td></td><td></td><td></td><td>0=l-D</td><td></td></tr><tr><td></td><td>4</td><td>90</td><td>5</td><td></td><td></td><td></td><td></td><td>3</td><td>273</td><td>II</td></tr><tr><td></td><td>8</td><td>269</td><td>3</td><td colspan="3">0=21</td><td></td><td colspan="2"></td><td></td></tr><tr><td></td><td>7 6</td><td>269</td><td>5</td><td>。 -2</td><td></td><td></td><td></td><td>3</td><td>0=wg 216</td><td></td></tr><tr><td></td><td>1</td><td>269</td><td>8</td><td></td><td></td><td></td><td></td><td>-5</td><td></td><td>19</td></tr><tr><td></td><td>5 一 一</td><td>269 89</td><td>24</td><td></td><td></td><td>10</td><td></td><td>-4</td><td>255 255</td><td></td></tr><tr><td></td><td>4 2 1</td><td>268</td><td>30</td><td></td><td></td><td></td><td></td><td>-3</td><td>75</td><td></td></tr><tr><td></td><td></td><td>101</td><td>38</td><td></td><td></td><td></td><td></td><td>-2</td><td>75</td><td></td></tr><tr><td></td><td>1</td><td>281</td><td>9</td><td>I</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>2</td><td></td><td>13</td><td>1</td><td></td><td></td><td></td><td></td><td>0=W+2F</td><td></td></tr><tr><td>2</td><td>17</td><td>253 200</td><td>3</td><td></td><td></td><td></td><td></td><td>3</td><td>216</td><td></td></tr><tr><td></td><td>3 4</td><td>202</td><td>19</td><td colspan="3">0=2l~2D</td><td>2 2</td><td>-3</td><td>40</td><td></td></tr><tr><td></td><td></td><td></td><td>4</td><td colspan="3">~2</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>5</td><td>19</td><td>4</td><td>。</td><td>~1</td><td>0 180</td><td>7</td><td></td><td>0=20g±l</td><td></td></tr><tr><td></td><td>7</td><td>340</td><td>3</td><td></td><td></td><td>180</td><td>5 3</td><td></td><td></td><td></td></tr><tr><td></td><td>6</td><td>1626</td><td>79</td><td></td><td></td><td></td><td></td><td>3</td><td>216</td><td></td></tr><tr><td></td><td>5 </td><td>165</td><td>4</td><td></td><td></td><td>1800</td><td>73</td><td></td><td></td><td></td></tr></table>
+
+415. True longitude=∑o"oo1C sin {0+j"M+i(M-T)+a°}.  
+
+<table><tr><td colspan="2">0=0</td><td colspan="4">0=l</td><td colspan="4">0=2D-l</td></tr><tr><td>宝</td><td>8</td><td>q</td><td>了 i</td><td>a</td><td>C</td><td>心</td><td>i</td><td>α</td><td>C</td></tr><tr><td>1</td><td>180</td><td>II</td><td>。 -3</td><td>180</td><td>3</td><td>I</td><td>1</td><td>220</td><td>31</td></tr><tr><td>2</td><td>1802</td><td>195</td><td>-2</td><td>0</td><td>38</td><td></td><td>2</td><td>212</td><td>1</td></tr><tr><td>3</td><td>357</td><td>14</td><td>~I</td><td>0</td><td>4</td><td></td><td>3</td><td>214</td><td>14</td></tr><tr><td>4</td><td>349</td><td>5</td><td>1</td><td>180</td><td>5</td><td></td><td>4</td><td>27</td><td>3</td></tr><tr><td>3</td><td>260</td><td>6</td><td>2</td><td>180</td><td>43</td><td>-I</td><td>-6</td><td>149</td><td>3</td></tr><tr><td>i</td><td>2244</td><td>327</td><td>3</td><td>0</td><td>3</td><td></td><td>-5</td><td>151</td><td>43</td></tr><tr><td>2</td><td>212&#x27;4</td><td>38</td><td>4</td><td>180</td><td>3</td><td></td><td>-4</td><td>329</td><td>3</td></tr><tr><td>3</td><td>212&#x27;5</td><td>48</td><td>1 I</td><td>2233</td><td>73</td><td></td><td>13</td><td>327</td><td>3</td></tr><tr><td>4</td><td>331</td><td>10</td><td>2</td><td>212</td><td>10</td><td></td><td>-2</td><td>328</td><td>6</td></tr><tr><td>2</td><td>2448</td><td>93</td><td>3</td><td>213</td><td>13</td><td></td><td>-1</td><td>320</td><td>35</td></tr><tr><td>3</td><td>245</td><td>20</td><td>5</td><td>210</td><td>9</td><td></td><td>3</td><td>280</td><td>4</td></tr><tr><td>4</td><td>244</td><td>14</td><td>3 I =n</td><td>330</td><td>9</td><td>2</td><td>2</td><td>244</td><td>1I</td></tr><tr><td>5</td><td>62</td><td>6</td><td>~2</td><td>327</td><td>8</td><td></td><td>3</td><td>244</td><td>6</td></tr><tr><td></td><td>277</td><td>16</td><td>~I</td><td>3063</td><td>74</td><td></td><td>4</td><td>245</td><td>5</td></tr><tr><td></td><td>276</td><td>13</td><td>2 2</td><td>245</td><td>17</td><td>12</td><td>-6</td><td>298</td><td>33</td></tr><tr><td></td><td>275</td><td>6</td><td>3</td><td>245</td><td>5</td><td></td><td>-3</td><td>296</td><td>3</td></tr><tr><td></td><td>94</td><td>3</td><td>4</td><td>244</td><td>3</td><td></td><td>-2</td><td>297</td><td>14</td></tr><tr><td></td><td>0=2D</td><td></td><td>6</td><td>63</td><td>6</td><td></td><td></td><td></td><td></td></tr><tr><td>2</td><td>0</td><td>5</td><td>12 ~4</td><td>296</td><td>3</td><td></td><td>0=2D+l</td><td></td><td></td></tr><tr><td></td><td>180</td><td>4</td><td>-3</td><td>295</td><td>5</td><td>0</td><td>2</td><td>180</td><td>6</td></tr><tr><td></td><td>181</td><td>44</td><td>-2</td><td>295</td><td>18</td><td>1</td><td>1</td><td>82</td><td>3</td></tr><tr><td>3</td><td>0</td><td>5</td><td>3 3</td><td>277</td><td>3</td><td>-1</td><td>-I</td><td></td><td>3</td></tr><tr><td></td><td>224</td><td>23</td><td>4</td><td>276</td><td>3</td><td></td><td></td><td>93</td><td></td></tr><tr><td>2</td><td>212</td><td>6</td><td>3 -4</td><td>264</td><td>3</td><td></td><td>0=2l</td><td></td><td></td></tr><tr><td></td><td>214</td><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>37</td><td>3</td><td></td><td>0=2D-l</td><td></td><td>。</td><td>-2</td><td>0 180</td><td>3</td></tr><tr><td></td><td>149</td><td>3</td><td>-5 。</td><td>180</td><td>3</td><td>I</td><td>2 1</td><td></td><td>3</td></tr><tr><td></td><td>328</td><td>3</td><td>14</td><td>182</td><td>20</td><td>-1</td><td>-I</td><td>232 308</td><td>3</td></tr><tr><td></td><td>317</td><td>23</td><td>-3</td><td>0</td><td>5</td><td></td><td></td><td></td><td>3</td></tr><tr><td></td><td>280</td><td>3</td><td>12</td><td>。</td><td>13</td><td></td><td></td><td></td><td></td></tr><tr><td>2</td><td>244</td><td>5</td><td>一1</td><td>。</td><td>3</td><td></td><td>0=21-2D</td><td></td><td></td></tr><tr><td></td><td>244</td><td>4</td><td>1</td><td>180</td><td>8</td><td>0</td><td>~2</td><td>。</td><td>4</td></tr><tr><td></td><td>246</td><td>4</td><td>2</td><td>1810</td><td>61</td><td>I</td><td>5</td><td>2c9</td><td>17</td></tr><tr><td></td><td>297</td><td>8</td><td>3</td><td>353</td><td>5</td><td>2</td><td>6</td><td>244</td><td>18</td></tr></table>
+
+<table><tr><td colspan="4">0=0</td><td colspan="4">0=1</td><td colspan="4">0=2D-l</td></tr><tr><td>/</td><td>心</td><td>8</td><td>C</td><td></td><td>i</td><td>8</td><td>C</td><td>j</td><td>i</td><td></td><td></td></tr><tr><td>。</td><td>！</td><td>178.8</td><td>643</td><td></td><td>12</td><td>180</td><td>36</td><td>一1</td><td>~</td><td></td><td>296</td></tr><tr><td></td><td>2</td><td>3596</td><td>187</td><td></td><td>-1</td><td>10</td><td>144</td><td></td><td></td><td>174&#x27;2</td><td></td></tr><tr><td>1</td><td>3</td><td>7</td><td>10</td><td></td><td>1</td><td>1790</td><td>158</td><td></td><td></td><td>273</td><td></td></tr><tr><td></td><td>~3</td><td>257</td><td>6</td><td></td><td>2</td><td>1800</td><td>190</td><td></td><td></td><td>102</td><td></td></tr><tr><td></td><td>~2</td><td>274</td><td>18</td><td></td><td>3</td><td>21</td><td>5</td><td></td><td></td><td>237</td><td></td></tr><tr><td></td><td>0</td><td>2899</td><td>87</td><td></td><td>~2</td><td>274</td><td>6</td><td></td><td></td><td>344</td><td></td></tr><tr><td></td><td>I</td><td>241&#x27;5</td><td>.165</td><td></td><td>0</td><td>282&#x27;3</td><td>62</td><td>-2</td><td>~2</td><td>19</td><td></td></tr><tr><td></td><td>2</td><td>3520</td><td>52</td><td></td><td>1</td><td>242</td><td>39</td><td></td><td>~1</td><td>291</td><td></td></tr><tr><td>2</td><td>3</td><td>355</td><td>4</td><td></td><td>2</td><td>3525</td><td>96</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>！【</td><td>250</td><td>10</td><td>-1</td><td>-2</td><td>188</td><td>7</td><td>。</td><td></td><td>0=21）+l</td><td></td></tr><tr><td></td><td>0</td><td>324</td><td>5</td><td></td><td>~I</td><td>298</td><td>35</td><td></td><td></td><td>180</td><td></td></tr><tr><td></td><td>I</td><td>238</td><td>25</td><td></td><td>0</td><td>2572</td><td>63</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>2</td><td>344</td><td>6</td><td></td><td>2</td><td>273</td><td>6</td><td></td><td></td><td>178</td><td></td></tr><tr><td>3</td><td>I</td><td>230</td><td>3</td><td></td><td>3</td><td>286</td><td>8</td><td></td><td>2</td><td>359</td><td></td></tr><tr><td></td><td></td><td>0=2D</td><td></td><td>2</td><td></td><td>326</td><td>7</td><td>I</td><td>0</td><td>353</td><td></td></tr><tr><td>。</td><td></td><td></td><td></td><td></td><td>1</td><td>238</td><td>5</td><td></td><td>I</td><td>237</td><td></td></tr><tr><td></td><td>-3</td><td>。 1800</td><td>4</td><td></td><td>2 1</td><td>343</td><td>4</td><td></td><td>2</td><td>352</td><td></td></tr><tr><td></td><td>12 -I</td><td>1</td><td>70</td><td>2</td><td></td><td>302</td><td>5</td><td></td><td>0</td><td>182</td><td></td></tr><tr><td></td><td>1</td><td>1785</td><td>33</td><td></td><td>0</td><td>214</td><td>7</td><td></td><td>2</td><td>273</td><td></td></tr><tr><td></td><td></td><td></td><td>167</td><td></td><td>0=2D-1</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>2</td><td>359&#x27;2</td><td>85</td><td>0</td><td></td><td>180</td><td></td><td>。</td><td></td><td>0=41）-l</td><td></td></tr><tr><td>1</td><td>3</td><td>13</td><td>7</td><td></td><td>-4</td><td>182</td><td>4</td><td></td><td>~2 1</td><td>180</td><td></td></tr><tr><td></td><td>。 1</td><td>349 237</td><td>27 35</td><td></td><td>-3 ~2</td><td>1803</td><td>22</td><td></td><td>2</td><td>358</td><td></td></tr><tr><td></td><td>2</td><td>352</td><td></td><td></td><td>-</td><td>1</td><td>1137</td><td>一1</td><td>12</td><td>179</td><td>心</td></tr><tr><td>~I</td><td>2 </td><td>8</td><td>15</td><td></td><td>1</td><td>1784</td><td>5 211</td><td></td><td></td><td>7</td><td></td></tr><tr><td></td><td>~1</td><td>303</td><td>30 6</td><td></td><td>2</td><td>359&#x27;2</td><td>89</td><td></td><td></td><td>0=2l</td><td></td></tr><tr><td></td><td>0</td><td>184</td><td>33</td><td></td><td>3</td><td>14</td><td>6</td><td>0</td><td>12</td><td>180</td><td></td></tr><tr><td></td><td>2</td><td>273</td><td>9</td><td>I</td><td>~3</td><td>261</td><td>5</td><td></td><td>-I</td><td>2</td><td></td></tr><tr><td></td><td>3</td><td>102</td><td>6</td><td></td><td>~2</td><td>310</td><td>13</td><td></td><td>I</td><td>178</td><td></td></tr><tr><td>2</td><td>I</td><td>236</td><td>5</td><td></td><td>0</td><td>55</td><td>56</td><td></td><td>2</td><td>180</td><td></td></tr><tr><td></td><td>2</td><td>345</td><td>3</td><td></td><td>1</td><td>2370</td><td>46</td><td>1</td><td>0</td><td>293</td><td></td></tr><tr><td>12</td><td>。</td><td>200</td><td>3</td><td></td><td>2</td><td>352</td><td>20</td><td></td><td>1</td><td>239</td><td></td></tr><tr><td></td><td>1</td><td>I10</td><td>6</td><td>~1</td><td>-3</td><td>187</td><td>6</td><td></td><td>道</td><td>301</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td>~2</td><td>75</td></table>
+
+#
+
+<table><tr><td>0=2l-2D</td><td></td><td></td><td>0=2l-4D</td><td></td><td></td><td></td><td>0=Wg</td><td></td></tr><tr><td>a</td><td>g</td><td>j”</td><td>i</td><td>α</td><td>0</td><td>j”</td><td>i α</td><td>C</td></tr><tr><td>180</td><td>5</td><td>0</td><td>2</td><td>0</td><td>9</td><td>I</td><td>。 45</td><td>5</td></tr><tr><td></td><td>1I</td><td>I</td><td>2</td><td>173</td><td>7</td><td>。 2</td><td>168</td><td>6</td></tr><tr><td></td><td>3</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>179&#x27;9</td><td>240</td><td></td><td>0=3l-2D</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>172&#x27;5 284</td><td>。</td><td>2</td><td>180</td><td>7</td><td></td><td></td><td></td></tr><tr><td>163</td><td>3</td><td>I</td><td>2</td><td>172</td><td>5</td><td></td><td></td><td></td></tr></table>
+
+417. True longitud $z = \Sigma 0 ^ { \prime \prime } { \cdot } _ { \mathrm { O O I } } C$ sin $\big \{ \theta + j ^ { \prime \prime } \mathrm { S } + i ( \mathrm { S } - \mathrm { T } ) + a ^ { \circ } \big \} .$
+
+<table><tr><td>0=0</td><td></td><td colspan="4">0l</td><td colspan="4">0=2D-l</td></tr><tr><td>α</td><td>0</td><td>j</td><td>i</td><td>α</td><td>C</td><td></td><td>i</td><td>a</td><td>0</td></tr><tr><td>1796</td><td>42</td><td>0</td><td></td><td>0</td><td>6</td><td>。</td><td>12</td><td>180</td><td>19</td></tr><tr><td>。</td><td>8</td><td></td><td>1</td><td>180</td><td>10</td><td></td><td>I</td><td>180</td><td>14</td></tr><tr><td>273</td><td>21</td><td></td><td>2</td><td>180</td><td>3</td><td></td><td>2</td><td>0</td><td>4</td></tr><tr><td>257</td><td>13</td><td>I</td><td>0</td><td>263</td><td>12</td><td>I</td><td>0</td><td>271</td><td>6</td></tr><tr><td>297</td><td>3</td><td></td><td>I</td><td>257</td><td>3</td><td></td><td>1</td><td>257</td><td>3</td></tr><tr><td></td><td></td><td>-1</td><td>-1</td><td>283</td><td>3</td><td>-I</td><td></td><td>271</td><td>5</td></tr><tr><td>0=2D</td><td></td><td></td><td>0</td><td>277</td><td>12</td><td></td><td>0</td><td>267</td><td>6</td></tr><tr><td>a</td><td>C</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>180</td><td>10</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>0</td><td>5</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>270</td><td>4</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>257</td><td>3</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>255</td><td>4</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></table>
+
+# 418. True longitude $: = \Sigma \mathrm { O } ^ { \prime \prime } { \cdot } _ { \mathrm { O O I } } C$ sin 0.
+
+0   
+2D 10 2l'+228° 4   
+$z \textrm { \textrm { \textrm { \textrm { \textrm { \textrm { z } } } } } }$ 39 l+1'+180° 6   
+2F-l 4 l-l+180° 6   
+$\smash { \vec { \ell } ^ { \prime } \ + \ \mathtt { r } \ \tilde { 8 } \vec { 0 } ^ { \circ } }$ 35 2Wg+2°8t+180° 38
+
+$$
+4 ^ { \mathrm { { r } } } \boldsymbol { 9 } , L \alpha t i t u d e = \Sigma _ { \mathrm { O } } \prime \prime _ { \mathrm { { O O I } } } C \sin \vartheta + j \mathrm { { T } } + i \mathrm { { ( T - V ) } } + a \mathrm { { e } } \vphantom { \Bigg \{ \alpha ( T - V ) + a ^ { 2 } \} } .
+$$
+
+<table><tr><td colspan="4">0=±F</td><td colspan="4">0=F+2D-l</td><td colspan="4">0</td></tr><tr><td>j</td><td>i</td><td>α</td><td>C</td><td>j</td><td>宝</td><td>a</td><td>C</td><td></td><td>；</td><td>a</td><td>C</td></tr><tr><td>0</td><td>I</td><td>0</td><td>9</td><td></td><td>-4</td><td>180</td><td>4</td><td>。</td><td>-6</td><td>285</td><td>3</td></tr><tr><td></td><td>2</td><td>180</td><td>4</td><td></td><td>-3</td><td>180</td><td>29</td><td></td><td>-5</td><td>235</td><td>5</td></tr><tr><td>1</td><td>2</td><td>273</td><td>6</td><td></td><td>~2</td><td>0</td><td>6</td><td></td><td>-4</td><td>285</td><td>6</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td>~I</td><td>0</td><td>5</td><td></td><td>-3</td><td>285</td><td>9</td></tr><tr><td></td><td></td><td>0=F+2D</td><td></td><td></td><td>1</td><td>0</td><td>6</td><td></td><td>-2</td><td>283</td><td>14</td></tr><tr><td>。</td><td></td><td></td><td></td><td></td><td>2</td><td>180</td><td>8</td><td></td><td>-1</td><td>285</td><td>37</td></tr><tr><td></td><td>-2</td><td>0</td><td>3</td><td></td><td>2</td><td>271</td><td>3</td><td></td><td>1</td><td>105</td><td>15</td></tr><tr><td></td><td>1</td><td>。 180</td><td>5</td><td>-2</td><td>-6</td><td>162</td><td>4</td><td></td><td>2</td><td>105</td><td>6</td></tr><tr><td></td><td>2</td><td></td><td>9</td><td></td><td></td><td></td><td></td><td></td><td>3</td><td>105</td><td>3</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>2</td><td>3</td><td>2156</td><td></td></tr><tr><td></td><td></td><td>0=-F+2D</td><td></td><td></td><td></td><td>0=-F+2D-l</td><td></td><td>3</td><td>~7</td><td>255</td><td>3</td></tr><tr><td>。</td><td>~7</td><td>180</td><td>3</td><td>。</td><td>-4</td><td>180</td><td>4</td><td></td><td>-6</td><td>255</td><td>5</td></tr><tr><td></td><td>-6</td><td>180</td><td>5</td><td></td><td>-3</td><td>180</td><td>31</td><td></td><td>5</td><td>255</td><td>9</td></tr><tr><td></td><td>15</td><td>180</td><td>9</td><td></td><td>-2</td><td>0</td><td>6</td><td></td><td>-4</td><td>255</td><td>25</td></tr><tr><td></td><td>-4</td><td>180</td><td>23</td><td></td><td>1</td><td>0</td><td>5</td><td></td><td>-3</td><td>516</td><td>74</td></tr><tr><td></td><td>-3</td><td>0</td><td>45</td><td></td><td>1</td><td>0</td><td>6</td><td></td><td>12</td><td>75</td><td>18</td></tr><tr><td></td><td>~2</td><td>0</td><td>21</td><td></td><td>2</td><td>180</td><td>8</td><td></td><td>-I</td><td>75</td><td>10</td></tr><tr><td></td><td>-1</td><td>180</td><td>5</td><td>I</td><td>2</td><td>271</td><td>3</td><td></td><td>1</td><td>75</td><td>6</td></tr><tr><td></td><td>1</td><td>0</td><td>16</td><td>-2</td><td>16</td><td>162</td><td>4</td><td></td><td>2</td><td>75</td><td>4</td></tr><tr><td></td><td>2</td><td>180</td><td>23</td><td></td><td></td><td></td><td></td><td></td><td>3</td><td>75</td><td>3</td></tr><tr><td>I</td><td>2</td><td>271</td><td>9</td><td></td><td></td><td></td><td></td><td>3</td><td>5</td><td>125</td><td>30</td></tr><tr><td></td><td>3</td><td>272</td><td>6</td><td></td><td>0=F-2D+l</td><td></td><td></td><td>3</td><td></td><td>67</td><td>7</td></tr><tr><td>-I</td><td>5</td><td>2700</td><td>68</td><td>I</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>12</td><td>269</td><td>6</td><td></td><td>5</td><td>90</td><td>4</td><td></td><td>0=w1-2D</td><td></td><td></td></tr><tr><td>2</td><td>3</td><td>199</td><td>3</td><td></td><td></td><td></td><td></td><td>2</td><td>3</td><td>36</td><td>4</td></tr><tr><td>-2</td><td>-3</td><td>341</td><td>5</td><td></td><td></td><td>0=F-2D-l</td><td></td><td></td><td>0=101+l</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td>1</td><td></td><td>270</td><td></td><td>2</td><td></td><td>216</td><td>4</td></tr><tr><td>0</td><td></td><td>0=±F+l</td><td></td><td></td><td>5</td><td></td><td>4</td><td>2</td><td>3 -3</td><td>75</td><td>4</td></tr><tr><td></td><td>12</td><td>0</td><td>3</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>1</td><td>180</td><td>4</td><td></td><td></td><td>0=±F+2l-2D</td><td></td><td></td><td></td><td>0=11-1</td><td></td></tr><tr><td></td><td>1</td><td>0</td><td>4</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>2</td><td>180</td><td>3</td><td>。</td><td>3</td><td>180</td><td>3</td><td>2</td><td>3</td><td>36</td><td>3</td></tr><tr><td></td><td>3</td><td>180</td><td>6</td><td>2</td><td>6</td><td>18</td><td>3</td><td>-2</td><td>~3</td><td>255</td><td>4</td></tr></table>
+
+Motion of the Moon.
+
+![](images/53322fd87f9ab55455eeb592d077b30463fae25453e68acf48a76f51c77bd811.jpg)

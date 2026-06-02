@@ -36,6 +36,63 @@ body {
   padding: 32px 20px 40px;
 }
 
+body.embed-mode .page-shell {
+  max-width: none;
+  padding: 0;
+}
+
+body.embed-mode .hero,
+body.embed-mode .section-block,
+body.embed-mode .info-card,
+body.embed-mode .preview-actions .action-button-muted,
+body.embed-mode .preview-actions .action-button:not(#openPageButton) {
+  display: none;
+}
+
+body.embed-mode .workspace,
+body.embed-mode .preview-shell {
+  display: block;
+}
+
+body.embed-mode .preview-card {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+body.embed-mode .preview-header {
+  padding: 14px 18px 10px;
+  margin-bottom: 0;
+}
+
+body.embed-mode .preview-header .section-label,
+body.embed-mode .preview-header h2 {
+  display: none;
+}
+
+body.embed-mode .preview-actions {
+  width: 100%;
+  justify-content: flex-end;
+}
+
+body.embed-mode #openPageButton {
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+body.embed-mode .preview-frame-wrap {
+  min-height: 620px;
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+body.embed-mode #previewFrame {
+  height: 620px;
+}
+
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);

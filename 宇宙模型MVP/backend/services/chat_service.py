@@ -3,19 +3,12 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from backend.catalog import VISUALIZATIONS
 from backend.services.rag_client import RAG_CLIENT
+from backend.services.visualization_planner import VISUALIZATION_PLANNER
 
 
 def _recommend_visualizations(question: str) -> list[dict[str, Any]]:
-    lowered = question.lower()
-    matches = []
-    for item in VISUALIZATIONS:
-        if any(keyword.lower() in lowered for keyword in item["keywords"]):
-            matches.append(item)
-    if matches:
-        return matches[:3]
-    return VISUALIZATIONS[:2]
+    return VISUALIZATION_PLANNER.plan(question=question)
 
 
 def _fallback_answer(question: str) -> str:
@@ -32,7 +25,14 @@ def _fallback_answer(question: str) -> str:
             "日食发生在太阳、月球、地球接近排成一条直线时，月球运行到太阳和地球之间，"
             "挡住了部分或全部太阳光。因为月球本影和半影范围有限，所以只有地球上一部分地区能看到日食。"
         )
-    if "开普勒第三定律" in question or "kepler" in lowered:
+    if "开普勒三大定律" in question or "开普勒三定律" in question or "kepler" in lowered:
+        return (
+            "开普勒三大定律可以这样理解：第一定律说行星绕太阳走的是椭圆轨道，太阳位于一个焦点；"
+            "第二定律说行星在相等时间内扫过相等面积，所以近日点更快、远日点更慢；"
+            "第三定律说公转周期的平方与轨道长半轴的立方成正比。"
+            "如果你想直观抓住核心，最适合先看第三定律，因为它最容易通过轨道大小和周期变化建立数量直觉。"
+        )
+    if "开普勒第三定律" in question:
         return (
             "开普勒第三定律说的是：行星公转周期的平方，与轨道长半轴的立方成正比。"
             "直观理解就是，离太阳越远的行星，轨道越大，运行得也越慢，所以周期会显著变长。"
@@ -108,7 +108,8 @@ class ChatService:
                 "contexts": rag_result["contexts"],
                 "recommendedVisualizations": _recommend_visualizations(question),
                 "service": "knowledge",
-                "strategy": None,
+                "strategy": rag_result.get("strategy") or variant,
+                "resolvedStrategy": rag_result.get("resolvedStrategy"),
                 "latencyMs": rag_result.get("latencyMs"),
                 "tokenUsage": rag_result.get("tokenUsage"),
                 "raw": rag_result["raw"],
@@ -120,6 +121,7 @@ class ChatService:
             "contexts": [],
             "recommendedVisualizations": _recommend_visualizations(question),
             "service": "assistant",
+            "strategy": variant,
             "raw": rag_result.get("raw"),
         }
 

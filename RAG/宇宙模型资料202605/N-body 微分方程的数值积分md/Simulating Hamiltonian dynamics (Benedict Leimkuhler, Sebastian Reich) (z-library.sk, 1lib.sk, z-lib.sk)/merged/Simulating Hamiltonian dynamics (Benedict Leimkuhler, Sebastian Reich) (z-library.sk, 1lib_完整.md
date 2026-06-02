@@ -1,0 +1,12348 @@
+<!-- source: Simulating Hamiltonian dynamics (Benedict Leimkuhler, Sebastian Reich) (z-library.sk, 1lib.sk, z-lib.sk).pdf -->
+
+<!-- pdf_type: normal; pages: 396; chunk_pages: 70 -->
+
+
+<!-- chunk 0001: pages 1-70 -->
+# Simulating Hamiltonian Dynamics
+
+Benedict Leimkuhlerand Sebastian Reich
+
+![](images/cb43057a3dd216a85d752666236137b2cf768290d222495ee70b943cef553de9.jpg)
+
+# Simulating Hamiltonian Dynamics
+
+The Cambridge Monographs on Applied and Computational Mathematics reflects the crucial role of mathematical and computational techniques in contemporary science. The series publishes expositions on all aspects of applicable and numerical mathematics, with an emphasis on new developments in this fast-moving area of research.
+
+State-of-the-art methods and algorithms as well as modern mathematical descriptions of physical and mechanical ideas are presented in a manner suited to graduate research students and professionals alike. Sound pedagogical presentation is a prerequisite. It is intended that books in the series will serve to inform a new generation of researchers.
+
+# Also in this series:
+
+1. A Practical Guide to Pseudospectral Methods, Bengt Fornberg   
+2. Dynamical Systems and Numerical Analysis, A. M. Stuart and A. R. Humphries   
+3. Level Set Methods and Fast Marching Methods, J. A. Sethian   
+4. The Numerical Solution of Integral Equations of the Second Kind, Kendall E. Atkinson   
+5. Orthogonal Rational Functions, Adhemar Bultheel, Pablo Gonzalez-Vera, Erik Hendiksen, and´   
+Olav Njastad ˚   
+6. The Theory of Composites, Graeme W. Milton   
+7. Geometry and Topology for Mesh Generation Herbert Edelsfrunner   
+8. Schwarz–Christoffel Mapping Tofin A. Driscoll and Lloyd N. Trefethen   
+9. High-Order Methods for Incompressible Fluid Flow, M. O. Deville, P. F. Fischer and   
+E. H. Mund   
+10. Practical Extrapolation Methods, Avram Sidi   
+11. Generalized Riemann Problems in Computational Fluid Dynamics, Matania Ben-Artzi and   
+Joseph Falcovitz   
+12. Radial Basis Functions, Martin D. Buhmann   
+13. Iterative Krylov Methods for Large Linear Systems, Henk A. van der Vorst.   
+15. Collocation Methods for Volterra Integral and Related Functional Equations, Hermann Brunner.
+
+# Simulating Hamiltonian Dynamics
+
+BENEDICT LEIMKUHLER University of Leicester
+
+SEBASTIAN REICH Imperial College, London
+
+   Cambridge, New York, Melbourne, Madrid, Cape Town, Singapore, São Paulo
+
+Cambridge University Press   
+The Edinburgh Building, Cambridge  , UK   
+Published in the United States of America by Cambridge University Press, New York   
+www.cambridge.org   
+Information on this title: www.cambridge.org/9780521772907
+
+$^ ©$ Cambridge University Press 2004
+
+This book is in copyright. Subject to statutory exception and to the provision of relevant collective licensing agreements, no reproduction of any part may take place without the written permission of Cambridge University Press.
+
+First published in print format  2005 - ---- eBook (NetLibrary) - --- eBook (NetLibrary)
+
+- ---- hardback - --- hardback
+
+Cambridge University Press has no responsibility for the persistence or accuracy of s for external or third-party internet websites referred to in this book, and does not guarantee that any content on such websites is, or will remain, accurate or appropriate.
+
+# Contents
+
+# Preface ix
+
+# Acknowledgements xvi
+
+# 1 Introduction
+
+# 1
+
+1.1 N-body problems 2   
+1.2 Problems and applications 3   
+1.3 Constrained dynamics 6   
+1.4 Exercises . 8
+
+# 2 Numerical methods 11
+
+2.1 One-step methods 13   
+2.2 Numerical example: the Lennard–Jones oscillator   
+2.3 Higher-order methods   
+2.4 Runge–Kutta methods   
+2.5 Partitioned Runge–Kutta methods   
+2.6 Stability and eigenvalues   
+2.7 Exercises .
+
+# 3 Hamiltonian mechanics 36
+
+3.1 Canonical and noncanonical Hamiltonian systems 36   
+3.2 Examples of Hamiltonian systems 39   
+3.3 First integrals 44   
+3.4 The flow map and variational equations 48   
+3.5 Symplectic maps and Hamiltonian flow maps 52   
+3.6 Differential forms and the wedge product 61   
+3.7 Exercises . 66
+
+# 4 Geometric integrators 70
+
+4.1 Symplectic maps and methods . 74
+
+4.2 Construction of symplectic methods by Hamiltonian splitting . . 76   
+4.3 Time-reversal symmetry and reversible discretizations . 81   
+4.4 First integrals 87   
+4.5 Case studies 91   
+4.6 Exercises . 99
+
+# 5 The modified equations 105
+
+5.1 Forward v. backward error analysis 107   
+5.2 The modified equations 117   
+5.3 Geometric integration and modified equations 129   
+5.4 Modified equations for composition methods 133   
+5.5 Exercises . 139
+
+# 6 Higher-order methods 142
+
+6.1 Construction of higher-order methods 143   
+6.2 Composition methods 144   
+6.3 Runge–Kutta methods 149   
+6.4 Generating functions 159   
+6.5 Numerical experiments 161   
+6.6 Exercises . 165
+
+# 7 Constrained mechanical systems 169
+
+7.1 N-body systems with holonomic constraints 170   
+7.2 Numerical methods for constraints 173   
+7.3 Transition to Hamiltonian mechanics 184   
+7.4 The symplectic structure with constraints 186   
+7.5 Direct symplectic discretization 188   
+7.6 Alternative approaches to constrained integration 191   
+7.7 Exercises . 195
+
+# 8 Rigid body dynamics 199
+
+8.1 Rigid bodies as constrained systems . . . 201   
+8.2 Angular momentum and the inertia tensor 210   
+8.3 The Euler equations of rigid body motion 212   
+8.4 Order 4 and order 6 variants of RATTLE for the free rigid body 223   
+8.5 Freely moving rigid bodies 224   
+8.6 Other formulations for rigid body motion 228   
+8.7 Exercises . 230
+
+# 9 Adaptive geometric integrators 234
+
+9.1 Sundman and Poincar´e transformations 235
+
+9.2 Reversible variable stepsize integration . 238   
+9.3 Sundman transformations . 246   
+9.4 Backward error analysis . 249   
+9.5 Generalized reversible adaptive methods 251   
+9.6 Poincar´e transformations 253   
+9.7 Exercises . 255
+
+# 10 Highly oscillatory problems 257
+
+10.1 Large timestep methods 258   
+10.2 Averaging and reduced equations 269   
+10.3 The reversible averaging (RA) method 271   
+10.4 The mollified impulse (MOLLY) method 276   
+10.5 Multiple frequency systems 279   
+10.6 Exercises . 280
+
+# 11 Molecular dynamics 287
+
+11.1 From liquids to biopolymers . 290   
+11.2 Statistical mechanics from MD trajectories 296   
+11.3 Dynamical formulations for the NVT, NPT and   
+other ensembles . 299   
+11.4 A symplectic approach: the Nos´e–Poincar´e method 305   
+11.5 Exercises . 313
+
+# 12 Hamiltonian PDEs 316
+
+12.1 Examples of Hamiltonian PDEs . . . 316   
+12.2 Symplectic discretizations 325   
+12.3 Multi-symplectic PDEs 335   
+12.4 Exercises . 352   
+References . 357   
+Index . 374
+
+# Preface
+
+# About geometric integration
+
+This book is about simulating dynamical systems, especially conservative systems such as arise in celestial mechanics and molecular models. We think of the integrator as the beating heart of any dynamical simulation, the scheme which replaces a differential equation in continuous time by a difference equation defining approximate snapshots of the solution at discrete timesteps. As computers grow in power, approximate solutions are computed over ever-longer time intervals, and the integrator may be iterated many millions or even billions of times; in such cases, the qualitative properties of the integrator itself can become critical to the success of a simulation. Geometric integrators are methods that exactly (i.e. up to rounding errors) conserve qualitative properties associated to the solutions of the dynamical system under study.
+
+The increase in the use of simulation in applications has mirrored rising interest in the theory of dynamical systems. Many of the recent developments in mathematics have followed from the appreciation of the fundamentally chaotic nature of physical systems, a consequence of nonlinearities present in even the simplest useful models. In a chaotic system the individual trajectories are by definition inherently unpredictable in the exact sense: solutions depend sensitively on the initial data. In some ways, this observation has limited the scope and usefulness of results obtainable from mathematical theory. Most of the common techniques rely on local approximation and perturbation expansions, methods best suited for understanding problems which are “almost linear,” while the new mathematics that would be needed to answer even the most basic questions regarding chaotic systems is still in its infancy. In the absence of a useful general theoretical method for analyzing complex nonlinear phenomena, simulation is increasingly pushed to the fore. It provides one of the few broadly applicable and practical means of shedding light on the behavior of complex nonlinear systems, and is now a standard tool in everything from materials modeling to bioengineering, from atomic theory to cosmology.
+
+As models grow in complexity and dimension, and the demands placed on simulation have risen, the need for more sophisticated numerical methods and analytic techniques also grows. Longer time interval simulations require more stable methods. Larger problems call for more efficient schemes, tailored to a particular application or family of applications. And more intricate modeling of delicate behaviors or properties requires corresponding improvements in the resolution of those properties during simulation.
+
+In writing this book for a broad audience of scientists, we have attempted to limit the introduction of technical detail, but in some places this cannot be avoided. The calculations are generally included for the benefit of students. We hope that appreciation of the general principles will not be lost in following the details of arguments. In the words of John Von Neumann, “One expects a mathematical theorem or a mathematical theory not only to describe and classify in a simple and elegant way numerous and a priori disparate special cases. One also expects elegance in its architectural, structural make-up. . . . If the deductions are lengthy or complicated there should be some simple general principle involved, which explains the complications and details, reduces the apparent arbitrariness to a few simple guiding motivations.” If there is one such guiding principle underlying our work it is this: classical mechanics – on which all physical models are based – also provides the proper foundation for numerical simulation of those systems. We will attempt to show in this book that practical, efficient methods for simulating conservative systems can be realized by making judicious use of the methods of classical mechanics.
+
+# An emphasis on methods
+
+In this book we address ourselves primarily to the following pair of questions:
+
+Which properties should be fundamental to an integration method for a (conservative) model?
+
+How can we design and implement schemes that respect physical principles regardless of timestep or traditional accuracy considerations?
+
+Although our interest is always ultimately in the methods themselves and in quantifying the relative differences among them, we will find that in attempting to answer the above questions, we are drawn far afield from the usual domain of the numerical analyst. The first question will lead us into the field of mechanics so that we may appreciate something of the nature of those structures and symmetries that underlie physical models and contribute to their long-term evolution. The second question will take us outside even the areas that have traditionally been investigated by mathematicians, since the special forms of force functions, presence of constraints, relationships among the variables, or efficiency considerations dictate to a large extent the features of appropriate (i.e. practical) methods used in applications.
+
+It is important to emphasize that our treatment is not comprehensive; we have made a selection from the literature which comprises – in our view – the most important material from the standpoint of practical application.
+
+Beginning with the idea of splitting we will show how many simple but effective integrators can be generated by using a few building blocks. The same techniques can be used to derive more sophisticated schemes. For example, explicit higherorder methods have a very natural derivation in the case of canonical mechanical systems developed in terms of the “kinetic $^ +$ potential” form of the energy.
+
+We survey recent work on methods for constrained systems and consider various approaches to the simulation of rigid body systems, methods which offer an efficient and – in many cases – demonstrably superior geometric alternative to more widespread schemes. Variable stepsize geometric integrators will be introduced based on a rescaling of the time variable. Methods for mixed systems possessing both rapidly and slowly varying degrees of freedom – or weak and strong forces – also call for the construction of specialized schemes. In all cases, our aim will be to present the ideas in as general a form as is prudent, highlighting instances where a given technique might be of use in other applications. Molecular dynamics applications are an important source of challenging problems for geometric integration, so we devote some time to their particular characteristics. Conservative partial differential equations introduce many new issues for the development of geometric integrators, a topic we touch on in the final chapter of the book.
+
+# How to use this book
+
+This book is intended, first, as a text for a course in computational mechanics or as a tool for self-instruction, and, second, as a basic reference for researchers and educators – regardless of discipline – interested in using and developing geometric integrators. The book should serve as a bridge from traditional training in the sciences to the recent research literature in the field of geometric integration. By emphasizing mathematical and computational issues and illustrating the various concepts and techniques with carefully developed model problems, it is hoped that the book can appeal to a wide audience, including mathematicians unfamiliar with modeling issues, and physicists, chemists, and engineers wishing to gain a better understanding of the mathematical underpinnings of existing methods or in developing effective methods for new applications.
+
+The book assumes only that the reader has had undergraduate coursework in linear algebra and differential equations. At several points we introduce, but do not thoroughly develop, topics from dynamical systems. A good introductory text in dynamical systems is the book of VERHULST [197]. We develop – in Chapters 2 and 3 – most of the necessary preliminaries of numerical analysis and classical mechanics from the ground up, however the reader should be aware that the treatment provided here of the required background material is necessarily brief; only those elements that are essential to our later study of geometric integrators are given. For an introduction to numerical analysis, the reader is referred to the classic books of ATKINSON [11], BURDEN AND FAIRES [37], and DAHLQUIST AND BJORK¨ [48]. The book of GEAR [70] can provide a useful introduction to the numerical solution of differential equations. The books of HAIRER, NøRSETT AND WANNER [82] and HAIRER AND WANNER [84] can serve as references for obtaining a more complete picture of the mathematical issues associated with construction of methods and error analysis for ordinary differential equations. ISERLES [91] has written an integrated text that introduces numerical methods for both ordinary and partial differential equations.
+
+First published at the end of the 19th century, ROUTH’s Dynamics of a System of Rigid Bodies (Elementary Part)1 remains a marvelous introduction to classical mechanics and provides a wealth of examples and exercises for the student (many of which could now be revisited with the aid of the modern computational techniques developed in this book). For a more systematic treatment to Hamiltonian classical mechanics the reader is referred to the following texts: LANDAU AND LIFSHITZ [105], MARION [121], GOLDSTEIN [73], and ARNOLD [7], all of which are well-worn occupants of our bookshelves. These books are quite varied in their use of notation and even in the way in which they motivate and explain identical material, but we have found all of them to be helpful on various occasions. If only one book is to be consulted, the elegant book of LANCZOS [104] is remarkable both in terms of its readability and its breadth, owing partly to the absence of detailed proofs. A modern rigorous treatment of classical mechanics may be found in MARSDEN AND RATIU [124], a book which also contains a number of useful examples and notes on history and applications.
+
+The book by SANZ-SERNA AND CALVO [172] was the first to cover symplectic integration methods and applications to classical mechanics and is still an excellent introduction to the subject. The more recent book by HAIRER, LUBICH, AND WANNER [80] covers a wide range of topics from geometric integration and should be very useful as an additional reference.
+
+In a graduate course in applied mathematics or computational physics, it is probable that much of the material of Chapters 1–3 could be skipped or skimmed, depending on the backgrounds of the students and the interests of the teacher. Some caution should be exercised here. In particular, it is essential that the student understand the concepts of convergence and order of convergence for a numerical method, the definition of the flow map, first integrals, and at least the condition for a symplectic map in terms of the Jacobian of the flow map.
+
+Molecular dynamics provides a rich source of problems for geometric integration, and we often draw on examples from this field for motivation and for evaluation of concepts and methods. Here again, it is likely that the reader may, on occasion, wish for a more detailed description of the problems or of typical approaches used by chemists and physicists. One reference stands out in this area for clarity of presentation and breadth: ALLEN AND TILDESLEY [4]. More recent books of FRANKEL AND SMIT [66] and SCHLICK [174] help to fill in the picture.
+
+Exercises included at the end of each chapter are intended to be demanding but not overwhelming; some of the multi-part problems could be assigned as projects, especially those involving the use of computers.
+
+# Computer software
+
+This book primarily emphasizes the mathematical properties of algorithms for solving differential equations. In later chapters, we will often see the methods introduced and analyzed as abstract maps of phase space. This approach, while essential to understanding and generalizing the methods, has the tendency to obscure both the intuitive basis for the theory and the ultimate importance of the subject. We would like emphasize that the student must implement and test numerical methods in order to gain a full understanding of the subject.
+
+While any programming language and graphics package could, in principle, be employed, the need for flexibility in the coding and testing of methods and the need to be able to work easily with scientific functions of vectors and matrices makes a specialized, interpreted language system for mathematics the best environment for problem solving.
+
+At the time of this writing, there are several widely distributed commercial software packages that support the simplified design and testing of algorithms, including the commercial packages MATLAB, MAPLE, and MATHEMATICA. Of these, the authors prefer the user interface and programming structure of MATLAB, but this is largely a matter of taste and any of the three mentioned systems would be suitable. These packages are all available to students at heavily discounted prices and run on a variety of computer platforms.
+
+For a student on a severe budget, there are several widely available free alternatives to the commercial packages. These options include, notably, OCTAVE, which is distributed under the Free Software Foundation’s GNU Public License. Our experience with this software is that it is adequate for most study purposes, although the commercial alternatives are generally superior with regard to easeof-use, documentation, and reliability.
+
+We will occasionally describe algorithms in this text, but we will attempt to avoid system-specific details, so the student is expected to supplement the mathematical study with study of the the user’s guide for the software system they are using, in particular the appropriate sections on programming.
+
+# Notation
+
+Let us summarize some basic notation used throughout the book. Dependent variables, such as positions $\pmb q$ and velocities $\pmb { v }$ are elements of a Euclidean space $\mathbb { R } ^ { d }$ , where $d \geq 1$ is the appropriate dimension. More specifically, we will always identify dependent variables with column vectors. When two column vectors $\pmb { u } \in$ $\mathbb { R } ^ { k }$ , $\pmb { v } \in \mathbb { R } ^ { I }$ are given we may write $( \pmb { u } , \pmb { v } ) ^ { T }$ for the column vector in $\mathbb { R } ^ { k + I }$ obtained by concatenating the two vectors. The transpose is there to remind us that the result is again a column vector. We will often need to refer to a set indexed by a parameter for which we write $\{ a _ { t } \} _ { t \in P }$ , where $P$ is the index set. As a short-hand, we will write $\left\{ \boldsymbol { a } _ { t } \right\}$ if the index set is clear from the context.
+
+The set of $k \times k$ matrices with real coefficients is $\mathbb { R } ^ { k \times k }$ and capital bold-face letter are used to denote matrices, e.g., A, $B \in \mathbb { R } ^ { k \times k }$ . The $k$ -dimensional identity is $\boldsymbol { I } _ { k }$ or $\prime$ as a short-hand if the dimension is clear from the context.
+
+A vector-valued function $\pmb { { \cal F } } : \mathbb { R } ^ { n }  \mathbb { R } ^ { m }$ will be assumed to map column vectors of dimension $n$ to column vectors of dimension $m$ . The vector of partial derivatives of a scalar-valued function $f ( \pmb q )$ is identified with a row vector in $\mathbb { R } ^ { d }$ and is denoted by $f _ { q } ( q )$ or, equivalently, by $\partial f / \partial \pmb q \left( \pmb q \right)$ . Hence the Jacobian matrix of a vector-valued function $\pmb { F } ( \pmb { q } )$ is identified with the $m \times n$ matrix $F _ { q } ( q )$ .
+
+The scalar product, inner product, or dot product of two column vectors a and $^ { b }$ in $\mathbb { R } ^ { d }$ is denoted by $\left. a , b \right.$ or ${ \pmb { a } } { \cdot } { \pmb { b } }$ , or, simply, $\partial ^ { T } \boldsymbol { b }$ , where $\partial ^ { T }$ is the transpose of a. The cross product of a and $b$ is denoted $\pmb { \partial } \times \pmb { b }$ . We will frequently use
+
+$$
+{ \widehat { \pmb { a } } } { \pmb { b } } = { \pmb { a } } \times { \pmb { b } } ,
+$$
+
+where $\widehat { \pmb { a } } \in \mathbb { R } ^ { 3 \times 3 }$ is a skew-symmetric matrix related to the vector $\pmb { a } = \left( a _ { 1 } , a _ { 2 } \right.$ , $a _ { 3 } ) ^ { T }$ by
+
+$$
+\widehat { \pmb { a } } = \left[ \begin{array} { c c c } { 0 } & { - a _ { 3 } } & { a _ { 2 } } \\ { a _ { 3 } } & { 0 } & { - a _ { 1 } } \\ { - a _ { 2 } } & { a _ { 1 } } & { 0 } \end{array} \right] .
+$$
+
+The norm of a vector a is defined by
+
+$$
+\lVert \pmb { a } \rVert = \langle \pmb { a } , \pmb { a } \rangle ^ { 1 / 2 } .
+$$
+
+A real-valued function $f$ defined on an interval $I$ of the real line is said to be square-integrable if $\textstyle \int _ { I } f ( x ) ^ { 2 } d x$ is bounded. In that case we say that $f$ lies in the function space $L _ { 2 }$ on the interval $I$ . We say that the $L _ { 2 }$ -norm of $f$ is
+
+$$
+\| f \| _ { 2 } = \left( \int _ { I } f ( x ) ^ { 2 } d x \right) ^ { \frac { 1 } { 2 } } ,
+$$
+
+and we define the $L _ { 2 }$ -inner product of two square integrable functions $f$ and $g$ by
+
+$$
+( f , g ) = \int _ { I } f ( x ) g ( x ) d x
+$$
+
+The gradient $\nabla _ { q } V ( q )$ of a scalar-valued differentiable function $V ( q )$ is defined by
+
+$$
+\langle \nabla _ { \boldsymbol { q } } V ( \boldsymbol { q } ) , \boldsymbol { u } \rangle = \operatorname* { l i m } _ { \varepsilon \to 0 } \frac { V ( \boldsymbol { q } + \varepsilon \boldsymbol { u } ) - V ( \boldsymbol { q } ) } { \varepsilon } ,
+$$
+
+where the equality is to hold for all vectors $\pmb { u }$ of the same dimension as $\pmb q$ . This definition leads to the relation
+
+$$
+\nabla _ { \pmb { q } } V ( \pmb q ) = V _ { \pmb { q } } ( \pmb q ) ^ { T } ,
+$$
+
+and, hence, the gradient $\nabla _ { q } V ( q )$ is a column vector.
+
+The time derivative of a function $\pmb q ( t )$ will normally be denoted by $d \pmb q / d t ( t )$ , but whenever it is more convenient we may instead use the short-hand $\dot { \pmb q } ( t )$ . If clear from the context, we will also frequently drop the argument in functions and write, for example, $\dot { \pmb q }$ instead of $\dot { \pmb q } ( t )$ , or $\boldsymbol { F }$ instead of $F ( q )$ . The same conventions apply to higher-order derivatives.
+
+If a variable $u$ depends on several independent variables such as time $t$ and space $x$ , then the partial derivatives are often denoted by $u _ { t }$ and $u _ { x }$ , respectively.
+
+Given two maps $\pmb { \psi } _ { 1 } : \mathbb { R } ^ { n }  \mathbb { R } ^ { n }$ and $\pmb { \psi } _ { 2 } : \mathbb { R } ^ { n }  \mathbb { R } ^ { n }$ with compatible range and domain, we define their composition $\psi _ { 2 } \circ \psi _ { 1 }$ by
+
+$$
+\left[ \pmb { \psi } _ { 2 } \circ \pmb { \psi } _ { 1 } \right] ( z ) = \pmb { \psi } _ { 2 } ( \pmb { \psi } _ { 1 } ( z ) ) ,
+$$
+
+for all $z \in \mathbb { R } ^ { n }$ . The inverse of a one-to-one map $\pmb { \psi }$ is denoted by $\psi ^ { - 1 }$ . Hence
+
+$$
+\pmb { \psi } ^ { - 1 } \circ \pmb { \psi } = \mathbf { i d } ,
+$$
+
+where $\mathbf { i d } ( z ) = z$ the identity map.
+
+Finally the Landau-order notation $\mathcal { O } ( \Delta t )$ is used to denote a quantity that goes to zero as rapidly as $\Delta t$ goes to zero. More generally, we will write $g ( \Delta t ) =$ $\mathcal { O } ( \Delta t ^ { p } )$ if $g ( \Delta t ) / \Delta t ^ { p }$ is bounded as $\Delta t \to 0$ but $g ( \Delta t ) / \Delta t ^ { q }$ is unbounded if $q > p$ .
+
+# Acknowledgements
+
+We have to admit that when we began this project, we had no appreciation for its ultimate complexity. The only thing that has kept the project going at some critical points was the broad support and encouragement we received from our families, our colleagues, and our students.
+
+A key aspect of the book is the emphasis on applications. Brian Laird proposed the Lennard–Jones model discussed in Chapter 4 and made several other helpful comments. Chris Sweet contributed most of the numerical experiments in Chapter 6, including the long-term simulations of the solar system, and Eric Barth provided the alanine dipeptide simulation in Chapter 11. Jason Frank helped with many of the experiments in Chapter 12. Jason’s tireless proofreading of the entire manuscript must also be remarked!
+
+We hope that the book will be useful for teaching upper-division undergraduate and graduate courses. In 2002, Ph.D. students from various fields and various parts of Europe – Martin Dahlberg (chemistry), Thomas Sauvaget (mathematics/physics), Marko Vranicar (physics), and Fredrick Hedman (mathematics) – attended an informal summer school in Leicester taught from an early draft of the book. Part of the book formed the basis for a series of survey lectures given by one of us in Bari, Italy in 2002. Mitch Luskin, Claudia Wulff, and Steve Bond have subjected their classes to a preliminary draft of the book for testing in this setting, and provided useful comments.
+
+We would like also to thank Teijo Arponen, Jeff Cash, Colin Cotter, Ernst Hairer, Zhidong Jia, Per-Christian Moan, Brian Moore, and Antonella Zanna for reading various parts of the manuscript and providing feedback. We have also relied on the extraordinary patience of Cambridge University Press, particularly our editors David Tranah and Joseph Bottrill.
+
+# 1
+
+# Introduction
+
+This book is about numerical methods for use in simulating dynamical phenomena governed by conservative processes. In this chapter, we review a few basic principles regarding conservative models. In general, we are concerned here with initial value problems for systems of ordinary differential equations (ODEs) of the form
+
+$$
+\frac { d } { d t } z = { \bf { \nabla } } f ( z ) , \qquad z ( t _ { 0 } ) = z ^ { 0 } ,
+$$
+
+where $z : \mathbb { R } \to \mathbb { R } ^ { k }$ . The basic questions encountered early on in a first course on ODEs concern existence and uniqueness of solutions, a topic addressed, for example, by Picard’s theorem. Discussion then turns to various techniques for analytically solving the differential equations when $\boldsymbol { f }$ has a prescribed form. In particular, the scalar case $k = 1$ is an instance of a separable differential equation and such models are in principle solvable in quadratures (i.e. by evaluating certain integrals and solving certain algebraic equations). Linear systems are exactly solvable after determination of the eigenvalues and eigenvectors (or generalized eigenvectors, in the degenerate case). Beyond these and a few other special cases, most models are not exactly integrable. In this book we are mostly interested in complex models that do not admit exact solutions.
+
+The emphasis of this book is on the particular models which are formulated naturally as conservative systems of ODEs, most importantly Hamiltonian systems. As a general rule, mechanical systems resulting from physical principles are Hamiltonian until (usually for prudent modeling purposes) subjected to simplifying reductions or truncations. For example, in typical fluid dynamics applications, the incorporation of diffusive effects due to friction with a boundary plays an essential role in the modeling. However, in many situations, the conservative paradigm can be retained and remains the most appropriate foundation for the construction of models, since it is in no small measure due to properties such as conservation of energy and angular momentum that matter behaves as it does.
+
+The existence of Kepler’s laws which approximately describe the motion of the planets in the solar system are reflections of the conservative nature of gravitational dynamics. The celebrated Kolmogorov–Arnold–Moser theory which discusses the local stability of nonlinear dynamical systems in the vicinity of certain critical points applies only to conservative systems. Even dissipative systems typically retain certain conservation laws (for example conservation of mass in fluid dynamics), and many of the ideas developed in this book are still applicable to such problems.
+
+# 1.1 $N \cdot$ -body problems
+
+Conservative dynamical systems most often originate through application of Newton’s second law which describes the motion of a body in an applied force field. In a classical N-body system (Fig. 1.1), several point masses are involved and the forces acting on any one body arise from the presence of neighboring bodies or some external field.
+
+![](images/42d0c7fb477eec76e41e02819edf59d287aeaadba795d437b4ef6904e0120982.jpg)  
+Figure 1.1 An N-body system.
+
+Let the ith body be assigned a mass $m _ { j }$ , an instantaneous position $\pmb q _ { j }$ (with respect to some appropriate reference frame), and a velocity $\pmb { V } _ { I }$ , $i = 1 , \dots , N$ . Let $F _ { j }$ represent the force acting on body $j$ (due, for example, to interactions with the other particles). We assume that the force can be obtained as the negative gradient of a potential energy function $V$ with respect to the i th particle position $\pmb q _ { I }$ , i.e.
+
+$$
+\pmb { F } _ { i } = - \nabla _ { \pmb { q } _ { i } } V \big ( \pmb { q } _ { 1 } , \pmb { q } _ { 2 } , \dots , \pmb { q } _ { N } \big ) .
+$$
+
+The $N .$ -point particles then move according to Newton’s equations of motion
+
+$$
+\begin{array} { c } { { \displaystyle \frac { d } { d t } { \pmb q } _ { i } = { \pmb v } _ { i } , } } \\ { { m _ { i } \displaystyle \frac { d } { d t } { \pmb v } _ { i } = { \pmb F } _ { i } , \qquad i = 1 , 2 , \ldots , N . } } \end{array}
+$$
+
+N-body problems can be naturally formulated to describe motion in any Euclidean space $\mathbb { R } ^ { \nu }$ , $\nu > 0$ , i.e. with $\pmb q _ { j }$ , $v _ { j }$ , and $F _ { j }$ all in $\mathbb { R } ^ { \nu }$ . Such a system is said to have νN degrees of freedom. We will say that the phase space of an $N .$ -body problem is the $2 \nu N \cdot$ -dimensional set consisting of all possible positions $\pmb q = ( \pmb q _ { 1 } , \pmb q _ { 2 } , \dotsb q _ { N } ) ^ { T }$ and velocities $\pmb { v } = ( \pmb { v } _ { 1 } , \pmb { v } _ { 2 } , \dots , \pmb { v } _ { N } ) ^ { T }$ of the particles. Under mild smoothness assumptions on the potential energy function $V$ , there exists, at least locally through any point $( \pmb q ^ { 0 } , \pmb v ^ { 0 } )$ of phase space, a unique trajectory of the mechanical system: a solution of the equations (1.1)–(1.2) subject to the initial conditions $\pmb q ( 0 ) = \pmb q ^ { 0 }$ , $\pmb { v } ( 0 ) = \pmb { v } ^ { 0 }$ . At a critical point $q = \bar { q }$ , all of the forces acting on the particles in the system vanish; hence the trajectory through $( \bar { \pmb q } , \pmb 0 )$ reduces to a single point.
+
+The total energy associated to the mechanical system (1.1)–(1.2) is the sum of kinetic and potential terms
+
+$$
+E ( \pmb { q } , \pmb { v } ) = \frac { 1 } { 2 } \sum _ { i = 1 } ^ { N } m _ { i } \| \pmb { v } _ { i } \| ^ { 2 } + V ( \pmb { q } ) .
+$$
+
+It is easy to see that the energy is constant along a trajectory, since
+
+$$
+\begin{array} { r l } { \displaystyle \frac { d } { d t } E = \sum _ { i = 1 } ^ { N } m _ { i } \pmb { v } _ { i } \cdot \dot { \pmb { v } } _ { i } + \sum _ { i = 1 } ^ { N } \nabla _ { q _ { i } } V ( \pmb { q } ) \cdot \dot { \pmb { q } } _ { i } } & { } \\ { \displaystyle = \sum _ { i = 1 } ^ { N } m _ { i } \pmb { v } _ { i } \cdot \left( \frac { 1 } { m _ { i } } \pmb { F } _ { i } \right) - \sum _ { i = 1 } ^ { N } \pmb { F } _ { i } \cdot \pmb { v } _ { i } = 0 . } \end{array}
+$$
+
+(Refer to the preface for details on the notation used in this derivation and later in the book.) A system with an energy function constant along solutions is referred to as a conservative system.
+
+# 1.2 Problems and applications
+
+Let us briefly survey a few of the most important recurring N-body applications. Examples of these problems, along with a number of other types of models, are developed in more detail in various places in the book.
+
+The historical origin of the N-body problem lies in gravitational modeling, and these problems remain of substantial current interest. Simulations are being conducted on a wide variety of astronomical systems, including planetary systems (for understanding both their formation and their long-term stability), systems of interacting stars or binaries, galaxies, and globular clusters. Closely related problems arise in semi-classical studies of atomic systems. As an example, the three-body gravitational problem involving bodies of unequal mass has the potential energy
+
+$$
+V ( q _ { 1 } , q _ { 2 } , q _ { 3 } ) = - \frac { G m _ { 1 } m _ { 2 } } { \| q _ { 1 } - q _ { 2 } \| } - \frac { G m _ { 2 } m _ { 3 } } { \| q _ { 2 } - q _ { 3 } \| } - \frac { G m _ { 1 } m _ { 3 } } { \| q _ { 1 } - q _ { 3 } \| } ,
+$$
+
+where $G$ is the universal gravitational constant. Such a three-body problem has no general, analytical solution, so simulation is needed to enhance understanding, sometimes in conjunction with partial theoretical analysis, for example to determine the stability of certain configurations of the bodies. Chaotic solutions of the three-body problem may include arbitrarily close approaches of the bodies, in which case the singularity in the potential may cause significant difficulty for numerical simulation and some sort of regularizing transformations of time and/or coordinates are needed. We will return to consider some of these issues in one of the book’s later chapters.
+
+Classical mechanics is also the basis of many molecular models in chemistry, physics, and biology, including those commonly used for studying liquids and gases, materials, proteins, nucleic acids, and other polymers. In these applications, $V$ is composed of a sum of several heterogeneous nonlinear contributions based on the distances between pairs of particles, varying both in functional form and in relative intensity. These terms may be “local” (“short-range”) meaning that they effectively involve only contributions from nearby particles, or they may be “longrange.” A commonly treated system with only local interactions is the simplified model of a gas or liquid, consisting of $N$ identical atoms of a certain prescribed mass, interacting in a Lennard–Jones pair potential
+
+$$
+\varphi _ { \mathsf { L . J . } } ( r ) = \epsilon \left[ \left( { \frac { \bar { r } } { r } } \right) ^ { 1 2 } - 2 \left( { \frac { \bar { r } } { r } } \right) ^ { 6 } \right] .
+$$
+
+The total potential energy is
+
+$$
+V = \sum _ { 1 \leq i < j \leq N } \varphi _ { \mathsf { L } . \mathsf { J } . } ( \| \pmb { q } _ { i } - \pmb { q } _ { j } \| ) .
+$$
+
+Note that such models are always simplifications of vastly more complex quantummechanical models. The parameters $\epsilon$ and $\bar { r }$ of the Lennard–Jones potential provide a fit to experiment, but would depend on the temperature and pressure at which the simulation is performed. Strictly speaking, the pair interactions between atoms would include all pairs, no matter how distant, but since the energy decays like $r ^ { - 6 }$ , the forces are generally found to be so small outside of some critical radius that the potential can simply be cut off beyond this distance. In practice, this is usually done by introducing a smooth transition of the potential energy function to a constant value.
+
+Regardless of what other potentials may be present, the presence of the Lennard–Jones potential ensures that the particle forces are ultimately strongly repulsive at short range. These repulsive forces are a very important aspect of molecular systems. The potential will be singular where particle positions overlap, but otherwise, the potential is smooth and the solution is globally defined: solutions started away from singularities can be extended without bound in $t$ . Thus molecular systems do not undergo the extreme collisions encountered in strictly Coulombic problems such as gravitation.
+
+Still other classes of conservative systems arise through discretization of partial differential equations. A semi-linear wave equation of the form
+
+$$
+u _ { t t } = u _ { x x } - f ( u ) , \qquad u = u ( x , t ) ,
+$$
+
+is conservative under certain prescriptions of boundary and initial data. If we assume, for example, that solutions are defined on the interval $[ 0 , L ]$ and are periodic with period $L$ , then the energy functional is
+
+$$
+E [ u ] = \int _ { 0 } ^ { L } \left[ \frac { 1 } { 2 } u _ { t } ^ { 2 } + \frac { 1 } { 2 } u _ { x } ^ { 2 } + F ( u ) \right] d x ,
+$$
+
+where $\begin{array} { r } { F ( u ) \ = \ \int _ { 0 } ^ { u } f ( s ) d s } \end{array}$ . The equations of motion could be written in the “Newton-like” form
+
+$$
+v _ { t } = - \delta _ { u } V [ u ] , \qquad u _ { t } = v ,
+$$
+
+where $\begin{array} { r } { V [ u ] = \int _ { 0 } ^ { L } \left[ \frac { 1 } { 2 } u _ { x } ^ { 2 } + F ( u ) \right] d x } \end{array}$ represents the potential energy, and $\delta _ { u }$ , termed the variational derivative, is the analogue of the gradient appearing in the Newtonian equations of motion,
+
+$$
+( \delta _ { u } G [ u ] , \delta u ) = \operatorname* { l i m } _ { \varepsilon \to 0 } \frac { G [ u + \varepsilon \delta u ] - G [ u ] } { \varepsilon } ,
+$$
+
+where $G$ is a functional, like the potential energy $V$ , that assigns a real number to functions $u ( x )$ and the equality holds for all sufficiently regular periodic functions $\delta \boldsymbol { u } ( \boldsymbol { x } )$ , i.e. $\delta u ( x ) = \delta u ( x + L )$ . This definition is formally equivalent to the defining relation for the gradient mentioned in the preface with $\langle . , . \rangle$ replaced by the $L _ { 2 }$ inner product,
+
+$$
+( u , v ) = \int _ { 0 } ^ { L } u ( x ) v ( x ) d x .
+$$
+
+Note that $\delta _ { u } G [ u ]$ is itself a function of $x$ .
+
+The simplest centered finite difference spatial discretization takes the form, for $i = 1 , 2 , \dots , N$ ,
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } u _ { i } = v _ { i } , } \\ { \displaystyle \frac { d } { d t } v _ { i } = \frac { u _ { i - 1 } - 2 u _ { i } + u _ { i + 1 } } { \Delta x ^ { 2 } } - f ( u _ { i } ) , } \end{array}
+$$
+
+where $u _ { i } \approx u ( i \Delta x , t ) , \Delta x = L / N$ , and the periodic boundary condition leads to the definitions $u _ { 0 } \equiv u _ { N }$ , $u _ { N + 1 } \equiv u _ { 1 }$ . This is in the form of a standard $N -$ body system in one dimension with positions $\pmb { \imath } = ( u _ { 1 } , u _ { 2 } , \ldots , u _ { N } ) ^ { T }$ , velocities $\pmb { v } = ( v _ { 1 } , v _ { 2 } , \ldots , v _ { N } ) ^ { T }$ , and potential
+
+$$
+V ( \pmb { u } ) = \sum _ { i = 1 } ^ { N } \left( \frac { u _ { i + 1 } - u _ { i } } { \Delta x } \right) ^ { 2 } + \sum _ { i = 1 } ^ { N } F ( u _ { i } ) .
+$$
+
+# 1.3 Constrained dynamics
+
+In the setting of modern applications, we will need to consider generalizations of the traditional N-body problem in which the basic modeling unit is not the point particle moving in Euclidean space but an object moving in some constrained space.
+
+For instance, in molecular dynamics, the bond stretch between two atoms is typically modeled by a spring with rest length $L > 0$ , say
+
+$$
+V _ { 1 2 } ( \pmb { q } _ { 1 } , \pmb { q } _ { 2 } ) = \frac { \alpha } { 2 } ( \lVert \pmb { q } _ { 1 } - \pmb { q } _ { 2 } \rVert - L ) ^ { 2 } ,
+$$
+
+where $\pmb q _ { 1 }$ and $\pmb q _ { 2 }$ are the positions of the atoms and $\alpha$ is a positive parameter. When $\alpha$ is large, the vibrational frequency is also large, while the variation in the length of the stretch from $L$ will typically be small. It is then common practice to replace one or more of these bonds by rigid length constraints, i.e. to introduce a constraint of the form
+
+$$
+\| \pmb { q } _ { 1 } - \pmb { q } _ { 2 } \| ^ { 2 } = L ^ { 2 } .
+$$
+
+If enough constraints among a set of particles are imposed simultaneously, the group becomes completely rigid. Such rigid bodies have very interesting dynamical properties in and of themselves. For example, in molecular dynamics, it is standard practice to replace small polyatomic molecules (for example, ${ \sf H } _ { 2 } \mathrm { O }$ ) by rigid bodies. As another illustration, while it may be appropriate to treat the bodies in the solar system as point masses for many purposes, in more delicate situations, the nonspherical rigid body structure of the planets may need to be taken into consideration.
+
+Let us begin by extending Newton’s equations for particle motion to the constrained case. Imagine a particle of mass $m$ moving on a constraint surface defined as the zero set of some smooth function $g$ . At any time, the particle is acted on by two types of forces: applied forces defined in the usual way by a potential energy function $V$ , and constraint forces which act in such a way as to make the particle lie on the constraint surface. Although we do not in general know anything about the directionality of the applied force, we may take as our starting point the principle of D’Alembert: the constraint force acts along the normal direction to the constraint surface, i.e. along the direction of the gradient to the function $g$ at the point of contact (Fig. 1.2).
+
+![](images/1368284cf47cbfa1e3ba071f328e2c66e8b0fb9229b0ad83b4d170152d337d39.jpg)  
+Figure 1.2 D’Alembert’s Principle: the constraint force acts in the normal direction to the constraint surface at the point of contact.
+
+Thus, if we denote the constraint forces by $F _ { g }$ , we have
+
+$$
+\begin{array} { r l } { F _ { g } } & { { } | \mathbf { \omega } | \quad \nabla _ { q } g ( q ) , } \end{array}
+$$
+
+or
+
+$$
+\pmb { F } _ { g } = \lambda \nabla _ { \pmb { q } } g ( \pmb { q } ) ,
+$$
+
+where $\lambda$ is a scalar.
+
+Using Newton’s second law, the equations of motion then take the form
+
+$$
+\begin{array} { c } { { m \dot { \pmb v } = - \nabla _ { \pmb q } V ( \pmb q ) + \lambda \nabla _ { \pmb q } g ( \pmb q ) , } } \\ { { \dot { \pmb q } = \pmb v , } } \\ { { g ( \pmb q ) = 0 . } } \end{array}
+$$
+
+The parameter $\lambda$ is an unknown which is uniquely determined by the condition that $\pmb q ( t )$ satisfy (1.8) at all points on the trajectory and that the trajectory be smooth. Specifically, if we differentiate the equation $g ( \pmb q ( t ) ) = 0$ twice with respect to time, we find first
+
+$$
+\frac { d } { d t } g ( \pmb { q } ) = \nabla _ { \pmb { q } } g ( \pmb { q } ) \cdot \dot { \pmb { q } } = \nabla _ { \pmb { q } } g ( \pmb { q } ) \cdot \pmb { v } = 0 ,
+$$
+
+and, then
+
+$$
+\frac { d ^ { 2 } } { d t ^ { 2 } } g ( \pmb { q } ) = \langle \pmb { v } , g _ { \pmb { q } \pmb { q } } ( \pmb { q } ) \pmb { v } \rangle + m ^ { - 1 } \nabla _ { \pmb { q } } g ( \pmb { q } ) \cdot [ - \nabla _ { \pmb { q } } V ( \pmb { q } ) + \lambda \nabla _ { \pmb { q } } g ( \pmb { q } ) ] = 0 ,
+$$
+
+where $g _ { q q } ( \pmb q )$ represents the Hessian matrix of $g$ . Provided that $\nabla _ { q } g ( \pmb q ) \neq 0$ , the equation (1.10) has a unique solution $\lambda = \Lambda ( \boldsymbol { q } , \boldsymbol { v } )$
+
+$$
+\Lambda ( \boldsymbol { q } , \boldsymbol { v } ) = \frac { m } { \| \nabla _ { \boldsymbol { q } } g ( \boldsymbol { q } ) \| ^ { 2 } } \left( \frac { 1 } { m } \langle \nabla _ { \boldsymbol { q } } g ( \boldsymbol { q } ) , \nabla _ { \boldsymbol { q } } V ( \boldsymbol { q } ) \rangle - \langle \boldsymbol { v } , g _ { \boldsymbol { q } \boldsymbol { q } } ( \boldsymbol { q } ) \boldsymbol { v } \rangle \right) .
+$$
+
+Equations (1.6)–(1.8) are a special case of the constrained Euler–Lagrange equations. As a simple illustration, we mention the example of a bead (of mass $m$ ) moving in gravity in two dimensions (coordinates $( x , z ) )$ ) along a wire described by the curve $\boldsymbol { \mathsf { I } } : \boldsymbol { \mathsf { Z } } = \boldsymbol { \mathsf { f } } ( \boldsymbol { x } )$ . The constraint is $g ( x , z ) : = z - f ( x )$ , and the equations of motion take the form
+
+$$
+\begin{array} { c } { { m \ddot { x } = - \lambda f ^ { \prime } ( x ) , } } \\ { { m \ddot { z } = - m g + \lambda , } } \\ { { z = f ( x ) . } } \end{array}
+$$
+
+Here $g$ represents the earth’s gravitational constant.
+
+As a second illustration, consider the spherical pendulum consisting of a bob of mass $m$ suspended from a fixed point on a rigid massless rod of length $L > 0$ . We formulate the problem in cartesian coordinates $( x , y , z )$ with energy
+
+$$
+E = \frac { 1 } { 2 m } ( \dot { x } ^ { 2 } + \dot { y } ^ { 2 } + \dot { z } ^ { 2 } ) + m g z ,
+$$
+
+and equations of motion
+
+$$
+\begin{array} { r } { m \ddot { x } = 2 \lambda x , \qquad } \\ { m \ddot { y } = 2 \lambda y , \qquad } \\ { m \ddot { z } = - m g + 2 \lambda z , \qquad } \\ { 0 = x ^ { 2 } + y ^ { 2 } + z ^ { 2 } - L ^ { 2 } . } \end{array}
+$$
+
+# 1.4 Exercises
+
+1. Scalar nonlinear models. Consider a single-degree-of-freedom problem of the form
+
+$$
+\begin{array} { c } { { \dot { q } = v , } } \\ { { m \dot { v } = - \varphi ^ { \prime } ( q ) . } } \end{array}
+$$
+
+a. Write the energy function $E ( q , v )$ for the above system and verify that it is conserved along trajectories of the system.
+
+b. Set the energy function to a constant value, say $E _ { 0 }$ , and show that the resulting equation can be solved for $V$ as a function of $q$ , subject to a choice of the sign of $V$ . Using this, together with the differential equations, show that the equations of motion reduce to a first-order differential equation for $q$ of the form
+
+$$
+\dot { q } = \pm \sqrt { \left( \frac { 2 } { m } \right) \left( E _ { 0 } - \varphi ( q ) \right) } .
+$$
+
+(Observe that this equation is separable, and hence the solution can in principle be recovered by integration.)
+
+Discuss first the case $v \neq 0$ and continue with an investigation of the solution behavior in the vicinity of $v = 0$ .
+
+2. Morse oscillator. (See problem 1 above.) The Morse oscillator is a onedegree-of-freedom conservative system consisting of a single particle of unit mass moving in the potential $\varphi ( q ) = D ( 1 - e ^ { - \beta q } ) ^ { 2 }$ . In the following set $D = 1$ and $\beta = 1$ .
+
+a. Sketch the graph of $\varphi$ as a function of $q$ .   
+b. Sketch several of the level curves $( E ( q , v ) = E _ { 0 }$ , $E _ { 0 }$ fixed) of the energy function. In particular, observe that the system has bounded trajectories for $E < E _ { * }$ . What is $\boldsymbol { E } _ { * }$ ? What can be said about an orbit with energy $E = E _ { * }$ ?   
+c. Sketch the graphs of several solution curves as functions of $t$ . [Hint: the velocity field can be sketched by using the result of problem 1b.]
+
+3. Pendulum. The planar version of the pendulum is described by the equations
+
+$$
+\begin{array} { c } { { m \ddot { x } = 2 \lambda x , } } \\ { { m \ddot { y } = - m g + 2 \lambda y , } } \\ { { 0 = x ^ { 2 } + y ^ { 2 } - L ^ { 2 } . } } \end{array}
+$$
+
+Introduce coordinates $x = L \sin \theta$ , $y = - L \cos \theta$ and show that the equations of motion can be reduced to a single second-order differential equation for $\theta$ which is in the form of a nonlinear oscillator.
+
+4. Bead-on-wire. Consider the “bead-on-wire” problem (1.11)–(1.13). Show that the equations of motion can be reduced to a second-order unconstrained differential equation for $x$ of the form
+
+$$
+\ddot { x } = - f ^ { \prime } ( x ) \frac { g + f ^ { \prime \prime } ( x ) \dot { x } ^ { 2 } } { 1 + f ^ { \prime } ( x ) ^ { 2 } } .
+$$
+
+5. Variational derivative. Using the definition (1.5) of the variational derivative and integration by parts, verify that
+
+$$
+\delta _ { u } V [ u ] = - u _ { x x } + F ^ { \prime } ( u ) ,
+$$
+
+for
+
+$$
+V [ u ] = \int _ { 0 } ^ { L } \left[ \frac { 1 } { 2 } u _ { x } ^ { 2 } + F ( u ) \right] d x .
+$$
+
+# 2
+
+# Numerical methods
+
+In this chapter, we introduce the concepts of accuracy and stability for a numerical method approximating the solution of an ordinary differential equation initial value problem
+
+$$
+{ \frac { d } { d t } } z = { \pmb { f } } ( z ) , \qquad z ( t _ { 0 } ) = z ^ { 0 } \in \mathbb { R } ^ { k } .
+$$
+
+Here $z ( t )$ represents the solution at a particular time $t$ ; $z = z ( t )$ thus defines a parameterized trajectory. We assume that trajectories are defined for all initial values $z ^ { 0 } \in \mathbb { R } ^ { n }$ and for all times $t \geq t _ { 0 }$ . For simplicity, we typically take $t _ { 0 } = 0$ . One also often uses the notation $\boldsymbol { z } ( t ; \boldsymbol { z } ^ { 0 } )$ to distinguish the trajectory to a given initial value $z ^ { 0 }$ .
+
+It is an important feature of the initial value problems we consider, that the solution value at any given point on the trajectory determines the solution at all later points on the trajectory, through integration of an appropriate initial value problem. In effect, the solutions $\boldsymbol { z } ( t ; \boldsymbol { z } ^ { 0 } )$ of the differential equation define a mapping, or rather a one-parametric family of mappings, $\{ \pmb { \phi } _ { t } \} _ { t \geq 0 }$ , which take initial data to later points along trajectories, i.e.
+
+$$
+\pmb { \phi } _ { t } \mathopen { } \mathclose \bgroup \left( z ^ { 0 } \aftergroup \egroup \right) = z \mathopen { } \mathclose \bgroup \left( t ; z ^ { 0 } \aftergroup \egroup \right) , \qquad z ^ { 0 } \in \mathbb { R } ^ { k } .
+$$
+
+We term the map $\pmb { \phi } _ { t } : \mathbb { R } ^ { k } \  \ \mathbb { R } ^ { k }$ the flow map of the given system (see Fig. 2.1).
+
+![](images/d229038d44b23811af2403cb573806b8cad77138e77455873c7bb42da277421e.jpg)  
+Figure 2.1 The flow map. The existence of a trajectory through each point of phase space (left) implies the existence of a flow map $\pmb { \phi } _ { t }$ taking points of phase space to their evolution through $t$ units of time (right).
+
+In general, the flow map has the following property: if we solve the differential equations from a given initial point $z ^ { 0 }$ up to a time $t _ { 1 }$ , then solve from the resulting point forward $t _ { 2 }$ units of time, the effect is the same as solving the equations with initial value $z ^ { 0 }$ up to time $t _ { 1 } + t _ { 2 }$ . In terms of the mapping, $\pmb { \phi } _ { t _ { 1 } } \circ \pmb { \phi } _ { t _ { 2 } } = \pmb { \phi } _ { t _ { 1 } + t _ { 2 } }$ . Such a family of mappings is sometimes referred to as a one-parametric semigroup. 1
+
+Given a differential equation and an initial value, a discrete version of a trajectory of the system could be obtained by taking snapshots of the solution at equally spaced points in time $t _ { 0 }$ , $t _ { 1 } = t _ { 0 } + \Delta t$ , $t _ { 2 } = t _ { 1 } + \Delta t , . . . .$ . The idea of most numerical methods for solving the initial value problem is to provide a simple rule for computing approximations to a discrete trajectory. Assume that this is done by a sequential iterative procedure: starting at $t _ { 0 }$ , and given the initial value $z ( t _ { 0 } ) = z ^ { 0 }$ , we compute, via some equation or system of equations, an approximation $z ^ { 1 }$ to $\boldsymbol { z } ( t _ { 1 } )$ , then, by the same means, $z ^ { 2 } \approx z ( t _ { 2 } )$ , etc. In this way, as much of the solution as desired can be obtained. This computational paradigm was understood by Euler, and was used – long before the advent of computers – as a means of studying the theoretical properties of differential equations. The framework was refined and applied to track the motion of charged particles and planets in the first decades of this century, and molded into a practical, effective tool in various fields of science and engineering during the computer revolution of the 1950s and 1960s.
+
+Even the simplest general timestepping methods can, in principle, be used for a wide variety of dynamics simulations, but shortcomings soon become evident in simulations of large, nonlinear dynamical systems. Standard error analysis can be used to demonstrate that a certain numerical method converges in the limit of a small timestep, but in any simulation the ability to take small timesteps is in direct conflict with the cost of a timestep and the need to perform integrations on time intervals long enough to elicit relevant macroscopic behavior. Moreover, even the seemingly elementary supposition that accuracy should be the foundation for analyzing methods is in question in many modern simulations, since, as we have noted in the introduction, accuracy of a particular trajectory may not be directly relevant to simulations of chaotic systems on long time intervals.
+
+In this chapter, we will discuss some elementary properties of timestepping schemes for ordinary differential equations, including the notions of accuracy and stability, and we discuss the application of various schemes to some simple classes of differential equations, notably linear conservative models.
+
+# 2.1 One-step methods
+
+Given a discrete trajectory up to time $t _ { n }$ , there are, in general, few restrictions on the way in which the next approximation $z ^ { n + 1 }$ is computed. For example, it might be based on a formula involving the previous computed points along the discrete trajectory, on the derivative of the solution at previous points, or on the values of higher derivatives of the solution at the previous timestep. A common choice is to base the next approximation only on the $I$ previously computed points $z ^ { n - I + 1 }$ , $z ^ { n - I + 2 } , \dots , z ^ { n }$ and the corresponding values of the derivative at those points, $\dot { z } ^ { n - I + 1 } , \dot { z } ^ { n - I + 2 } , \dots , \dot { z } ^ { n }$ (where $\dot { z } ^ { i } \equiv f ( z ^ { i } ) )$ . A linear multistep method is defined by a linear recurrence relation involving these data together with the associated values at the subsequent time point, $z ^ { n + 1 }$ and $\dot { z } ^ { n + 1 }$ .
+
+We will be primarily concerned with the case $I = 1$ , generalized one-step methods. By iterating the flow map, we know that we obtain a series of snapshots of the true trajectory
+
+$$
+z ^ { 0 } , \pmb { \phi } _ { \Delta t } ( z ^ { 0 } ) , \pmb { \phi } _ { \Delta t } \circ \pmb { \phi } _ { \Delta t } ( z ^ { 0 } ) , . . .
+$$
+
+or, compactly, $\{ \pmb { \phi } _ { \Delta t } ^ { n } ( z ^ { 0 } ) \} _ { n = 0 } ^ { \infty }$ , where the composition power $\pmb { \phi } _ { \Delta t } ^ { n }$ is the identity if $n = 0$ and is otherwise the $n$ -fold composition of $\pmb { \phi } _ { \Delta t }$ with itself. For a one-step method, the approximating trajectory can be viewed as the iteration of another mapping $\pmb { \psi } _ { \Delta t } : \mathbb { R } ^ { k }  \mathbb { R } ^ { k }$ of the underlying space, so that
+
+$$
+z ^ { n } = \pmb { \psi } _ { \Delta t } ^ { n } ( z ^ { 0 } ) .
+$$
+
+The mapping $\psi _ { \Delta t }$ is generally nonlinear, will depend on the function $\boldsymbol { f }$ and/or its derivatives, and may be quite complicated – perhaps even defined implicitly as the solution of some nonlinear algebraic system. Because one-step methods generate a mapping of the phase space, they can be studied with the same techniques and concepts that one employs for understanding the flow map itself. To benefit from this natural correspondence, we will primarily focus on one-step methods throughout this book.
+
+# 2.1.1 Derivation of one-step methods
+
+One-step methods can be derived in various ways. One way is to first integrate both sides of (2.1) on a small interval $\left[ { t , t + \Delta t } \right]$ , obtaining
+
+$$
+z ( t + \Delta t ) - z ( t ) = \int _ { 0 } ^ { \Delta t } f ( z ( t + \tau ) ) d \tau .
+$$
+
+The right-hand side can then be replaced by a suitable quadrature formula resulting in an approximation of the form
+
+$$
+z ( t + \Delta t ) \approx z ( t ) + \sum _ { i = 1 } ^ { s } b _ { i } { \pmb f } ( z ( t + \tau _ { i } ) ) ,
+$$
+
+for an appropriate set of weights $\{ b _ { i } \}$ and quadrature points $\{ \tau _ { i } \}$ . In Euler’s method, the quadrature rule used is just
+
+$$
+\int _ { 0 } ^ { \Delta t } { \pmb { f } } ( { \pmb { z } } ( t + \tau ) ) d \tau = \Delta t { \pmb { f } } ( { \pmb { z } } ( t ) ) + { \mathcal { O } } ( \Delta t ^ { 2 } ) .
+$$
+
+The implicit Euler method, on the other hand, is obtained by replacing the value of $\pmb { f }$ at the left endpoint of the interval with its value at the right endpoint. The term implicit here refers to the fact that a nonlinear system of equations must be solved to advance the step. The trapezoidal rule is based on
+
+$$
+\int _ { 0 } ^ { \Delta t } { \pmb { f } } ( { \pmb { z } } ( t + \tau ) ) d \tau = \frac { 1 } { 2 } \Delta t \left[ { \pmb { f } } ( { \pmb { z } } ( t ) ) + { \pmb f } ( { \pmb { z } } ( t + \Delta t ) ) \right] + { \cal O } ( \Delta t ^ { 3 } ) ,
+$$
+
+and the implicit midpoint method is defined by
+
+$$
+\int _ { 0 } ^ { \Delta t } { \pmb { f } } ( { \pmb { z } } ( t + \tau ) ) d \tau = \Delta t { \pmb { f } } \left( \frac { { \pmb { z } } ( t ) + { \pmb { z } } ( t + \Delta t ) } { 2 } \right) + { \cal O } ( \Delta t ^ { 3 } ) .
+$$
+
+In each case, the associated one-step methods are obtained by using the truncated approximation formula to relate subsequent points $z ^ { n }$ and $z ^ { n + 1 }$ along a discrete trajectory.
+
+$$
+z ^ { n + 1 } = z ^ { n } + \Delta t \pmb { f } ( z ^ { n } ) \qquad z ^ { n + 1 } = z ^ { n } + \Delta t \pmb { f } ( z ^ { n + 1 } )
+$$
+
+$$
+\begin{array} { r l } { z ^ { n + 1 } = z ^ { n } + \frac { \Delta t } { 2 } \left[ \pmb { f } ( z ^ { n } ) + \pmb { f } ( z ^ { n + 1 } ) \right] } & { { } z ^ { n + 1 } = z ^ { n } + \Delta t \pmb { f } \left( \frac { z ^ { n } + z ^ { n + 1 } } { 2 } \right) } \end{array}
+$$
+
+This can of course be generalized to design more accurate approximations, as we shall shortly see.
+
+Let us show in detail how we would apply such methods to treat a secondorder system of differential equations
+
+$$
+\ddot { \pmb q } = \pmb q ( \pmb q ) ,
+$$
+
+such as arises from Newton’s second law. We begin by writing the differential equations in a first-order form
+
+$$
+\begin{array} { l } { \dot { \pmb q } = \pmb v , } \\ { \dot { \pmb v } = \pmb g ( \pmb q ) . } \end{array}
+$$
+
+Next, we identify the pair of dependent variables (or vectors of dependent variables) with a new vector $z$ , and define a vector field $\pmb { f } ( z )$ by pairing the right-hand sides of each equation
+
+$$
+z = { \Bigg [ } { \pmb q } { \Bigg ] } , \qquad { \pmb f } ( z ) = { \pmb f } ( { \pmb q } ^ { } ) ) = { \Bigg [ } { \pmb v } ^ { }  \\ { { \pmb v } ^ { } { \Bigg ] } , \qquad { \pmb f } ( { \pmb z } ) = { \pmb f } ( { \pmb z } ^ { } ) \Bigg ] . }
+$$
+
+We can then apply any of the numerical methods given to the equation ${ \dot { z } } = f ( z )$ . Thus Euler’s method for the second-order system becomes
+
+$$
+\begin{array} { l } { { { \pmb q } ^ { n + 1 } = { \pmb q } ^ { n } + \Delta t { \pmb v } ^ { n } , } } \\ { { { \pmb v } ^ { n + 1 } = { \pmb v } ^ { n } + \Delta t { \pmb g } ( { \pmb q } ^ { n } ) . } } \end{array}
+$$
+
+# 2.1.2 Error analysis
+
+Error analysis for a one-step method such as those discussed above centers on two issues: (i) the accuracy of the one-step approximation, as determined by comparison of the Taylor series expansions of true solutions and the numerical approximation in a timestep, and (ii) the accumulation of the error during computation of a discrete trajectory. The errors due to round-off in the computations (to which all floating point calculations are subject) are typically assumed to be much smaller than the errors due to the introduction of the approximation scheme, and are simply ignored.
+
+We will use the term local error for the difference between the exact and approximate solutions on a single timestep of size $\Delta t$ , say starting from a point $\bar { z }$ along some particular trajectory. Let us denote the local error at this point by ${ \bf \delta l e } ( \Delta t ; \bar { z } )$ (see Fig. 2.2). Using Taylor series, we can obtain an expansion in powers of $\Delta t$ of the form
+
+$$
+\begin{array} { r } { \mathbf { { l e } } ( \Delta t ; \bar { z } ) = \mathbf { C } _ { p + 1 } ( \bar { z } ) \Delta t ^ { p + 1 } + \mathbf { C } _ { p + 2 } ( \bar { z } ) \Delta t ^ { p + 2 } + \dots . } \end{array}
+$$
+
+The integer $p$ is termed the order of the method. Below we give the leading terms of the local error for the elementary one-step methods introduced earlier. We use the notation $z ^ { ( k ) }$ to denote the $k$ th derivative of $z ( t )$ at $z ( t ) = \bar { z }$ .
+
+![](images/2a75bac91de018c15742b7fb86e78ea45a59b75746d8e050f2896fc1aa86992e.jpg)  
+Figure 2.2 Local errors in numerical integration.
+
+![](images/6616e37d84d51602c22571b421d49ec93d84ab092efc9bb73eeb48a47a9b47d7.jpg)
+
+To make sense of these formulas, observe that any derivative of a trajectory $z ( t )$ at the point where $z ( t ) = \bar { z }$ could be rewritten as a function just of $\bar { z }$ itself by using the differential equations. For example
+
+$$
+\dot { z } ( t ) = \pmb { f } ( \bar { z } ) ,
+$$
+
+and
+
+$$
+\ddot { z } ( t ) = \frac { d } { d t } f ( z ( t ) ) | _ { z } ( t ) = \bar { z } = f ^ { \prime } ( \bar { z } ) f ( \bar { z } ) ,
+$$
+
+where $\pmb { f } ^ { \prime }$ denotes the Jacobian matrix of $\boldsymbol { f }$ . In this way, the leading terms in the local error given above can be viewed as products of a coefficient function of a point $\bar { z }$ with a power of $\Delta t$ .
+
+At the first integration step, the local error introduced is $\mathbf { l e } ( \Delta t ; z ^ { 0 } )$ . At the next step, the relevant term is $\mathbf { l e } ( \Delta t ; z ^ { 1 } )$ . A similar error is introduced at each step of the method. The issue then becomes how these errors accumulate over a certain time interval $[ 0 , T ]$ . The form that the global error development takes depends on the type of method involved. A global error bound for Euler’s method, for example, is easy to obtain under the assumption that $\boldsymbol { f }$ obeys a Lipschitz condition in an appropriate open set $D \subset \mathbb { R } ^ { k }$ containing the exact solution
+
+$$
+\| \ b { t } ( \pmb { u } ) - \pmb { t } ( \pmb { v } ) \| \leq L \| \pmb { u } - \pmb { v } \| , \qquad \mathrm { u n i f o r m l y ~ f o r ~ a l l ~ } \pmb { u } , \pmb { v } \in D ,
+$$
+
+where $L$ is a positive constant. The following theorem then tells us that the largest error in the numerical solution is proportional to the stepsize.
+
+Theorem 1 Under the assumption (2.3), and provided the exact solution is twice continuously differentiable, then the error for Euler’s method admits a bound of the form
+
+$$
+\| z ( t _ { n } ) - z ^ { n } \| \leq K \left( e ^ { t _ { n } L } - 1 \right) \Delta t \leq K \left( e ^ { T L } - 1 \right) \Delta t , \quad n = 1 , 2 , \ldots , N ,
+$$
+
+where $\boldsymbol { K }$ is independent of the integration interval $T$ and the stepsize $\Delta t =$ $T / N$ . ✷
+
+Proof. We first construct a recurrence relation for the numerical error defined by
+
+$$
+\begin{array} { r } { \pmb { e } ^ { n } = z ( t _ { n } ) - z ^ { n } . } \end{array}
+$$
+
+We make use of the Taylor expansion of the solution on the one hand and of the numerical method on the other, then regroup terms
+
+$$
+\begin{array} { l } { { \displaystyle e ^ { n + 1 } = \left( z ( t _ { n } ) + \Delta t \dot { z } ( t _ { n } ) + \frac { 1 } { 2 } \Delta t ^ { 2 } \ddot { z } ( \tau ) \right) - \left( z ^ { n } + \Delta t f ( z ^ { n } ) \right) } } \\ { ~ } \\ { { \displaystyle ~ = \left( z ( t _ { n } ) + \Delta t f ( z ( t _ { n } ) ) + \frac { 1 } { 2 } \Delta t ^ { 2 } \dot { z } ( \tau ) \right) - \left( z ^ { n } + \Delta t f ( z ^ { n } ) \right) } } \\ { ~ } \\ { { \displaystyle ~ = \left( z ( t _ { n } ) - z ^ { n } \right) + \Delta t \big ( f ( z ( t _ { n } ) ) - f ( z ^ { n } ) \big ) + \frac { 1 } { 2 } \Delta t ^ { 2 } \ddot { z } ( \tau ) , } } \end{array}
+$$
+
+$\tau \in \left[ t _ { n } , t _ { n + 1 } \right]$ . Next we take norms, apply the triangle inequality, and use the Lipschitz condition (2.3) to obtain
+
+$$
+\begin{array} { l } { \displaystyle \| e ^ { n + 1 } \| \le \| z ( t _ { n } ) - z ^ { n } \| + \Delta t \| f ( z ( t _ { n } ) ) - f ( z ^ { n } ) \| + \frac { 1 } { 2 } \Delta t ^ { 2 } \| \dot { z } ( \tau ) \| } \\ { \displaystyle \le ( 1 + \Delta t L ) \| e ^ { n } \| + \frac { 1 } { 2 } \Delta t ^ { 2 } \| \dot { z } ( \tau ) \| . } \end{array}
+$$
+
+Since the solution is twice continuously differentiable, we may bound $\ddot { z } ( \tau )$ on $[ 0 , T ]$ by a constant $M$ . Observe that a linear recurrence relation of the form
+
+$$
+a _ { n + 1 } \leq C a _ { n } + D
+$$
+
+satisfies the bound $\begin{array} { r } { a _ { n } \leq C ^ { n } a _ { 0 } + \frac { C ^ { n } - 1 } { C - 1 } D } \end{array}$ . The bound (2.4) with $\begin{array} { r } { K = \frac { M } { 2 L } } \end{array}$ follows by applying this result to the case at hand. In particular, we set $a _ { n } = \| e ^ { n } \|$ , $C = 1 + \Delta t L$ , $D = \Delta t ^ { 2 } M / 2$ and observe that $\partial ^ { 0 } = 0$ as well as
+
+$$
+( 1 + \Delta t L ) ^ { n } \leq \mathsf { e } ^ { n \Delta t L } .
+$$
+
+It is important to note several features of this bound, which is representative of the types of error bounds obtainable for numerical difference equations. First, the positive constant $L$ may be quite large (it can be obtained as the norm of the Jacobian matrix $\pmb { f } ^ { \prime }$ of $\pmb { f }$ ). The error bound thus grows exponentially in time and will quickly have little to tell us quantitatively about the numerical solution.
+
+Fixing the length of the time interval, $\tau$ , the error inequality does provide us with a precise upper bound on the error and suggests that the error is reduced in proportion to the reduction of the stepsize. In practical applications, such a linear scaling relationship between the timestep and error is usually observed, even if the scaling factor is generally found to be rather smaller (but still exponential in $\tau$ ) in comparison with that given by the bound $( K e ^ { T L } )$ .
+
+# 2.2 Numerical example: the Lennard–Jones oscillator
+
+In many situations, the error will exhibit a nonuniform growth, due to abrupt changes in the dynamics. Let us illustrate this phenomenon by examining the growth of error when Euler’s method is applied to a Lennard–Jones oscillator
+
+$$
+\begin{array} { l } { { \dot { q } = v , } } \\ { { \dot { v } = - \varphi ^ { \prime } ( q ) , } } \end{array}
+$$
+
+where $\varphi ( q ) = q ^ { - 1 2 } - 2 q ^ { - 6 }$ . It is clear that the potential will rise rapidly without bound for $q  0$ , thus solutions of the system must be bounded away from $q = 0$ if the energy $E = v ^ { 2 } / 2 + \varphi ( q )$ is to remain constant along trajectories. Moreover, it can be shown that the solutions are bounded for $E \leq 0$ and unbounded for $E > 0$ . A trajectory is shown on the left in Fig. 2.3. On the right in the same figure, the energy error is plotted as a function of time, for a sample trajectory with stepsize $\Delta t = 0 . 0 0 1$ .
+
+For studying examples such as this one, it is often useful to keep in mind a local propagation relation of the form
+
+$$
+\| \pmb { e } ^ { n + 1 } \| \le \left( 1 + \Delta t a ( t _ { n } ) \right) \| \pmb { e } ^ { n } \| + \Delta t ^ { 2 } b ( t _ { n } ) + O ( \Delta t ^ { 3 } ) .
+$$
+
+![](images/8ee4e507e77fe926e731c8a484e10928bd16b58887d9cb7e191de0df4841b753.jpg)  
+Figure 2.3 Solution curves in the $q V \cdot$ -plane (left) and energy error (right) for Euler’s method applied to the Lennard–Jones oscillator.
+
+The functions $a = a ( t )$ and $b = b ( t )$ depend on a particular trajectory of the system. Such an estimate would hold for any first-order method. For Euler’s method, we have
+
+$$
+\begin{array} { r l } & { a ( t _ { n } ) = \| f ^ { \prime } ( z ( t _ { n } ) ) \| , } \\ & { b ( t _ { n } ) = \underset { \tau \in [ t _ { n } , t _ { n + 1 } ] } { \operatorname* { m a x } } \frac { 1 } { 2 } \| \dot { z } ( \tau ) \| , } \end{array}
+$$
+
+where $z = z ( t )$ represents the particular trajectory of interest, and $\pmb { f } ^ { \prime }$ denotes the Jacobian matrix of $\pmb { f }$ . A proof is developed in the exercises of this chapter. While still only a bound, (2.5) indicates that increase in the error in Euler’s method at a timestep arises from two sources: the sensitivity of the solution to perturbations in the initial data (measured by $a ( t ) )$ ) and the local smoothness of the solution (measured by $b ( t )$ ).
+
+Let us examine the bound (2.5) in the case of a nonlinear oscillator. In terms of the variables $q$ and $v = \dot { q }$ , the vector field has the expression
+
+$$
+f ( z ) = \left[ \begin{array} { c } { { v } } \\ { { - \varphi ^ { \prime } ( q ) } } \end{array} \right] .
+$$
+
+We can write the $2 \times 2$ Jacobian matrix of $\pmb { f }$ as
+
+$$
+{ \pmb f } ^ { \prime } ( z ) = \left[ \begin{array} { c c } { { 0 } } & { { 1 } } \\ { { - \varphi ^ { \prime \prime } ( q ) } } & { { 0 } } \end{array} \right] .
+$$
+
+The 2-norm of a matrix $\pmb { A }$ is the square root of the magnitude of the largest eigenvalue of $A ^ { T } A$ , which for our Jacobian matrix is just $\mathsf { m a x } \{ 1 , | \varphi ^ { \prime \prime } ( q ) | \}$ . On
+
+the other hand, the second derivative of a solution $z = z ( t )$ can be evaluated in terms of the vector field, i.e.
+
+$$
+\ddot { z } = { \left[ \begin{array} { l } { \ddot { q } } \\ { \ddot { v } } \end{array} \right] } = { \left[ - \varphi ^ { \prime } \right]} ^ { \phantom { \dagger } }  ,
+$$
+
+hence
+
+$$
+\| \dot { z } ( t ) \| = \sqrt { ( \varphi ^ { \prime } ( q ( t ) ) ) ^ { 2 } + ( \varphi ^ { \prime \prime } ( q ( t ) ) ) ^ { 2 } v ( t ) ^ { 2 } } .
+$$
+
+We can use the energy relation $\textstyle { \frac { 1 } { 2 } } v ^ { 2 } + \varphi ( q ) = E$ to replace the latter expression by one involving $q$ only. Summarizing, the two numbers $a ( t )$ and $b ( t )$ which govern the potential growth of errors in the bound (2.5) are
+
+$$
+\begin{array} { l } { { a ( t ) = \operatorname * { m a x } \{ 1 , | \varphi ^ { \prime \prime } ( q ( t ) ) | \} , } } \\ { { b ( t ) = \displaystyle \frac 1 2 \sqrt { ( \varphi ^ { \prime } ( q ( t ) ) ) ^ { 2 } + 2 ( \varphi ^ { \prime \prime } ( q ( t ) ) ) ^ { 2 } ( E - \varphi ( q ( t ) ) } . } } \end{array}
+$$
+
+If we graph these two numbers against time along a trajectory, we observe fluctuations in $^ { a }$ , $b$ and the error as shown in Fig. 2.4. Both $^ { a }$ and $b$ increase rapidly as $q$ approaches the singularity at $q = 0$ . The graphs indicate that the largest growth in the error is well correlated with the increase in a and $b$ .
+
+This example highlights an important issue for numerical simulation: the need to incorporate adaptivity in the timestep when solving problems for which the solution exhibits a varying degree of smoothness on the relevant time interval. We will return to this issue in Chapter 9.
+
+# 2.3 Higher-order methods
+
+The Euler method is a first-order integrator, meaning that it has global error proportional to the stepsize. Higher-order methods have global error which satisfies a higher power law in the stepsize.
+
+Suppose that a given one-step method $\psi _ { \Delta t }$ is such that, at some given point $\bar { z }$ of phase space, $\pmb { \psi } _ { \Delta t } ( \bar { z } )$ approximates the solution $z ( \Delta t , \bar { z } )$ through $\bar { z }$ for small $\Delta t$ . The quality of this local approximation can be measured by comparing the Taylor series expansions of $\pmb { \psi } _ { \Delta t } ( \bar { z } )$ and $z ( \Delta t , \bar { z } )$ in terms of $\Delta t$ . The order of the numerical one-step method is then defined as the largest integer $p \geq 1$ such that coefficients of the stepsize powers $\Delta t ^ { j }$ , $i = 1 , \dots , p$ , are identical in the Taylor series expansions or, in other words,
+
+$$
+| | \psi _ { \Delta t } ( \bar { z } ) - z ( \Delta t , \bar { z } ) | | \leq C \Delta t ^ { p + 1 } ,
+$$
+
+for all $\bar { z }$ in the domain of interest, where $C > 0$ is an appropriate constant.
+
+![](images/6f32f7cb64e243107c186b910bb7ee71139d473215d0a7e1dcdc6d63d2097e7f.jpg)  
+Figure 2.4 Comparison of the variation in coefficients a and $b$ with the evolution of the error.
+
+Let us assume that our vector field satisfies the Lipschitz condition (2.3). For many classes of one-step methods, including the Runge–Kutta methods considered in the next subsection, it is then possible to show that the map $\psi _ { \Delta t }$ itself obeys a Lipschitz condition of the form:
+
+$$
+| | \psi _ { \Delta t } ( z _ { 1 } ) - \psi _ { \Delta t } ( z _ { 2 } ) | | \leq ( 1 + \bar { L } \Delta t ) | | z _ { 1 } - z _ { 2 } | | , \qquad \bar { L } \geq L .
+$$
+
+Using an argument very similar to that used to prove the convergence of Euler’s method (see, for example, [82] for details) one then finds that over a fixed time interval, the approximation of the flow by timesteps of size $\Delta t$ will be accurate to within $\mathcal { O } ( \Delta t ^ { p } )$ , i.e.,
+
+$$
+\begin{array} { r } { | | \psi _ { \Delta t } ^ { n } ( z ^ { 0 } ) - z ( n \Delta t , z ^ { 0 } ) | | \leq K \left( e ^ { \bar { L } T } - 1 \right) \Delta t ^ { p } , \qquad 1 \leq n \leq N , } \end{array}
+$$
+
+where $K > 0$ is an appropriate constant.
+
+As mentioned above, the practical value of this type of estimate is severely limited by the presence of the exponential term involving the time interval, by the involvement of the Lipschitz constant which can be exceedingly large at certain points during the course of integration, and by the fact that the estimate does not take into account any structure of the map $\psi _ { \Delta t }$ , such as whether it is expanding or contracting. Nonetheless, the global error bound is useful on shorter time intervals.
+
+Using relation (2.6) and the leading terms in the local error expansions for various methods worked out earlier, we can conclude that the Euler and implicit Euler methods are first-order accurate, while the trapezoidal rule and implicit midpoint methods are of second order.
+
+# 2.4 Runge–Kutta methods
+
+All of the methods discussed so far are special cases of Runge–Kutta methods.   
+The class of general $S ^ { \th }$ -stage Runge–Kutta methods is given below.
+
+![](images/817ca1f5e85f4dfa6481f3ec87be9db7bd12e29b1438da0675400708dd29b561.jpg)
+
+The number of stages $s$ and the constant coefficients $\{ b _ { i } \}$ , $\{ a _ { i j } \}$ completely characterize a Runge–Kutta method. In general, such a method is implicit and leads to a nonlinear system in the $s$ internal stage variables $Z _ { j }$ . In some cases the formulas are layered in such a way that the first stage variable $Z _ { 1 }$ is given explicitly in terms of $z ^ { n }$ , then $Z _ { 2 }$ is determined from $z ^ { n }$ and $Z _ { 1 }$ , etc.
+
+An example of a fourth-order explicit Runge–Kutta method is given next.
+
+# A FOURTH-ORDER RUNGE–KUTTA METHOD (RK-4)
+
+$$
+\begin{array} { l } { { Z _ { 1 } = z ^ { n } , } } \\ { { \displaystyle Z _ { 2 } = z ^ { n } + \frac { 1 } { 2 } \Delta t f ( Z _ { 1 } ) , } } \\ { { \displaystyle Z _ { 3 } = z ^ { n } + \frac { 1 } { 2 } \Delta t f ( Z _ { 2 } ) , } } \\ { { \displaystyle Z _ { 4 } = z ^ { n } + \Delta t f ( Z _ { 3 } ) , } } \\ { { \displaystyle Z _ { n + 1 } = z _ { n } + \frac { \Delta t } { 6 } \left[ f ( Z _ { 1 } ) + 2 f ( Z _ { 2 } ) + 2 f ( Z _ { 3 } ) + f ( Z _ { 4 } ) \right] . } } \end{array}
+$$
+
+To see that this method has fourth order, one views (2.7)–(2.11) as defining a function $z ^ { n + 1 } = \pmb { \psi } _ { \Delta t } ( z ^ { n } )$ . We take the difference of this function with the solution $z ( \Delta t ; z ^ { n } )$ through $z ^ { n }$ , then expand this difference in a Taylor series about $\Delta t = 0$ . After some simplification, it will be found that the constant through fourthorder terms of this expansion in powers of $\Delta t$ vanish identically, and we are left with
+
+$$
+z ^ { n + 1 } - z ( \Delta t ; z ^ { n } ) = C _ { 5 } ( z ^ { n } ) \Delta t ^ { 5 } + \mathcal { O } ( \Delta t ^ { 6 } ) ,
+$$
+
+where the coefficient function $C _ { 5 } ( z )$ depends on the vector field $\pmb { f }$ and its derivatives. Since the method introduces a local error of size proportional to $\Delta t ^ { 5 }$ at each step, it will exhibit fourth-order global accuracy.
+
+In some cases the increased order of accuracy associated with a particular higher-order explicit Runge–Kutta method may provide a better approximation of the solution, but this increased accuracy must be balanced against the increased work involved in computing the timestep. Moreover, in very long-term simulations or at large stepsizes, nonphysical effects generally become apparent, such as energy drift or artificial dissipation.
+
+This is well illustrated by reconsidering the Lennard–Jones oscillator solved earlier with Euler’s method. The graph of solutions obtained using the fourthorder Runge–Kutta method given above is shown in Fig. 2.5 along with the energy error. It is immediately clear that the error is much smaller in magnitude, by a factor of more than ten, despite a much increased timestep of $\Delta t = 0 . 1$ . But note, too, that the energy error grows in a similar way, in jumps associated to the approach of $q$ to the singularity at the origin. If the simulation is carried out on a much longer time interval (but still very short in relation to an actual molecular dynamics simulation), the error steadily accumulates (Fig. 2.6, left) until the numerical solution bears little relation to the true orbit. Another important observation to be made from (2.6) is that the drift in the energy error (right panel) can be very small compared with the error being introduced in the solution itself. Qualitatively, the picture for Euler’s method and the picture for the fourth-order Runge–Kutta method are quite similar: steady drift is observed in the energy and in the solution trajectories, eventually rendering the results of numerical computation useless.
+
+![](images/c1945b5712ff34d534fee1bfb0d8f35c853bedecff7f00cd90728de3ebeedf67.jpg)  
+Figure 2.5 Solution curves in the $q V \cdot$ -plane (left) and energy error (right) for the fourth-order Runge–Kutta method applied to the Lennard–Jones oscillator.
+
+![](images/ccbe3f2db1ebfb3e96cf6d89c36c1abb0530ec26fa72637470f8026786ae5edc.jpg)  
+Figure 2.6 Solution curves in the $q V \cdot$ -plane (left) and energy error (right) for the fourth-order Runge–Kutta method applied to the Lennard–Jones oscillator on a time interval [0, 5000].
+
+# 2.5 Partitioned Runge–Kutta methods
+
+Yet another approach to approximating the solution trajectory is based on using different approximation formulas for different components of the solution. For example, we will often treat canonical Hamiltonian systems in this book which admit a natural dichotomy between positions and momenta. Partitioned Runge– Kutta (PRK) methods exploit this dichotomy by using different sets of quadrature rules for each subset of the variables. If the system can be written in the form $\begin{array} { r } { \frac { d } { d t } \pmb { u } = \pmb { g } ( \pmb { u } , \pmb { v } ) } \end{array}$ , $\begin{array} { r } { \frac { d } { d t } \pmb { v } = \pmb { h } ( \pmb { u } , \pmb { v } ) } \end{array}$ , then the associated Partitioned Runge–Kutta method of $S$ stages uses two sets of coefficients $\left( \{ \bar { b } _ { i } \} , \{ \bar { a } _ { i j } \} \right)$ and $( \{ \widetilde { b } _ { i } \} , \{ \widetilde { a } _ { i j } \} )$ , and computes the timestep as follows:
+
+<table><tr><td>PARTITIONED RUNGE-KUTTA METHODS FOR du = g(u,v);v = h(u,v)</td></tr><tr><td></td></tr><tr><td>S un+1 =u&quot;+△t∑big(Ui, Vi), i=1</td></tr><tr><td>S vn+1 =v&quot;+△t∑bih(Ui,Vi), i=1</td></tr><tr><td>where，fori=1,2,...,s,</td></tr><tr><td>S</td></tr><tr><td></td></tr><tr><td>Ui = u&quot; +△t∑aijg(Ui, Vi),</td></tr><tr><td>i=1</td></tr><tr><td>s</td></tr><tr><td>Vi = v&quot; + △t∑aijh(Ui, Vi). i=1</td></tr></table>
+
+These methods are often used for treating mechanically derived problems of the form:
+
+$$
+\pmb { M } \frac { d ^ { 2 } } { d t ^ { 2 } } \pmb { q } = - \nabla _ { \pmb { q } } V ( \pmb { q } ) ,
+$$
+
+with $\textbf { \em u } = \textbf { \em q }$ and $\begin{array} { r } { { \pmb v } = \frac { d } { d t } { \pmb q } } \end{array}$ , in which setting they are typically referred to as Runge–Kutta–Nystr¨om (RKN) methods.
+
+One example of this type of Partitioned Runge–Kutta method is the method below
+
+$$
+\begin{array} { c } { { \pmb q ^ { n + 1 } = { \pmb q } ^ { n } + \Delta t { \pmb v } ^ { n } , } } \\ { { \pmb M \pmb v ^ { n + 1 } = { \pmb M \pmb v } ^ { n } - \Delta t \nabla _ { \pmb q } V ( { \pmb q } ^ { n + 1 } ) . } } \end{array}
+$$
+
+This method is very similar to Euler’s method, except that the vector field is evaluated in one component at time level $n + 1$ and in the other at time level $n$ . It is immediately obvious that we could as well have proposed the alternative method
+
+$$
+\begin{array} { c } { { \pmb q ^ { n + 1 } = \pmb q ^ { n } + \Delta t { \pmb v } ^ { n + 1 } , } } \\ { { \pmb M { \pmb v } ^ { n + 1 } = \pmb M { \pmb v } ^ { n } - \Delta t \nabla _ { \pmb q } \pmb V ( \pmb q ^ { n } ) . } } \end{array}
+$$
+
+Both of these methods are explicit and first-order accurate. We call these methods collectively the Asymmetrical Euler methods. To distinguish these two schemes, we refer to the first (2.12)–(2.13) as Asymmetrical Euler-A and the second as Asymmetrical Euler- $B$ (or, briefly, Euler- $A$ and Euler- $B$ ).
+
+Another Partitioned Runge–Kutta method is the St¨ormer–Verlet method for Newton’s equations $\dot { \pmb q } = \pmb { v }$ , $M \dot { \pmb { v } } = - \nabla _ { \pmb { q } } V ( \pmb { q } ) )$ , defined as follows:
+
+$$
+\begin{array} { c } { { q ^ { n + 1 } = { \pmb q } ^ { n } + \Delta t { \pmb v } ^ { n + \frac { 1 } { 2 } } , } } \\ { { { \displaystyle M } { \pmb v } ^ { n + \frac { 1 } { 2 } } = { \pmb M } { \pmb v } ^ { n } - \frac { \Delta t } { 2 } \nabla _ { \pmb q } V ( { \pmb q } ^ { n } ) , } } \\ { { { \displaystyle M } { \pmb v } ^ { n + 1 } = { \pmb M } { \pmb v } ^ { n + \frac { 1 } { 2 } } - \frac { \Delta t } { 2 } \nabla _ { \pmb q } V ( { \pmb q } ^ { n + 1 } ) . } } \end{array}
+$$
+
+Evidently, the scheme is fully explicit, since we can evaluate successively the formula (2.17), then (2.16) and finally (2.18) without solving any nonlinear system. Note further that the discretization can be solved in terms of the half-step velocites $\pmb { v } ^ { n - \frac { 1 } { 2 } } , \pmb { v } ^ { n + \frac { 1 } { 2 } }$ , etc., resulting in
+
+$$
+\begin{array} { c } { { q ^ { n + 1 } = { \pmb q } ^ { n } + \Delta t { \pmb v } ^ { n + \frac { 1 } { 2 } } , } } \\ { { M \pmb v } ^ { n + \frac { 1 } { 2 } } = { \pmb M } { \pmb v } ^ { n - \frac { 1 } { 2 } } - \Delta t \nabla _ { \pmb q } V ( { \pmb q } ^ { n } ) . } \end{array}
+$$
+
+One can altogether eliminate the velocities from the St¨ormer–Verlet method to obtain the following two-step method in the coordinates only
+
+$$
+{ \cal M } \frac { { \pmb q } ^ { n + 1 } - 2 { \pmb q } ^ { n } + { \pmb q } ^ { n + 1 } } { \Delta t ^ { 2 } } = - \nabla _ { \pmb { q } } V ( { \pmb q } ^ { n } ) .
+$$
+
+This formulation is often called the leapfrog method. Both the leapfrog and the St¨ormer–Verlet formulation can be shown to be second-order accurate.
+
+# 2.6 Stability and eigenvalues
+
+![](images/159eb6aef7a9258c934a6633ecca30a2f520f2b9247d84c4f3b198863949a6b6.jpg)  
+Figure 2.7 Numerical solution of the harmonic oscillator obtained using Euler’s method (left) and the Euler-B method (right).
+
+If we graph a solution of the harmonic oscillator $\dot { \boldsymbol { q } } = \boldsymbol { v }$ ; $\dot { v } = - q$ we should see a circle in the phase plane (the $q v \cdot$ -plane). On the other hand, if we apply a numerical method and compute discrete points with the method, there is no reason to expect that these would lie on a circle. Numerical solutions obtained using two different methods are shown in Fig. 2.7, graphed along with the circle that would represent the exact solution for the chosen initial condition. Observe that the solutions spiral out in the case of the first method (left) and that they appear to lie on an ellipse in the case of the second method (right). The method used to produce the illustration on the left is Euler’s method, while the scheme used on the right is the Euler-B method (2.14)–(2.15) we encountered in the previous section.
+
+While neither method exactly replicates the circular orbits, it seems clear that there is an important qualitative difference between the two schemes. The terminology we use to discuss this distinction is asymptotic stability. In this section, we show that the long-term asymptotic dynamics of numerical methods can be thoroughly understood in the case of the harmonic oscillator, or, more generally, any linear mechanical system.
+
+Write the equation for the harmonic oscillator in the form
+
+$$
+\frac { d } { d t } z = { \bf A } z ,
+$$
+
+where
+
+$$
+\pmb { A } = \left[ \begin{array} { c c } { 0 } & { 1 } \\ { - \omega ^ { 2 } } & { 0 } \end{array} \right] .
+$$
+
+The solution at any time can be defined by a matrix (the fundamental solution matrix), $R ( t )$
+
+$$
+\begin{array} { r } { z ( t ; z ^ { 0 } ) = R ( t ) z ^ { 0 } , \qquad R ( t ) = \left[ \begin{array} { c c } { \cos \omega t } & { \frac { 1 } { \omega } \sin \omega t } \\ { - \omega \sin \omega t } & { \cos \omega t } \end{array} \right] , } \end{array}
+$$
+
+which has the eigenvalues $\mu _ { 1 , 2 } = e ^ { \pm i \omega t }$ , both of which lie on the unit circle. It is also easy to verify that the determinant of $R ( t )$ is equal to one.
+
+The Euler’s method approximation leads to the mapping
+
+$$
+\begin{array} { r } { z ^ { n + 1 } = \hat { R } ( \Delta t ) z ^ { n } , \hat { R } ( \Delta t ) = \left[ \begin{array} { c c } { 1 } & { \Delta t } \\ { - \Delta t \omega ^ { 2 } } & { 1 } \end{array} \right] , } \end{array}
+$$
+
+where the propagation matrix $\hat { R } ( \Delta t )$ has the eigenvalues
+
+$$
+\hat { \lambda } _ { 1 , 2 } = 1 \pm i \Delta t \omega .
+$$
+
+The growth of error through the powers $[ \hat { R } ] ^ { n }$ is determined by the powers of the eigenvalues of that matrix. A numerical method is asymptotically stable if the growth of the solution for a linear model problem is asymptotically bounded. A sufficient condition for asymptotic stability is that the eigenvalues of the method are (i) in the unit disk in the complex plane, and (ii) simple (not repeated) if on the unit circle. Since the eigenvalues of Euler’s method are both of modulus greater than one, their powers grow exponentially fast and the method is unstable.
+
+Note that the asymptotic instability of Euler’s method does not contradict the convergence of the method, since fixing any time interval $[ 0 , T ]$ and simultaneously driving the number of steps $N$ to infinity as $\Delta t \to 0$ so that $N \Delta t = T$ , we have
+
+$$
+\operatorname* { l i m } _ { N  \infty } ( \hat { \lambda } _ { 1 , 2 } ) ^ { N } = \operatorname* { l i m } _ { N  \infty } ( 1 \pm i \Delta t \omega ) ^ { N } = e ^ { \pm i \omega T } + O ( \Delta t ) .
+$$
+
+In some cases, it is possible to show that the eigenvalues of a numerical method applied to the harmonic oscillator also lie on the unit circle in the complex plane. Applying the St¨ormer–Verlet method to the harmonic oscillator results in the propagator
+
+$$
+\begin{array} { r } { \hat { R } ( \Delta t ) = \left[ \begin{array} { c c } { 1 - \frac { \Delta t ^ { 2 } \omega ^ { 2 } } { 2 } } & { \Delta t } \\ { - \Delta t \omega ^ { 2 } \left( 1 - \frac { \Delta t ^ { 2 } \omega ^ { 2 } } { 4 } \right) } & { 1 - \frac { \Delta t ^ { 2 } \omega ^ { 2 } } { 2 } } \end{array} \right] , } \end{array}
+$$
+
+which has eigenvalues
+
+$$
+\hat { \lambda } _ { 1 , 2 } = 1 - \mu ^ { 2 } \pm \sqrt { 2 \mu ^ { 2 } ( \frac { 1 } { 2 } \mu ^ { 2 } - 1 ) } , ~ \mu ^ { 2 } = \frac { 1 } { 2 } \Delta t ^ { 2 } \omega ^ { 2 } .
+$$
+
+Note that $\hat { \lambda } _ { 1 } \hat { \lambda } _ { 2 } = 1$ for all values of $\mu \geq 0$ implying that the determinant of $\hat { R } ( \Delta t )$ is equal to one. Furthermore, for $\mu ^ { 2 } < 2$ , the eigenvalues are complex, and
+
+$$
+| \hat { \lambda } _ { 1 , 2 } | ^ { 2 } = ( 1 - \mu ^ { 2 } ) ^ { 2 } + 2 \mu ^ { 2 } ( 1 - \frac { 1 } { 2 } \mu ^ { 2 } ) = 1 .
+$$
+
+For $\mu ^ { 2 } > 2$ , the eigenvalues are real and one has modulus greater than unity. Thus the St¨ormer–Verlet rule has a stability condition of the form
+
+$$
+\Delta t ^ { 2 } \omega ^ { 2 } < 4 ,
+$$
+
+when applied to the harmonic oscillator.
+
+As we vary the stepsize $\Delta t$ from zero, the eigenvalues of the St¨ormer–Verlet method move around the unit circle until $\Delta t = 2 / \omega$ , at which timestep both eigenvalues are at $^ { - 1 }$ . For larger stepsizes, one eigenvalue heads toward the origin along the negative real axis, while the other goes off to infinity.
+
+![](images/51406f897c6b25e88b29c86c719b7d195b38d8ed2df16fabe316db9304a43b28.jpg)  
+Figure 2.8 Comparison of eigenvalue curves (bold, marked by arrows) for (a) the true propagator, (b) Euler’s method, and (c) the St¨ormer–Verlet method.
+
+The eigenvalues for the propagators obtained by using Euler’s method and the St¨ormer–Verlet method are diagrammed in Fig. 2.8(b) and (c). Compare these curves (marked by arrows) with the eigenvalues of the exact propagator (Fig. 2.8(a). It is more useful to visualize the stability properties of the different methods as curves in three-dimensional space, parameterized by adding a dimension of time (or timestep). For the true propagator, these eigenvalue curves are helices on the cylinder of radius one (see Fig. 2.9). Numerical methods like Euler’s method (or the fourth-order Runge–Kutta method) have eigenvalue curves that leave the cylinder, even for small $\Delta t$ , whereas for certain other methods such as Euler-B (see Exercises) and St¨ormer–Verlet, the eigenvalues remain on the surface of the cylinder. until $\Delta t = 2 / \omega$ . The curves for Euler and St¨ormer–Verlet are also shown in Fig. 2.9. In Chapter 5, we will see that this desirable linear stability property can be viewed as the elementary consequence of certain general geometric principles respected by the St¨ormer–Verlet and Euler-B methods. In the case considered here, these geometric principles reduce to the fact that the determinant of the matrices $R ( t )$ and $\hat { R } ( \Delta t )$ , respectively, are equal to one.
+
+![](images/45c7e3df14a8cc6e463ca5b8e6a91d9d6439bbbca32cf690c252b63a885742e5.jpg)  
+Figure 2.9 Eigenvalue curves as functions of time or timestep. The eigenvalues of the exact propagator for the harmonic oscillator are helices on the unit cylinder, whereas the eigenvalues of Euler’s method immediately leave the cylinder. Those of St¨ormer–Verlet remain on the cylinder until $\Delta t = 2 / \omega$ .
+
+We can easily extend this discussion to a $2 N \cdot$ -dimensional linear system of differential equations of the form
+
+$$
+\begin{array} { l } { \displaystyle { \frac { d } { d t } \boldsymbol { q } = \boldsymbol { v } , } } \\ { \displaystyle { \frac { d } { d t } \boldsymbol { v } = - \boldsymbol { K } \boldsymbol { q } . } } \end{array}
+$$
+
+We assume that $\kappa$ is an $N \times N$ constant symmetric matrix. (In general, if this system arose from Newton’s laws of motion in linear forces, or through a process of linearization of a nonlinear mechanical system, we might expect to find mass coefficients multiplying the accelerations in the second equation, but we ignore these for simplicity.)
+
+The behavior of solutions to a linear system such as this one over time is determined by the eigenvalue–eigenvector structure of the matrix K. Recall that an eigenvalue–eigenvector pair for a symmetric $N \times N$ matrix $\kappa$ consists of a (real) scalar $\lambda$ and a nonzero N-vector $\pmb { v }$ , related by the equation
+
+$$
+K { \pmb v } = \lambda { \pmb v } .
+$$
+
+Furthermore the eigenvectors form a complete basis in $\mathbb { R } ^ { N }$ . Denote the eigenvalue– eigenvector pairs by $\left( \lambda _ { i } , v _ { i } \right)$ , $i = 1 , \dots , N$ . The eigenvectors can be viewed as the columns of a matrix $v$ with the property
+
+$$
+\begin{array} { r } { K V = [ K v _ { 1 } , K v _ { 2 } , \ldots , K v _ { N } ] = [ \lambda _ { 1 } v _ { 1 } , \lambda _ { 2 } v _ { 2 } , \ldots , \lambda _ { N } v _ { N } ] = V \Lambda , } \end{array}
+$$
+
+where $\wedge$ is a diagonal matrix with the eigenvalues on the diagonal. Since the columns of $v$ are linearly independent, the matrix $v$ is nonsingular, so we may premultiply both sides of the above equation by ${ \cal { V } } ^ { - 1 }$ to obtain
+
+$$
+\pmb { V } ^ { - 1 } \pmb { K } \pmb { V } = \pmb { I } ,
+$$
+
+and we say that the matrix $\kappa$ is diagonalizable.
+
+Returning to the linear mechanical system, the behavior of solutions is now easily analyzed. Starting from the linear differential equations (2.22–2.23), we make the nonsingular changes of variables
+
+$$
+\pmb { q } ( t ) = \pmb { V } \pmb { u } ( t ) ,
+$$
+
+and
+
+$$
+\pmb { v } ( t ) = \pmb { V } \pmb { w } ( t ) ,
+$$
+
+resulting in the equations
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } V \pmb { u } = V \pmb { w } , } \\ { \displaystyle \frac { d } { d t } V \pmb { w } = - K V \pmb { u } . } \end{array}
+$$
+
+After premultiplying each equation by $V ^ { - 1 }$ , we arrive at
+
+$$
+\begin{array} { l } { \displaystyle { \frac { d } { d t } \boldsymbol { u } = \boldsymbol { w } , } } \\ { \displaystyle { \frac { d } { d t } \boldsymbol { w } = - V ^ { - 1 } K \boldsymbol { V } \boldsymbol { u } = - \boldsymbol { \Lambda } \boldsymbol { u } . } } \end{array}
+$$
+
+Because $\pmb { \Lambda }$ is diagonal, we see that the system of $2 N$ equations reduces to N decoupled $2 \times 2$ systems of the form
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } u _ { i } = w _ { i } , } \\ { \displaystyle \frac { d } { d t } w _ { i } = - \lambda _ { i } u _ { i } . } \end{array}
+$$
+
+The eigenvalues $\lambda _ { j }$ are real, since $\kappa$ is symmetric. If the matrix $\kappa$ is, moreover, positive definite, then the $\lambda _ { j }$ are all positive, and the decoupled systems are harmonic oscillators.
+
+The numerical analysis of this system proceeds along similar lines. We apply a discretization method to (2.22)–(2.23), then use the same set of linear transformations to decouple the variables. In the end, we find that the stability of the numerical method on the linear system is determined by the stability of the same method when applied to each of the oscillators (2.24)–(2.25).
+
+Thus, for a linear mechanical system with potential $\begin{array} { r } { V = \frac { 1 } { 2 } \pmb { q } ^ { T } K \pmb { q } } \end{array}$ , with $\kappa$ a symmetric positive definite matrix, the harmonic stability condition such as that for the St¨ormer–Verlet method (2.21) must be applied with $\omega ^ { 2 }$ replaced by each of the eigenvalues of the matrix K. For large systems, the number of eigenvalues and different components or modes of the solution will be similarly large, but for the asymptotic stability of the numerical solution, the restriction on the timestep for all of the components is determined by the timestep restriction for the fastest mode of the system.
+
+Much recent research in numerical methods for differential equations is aimed at developing new classes of methods which allow the slow modes to be propagated more efficiently in the presence of such high-frequency components, and we introduce some such schemes in Chapter 10.
+
+# 2.7 Exercises
+
+1. Euler’s method. Assume that the vector field $\boldsymbol { f }$ is continuously differentiable and a given solution $z = z ( t )$ is twice continuously differentiable. Assume the convergence of Euler’s method, then use this to prove the following error growth relation for Euler’s method
+
+$$
+\| \pmb { e } ^ { n + 1 } \| \le \left( 1 + \Delta t a ( t _ { n } ) \right) \| \pmb { e } ^ { n } \| + \Delta t ^ { 2 } b ( t _ { n } ) + \mathcal { O } ( \Delta t ^ { 3 } ) ,
+$$
+
+where
+
+$$
+\begin{array} { r l } & { a ( t _ { n } ) = \| \pmb { f ^ { \prime } } ( \pmb { z } ( t _ { n } ) ) \| , } \\ & { b ( t _ { n } ) = \underset { \tau \in [ t _ { n } , t _ { n + 1 } ] } { \operatorname* { m a x } } \frac { 1 } { 2 } \| \ddot { \ b { z } } ( \tau ) \| . } \end{array}
+$$
+
+2. Asymmetrical Euler: order of accuracy. Show that the Euler-B method (2.14)–(2.15) is a Partitioned Runge–Kutta method by defining all of the relevant coefficients. Show that this method introduces an error proportional to $\Delta t ^ { 2 }$ in one step when applied to a general one-degree-of-freedom problem and find the leading term in the local error expansion for this method.
+
+3. Asymmetrical Euler: stability. Determine the stability condition for the Euler-A method using the technique of Section 2.6, and graph the eigenvalues when applied to the harmonic oscillator. Compare with the corresponding stability conditions of the St¨ormer–Verlet and Euler methods.
+
+4. Stability: the pendulum. Consider the planar pendulum described by
+
+$$
+\ddot { \theta } = - \frac { g } { L } \sin \theta ,
+$$
+
+where $g$ is the earth’s gravitational constant and $L$ the length of the pendulum. Using a linearization of this equation, determine the stepsize stability restriction for the Euler-B method applied to integrate the system near the hanging-down configuration $( \theta = 0$ ).
+
+Note: In general, the stability of the discrete linearized problem at a critical point does not automatically imply the stability of the corresponding nonlinear equations. In order to say something about the latter, more powerful methods such as the KAM theory must typically be invoked (see, for example, [197]).
+
+5. Boundary of the stability region. We have seen that for $\Delta t \omega < 2$ , the eigenvalues of the St¨ormer–Verlet method applied to the Harmonic oscillator are both on the unit circle and are distinct. The special case $\Delta t \omega = 2$ is interesting, since it represents the boundary of the stability region. Is the St¨ormer–Verlet method stable when applied to the Harmonic oscillator (in the sense that the numerical solution is bounded asymptotically for all $n$ ) when $\Delta t \omega = 2 ?$ Explain.
+
+6. Linear spring-mass system. Consider a linear system in 1D consisting of $N -$ point particles with nonuniform masses $m _ { j }$ , with the $i , j$ particle pair joined by a zero rest-length spring (spring constant $k _ { j j }$ ).
+
+a. Show that the total potential energy can be written $\begin{array} { r } { V = \frac { 1 } { 2 } \pmb { q } ^ { T } K \pmb { q } } \end{array}$ , where $\kappa$ is a symmetric, positive semi-definite matrix, then show that the equations of motion are in the form of an $N .$ -body system
+
+$$
+M \frac { d ^ { 2 } } { d t ^ { 2 } } \pmb q = - K \pmb q ,
+$$
+
+where $M$ is a diagonal matrix.
+
+b. Introduce a scaling $\tilde { \pmb q } _ { i } = \sqrt { m _ { i } } \pmb q _ { i }$ and show that in the new variables, the equations can be written
+
+$$
+\frac { d ^ { 2 } } { d t ^ { 2 } } \tilde { \pmb q } = - \tilde { \cal K } \tilde { \pmb q } ,
+$$
+
+where $\tilde { \kappa }$ is symmetric and positive semi-definite.
+
+c. Consider the special case of a homogeneous nearest neighbor spring system with both boundaries fixed at the origin, $N$ unit masses, and uniform spring constant $\kappa$ . Write out the solution in this case. Hint: The $N \times N$ matrix $\pmb { A } = \left( a _ { i j } \right)$ with
+
+$$
+a _ { i j } = \left\{ { \begin{array} { l l } { - 2 , } & { i = j } \\ { 1 , } & { | { \it { i } } - { \it { j } } | = 1 } \\ { 0 , } & { { \mathrm { e } } { \mathrm { l s e } } } \end{array} } \right.
+$$
+
+has eigenvalues
+
+$$
+\lambda _ { k } = - 2 ( 1 + \cos ( \theta _ { k } ) ) ,
+$$
+
+and corresponding eigenvectors $\pmb { u } _ { k }$ with components
+
+$$
+u _ { k j } = \mathsf { s i n } ( j \theta _ { k } ) , \qquad j = 1 , \ldots , N ,
+$$
+
+where $\begin{array} { r } { \theta _ { k } = \frac { \pi k } { N + 1 } } \end{array}$ , $k = 1 , 2 , \ldots , N .$
+
+d. Determine the numerical stability restriction for using Euler’s method and the St¨ormer–Verlet method to solve this linear spring-mass system, as a relation involving $N$ and $\Delta t$ .
+
+7. Flow maps and numerical methods. A set $\mathcal { G }$ together with an associative product relation $^ *$ is called a group if (i) $\mathcal { G }$ is closed under $^ *$ , i.e. $g _ { 1 } , g _ { 2 } \in \mathcal { G }$ implies $g _ { 1 } * g _ { 2 } \in \mathcal { G } ,$ , (ii) $\mathcal { G }$ contains an identity element $e$ such that $e * g =$ $g * e = g$ , and (iii) for any element $g \in { \mathcal { G } }$ there is an inverse element $g ^ { - 1 } \in \mathcal { G }$ such that $g * g ^ { - 1 } = g ^ { - 1 } * g = e$ .
+
+a. Suppose that a given differential equation
+
+$$
+{ \frac { d } { d t } } z = { \pmb f } ( z )
+$$
+
+admits solutions defined for infinite time in both the positive and negative directions. Show that the flow maps $\{ \pmb { \phi } _ { t } \} _ { t \in \mathbb { R } }$ defined as the mappings which take points $\bar { z }$ to points $t$ units in time later along the solution passing through $\bar { z }$ constitute a one-parametric group, where the group operation $^ *$ is a composition of maps and
+
+$$
+\pmb { \psi } _ { t _ { 1 } + t _ { 2 } } = \pmb { \phi } _ { t _ { 2 } } \circ \pmb { \phi } _ { t _ { 1 } } .
+$$
+
+b. Consider now the set $\hat { \mathcal { G } }$ which consists of all the mappings defined by applying Euler’s method with timesteps $\Delta t > 0$ . Does $\hat { \mathcal { G } }$ constitute a one-parametric group in the above sense with $\Delta t$ taking the role of time $t ?$
+
+8. Computer project with one-step methods. In this exercise you will write a small computer program to test a numerical method for solving $\dot { \boldsymbol { q } } ~ = ~ \boldsymbol { v }$ , $\dot { v } = - \varphi ^ { \prime } ( q )$ , $q ( 0 ) = q ^ { 0 }$ , $v ( 0 ) = v ^ { 0 }$ . Refer to the preface for a discussion of computer software.
+
+a. Write a module eulerstep that takes as input:
+
+• an arbitrary function $\varphi : \mathbb { R }  \mathbb { R }$ , real scalars $q ^ { n } , v ^ { n } , \Delta t$ ,
+
+and computes the result of taking a single step with Euler’s method applied to the differential equation.
+
+b. Write a computer program stepper which takes as inputs:
+
+an arbitrary function $\varphi : \mathbb { R }  \mathbb { R }$ ,   
+. real scalars $q ^ { 0 } , v ^ { 0 } , \Delta t$ ,   
+integer $N$ , the name of a module (such as eulerstep) which implements a one-step method for the differential equation. Then solve the system ${ \dot { q } } = v$ , $\dot { v } = - \varphi ^ { \prime } ( q )$ by taking $N$ steps with Euler’s method starting from $q ^ { 0 } , \ v ^ { 0 }$ . The program should produce as output a pair of $( N + 1 )$ one-dimensional arrays $Q$ , $v$ consisting of the beginning and ending of positions and velocities and all intermediate steps.   
+c. Write modules eulerAstep, eulerBstep, stormerstep and rk4step with similar inputs and outputs to the module eulerstep but implementing a single timestep of the Euler-A, Euler-B, St¨ormer–Verlet, and fourth-order Runge–Kutta methods of the text.   
+d. Experiment with the various methods using the stepper routine. Examine the energy conservation of the various methods, when applied to a Morse oscillator with unit coefficients, $\varphi ( q ) = ( 1 - \exp ( - q ) ) ^ { 2 }$ .
+
+# 3
+
+# Hamiltonian mechanics
+
+In this chapter we introduce the Hamiltonian formulation of classical mechanics. The elementary properties of Newton’s equations such as the conservation of energy or momentum can be explained without much difficulty by the use of nothing more than the chain rule of calculus, but it turns out that there is another, deeper level of structure that relates to the properties of bundles of trajectories emanating from a set of initial conditions. The most useful tool for describing the solutions is the flow map already introduced in the previous chapter.
+
+For any differential equation $\dot { z } = f ( z )$ , recall that we denote the solution through a given initial condition $z ^ { 0 }$ by $\boldsymbol { z } ( t ; \boldsymbol { z } ^ { 0 } )$ . Assuming that this solution is globally defined, we may fix a value of $t$ , and consider the trajectories starting from any arbitrary point $z ^ { 0 }$ in phase space. The flow map $\pmb { \phi } _ { t }$ is the mapping from initial points $z ^ { 0 }$ to final points $\boldsymbol { z } ( t ; \boldsymbol { z } ^ { 0 } )$ along trajectories, thus
+
+$$
+z ( t ; z ^ { 0 } ) = \pmb { \phi } _ { t } ( z ^ { 0 } ) .
+$$
+
+For conservative mechanical systems, it turns out that the flow map inherits certain global qualitative or geometric properties which are, in a very real sense, as fundamental as any of the physical laws which characterize our understanding of the properties of matter. An example of such a qualitative property is the conservation of the volume of a set of points of phase space under their simultaneous time evolution. Another example is found in the stringent restrictions placed on the asymptotic behavior of solutions of Hamiltonian systems near equilibrium points. In this chapter, we explore the geometric properties which are the consequences of Hamiltonian mechanics. This treatment is necessarily restricted; the reader is referred to the preface for suggestions for further reading.
+
+# 3.1 Canonical and noncanonical Hamiltonian systems
+
+Let us begin our discussion by recalling Newton’s equations (1.1)–(1.2) for $N$ particles moving in $\mathbb { R } ^ { 3 }$ . To compactify the notation, we introduce the diagonal
+
+mass matrix $\pmb { M } \in \mathbb { R } ^ { 3 N \times 3 N }$ such that
+
+$$
+M \pmb { v } = ( m _ { 1 } \pmb { v } _ { 1 } , \dots , m _ { N } \pmb { v } _ { N } ) ^ { T } .
+$$
+
+We also eliminate the particle velocities and write (1.1)–(1.2) as a second-order differential equation
+
+$$
+M \ddot { \pmb q } = \pmb { F } ( \pmb q )
+$$
+
+in the vector of particle coordinates
+
+$$
+\pmb { q } : = ( \pmb { q } _ { 1 } , \dots , \pmb { q } _ { N } ) ^ { T } .
+$$
+
+The force $\boldsymbol { F }$ is given by the negative gradient of a potential energy function with respect to position
+
+$$
+\pmb { \cal F } ( \pmb { q } ) : = - \nabla _ { \pmb { q } } V ( \pmb { q } ) .
+$$
+
+The Hamiltonian formulation of Newtonian mechanics reduces (3.1) back to a system of first-order equations, but instead of including the particle velocities it relies on the vector of linear momenta $\pmb { p } \in \mathbb { R } ^ { 3 N }$ defined by
+
+$$
+p : = M { \dot { q } } .
+$$
+
+There are obviously many ways to rewrite second-order equations as systems of first-order equations. A priori, there is no reason why one approach should have a significant advantage over another. The observation of Hamilton was that the differential equations defining both position and momentum are obtained by dual operations on the same total energy function.
+
+For Newtonian mechanics, the differential equations take the following form:
+
+$$
+\begin{array} { l } { { \displaystyle { \frac { d } { d t } } { \pmb q } = { \pmb M } ^ { - 1 } { \pmb p } } , \ } \\ { { \displaystyle { \frac { d } { d t } } { \pmb p } = - \nabla _ { \pmb q } V ( { \pmb q } ) . } \ } \end{array}
+$$
+
+The equations (3.2)–(3.3) are termed a Hamiltonian system with Hamiltonian (or energy)
+
+$$
+H ( \pmb { q } , \pmb { p } ) : = \frac { \pmb { p } ^ { T } M ^ { - 1 } \pmb { p } } { 2 } + V ( \pmb { q } ) ,
+$$
+
+which is a first integral (constant of motion), i.e.
+
+$$
+\frac { d } { d t } H ( \pmb { q } ( t ) , \pmb { p } ( t ) ) = \pmb { p } ( t ) ^ { T } \pmb { M } ^ { - 1 } \pmb { \dot { p } } ( t ) + \pmb { \dot { q } } ( t ) ^ { T } \nabla _ { \pmb { q } } V ( \pmb { q } ( t ) ) = 0 ,
+$$
+
+along solutions $( \pmb q ( t ) , \pmb p ( t ) )$ of (3.2)–(3.3).
+
+It is easy and useful to generalize equations (3.2)–(3.3). Given a phase space $\mathbb { R } ^ { d } \times \mathbb { R } ^ { d }$ of arbitrary (even) dimension $2 d \geq 2$ and an arbitrary (smooth) Hamiltonian function $H : \mathbb R ^ { d } \times \mathbb R ^ { d } \to \mathbb R$ , the corresponding canonical Hamiltonian equations of motion are
+
+$$
+\begin{array} { c } { { \displaystyle { \frac { d } { d t } } \pmb { q } = + \nabla _ { p } H ( \pmb { q } , \pmb { p } ) , } } \\ { { \displaystyle { \frac { d } { d t } } \pmb { p } = - \nabla _ { \pmb { q } } H ( \pmb { q } , \pmb { p } ) . } } \end{array}
+$$
+
+It now becomes evident that the change of variables to positions and momenta has uncovered a symmetry in their function (or, rather, an antisymmetry, since we also have a change of sign). We will see shortly that this antisymmetry, together with the smoothness of the solutions with respect to perturbation of the initial data, has important ramifications for the flow map of the system.
+
+When discussing Hamiltonian systems, it is often convenient to use the notation
+
+$$
+z : = ( q , p ) ^ { T } ,
+$$
+
+with $\pmb q , \pmb p \in \mathbb { R } ^ { d }$ , $z \in \mathbb { R } ^ { 2 d }$ , and to introduce the $2 d \times 2 d$ canonical structure matrix $\jmath$ ,
+
+$$
+J : = \left[ \begin{array} { c c } { { { \bf 0 } } } & { { + I _ { d } } } \\ { { - I _ { d } } } & { { { \bf 0 } } } \end{array} \right] .
+$$
+
+Then the Hamiltonian system (3.4)–(3.5) can be rewritten in compact form:
+
+$$
+\frac { d } { d t } z = J \nabla _ { z } H ( z ) .
+$$
+
+The term “canonical” is reserved for Hamiltonian systems on an even dimensional Euclidean space with $\jmath$ as in (3.6), but Hamiltonian systems can be generalized in various ways without altering the discussion of their geometric properties in any essential way. For example, we may allow $\jmath$ to be an arbitrary invertible constant skew-symmetric matrix (with $J ^ { T } = - J$ ). Still more generally, we may allow, under suitable restrictions, the structure matrix itself to depend on the phase space variable $z$ , i.e. $\begin{array} { r } { J = J ( z ) } \end{array}$ , or the phase space may be replaced by an appropriate smooth, even-dimensional manifold.1
+
+The system (3.7) is an example of an autonomous differential equation, meaning that the vector field is formally independent of time. Time-dependent or non-autonomous Hamiltonian systems with $H = H ( z , t )$ also arise frequently in applications. The equations of motion are then given by
+
+$$
+\frac { d } { d t } z = J \nabla _ { z } H ( z , t ) .
+$$
+
+In most cases, the special structures associated to autonomous Hamiltonian systems are easily extended to non-autonomous systems.
+
+# 3.2 Examples of Hamiltonian systems
+
+In this section, we survey some of the many types of Hamiltonian systems that arise in the physical sciences. It is our experience that having a feel for the types of applications which may arise is important to understanding both the theoretical and numerical issues associated with their study.
+
+# 3.2.1 Linear systems
+
+A canonical linear Hamiltonian system is defined by a quadratic Hamiltonian $\begin{array} { r } { H = \frac { 1 } { 2 } z ^ { T } L z } \end{array}$ , where $\pmb { L }$ is a symmetric $2 d \times 2 d$ matrix and $J$ a structure matrix of type (3.6). The equations of motion are thus
+
+$$
+\frac { d } { d t } z = J L z .
+$$
+
+A matrix of the form $A = J L$ with $\pmb { L }$ symmetric is typically referred to as a Hamiltonian matrix. For example, the harmonic oscillator is a one-degree-offreedom linear Hamiltonian system with
+
+$$
+\begin{array} { r } { L = \left[ \begin{array} { c c } { \omega ^ { 2 } } & { 0 } \\ { 0 } & { 1 } \end{array} \right] , } \end{array}
+$$
+
+and $z = ( q , p ) ^ { T }$
+
+The solution of a linear Hamiltonian system is formally computable in terms of the eigenvalues and eigenvectors of the matrix $A = J L$ . (In practice, the computation of the eigenstructure may be quite involved, so the solution is often propagated instead by an appropriate numerical method.) It is interesting to consider some of the properties of this eigenstructure. Since $A = J L$ is real, it follows that the eigenvalues occur in complex conjugate pairs. Moreover, if $\lambda$ is an eigenvalue of $\pmb { A }$ , it follows that $\lambda$ is also an eigenvalue of $\pmb { A } ^ { T } = \pmb { L } ^ { T } \pmb { J } ^ { T } = - \pmb { L } \pmb { J }$ , i.e.
+
+![](images/b1ed1ab72597e19bcb9372772437749aa1fb78d3382e0b1d2c69c839554ecf68.jpg)  
+Figure 3.1 If $\lambda$ is an eigenvalue of a Hamiltonian matrix, then so are $\bar { \lambda }$ , $- \lambda$ , and $- \bar { \lambda }$ .
+
+$$
+- L J u = \lambda u
+$$
+
+for some $\pmb { u }$ . Let ${ \pmb v } = J { \pmb u }$ , then we have
+
+$$
+- \pmb { L } \pmb { v } = \lambda \pmb { J } ^ { - 1 } \pmb { v } ,
+$$
+
+and, after premultiplying by $\jmath$
+
+$$
+- J L v = \lambda v .
+$$
+
+This means that $- \lambda$ is also an eigenvalue of $\pmb { A }$ (with eigenvector $\mathbf { \nabla } J \mathbf { \nabla } \mu$ ). Summarizing, if $\lambda$ is an eigenvalue of a Hamiltonian matrix, then so are $\bar { \lambda }$ , $- \lambda$ , and, by extension, $- \bar { \lambda }$ . A Hamiltonian matrix therefore has a symmetric spectrum with respect to both coordinate axes of the complex plane (Fig. 3.1).
+
+# 3.2.2 Single-degree-of-freedom problems
+
+Anharmonic one-degree-of-freedom oscillators with Hamiltonians of the form $H ( q , p ) = p ^ { 2 } + \varphi ( q )$ are also of interest. In the previous chapters we encountered the Lennard–Jones oscillator, with potential
+
+$$
+\varphi _ { \mathsf { L . J . } } ( q ) = \epsilon \left[ \left( \frac { \bar { r } } { q } \right) ^ { 1 2 } - 2 \left( \frac { \bar { r } } { q } \right) ^ { 6 } \right] .
+$$
+
+As another example, the plane pendulum can be described in terms of the angle $q$ made with the vertical axis by the Hamiltonian
+
+$$
+H = { \frac { 1 } { 2 } } p ^ { 2 } - { \frac { g } { L } } \cos q ,
+$$
+
+where $L$ is the length of the pendulum and $g$ the gravitational constant.
+
+The phase portrait of a planar system qualitatively summarizes the global dynamics by depicting a few representative orbits in the $q , p$ domain. These orbits can obviously be identified with pieces of the curves defined by the equation $H ( q , p ) =$ constant, thus we may view the orbits as level curves of the Hamiltonian function. The graph of the surface $E = H ( q , p )$ in $( q , p , E )$ -space characterizes the dynamics of a single-degree-of-freedom system. In particular, the equilibria are associated with critical points on this surface: local minima correspond to stable equilibria, while saddle points correspond to unstable equilibria. In Fig. 3.2, we show the graph of $E = H ( q , p )$ together with the phase portrait (level curves of $H$ ) for the Lennard–Jones oscillator $\epsilon = 0 . 2 5$ , $\bar { r } = 1$ ) and the pendulum $g / L = 1$ ).
+
+![](images/207cf65f7b9510ac8395ac64a600ee0485d830aa18a71d17377521d47f8ee6e3.jpg)  
+Figure 3.2 Energy surfaces for one-degree-of-freedom problems, and phase portraits. Left, Lennard–Jones oscillator. Right, plane pendulum.
+
+# 3.2.3 Central forces
+
+Next, consider the three-degree-of-freedom nonlinear system describing the motion of a body of unit mass in $\mathbb { R } ^ { 3 }$ , i.e. $\pmb q = ( q _ { 1 } , q _ { 2 } , q _ { 3 } ) ^ { T }$ , with a potential energy of interaction given by $\varphi = \varphi ( r )$ where $r$ represents the distance from the body to
+
+the origin. This is an instance of a central-force problem. If $\varphi ( r ) = - 1 / r$ , then we have the Kepler problem with Hamiltonian
+
+$$
+H = \frac { 1 } { 2 } ( p _ { 1 } ^ { 2 } + p _ { 2 } ^ { 2 } + p _ { 3 } ^ { 2 } ) - \frac { 1 } { \sqrt { q _ { 1 } ^ { 2 } + q _ { 2 } ^ { 2 } + q _ { 3 } ^ { 2 } } } .
+$$
+
+The level sets of constant energy are five dimensional surfaces (!), hence nontrivial to visualize, but, as we shall see in Section 3.3, a complete description of the dynamics of the system is still easily obtained by using some additional properties of the equations.
+
+# 3.2.4 Charged particle in a magnetic field
+
+Up to normalization of certain constants, the Kepler problem can be viewed as a model of gravitational dynamics. It also represents, qualitatively, the classical model of an electron in the field of a positively charged fixed nucleus. It is interesting to consider in this context a generalization in which the electron moves not only under the Coulombic potential, but also in an applied (constant) magnetic field. If $\pmb { b } = ( b _ { 1 } , b _ { 2 } , b _ { 3 } ) ^ { T }$ is a vector representing such a field, the equations of motion for the particle are found to take the form
+
+$$
+m \ddot { \pmb q } = - \gamma \frac { \pmb q } { \lVert \pmb q \rVert ^ { 3 } } + \pmb { b } \times \dot { \pmb q } ,
+$$
+
+where $m$ is the mass of the particle, $\gamma$ is a positive constant, and $\times$ is the usual cross product of vectors.
+
+Defining the momenta in the usual way, we have the first-order system
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } \pmb { q } = \frac { 1 } { m } \pmb { p } , } \\ { \displaystyle \frac { d } { d t } \pmb { p } = - \gamma \frac { \pmb { q } } { \| \pmb { q } \| ^ { 3 } } - \frac { 1 } { m } \pmb { p } \times \pmb { b } . } \end{array}
+$$
+
+Here $\pmb q$ , and $\pmb { p }$ are assumed to be vectors in $\mathbb { R } ^ { 3 }$ . It is easy to show that this is not a canonical Hamiltonian system, since, if it were, we would have to have
+
+$$
+\nabla _ { \boldsymbol { p } } \boldsymbol { H } = \frac { 1 } { m } \boldsymbol { p } , \qquad \nabla _ { \boldsymbol { q } } \boldsymbol { H } = \gamma \frac { \boldsymbol { q } } { \| \boldsymbol { q } \| ^ { 3 } } + \frac { 1 } { m } \boldsymbol { p } \times \boldsymbol { b } ,
+$$
+
+and equality of mixed partials would be violated. However, a Hamiltonian description (3.7) does follow if we define instead
+
+$$
+\boldsymbol { J } = \left[ \begin{array} { l l } { 0 } & { \boldsymbol { I } } \\ { - \boldsymbol { I } } & { \boldsymbol { \widehat { b } } } \end{array} \right] ,
+$$
+
+where $\widehat { b }$ is the skew symmetric matrix defined by
+
+$$
+\begin{array} { r } { \widehat { \pmb { b } } = \left[ \begin{array} { c c c } { 0 } & { - b _ { 3 } } & { b _ { 2 } } \\ { b _ { 3 } } & { 0 } & { - b _ { 1 } } \\ { - b _ { 2 } } & { b _ { 1 } } & { 0 } \end{array} \right] , } \end{array}
+$$
+
+taking as Hamiltonian2
+
+$$
+H ( \pmb q , \pmb p ) = \frac { 1 } { 2 m } \| \pmb { p } \| ^ { 2 } - \frac { \gamma } { \| \pmb q \| } .
+$$
+
+# 3.2.5 Lagrange’s equation
+
+Given a Lagrangian function $L ( \pmb q , \dot { \pmb q } )$ , Lagrange’s equation of motion is
+
+$$
+\frac { d } { d t } \nabla _ { \dot { q } } L ( \pmb { q } , \dot { \pmb { q } } ) - \nabla _ { \pmb { q } } L ( \pmb { q } , \dot { \pmb { q } } ) = \mathbf { 0 } .
+$$
+
+This equation is the Euler–Lagrange equation minimizing the action integral
+
+$$
+\mathcal { L } [ \pmb { q } ] = \int _ { t _ { 0 } } ^ { t _ { 1 } } L ( \pmb { q } ( t ) , \dot { \pmb { q } } ( t ) ) d t .
+$$
+
+For more details see [7, 8, 73]. Lagrange’s equation (3.13) is second order in time. It is reduced to a system of first-order equations by introducing the conjugate momenta
+
+$$
+\pmb { p } = \nabla _ { \dot { \pmb { q } } } L ( \pmb { q } , \dot { \pmb { q } } ) .
+$$
+
+We require that this relation defines a one-to-one map between $p$ and $\dot { \pmb q }$ for fixed $\pmb q$ . It can be shown (see problem 1 in the Exercises) that the equation (3.14) together with the reformulation
+
+$$
+\pmb { \dot { p } } = \nabla _ { \pmb { q } } L ( \pmb { q } , \dot { \pmb { q } } )
+$$
+
+of Lagrange’s equation (3.13) are canonical with Hamiltonian
+
+$$
+H ( { \pmb q } , { \pmb p } ) = { \pmb p } \cdot \dot { \pmb q } - L ( { \pmb q } , \dot { \pmb q } ) .
+$$
+
+For example, take a particle of unit mass moving in a central field. The Lagrangian is
+
+$$
+L = \frac { 1 } { 2 } ( \dot { q } _ { 1 } ^ { 2 } + \dot { q } _ { 2 } ^ { 2 } + \dot { q } _ { 3 } ^ { 2 } ) + \frac { 1 } { \sqrt { q _ { 1 } ^ { 2 } + q _ { 2 } ^ { 2 } + q _ { 3 } ^ { 2 } } } .
+$$
+
+Note the change in sign compared with the Hamiltonian (3.9). The conjugate momenta is
+
+$$
+\begin{array} { r } { p = \dot { \pmb q } , } \end{array}
+$$
+
+as expected.
+
+The charged particle in a magnetic field has Lagrangian
+
+$$
+L = \frac { m } { 2 } \| \dot { \pmb q } \| ^ { 2 } + \frac { \gamma } { \| \pmb q \| } + \frac { 1 } { 2 } \pmb q ^ { T } \widehat b \dot { \pmb q } .
+$$
+
+According to (3.14), the conjugate momenta is
+
+$$
+\pmb { p } = m \dot { \pmb q } - \frac 1 2 \widehat { \pmb { b } } \pmb { q } .
+$$
+
+This definition of $p$ is different from the one used in Section 3.2.4! In Problem 1 in the Exercises you will be asked to derive the associated Hamiltonian and to verify the canonical equations of motion (3.32)–(3.33). This example emphasizes the point that the Hamiltonian formulation of a problem need not be unique and that there is a certain freedom in the choice of the Hamiltonian $H$ and the structure matrix $\jmath$ .
+
+# 3.2.6 $N$ -body problem
+
+Finally, let us return to the homogeneous system of $N$ bodies moving in $\mathbb { R } ^ { 3 }$ with masses $m _ { j }$ , $i = 1 , \dots , N$ , interacting through a particle–particle interaction potential (pair-potential) $\varphi ( r )$ , with $r$ the distance between two particles. The corresponding canonical equations of motion are
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } { \pmb q } _ { i } = \frac { 1 } { m _ { i } } { \pmb p } _ { i } , } \\ { \displaystyle \frac { d } { d t } { \pmb p } _ { i } = - \sum _ { i \neq j } \frac { \varphi ^ { \prime } ( r _ { i j } ) } { r _ { i j } } ( { \pmb q } _ { i } - { \pmb q } _ { j } ) , \qquad i = 1 , 2 , \dots , N , } \end{array}
+$$
+
+where $r _ { i j } = | | \pmb { q } _ { i } - \pmb { q } _ { j } | |$ ; the Hamiltonian function is
+
+$$
+H = \frac { 1 } { 2 } \sum _ { i = 1 } ^ { N } \frac { | | \pmb { p } _ { i } | | ^ { 2 } } { m _ { i } } + \sum _ { i = 1 } ^ { N - 1 } \sum _ { j = i + 1 } ^ { N } \varphi ( r _ { i j } ) .
+$$
+
+# 3.3 First integrals
+
+A first integral, constant of motion, or conserved quantity of a general differential equation is a function $G : \mathbb { R } ^ { 2 d }  \mathbb { R }$ which is constant along all solution curves $\boldsymbol { z } ( t ; \boldsymbol { z } ^ { 0 } )$ of the system, i.e.
+
+$$
+G ( z ( t ; z ^ { 0 } ) ) = G ( z ^ { 0 } ) ,
+$$
+
+for all $z ^ { 0 } \in \mathbb { R } ^ { 2 d }$ and all $t \in \mathbb R$ . We say that having a first integral is a “geometric property” of a system of differential equations because its existence implies that the solutions are at least partly described by the geometry of the lowerdimensional manifolds $\{ z \in \mathbb { R } ^ { 2 d } \mid G ( z ) = { \mathsf { c o n s t a n t } } \}$ .
+
+What are the conditions that ensure that a particular function $G$ is a first integral for a canonical Hamiltonian system (3.7)? Assume that $z ( t )$ is a solution curve of (3.7), then
+
+$$
+\begin{array} { r l } & { \frac { d } { d t } G ( z ( t ) ) = \nabla _ { z } G ( z ( t ) ) \cdot \dot { z } ( t ) } \\ & { \qquad = \left[ \nabla _ { z } G ( z ( t ) ) \right] ^ { T } \dot { z } ( t ) } \\ & { \qquad = \left[ \nabla _ { z } G ( z ( t ) ) \right] ^ { T } J \nabla _ { z } H ( z ( t ) ) . } \end{array}
+$$
+
+If this quantity is to vanish for every trajectory $\boldsymbol { z } ( t ; \boldsymbol { z } ^ { 0 } )$ with initial conditions chosen from some open set in phase space, we must have that the Poisson bracket of $G$ and $H$ , defined by
+
+$$
+\{ G , H \} ( z ) : = \left[ \nabla _ { z } G ( z ) \right] ^ { T } J \nabla _ { z } H ( z ) ,
+$$
+
+vanishes identically, i.e.
+
+$$
+\{ G , H \} ( z ) \equiv 0 .
+$$
+
+This is a necessary and sufficient condition for $G$ to be a first integral of a Hamiltonian system with Hamiltonian $H$ .
+
+More generally, the time evolution of an arbitrary, smooth function $G : \mathbb { R } ^ { 2 d } $ $\mathbb { R }$ along a solution of a canonical system with Hamiltonian $H$ is given by
+
+$$
+\frac { d } { d t } G ( z ) = \{ G , H \} ( z ) .
+$$
+
+For example, take $G ( { \pmb q } , { \pmb p } ) : = { \ b q } _ { i }$ , then
+
+$$
+\frac { d } { d t } q _ { i } = \{ q _ { i } , H \} ( \pmb { q } , \pmb { p } ) = \frac { \partial } { \partial p _ { i } } H ( \pmb { q } , \pmb { p } ) ,
+$$
+
+as we would expect.
+
+The Poisson bracket is a bilinear, antisymmetric operation.3 This means that, for functions $F , G , H : \mathbb { R } ^ { 2 d }  \mathbb { R }$ , and scalars $\alpha , \beta$
+
+$$
+\{ F , \alpha G + \beta H \} = \alpha \{ F , G \} + \beta \{ F , H \} ,
+$$
+
+and
+
+$$
+\{ F , G \} = - \{ G , F \} .
+$$
+
+Note that the latter identity implies linearity in the first argument as well. Moreover, $\{ F , F \} = - \{ F , F \}$ , hence $\{ F , F \} = 0$ , i.e. the Poisson bracket of a function with itself vanishes identically.
+
+We have already seen that the Hamiltonian (or energy) $H$ of a Hamiltonian system is a first integral. Using the Poisson bracket notation, this statement reduces to the observation $\{ H , H \} = 0$ .
+
+Example 1 The Kepler problem in $\mathbb { R } ^ { 3 }$ possesses an interesting and nontrivial integral invariant structure. First, the energy,
+
+$$
+H = \frac { 1 } { 2 } \pmb { p } ^ { T } \pmb { p } - \frac { 1 } { | | \pmb { q } | | } = \frac { 1 } { 2 } ( p _ { 1 } ^ { 2 } + p _ { 2 } ^ { 2 } + p _ { 3 } ^ { 2 } ) - \frac { 1 } { \sqrt { q _ { 1 } ^ { 2 } + q _ { 2 } ^ { 2 } + q _ { 3 } ^ { 2 } } } ,
+$$
+
+is a constant of motion. Moreover, one easily verifies that the components of the angular momentum vector,
+
+$$
+\pmb { m } = \pmb { q } \times \pmb { p } = \left[ \begin{array} { c } { m _ { 1 } } \\ { m _ { 2 } } \\ { m _ { 3 } } \end{array} \right]
+$$
+
+are conserved quantities. For example
+
+$$
+\begin{array} { l } { { \displaystyle \{ m _ { 1 } , H \} = \{ q _ { 2 } p _ { 3 } - q _ { 3 } p _ { 2 } , H \} } } \\ { { \displaystyle \quad = p _ { 3 } \frac { \partial H } { \partial p _ { 2 } } - p _ { 2 } \frac { \partial H } { \partial p _ { 3 } } + q _ { 3 } \frac { \partial H } { \partial q _ { 2 } } - q _ { 2 } \frac { \partial H } { \partial q _ { 3 } } } } \\ { { \displaystyle \quad = p _ { 3 } p _ { 2 } - p _ { 2 } p _ { 3 } - q _ { 3 } q _ { 2 } / \| { \bf q } \| ^ { 3 } + q _ { 2 } q _ { 3 } / \| { \bf q } \| ^ { 3 } } } \\ { { \displaystyle \quad = 0 . } } \end{array}
+$$
+
+Since, for any vectors a and $^ { b }$ , we have
+
+$$
+a \cdot ( a \times b ) = 0 , \qquad b \cdot ( a \times b ) = 0 ,
+$$
+
+it follows that $\pmb q$ and $p$ lie permanently in the plane perpendicular to $\pmb { m }$ (see Fig. 3.3). For simplicity, it is typically assumed that this plane of motion is oriented such that $\pmb { m }$ points in the $q _ { 3 }$ direction, in which case we have $p _ { 3 } \equiv 0$ , implying $q _ { 3 }$ is constant along trajectories, and the more traditional planar Kepler problem results with Hamiltonian reduced to
+
+$$
+H = \frac { 1 } { 2 } ( p _ { 1 } ^ { 2 } + p _ { 2 } ^ { 2 } ) - \frac { 1 } { \sqrt { q _ { 1 } ^ { 2 } + q _ { 2 } ^ { 2 } } } .
+$$
+
+This is a system with two degrees of freedom and two first integrals; energy $H$ and the third component of the angular momentum vector $\pmb { m }$ . Hence any bounded motion is restricted to a two-dimensional surface which is diffeomorph to a torus.
+
+Furthermore, the special form of the Kepler force field creates an additional vector, namely the Runge–Lenz vector
+
+$$
+\pmb { e } = \pmb { p } \times \pmb { m } - \frac { \pmb { q } } { | | \pmb { q } | | } ,
+$$
+
+which is constant along solution curves (see problem 2 in the Exercises). This invariance implies that the bounded trajectories of the Kepler problem are closed in the $\left( q _ { 1 } , q _ { 2 } \right)$ -plane [7]. ✷
+
+![](images/33f52facacef0259643dd9d50ca5662d39a0faddcf16c1f23b96c9380329d3b2.jpg)  
+Figure 3.3 Significance of the angular momentum in the Kepler problem: orbits lie in the plane perpendicular to $m = \pmb { q } \times \pmb { p }$ .
+
+Angular momentum $m = \pmb { q } \times \pmb { p }$ is a first integral for any particle moving under a central force field (see problem 2 in the Exercises), i.e. with Hamiltonian of the form
+
+$$
+H = \frac { 1 } { 2 } \pmb { p } ^ { T } \pmb { p } + \varphi ( | | \pmb { q } | | ) ,
+$$
+
+thus all such systems have planar motion.
+
+In general, each first integral reduces the number of degrees of freedom by one as an intersection of invariant manifolds. The Kepler problem is an example of an integrable Hamiltonian system, meaning, intuitively, that the system possesses an independent first integral $G _ { i }$ for each of its degrees of freedom. The solutions of an integrable system of $d$ degrees of freedom are then restricted to $d \cdot$ -dimensional level sets
+
+$$
+\mathcal { M } _ { \mathrm { c } } = \{ ( \boldsymbol { q } , \boldsymbol { p } ) \in \mathbb { R } ^ { 2 d } : G _ { i } ( \boldsymbol { q } , \boldsymbol { p } ) = c _ { i } , i = 1 , \ldots , d \} .
+$$
+
+If these level sets are compact sets (i.e. closed and bounded), then they can be viewed as $d \cdot$ -dimensional tori, i.e. the level sets can be transformed by a smooth (and smoothly invertible) mapping to a set of the form $T = S ^ { 1 } \times S ^ { 1 } \times S ^ { 1 } . . . \times S ^ { 1 }$ ( $d$ times), where $S ^ { 1 }$ is the circle.4 Upon introducing angle variables $\phi$ to describe the tori and identifying each torus by its action ${ \textbf { \textsf { l } } } \in \mathbb { R } ^ { d }$ [7, 8], the integrable system can be transformed to the canonical system
+
+$$
+\dot { \mathbf { l } } = \mathbf { 0 } , \qquad \dot { \pmb { \phi } } = \nabla _ { \mathrm { l } } S ( \mathbf { l } ) ,
+$$
+
+with Hamiltonian $S ( \boldsymbol { \mathsf { I } } )$ . Thus integrable systems have regular quasi-periodic solutions with frequency $\pmb { \omega } = \nabla _ { 1 } S ( \pmb { \mathsf { I } } )$ .
+
+Most systems do not possess a full complement of first integrals. The few first integrals that are typically present can be of substantial physical and practical importance. In complex nonlinear systems, they sometimes provide a simple way of distinguishing plausible trajectories from nonphysical ones or of assessing the quality of an approximation.
+
+Example 2 The equations of motion (3.19)-(3.20)of $N$ particles interacting through a distance-dependent pair-potential $\varphi ( r )$ admit total linear momentum $\pmb { p } _ { \mathrm { t o t } } = \sum _ { i } \pmb { p } _ { i }$ and total angular momentum $\begin{array} { r } { m _ { \mathrm { t o t } } = \sum _ { i } { q _ { i } } \times p _ { i } } \end{array}$ as first integrals. For example:
+
+$$
+{ \frac { d } { d t } } { \pmb { p } } _ { t o t } = \sum _ { i } { \frac { d } { d t } } { \pmb { p } } _ { i } = \sum _ { i } \sum _ { i \neq j } - { \frac { \varphi ^ { \prime } ( r _ { i j } ) } { r _ { i j } } } ( { \pmb { q } } _ { i } - { \pmb { q } } _ { j } ) = { \bf 0 } ,
+$$
+
+since $r _ { i j } = r _ { j i }$
+
+In molecular applications, periodic boundary conditions are often introduced as a modeling device. In this case, the total linear momentum remains a conserved quantity, but the total angular momentum is sacrificed.
+
+# 3.4 The flow map and variational equations
+
+Each Hamiltonian system gives rise to a family of flow maps parameterized by time $t$ . Contrary to the previously used notation $\pmb { \phi } _ { t }$ , we denote the flow map from now on by $\phi _ { t , H }$ to indicate its dependence on the Hamiltonian $H$ . As we have mentioned in the previous chapter, the family of flow maps is closed under the composition operation, i.e. for any $t = \tau _ { 1 } , \ t = \tau _ { 2 }$
+
+$$
+\begin{array} { r } { \pmb { \phi } _ { \tau _ { 1 } , H } \circ \pmb { \phi } _ { \tau _ { 2 } , H } = \pmb { \phi } _ { \tau _ { 2 } , H } \circ \pmb { \phi } _ { \tau _ { 1 } , H } = \pmb { \phi } _ { \tau _ { 1 } + \tau _ { 2 } , H } . } \end{array}
+$$
+
+The flow map $\pmb { \phi } _ { 0 , H }$ at $t = 0$ is the identity map (abbreviated id). Every flow map evidently has an inverse in the family, since
+
+$$
+\pmb { \phi } _ { - t , H } \circ \pmb { \phi } _ { t , H } = \pmb { \phi } _ { 0 , H } = \mathbf { i d } .
+$$
+
+4Some additional technical assumptions have to be made [7, 8].
+
+The one-parameter family of time $t$ flow maps of a Hamiltonian system thus defines a commutative group.
+
+Example 3 Consider a particle of mass $m$ that is moving in $\mathbb { R } ^ { 3 }$ without any force acting on it. The corresponding Hamiltonian is the kinetic energy of the particle and the flow map is given by
+
+$$
+\pmb { \phi } _ { t , H } ( \pmb q , \pmb { p } ) = \left[ \begin{array} { c } { \pmb { q } + \frac { t } { m } \pmb { p } } \\ { \pmb { p } } \end{array} \right] .
+$$
+
+Example 4 For the linear Hamiltonian system (3.8),the flow map $\pmb { \phi } _ { t , H }$ is given by a matrix exponential
+
+$$
+\pmb { \phi } _ { t , H } ( z ) = \mathrm { e x p } ( t J L ) z .
+$$
+
+Let us consider in detail the example of the harmonic oscillator
+
+$$
+\begin{array} { l } { { \displaystyle { \frac { d } { d t } } q = p } , } \\ { { \displaystyle { \frac { d } { d t } } p = - \omega ^ { 2 } q . } } \end{array}
+$$
+
+The first step is to introduce new coordinates $\hat { z } : = { S } ^ { - 1 } z$ , $z = ( q , p ) ^ { T }$ , with
+
+$$
+\pmb { S } = \left[ \begin{array} { c c } { 1 / \sqrt { \omega } } & { 0 } \\ { 0 } & { \sqrt { \omega } } \end{array} \right] .
+$$
+
+In these new coordinates the matrix
+
+$$
+\begin{array} { r } { J L = \left[ \begin{array} { c c } { 0 } & { 1 } \\ { - \omega ^ { 2 } } & { 0 } \end{array} \right] } \end{array}
+$$
+
+gets transformed to
+
+$$
+\pmb { S } ^ { - 1 } \pmb { J } \pmb { L } \pmb { S } = \left[ \begin{array} { c c } { 0 } & { \omega } \\ { - \omega } & { 0 } \end{array} \right] .
+$$
+
+The corresponding transformed linear system
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } \hat { q } = \omega \hat { p } , } \\ { \displaystyle \frac { d } { d t } \hat { p } = - \omega \hat { q } , } \end{array}
+$$
+
+$\hat { z } = ( \hat { q } , \hat { p } ) ^ { T }$ , generates the flow map
+
+$$
+\begin{array} { r l } & { \pmb { \hat { \phi } } _ { t , H } = \exp ( t \pmb { \cal S } ^ { - 1 } J L \pmb { \cal S } ) , } \\ & { \quad \quad = \left[ \begin{array} { l l } { \cos \omega t } & { \sin \omega t } \\ { - \sin \omega t } & { \cos \omega t } \end{array} \right] . } \end{array}
+$$
+
+We obtain the flow map $\pmb { \phi } _ { t , H }$ by transforming $\hat { \pmb { \phi } } _ { t , H }$ back to the variable $z = S \hat { z }$ . Thus
+
+$$
+\begin{array} { r l } & { \boldsymbol { \phi } _ { t , H } ( z ) = \exp ( t J L ) z } \\ & { \qquad = \boldsymbol { S } \boldsymbol { \hat { \phi } } _ { t , H } \boldsymbol { S } ^ { - 1 } \boldsymbol { z } } \\ & { \qquad = \left[ \begin{array} { c c } { 1 / \sqrt { \omega } } & { 0 } \\ { 0 } & { \sqrt { \omega } } \end{array} \right] \left[ \begin{array} { c c } { \cos \omega t } & { \sin \omega t } \\ { - \sin \omega t } & { \cos \omega t } \end{array} \right] \left[ \begin{array} { c c } { \sqrt { \omega } } & { 0 } \\ { 0 } & { 1 / \sqrt { \omega } } \end{array} \right] z } \\ & { \qquad = \left[ \begin{array} { c c } { \cos \omega t } & { \omega ^ { - 1 } \sin \omega t } \\ { \omega \sin \omega t } & { \sin \omega t } \end{array} \right] z . } \end{array}
+$$
+
+Hence the flow of the harmonic oscillator is described by a product of three matrices: a scaling, a rotation, and the inverse scaling.
+
+Hamiltonian systems with bounded smooth Hamiltonian function $H$ admit smooth flow maps. The inverse map $\pmb { \phi } _ { t , H } ^ { - 1 } \equiv \pmb { \phi } _ { - t , H }$ is also smooth. A map which is smooth, invertible, and whose inverse map is also smooth is called a diffeomorphism.
+
+Even when the potential energy is not smooth (for example, when it has singular points) we can still often define a flow map subject to a suitable domain restriction. For example, for an $N .$ -body system subject to a pair potential $\varphi$ with a singularity at $r = 0$ , ultimately repulsive at short range $\begin{array} { r l } { ( \operatorname* { l i m } _ { r \to 0 + } \varphi ( r ) = } & { { } } \end{array}$ $+ \infty )$ , we can define a global flow map on the complement of the singular set $\{ ( { \pmb q } _ { 1 } , { \pmb q } _ { 2 } , \dots , { \pmb q } _ { N } ) | { \pmb q } _ { i } = { \pmb q } _ { j }$ , some $i , j , i \neq j \}$ .
+
+In general, the flow map cannot be written down explicitly but can only be approximated numerically. We will take up this task in the following chapters.
+
+The flow map notation allows us to emphasize solution properties that are shared by bundles of trajectories. For example, instead of considering a single initial point $z ^ { 0 }$ , we can look at a neighborhood $\mathcal { U } \subset \mathbb { R } ^ { 2 d }$ of initial points near the given $z ^ { 0 }$ and can ask how this whole set of initial conditions is transported by the flow map, i.e. we can discuss the transformed sets
+
+$$
+\begin{array} { r l } & { \mathcal { U } _ { t } : = \pmb { \phi } _ { t , H } ( \mathcal { U } ) , } \\ & { \quad \quad : = \{ z \in \mathbb { R } ^ { 2 d } : z = \pmb { \phi } _ { t , H } ( \hat { z } ) \ \mathrm { w i t h } \ \hat { z } \in \mathcal { U } \} , } \end{array}
+$$
+
+$t > 0$ . This point of view will allow us to better understand some of the qualitative properties of Hamiltonian equations of motion.
+
+A first step in this direction is to investigate the solution behavior of a system near a given trajectory $z ( t ; z ^ { 0 } )$ via linearization of the system along $z ( t ; z ^ { 0 } )$ . Let $\boldsymbol { z } ( t ; \bar { \boldsymbol { z } } ^ { 0 } )$ denote another solution with an almost identical initial condition, i.e. $\bar { z } ^ { 0 } \approx z ^ { 0 }$ . Then it is often of interest to know how this small difference
+
+$$
+\delta z ^ { 0 } : = \bar { z } ^ { 0 } - z ^ { 0 }
+$$
+
+in the initial conditions is propagated in time. Of course, the answer is obtained by simply comparing the two solution curves, i.e.
+
+$$
+\delta z ( t ) : = z ( t ; \bar { z } ^ { 0 } ) - z ( t ; z ^ { 0 } ) .
+$$
+
+However, if only $z ( t ; z ^ { 0 } )$ is explicitly known, then an approximation for $\delta z ( t )$ can be obtained via Taylor series expansion of the flow map in $\delta z ^ { 0 }$
+
+$$
+\begin{array} { l } { \displaystyle \delta z ( t ) = \pmb { \phi } _ { t , H } ( \bar { z } ^ { 0 } ) - \pmb { \phi } _ { t , H } ( z ^ { 0 } ) } \\ { \displaystyle = \pmb { \phi } _ { t , H } ( z ^ { 0 } + \delta z ^ { 0 } ) - \pmb { \phi } _ { t , H } ( z ^ { 0 } ) } \\ { \displaystyle \approx \frac { \partial } { \partial z } \pmb { \phi } _ { t , H } ( z ^ { 0 } ) \delta z ^ { 0 } . } \end{array}
+$$
+
+This motivates the definition of the time-dependent vector
+
+$$
+\pmb { \xi } ( t ) = \frac { \partial } { \partial z } \pmb { \phi } _ { t , H } ( z ^ { 0 } ) \delta z ^ { 0 } .
+$$
+
+We can differentiate with respect to time making use of
+
+$$
+\frac { d } { d t } z ( t ) = \frac { \partial } { \partial t } \pmb { \phi } _ { t , H } ( z ( 0 ) ) = J \nabla _ { z } H ( \pmb { \phi } _ { t , H } ( z ( 0 ) ) ) = J \nabla _ { z } H ( z ( t ) )
+$$
+
+to obtain
+
+$$
+\begin{array} { r l } & { \frac { d } { d t } \pmb { \xi } ( t ) = \frac { \partial } { \partial t } \frac { \partial } { \partial z } \phi _ { t , H } ( z ^ { 0 } ) \delta z ^ { 0 } } \\ & { \qquad = \frac { \partial } { \partial z } \left[ \frac { \partial } { \partial t } \phi _ { t , H } ( z ^ { 0 } ) \right] \delta z ^ { 0 } } \\ & { \qquad = \frac { \partial } { \partial z } \left[ J \nabla _ { z } H ( \phi _ { t , H } ( z ^ { 0 } ) ) \right] \delta z ^ { 0 } } \\ & { \qquad = J H _ { z z } ( z ( t ) ) \left[ \frac { \partial } { \partial z } \phi _ { t , H } ( z ^ { 0 } ) \delta z ^ { 0 } \right] } \\ & { \qquad = J H _ { z z } ( z ( t ) ) \xi ( t ) . } \end{array}
+$$
+
+Hence we have derived a linear time-dependent differential equation in $\pmb { \xi } \in \mathbb { R } ^ { 2 d }$ , called the variational equations along a solution $\boldsymbol { z } ( t ) = \boldsymbol { z } ( t ; \boldsymbol { z } ^ { 0 } )$ :
+
+VARIATIONAL EQUATIONS
+
+$$
+\frac { d } { d t } \pmb { \xi } = J H _ { z z } ( z ( t ) ) \pmb { \xi } .
+$$
+
+Note that the quality of the approximation $\delta z ( t ) \approx \pmb { \xi } ( t )$ depends on the smallness of $\delta z ^ { 0 }$ and will only be valid, in general, over relatively short time intervals. However, the variational equations are important in their own right as we will see in the following section.
+
+In the particular situation that $z ( t ; z ^ { 0 } )$ is an equilibrium solution $z ( t ; z ^ { 0 } ) \equiv$ $\bar { z } = z ^ { 0 }$ , the variational equations (3.23) reduce to the time-independent linear system
+
+$$
+\frac { d } { d t } \pmb { \xi } = J H _ { z z } ( \bar { z } ) \pmb { \xi } .
+$$
+
+For the Newtonian mechanical system (3.2)–(3.3) with equilibrium $\bar { z } = ( \bar { \pmb q } , { \bf 0 } )$ , the variational equations about $z = \bar { z }$ are
+
+$$
+\frac { d } { d t } \pmb { \xi } = \left[ \begin{array} { c c } { \ \mathbf { 0 } } & { \ M ^ { - 1 } } \\ { - V _ { q q } ( \bar { q } ) } & { \ \mathbf { 0 } } \end{array} \right] \pmb { \xi } .
+$$
+
+The study of this linear system often allows one to understand the behavior of solutions of the nonlinear system in the vicinity of the equilibrium point. For example, if the matrix $V _ { q q } ( \bar { q } )$ is positive definite, the equilibrium point $\bar { \pmb q }$ will be stable for both the linear system and the nonlinear system.5
+
+Let us abbreviate the Jacobian of the flow map $\Phi _ { t , H }$ by $\pmb { F } ( t ) \in \mathbb { R } ^ { 2 d \times 2 d }$ , i.e.
+
+$$
+\pmb { F } ( t ) = \frac { \partial } { \partial z } \pmb { \phi } _ { t , H } ( z ^ { 0 } ) .
+$$
+
+Then formula (3.22) can be written as ${ \pmb \xi } ( t ) = { \pmb F } ( t ) \delta z ^ { 0 }$ , which holds for any vector $\delta z ^ { 0 }$ . It is then easy to verify that the matrix $\pmb { F } ( t )$ itself is the solution of the matrix-valued variational equation
+
+$$
+\frac { d } { d t } \pmb { F } = J H _ { z z } ( z ( t ) ) \pmb { F } ,
+$$
+
+with initial condition $F ( 0 ) = I _ { 2 d }$
+
+# 3.5 Symplectic maps and Hamiltonian flow maps
+
+This and following sections are devoted to the definition of symplecticness of a smooth mapping $\pmb { \psi } : \mathbb { R } ^ { 2 d }  \mathbb { R } ^ { 2 d }$ and its implications for the solution behavior of canonical Hamiltonian systems. The presentation in this section is divided into three parts. We start with an algebraic definition of symplecticness and show that the flow map $\pmb { \phi } _ { \tau , H }$ of a canonical Hamiltonian system is symplectic. In the second part, we discuss the implications on the solution behavior for singledegree-of-freedom systems. Finally, in the third part, we give another derivation of symplecticness, making clear its geometric interpretation in arbitrary finite dimensions.
+
+A smooth map $\pmb { \psi }$ on the phase space $\mathbb { R } ^ { 2 d }$ is called a symplectic map with respect to the (constant and invertible) structure matrix $J$ if its Jacobian $\pmb { \psi } _ { z } ( z )$ satisfies:
+
+$$
+\begin{array} { r } { [ \pmb { \psi } _ { z } ( z ) ] ^ { T } J ^ { - 1 } \pmb { \psi } _ { z } ( z ) = J ^ { - 1 } , } \end{array}
+$$
+
+for all $z$ in the domain of definition of $\pmb { \psi }$ . In case $\jmath$ in (3.25), given by (3.6), one sees the term “canonical map” used as a synonym for the term “symplectic map.”
+
+For a linear transformation $\pmb { \psi } ( z ) ~ = ~ \pmb { B z }$ , the condition of symplecticness reduces to $B ^ { T } J ^ { - 1 } B = J ^ { - 1 }$ and $B$ is referred to as a symplectic matrix.
+
+Example 5 Consider the Hénon map $\pmb { \psi } _ { a , b } : \mathbb { R } ^ { 2 }  \mathbb { R } ^ { 2 }$ defined by
+
+$$
+\pmb { \psi } _ { a , b } ( q , p ) : = \left[ \underset { 1 + b q + a p ^ { 2 } } { p } \right] ,
+$$
+
+a, $b \neq 0$ parameters. To check that this map is canonical, we compute the Jacobian matrix
+
+$$
+\frac { \partial } { \partial z } \pmb { \psi } _ { a , b } ( z ) = \left[ \begin{array} { c c } { 0 } & { 1 } \\ { b } & { 2 a p } \end{array} \right] ,
+$$
+
+of $\psi _ { a , b }$ . Then a straightforward calculation yields
+
+$$
+\left[ \frac { \partial } { \partial z } \psi _ { a , b } \right] ^ { T } J ^ { - 1 } \frac { \partial } { \partial z } \psi _ { a , b } = \left[ \begin{array} { c c } { 0 } & { b } \\ { 1 } & { 2 a p } \end{array} \right] \left[ \begin{array} { c c } { 0 } & { - 1 } \\ { 1 } & { 0 } \end{array} \right] \left[ \begin{array} { c c } { 0 } & { 1 } \\ { b } & { 2 a p } \end{array} \right] = - b J ^ { - 1 } .
+$$
+
+(Here $\jmath$ is the $2 \times 2$ canonical symplectic structure matrix.) Hence the H´enon map is symplectic for $b = - 1$ . ✷
+
+Example6 Often，a non-linear change of position in coordinates from $\pmb q$ to $\hat { \pmb q }$ is prescribed by
+
+$$
+{ \hat { \pmb q } } = { \pmb h } ( { \pmb q } ) ,
+$$
+
+where $\pmb { \mathscr { h } } : \mathcal { U } \subset \mathbb { R } ^ { d }  \mathbb { R } ^ { d }$ is a diffeomorphism (i.e. a smooth map with a smooth inverse).
+
+For example, consider the transformation
+
+$$
+\begin{array} { r } { q _ { 1 } = r \sin \theta , } \\ { q _ { 2 } = r \cos \theta } \end{array}
+$$
+
+from polar $( r , \theta )$ coordinates to Cartesian $\left( q _ { 1 } , q _ { 2 } \right)$ coordinates.
+
+
+<!-- chunk 0002: pages 71-140 -->
+One then requires a definition of the corresponding transformed conjugate momenta $\hat { p }$ such that the overall transformation $\pmb { \psi }$ from $( \pmb q , \pmb p )$ to $( \hat { \pmb q } , \hat { \pmb p } )$ is symplectic. Such a definition is provided by
+
+$$
+\hat { p } : = [ h _ { q } ( q ) ] ^ { - T } p .
+$$
+
+The overall coordinate transformation $\pmb { \psi }$ is hence given by
+
+$$
+\psi ( q , p ) = \left[ \begin{array} { c } { { h ( q ) } } \\ { { { [ } h _ { q } ( q ) { ] } ^ { - T } p } } \end{array} \right] .
+$$
+
+This type of symplectic transformation is sometimes called a canonical point transformation [73, 124].
+
+The Jacobian of the map $\pmb { \psi }$ is
+
+$$
+\pmb { \psi } _ { z } ( z ) = \left[ \begin{array} { c c } { h _ { q } ( \pmb { q } ) } & { \mathbf { 0 } } \\ { G ( \pmb { q } , \pmb { p } ) } & { [ h _ { q } ( \pmb { q } ) ] ^ { - T } } \end{array} \right] ,
+$$
+
+where $G ( \pmb { q } , \pmb { p } )$ is the matrix of partial derivative of the vector $[ h _ { q } ( q ) ] ^ { - T } p$ with respect to $\pmb q$ . It can be verified by explicit computation that
+
+$$
+\pmb { \psi } _ { z } ( z ) ^ { T } \pmb { J } ^ { - 1 } \pmb { \psi } _ { z } ( z ) = \pmb { J } ^ { - 1 } ,
+$$
+
+where $\jmath$ is the canonical structure matrix. A different proof for the symplecticness of canonical point transformations will be given in Section 3.6.
+
+For the coordinate transformation from polar to cartesian coordinates, we obtain the expression
+
+$$
+{ \left[ \begin{array} { l } { p _ { 1 } } \\ { p _ { 2 } } \end{array} \right] } = { \frac { 1 } { r } } \left[ r \sin \theta \quad \cos \theta \right] { \left[ \begin{array} { l } { p _ { r } } \\ { p _ { \theta } } \end{array} \right] } \left[ { \begin{array} { l } { p _ { r } } \\ { p _ { \theta } } \end{array} } \right]
+$$
+
+for the conjugate momenta $p _ { r } , ~ p _ { \theta }$ . This implies that the kinetic energy of a particle in $\mathbb { R } ^ { 2 }$ with mass $m$ transforms according to
+
+$$
+{ \frac { 1 } { 2 m } } \left( p _ { 1 } ^ { 2 } + p _ { 2 } ^ { 2 } \right) = { \frac { 1 } { 2 m } } \left( p _ { r } ^ { 2 } + { \frac { 1 } { r ^ { 2 } } } p _ { \theta } ^ { 2 } \right) .
+$$
+
+The main result of this section is contained in the following:
+
+Theorem 1 The flow map $\pmb { \phi } _ { \tau , H }$ of a Hamiltonian system (3.7) is symplectic. ✷
+
+Proof. Recall that the Jacobian of the flow map
+
+$$
+\pmb { F } ( t ) = \frac { \partial } { \partial z } \pmb { \phi } _ { t , H } ( z )
+$$
+
+satisfies the variational equation (3.24) with initial condition $F ( 0 ) = I _ { 2 d }$ . To prove the proposition, we have to verify that
+
+$$
+F ( t ) ^ { T } J ^ { - 1 } F ( t ) = J ^ { - 1 } .
+$$
+
+Since $F ( 0 ) = I _ { 2 d }$ the statement is true for $t = 0$ . Hence we only have to show that
+
+$$
+\frac { d } { d t } K = 0 , \qquad K ( t ) : = F ( t ) ^ { T } J ^ { - 1 } F ( t ) .
+$$
+
+Indeed, we obtain
+
+$$
+\begin{array} { r l } & { \frac { d } { d t } K = F ^ { T } J ^ { - 1 } \dot { F } + \left[ \dot { F } \right] ^ { T } J ^ { - 1 } F } \\ & { ~ = F ^ { T } J ^ { - 1 } \left[ J H _ { z z } ( z ( t ) ) F \right] + \left[ F ^ { T } H _ { z z } ( z ( t ) ) J ^ { T } \right] J ^ { - 1 } F } \\ & { ~ = F ^ { T } H _ { z z } ( z ( t ) ) F - F ^ { T } H _ { z z } ( z ( t ) ) F } \\ & { ~ = \bf { 0 } . } \end{array}
+$$
+
+The symplecticness of the flow map implies the existence of certain global conservation laws or integral invariants related to the evolution of subsets of phase space. In particular, we will show in the following subsection that symplecticness implies preservation of area for one-degree-of-freedom systems ( $\left[ d = 1 \right.$ ). In higher dimensions this invariant is replaced by the preservation of volume $( d > 1 )$ ). Conservation of volume under the flow map of a canonical Hamiltonian system follows from Liouville’s Theorem [7] (see problem 7 in the Exercises), but it can also be considered as a consequence of the symplecticness of the flow map.6 In other words, the sets $\mathcal { U } _ { t }$ , $t > 0$ , defined by (3.21) might change their shapes significantly but they will always occupy the same volume in phase space as time $t$ increases. The existence of this integral invariant implies severe and important restrictions on the possible solution behavior of Hamiltonian dynamical systems. As we will see throughout this book, preservation of the symplectic structure under numerical discretization is often a very desirable property for long-term approximate integration of Hamiltonian systems.
+
+# 3.5.1 One-degree-of-freedom systems
+
+Let $\pmb { \psi } : \mathbb { R } ^ { 2 }  \mathbb { R } ^ { 2 }$ be a symplectic map in the plane. We write the Jacobian $\pmb { \psi } _ { z } ( z )$ as
+
+$$
+\pmb { \psi } _ { z } ( z ) = \left[ \begin{array} { c c } { { a } } & { { b } } \\ { { c } } & { { d } } \end{array} \right] .
+$$
+
+Using this in (3.25), we obtain the equivalent condition
+
+$$
+a d - b c = 1 .
+$$
+
+6Symplecticness also implies the existence of other integral invariants for $d > 1$ . Thus the concept of symplecticness is a stronger property than conservation of volume.
+
+However, this is the same as saying
+
+$$
+\mathsf { d e t } [ \pmb { \psi } _ { z } ( z ) ] = 1 .
+$$
+
+Thus, for planar maps $\pmb { \psi }$ , the condition of symplecticness (3.25) is that the determinant of the Jacobian ${ \pmb { \psi } } _ { z } ( z )$ is everywhere equal to one.
+
+What is the implication of this for the behavior of the map $\pmb { \psi } ?$ Let $\mathcal { R }$ be a bounded subset of phase space. The oriented area7 $\alpha ( \mathcal { R } )$ is defined by the integral
+
+$$
+\alpha ( \mathcal { R } ) = \int _ { \mathcal { R } } d q d p .
+$$
+
+Let $\hat { \mathcal { R } }$ denote the image of $\mathcal { R }$ under $\pmb { \psi }$ , i.e. ${ \hat { \mathcal { R } } } = \pmb { \psi } ( { \mathcal { R } } )$ . Then, following the standard rules for changing variables in an integral
+
+$$
+\begin{array} { l } { \displaystyle \alpha ( \hat { \mathcal { R } } ) = \int _ { \hat { \mathcal { R } } } d \hat { q } d \hat { p } } \\ { \displaystyle \quad = \int _ { \mathcal { R } } \operatorname* { d e t } [ \psi _ { z } ( z ) ] d q d p } \\ { \displaystyle \quad = \int _ { \mathcal { R } } d q d p } \\ { \displaystyle \quad = \alpha ( \mathcal { R } ) . } \end{array}
+$$
+
+Thus a symplectic map of the plane is area preserving.
+
+The implications of symplecticness for the behavior of maps in higher dimensions are taken up in the following section.
+
+# 3.5.2 The symplectic structure of phase space
+
+We now turn to the general situation and discuss the symplectic structure associated to $2 d \cdot$ -dimensional phase space. The book of LANDAU AND LIFSHITZ [105] gives a clear explanation of the symplectic structure. A more advanced and mathematically precise treatment will be found in the book of ARNOLD [7].
+
+Let us start with some notation from differential geometry. A two-form on $\mathbb { R } ^ { 2 d }$ is a skew-symmetric bilinear function $\Omega ( \pmb { \xi } , \pmb { \eta } )$ with arguments $\pmb { \xi }$ and $\pmb { \eta }$ in $\mathbb { R } ^ { 2 d }$ . Bilinearity means that the function is linear in each of its two arguments
+
+![](images/a5babd35f0e1eac7c15b1ff88d3149414846eda36e4f31bbfd8adbd2a3951f86.jpg)  
+Figure 3.4 The two-form $\Omega$ for $d = 1$ is the oriented area of the parallelogram described by a pair of vectors in $\mathbb { R } ^ { 2 }$ , i.e. it is the transverse coordinate of the cross product of the pair of vectors viewed as embedded in $\mathbb { R } ^ { 3 }$ .
+
+separately, and skew-symmetry means
+
+$$
+\Omega ( \pmb { \xi } , \pmb { \eta } ) = - \Omega ( \pmb { \eta } , \pmb { \xi } ) ,
+$$
+
+for any $\xi , \eta$
+
+The symplectic structure matrix
+
+$$
+J = \left[ \begin{array} { c c } { { { \bf 0 } } } & { { + I _ { d } } } \\ { { - I _ { d } } } & { { { \bf 0 } } } \end{array} \right] ,
+$$
+
+introduces the symplectic two-form $\Omega$ on the phase space $\mathbb { R } ^ { 2 d }$
+
+$$
+\Omega ( \pmb { \xi } , \pmb { \eta } ) : = \pmb { \xi } ^ { T } J ^ { - 1 } \pmb { \eta } , \qquad \pmb { \xi } , \pmb { \eta } \in \mathbb { R } ^ { 2 d } .
+$$
+
+Let us give a geometric interpretation of the two-form $\Omega$ . For $d = 1$ , $\Omega ( \pmb { \xi } , \pmb { \eta } )$ is the oriented area of the parallelogram spanned by the two vectors $\pmb { \xi }$ and $\pmb { \eta }$ in $\mathbb { R } ^ { 2 }$ . This is easily verified since, for $d = 1$
+
+$$
+\begin{array} { r } { \pmb { \xi } ^ { T } J ^ { - 1 } \pmb { \eta } = \xi _ { 2 } \eta _ { 1 } - \xi _ { 1 } \eta _ { 2 } , \qquad \pmb { \xi } = ( \xi _ { 1 } , \xi _ { 2 } ) ^ { T } , \pmb { \eta } = ( \eta _ { 1 } , \eta _ { 2 } ) ^ { T } \in \mathbb { R } ^ { 2 } . } \end{array}
+$$
+
+The orientation of area refers to the fact that $\Omega ( \pmb { \xi } , \pmb { \eta } )$ is either equal to the area spanned by $\pmb { \xi }$ and $\pmb { \eta }$ or is equal to the negative of this area. Viewing the two planar vectors as embedded in $\mathbb { R } ^ { 3 }$ , the two-form $\Omega$ is nothing but the $Z$ -coordinate of the cross product of the two vectors (Fig. 3.4).
+
+For $d > 1$ , we project $\pmb { \xi } \in \mathbb { R } ^ { 2 d }$ and $\pmb { \eta } \in \mathbb { R } ^ { 2 d }$ down on to the $\left( q _ { i } , p _ { i } \right)$ -coordinate planes, $i = 1 , \ldots , d$ . Denote the corresponding vectors in $\mathbb { R } ^ { 2 }$ by $\pmb { \xi } ^ { ( i ) }$ , $\pmb { \eta } ^ { ( i ) }$ respectively, $i = 1 , \ldots , d$ . Then $\Omega ( \pmb { \xi } , \pmb { \eta } )$ is equivalent to the sum of the oriented areas of the parallelograms spanned by the pair of vectors $\pmb { \xi } ^ { ( i ) }$ and $\pmb { \eta } ^ { ( i ) }$ . To be precise, if we now denote by $\Omega _ { 0 }$ the standard two-form of a pair of vectors in the plane, define
+
+$$
+\Omega ( \pmb { \xi } , \pmb { \eta } ) = \sum _ { i = 1 } ^ { d } \Omega _ { 0 } ( \pmb { \xi } ^ { ( i ) } , \pmb { \eta } ^ { ( i ) } ) .
+$$
+
+In fact, this is synonymous with saying
+
+$$
+\Omega ( \pmb { \xi } , \pmb { \eta } ) = \pmb { \xi } ^ { T } \pmb { J } ^ { - 1 } \pmb { \eta } ,
+$$
+
+where $\jmath$ refers to the symplectic structure matrix in $\mathbb { R } ^ { 2 d }$ .
+
+Next we consider the integral of $\Omega$ over a smooth two-dimensional surface $S \subset \mathbb { R } ^ { 2 d }$ of phase space. We can view such a two-surface as being described8 by a smooth mapping $\pmb { \sigma }$ from an open subset $\mathcal { R }$ of the $( u , v )$ -plane into phase space $\mathbb { R } ^ { 2 d }$ such that the partial derivatives $\pmb { \sigma } _ { u } ( u , v )$ and $\pmb { \sigma } _ { v } ( u , v )$ are linearly independent vectors for all $( u , v ) \in \mathcal { R }$ . We define the integral of the two-form $\Omega$ over the surface $s$ by
+
+$$
+\begin{array} { r } { \int _ { \mathcal { S } } \Omega : = \int _ { \mathcal { R } } \Omega ( \pmb { \sigma } _ { u } d u , \pmb { \sigma } _ { v } d v ) } \\ { = \int _ { \mathcal { R } } \pmb { \sigma } _ { u } ^ { T } J ^ { - 1 } \pmb { \sigma } _ { v } d u d v ; } \end{array}
+$$
+
+the last integral is to be understood as the usual integral of the function $f : =$ $\pmb { \sigma } _ { u } ^ { T } \pmb { J } ^ { - 1 } \pmb { \sigma } _ { v }$ over $\mathcal { R } \subset \mathbb { R } ^ { 2 }$ . To give a geometric interpretation to the integral, we separate the mapping $\pmb { \sigma }$ into $d$ components $\pmb { \sigma } _ { 1 } , \pmb { \sigma } _ { 2 } , \dots . . . , \pmb { \sigma } _ { d }$ , with $\pmb { \sigma } _ { i }$ taking values in the $\left( p _ { i } , q _ { i } \right)$ -coordinate plane. Denote the image of $\mathcal { R }$ under $\pmb { \sigma } _ { i }$ by $S _ { i } \subset \mathbb { R } ^ { 2 }$ . To interpret the integral of $\Omega$ over the surface $s$ , we first partition $\mathcal { R }$ into a mesh of small rectangles with dimensions $\Delta u \times \Delta v$ . Such a partition results in corresponding partitions of each of the map images (the coordinate plane projections of the surface) into small curved regions (see Fig. 3.5). For a fine enough partition, the “rectangle images” are approximated by parallelograms (see Fig. 3.6) spanned by the vectors
+
+$$
+\pmb { \xi } ^ { ( i ) } = \pmb { \sigma } _ { i , u } \Delta u \in \mathbb { R } ^ { 2 } , \qquad \pmb { \eta } ^ { ( i ) } = \pmb { \sigma } _ { i , v } \Delta v \in \mathbb { R } ^ { 2 } .
+$$
+
+The integral of the two-form $\Omega$ is now approximated by the sum of the oriented areas of these parallelograms. The integral of $\Omega$ over $s$ is then taken to be the limiting value of this sum as the diameter of the underlying mesh imposed on $\mathcal { R }$ tends uniformly to zero. In other words
+
+$$
+\int _ { S } \Omega = \sum _ { i } \alpha ( S _ { i } ) ,
+$$
+
+with $\alpha ( S _ { i } )$ being the oriented area of $S _ { i } \subset \mathbb { R } ^ { 2 }$ .
+
+$^ 8 | { \mathfrak { n } }$ general, the surface must be divided into a collection of overlapping regions called charts, in each of which a local parameterization is defined [7].
+
+![](images/fd1620f26a81700d6f6626e39cfc0447106c415d56152087ed77652a8ddf1600.jpg)  
+Figure 3.5 A surface is defined by a parameterization: a collection of $d$ mappings from a parameter space in the uv -plane to the canonical $\left( q _ { i } , p _ { i } \right)$ - coordinate planes. A rectangular mesh in parameter space induces a curved mesh in the coordinate planes.
+
+Now consider how the symplectic two-form $\Omega$ changes under a coordinate transformation $\pmb { \psi } : \mathbb { R } ^ { 2 d }  \mathbb { R } ^ { 2 d }$ . We define the transformed differential form ${ \pmb { \psi } } ^ { * } \Omega$ by
+
+$$
+\pmb { \psi } ^ { \ast } \Omega \left( \pmb { \xi } , \pmb { \eta } \right) : = \Omega \left( \pmb { \psi } _ { z } ( z ) \pmb { \xi } , \pmb { \psi } _ { z } ( z ) \pmb { \eta } \right) .
+$$
+
+In other words, ${ \pmb { \psi } } ^ { * } \Omega ( \pmb { \xi } , \pmb { \eta } )$ is equal to $\Omega ( \hat { \pmb { \xi } } , \hat { \pmb { \eta } } )$ where $\hat { \xi } , \hat { \eta }$ are the transports of the vectors $\pmb { \xi }$ and $\pmb { \eta }$ , respectively, under the linearization (Jacobian matrix) of $\pmb { \psi }$ . A transformation $\pmb { \psi }$ is called symplectic, if
+
+$$
+\psi ^ { * } \Omega = \Omega ,
+$$
+
+or, equivalently
+
+$$
+\pmb { \psi } _ { z } ( z ) ^ { T } \pmb { J } ^ { - 1 } \pmb { \psi } _ { z } ( z ) = \pmb { J } ^ { - 1 } ,
+$$
+
+![](images/a67e524649422a578f9a46db94bbfc4939956b870685d667b3619140f8ca40e5.jpg)  
+Figure 3.6 For a small rectangular patch in parameter space, the image under the parameterization is a small region that is approximated by a parallelogram whose oriented area is computed in the usual way. The integral of the two-form over a two-surface is then obtained as the limit, for decreasing meshwidth in parameter space, of the sum of the induced two-forms.
+
+which is the definition we gave before. In other words, symplectic maps leave the symplectic two-form $\Omega$ invariant. Thus, for $d = 1$ , a map $\pmb { \psi }$ is symplectic if the parallelogram spanned by $\pmb { \xi }$ and $\pmb { \eta }$ has the same area as the parallelogram spanned by the two vectors $\pmb { \psi } _ { z } ( z ) \pmb { \xi }$ and ${ \pmb { \psi } } _ { z } ( z ) { \pmb { \eta } }$ . This implies that, for $d = 1$ , a symplectic map conserves area.
+
+More generally, this important integral invariance can be written as
+
+$$
+\begin{array} { l } { \displaystyle { \int _ { \mathcal { S } } \Omega : = \int _ { \mathcal { S } } \pmb { \psi } ^ { * } \Omega } } \\ { \displaystyle \qquad = \int _ { \mathcal { R } } \Omega ( \pmb { \psi } _ { z } \pmb { \sigma } _ { u } d u , \pmb { \psi } _ { z } \pmb { \sigma } _ { v } d v ) } \end{array}
+$$
+
+$$
+\begin{array} { l } { \displaystyle = \int _ { \mathcal R } \Omega \left( \bar { \pmb { \sigma } } _ { u } d u , \bar { \pmb { \sigma } } _ { v } d v \right) } \\ { \displaystyle = \int _ { \bar { \mathcal S } } \Omega , } \end{array}
+$$
+
+where ${ \bar { \mathcal { S } } } : = \psi ( { \mathcal { S } } )$ and $\bar { \pmb { \sigma } } : = \pmb { \psi } \circ \pmb { \sigma } : \mathcal { R }  \bar { \mathcal { S } }$ is a parameterization of $\bar { S }$ . For $d > 1$ , this formula implies the conservation of a sum of oriented areas of projections of $s$ on to the $\left( q _ { i } , p _ { i } \right)$ -coordinate planes, i.e.
+
+$$
+\sum _ { i } \alpha ( S _ { i } ) = \sum _ { i } \alpha ( \bar { S } _ { i } ) .
+$$
+
+We refer to this quantity as the symplectic area.
+
+We have already mentioned that the flows of Hamiltonian systems preserve volume in phase space. In fact, it can be shown that conservation of the symplectic two-form $\Omega$ alone implies that the sum over all distinct $k$ -tuples $1 \leq i _ { 1 } < i _ { 2 } <$ $\dots < i _ { k } \le d$ of oriented volumes of projections of a $2 k$ -dimensional submanifold on to the $\left( p _ { i _ { 1 } } , p _ { i _ { 2 } } , \ldots , p _ { i _ { k } } , q _ { i _ { 1 } } , q _ { i _ { 2 } } , \ldots , q _ { i _ { k } } \right)$ -coordinate system is also conserved under the map [7]; as a special case ( $k = d$ ), this implies the conservation of phase space volume.
+
+We also mention that, although our geometric interpretation above relied on the fact that $\jmath$ was the canonical structure matrix, a corresponding geometric property would hold locally for any Hamiltonian system. This is a consequence of Darboux’s theorem [7, 8].
+
+# 3.6 Differential forms and the wedge product
+
+The definition (3.28) is not always the most convenient approach to check the symplecticness of a given map $\pmb { \psi }$ . This is true in particular if the map is given implicitly or the definition involves additional variables that could, in principle, be eliminated. In those cases, it is best to use implicit differentiation combined with a definition of symplecticness in terms of differential one- and two-forms. We develop the necessary mathematical material in this section.
+
+Recall from calculus that if $f : \mathbb { R } ^ { m }  \mathbb { R }$ is a smooth function, then its directional derivative along a vector $\pmb { \xi } \in \mathbb { R } ^ { m }$ , denoted here by $d f ( \pmb { \xi } )$ , is given by
+
+$$
+d f ( \pmb { \xi } ) = \frac { \partial f } { \partial z _ { 1 } } \xi _ { 1 } + \frac { \partial f } { \partial z _ { 2 } } \xi _ { 2 } + \cdot \cdot \cdot + \frac { \partial f } { \partial z _ { m } } \xi _ { m } ,
+$$
+
+where the partial derivatives of $f$ are computed at a fixed location $z \in \mathbb { R } ^ { m }$ . It is clear from the definition that $d f ( \pmb { \xi } )$ is linear in $\pmb { \xi }$ . The linear functional $d f ( . )$ is called the differential of $f$ at $z$ and is an $\mathsf { e x }$ ample of a differential one-form.
+
+A particularly simple class of differentials is provided by the coordinate functions $f ( z ) = z _ { i }$ and
+
+$$
+d z _ { i } ( \pmb { \xi } ) = \xi _ { i } ,
+$$
+
+$i = 1 , \dots , m$ . Indeed, the differentials $d z _ { i }$ can be used as a basis for representing any other differential df since
+
+$$
+d f ( { \pmb \xi } ) = \frac { \partial f } { \partial z _ { 1 } } d z _ { 1 } ( { \pmb \xi } ) + \frac { \partial f } { \partial z _ { 2 } } d z _ { 2 } ( { \pmb \xi } ) + \dots + \frac { \partial f } { \partial z _ { m } } d z _ { m } ( { \pmb \xi } ) ,
+$$
+
+and, consequently
+
+$$
+d f = { \frac { \partial f } { \partial z _ { 1 } } } d z _ { 1 } + { \frac { \partial f } { \partial z _ { 2 } } } d z _ { 2 } + \cdot \cdot \cdot + { \frac { \partial f } { \partial z _ { m } } } d z _ { m } .
+$$
+
+To summarize, the set of all differentials at a point $z \in \mathbb { R } ^ { m }$ forms a linear space with the differentials $d z _ { i }$ as a basis.
+
+We now apply a coordinate transformation $\pmb { \psi } : \mathbb { R } ^ { m }  \mathbb { R } ^ { m }$ and define
+
+$$
+{ \hat { z } } = \psi ( z ) ,
+$$
+
+as well as the transformed function
+
+$$
+{ \hat { f } } ( z ) = f ( { \hat { z } } ) = f ( \pmb { \psi } ( z ) ) .
+$$
+
+Denoting the ith component of the transformation $\pmb { \psi }$ by $\Psi ^ { j }$ , i.e. $\hat { z } _ { i } = \Psi ^ { i } ( z )$ , the standard chain rule implies
+
+$$
+\begin{array} { r l } & { d \hat { t } = \displaystyle { \sum _ { j } \frac { \partial f } { \partial \hat { z } _ { j } } \frac { \partial \Psi ^ { j } } { \partial z _ { 1 } } d z _ { 1 } } + \sum _ { j } \frac { \partial f } { \partial \hat { z } _ { j } } \frac { \partial \Psi ^ { j } } { \partial z _ { 2 } } d z _ { 2 } + \cdots + \sum _ { j } \frac { \partial f } { \partial \hat { z } _ { j } } \frac { \partial \Psi ^ { j } } { \partial z _ { m } } d z _ { m } , } \\ & { \quad = \displaystyle { \frac { \partial f } { \partial \hat { z } _ { 1 } } \sum _ { i } \frac { \partial \Psi ^ { 1 } } { \partial z _ { i } } d z _ { i } } + \frac { \partial f } { \partial \hat { z } _ { 2 } } \sum _ { i } \frac { \partial \Psi ^ { 2 } } { \partial z _ { i } } d z _ { i } + \cdots + \frac { \partial f } { \partial \hat { z } _ { m } } \sum _ { i } \frac { \partial \Psi ^ { m } } { \partial z _ { i } } d z _ { i } } ,  \end{array}
+$$
+
+which we rewrite as
+
+$$
+d \hat { f } = \frac { \partial f } { \partial \hat { z } _ { 1 } } d \hat { z } _ { 1 } + \frac { \partial f } { \partial \hat { z } _ { 2 } } d \hat { z } _ { 2 } + \cdot \cdot \cdot + \frac { \partial f } { \partial \hat { z } _ { m } } d \hat { z } _ { m } ,
+$$
+
+in the new basis
+
+$$
+d \hat { Z } _ { j } = \sum _ { i } \frac { \partial \Psi ^ { j } } { \partial z _ { i } } d z _ { i } .
+$$
+
+To compactify the notation, we introduce the column vector of differential oneforms
+
+$$
+d z = ( d z _ { 1 } , d z _ { 2 } , \ldots , d z _ { m } ) ^ { T } ,
+$$
+
+with the property that $d z ( \pmb { \xi } ) = \pmb { \xi }$ and hence
+
+$$
+d f = f _ { z } \cdot d z .
+$$
+
+The transformation rule (3.29) becomes
+
+$$
+d \hat { z } = \pmb { \psi } _ { z } ( z ) d z ,
+$$
+
+and, consequently
+
+$$
+d \hat { z } ( \pmb { \xi } ) = \pmb { \psi } _ { z } ( z ) d z ( \pmb { \xi } ) = \pmb { \psi } _ { z } ( z ) \pmb { \xi } .
+$$
+
+Let us now come back to symplectic transformations and a splitting of variables $\pmb { \mathrm { \tau } } _ { Z } = ( \pmb { q } , \pmb { p } ) \in \mathbb { R } ^ { 2 d }$ with associated one-forms $d q _ { i }$ , $d p _ { j }$ , $i = 1 , \ldots , d$ . Given any two vectors $\pmb { \xi } , \pmb { \eta } \in \mathbb { R } ^ { 2 d }$ , the symplectic two-form $\Omega$ is defined by
+
+$$
+\Omega ( \pmb { \xi } , \pmb { \eta } ) = \pmb { \xi } ^ { T } J ^ { - 1 } \pmb { \eta } .
+$$
+
+Using the ordering of the two vectors $\pmb { \xi }$ and $\pmb { \eta }$ into a sequence of projections $\pmb { \xi } ^ { ( i ) } , \pmb { \eta } ^ { ( i ) } \in \mathbb { R } ^ { 2 }$ down on to the $\left( q _ { i } , p _ { i } \right)$ -coordinate planes, as introduced in the previous section, it is straightforward to verify that
+
+$$
+\Omega ( { \pmb \xi } , { \pmb \eta } ) = \sum _ { i } \Omega _ { 0 } ( { \pmb \xi } ^ { ( i ) } , { \pmb \eta } ^ { ( i ) } ) = \sum _ { i } \left[ d p _ { i } ( { \pmb \xi } ) d q _ { i } ( { \pmb \eta } ) - d q _ { i } ( { \pmb \xi } ) d p _ { i } ( { \pmb \eta } ) \right] ,
+$$
+
+where, by definition, $d q _ { i } ( \pmb { \xi } ) = \xi _ { 1 } ^ { ( i ) }$ , $d p _ { i } ( \pmb { \xi } ) = \xi _ { 2 } ^ { ( i ) }$ etc. This suggests to introduce the wedge product of two differentials $d f$ and $d g$ via
+
+$$
+( d f \wedge d g ) ( \pmb { \xi } , \pmb { \eta } ) : = d g ( \pmb { \xi } ) d f ( \pmb { \eta } ) - d f ( \pmb { \xi } ) d g ( \pmb { \eta } ) ,
+$$
+
+and, in particular, to write
+
+$$
+\Omega = \sum _ { i } d q _ { i } \wedge d p _ { i } .
+$$
+
+Using vector notation, we shorten this to
+
+$$
+\Omega = d \pmb { q } \wedge d \pmb { p } .
+$$
+
+Conservation of symplecticness, under a transformation
+
+$$
+\begin{array} { c } { { \hat { q } = { \pmb { \psi } } ^ { 1 } ( { \pmb q } , { \pmb p } ) , } } \\ { { \hat { p } = { \pmb { \psi } } ^ { 2 } ( { \pmb q } , { \pmb p } ) } } \end{array}
+$$
+
+reduces now to the statement that
+
+$$
+d \hat { \pmb q } \wedge d \hat { \pmb { p } } = d \pmb { q } \wedge d \pmb { p } ,
+$$
+
+where
+
+$$
+\begin{array} { r } { d \hat { \pmb q } = \pmb { \psi } _ { \pmb q } ^ { 1 } ( \pmb q , \pmb p ) d \pmb q + \pmb { \psi } _ { p } ^ { 1 } ( \pmb q , \pmb p ) d \pmb { p } , } \\ { d \hat { \pmb q } = \pmb { \psi } _ { \pmb q } ^ { 2 } ( \pmb q , \pmb p ) d \pmb q + \pmb { \psi } _ { p } ^ { 2 } ( \pmb q , \pmb p ) d \pmb { p } . } \end{array}
+$$
+
+We will prove this result below.
+
+One can immediately verify several algebraic properties of the wedge product which prove useful in calculations:
+
+PROPERTIES OF THE WEDGE PRODUCT
+
+Let da, db, dc, be $k$ -vectors of differential one-forms on $\mathbb { R } ^ { m }$ , then the following properties hold.
+
+1. Skew-symmetry
+
+$$
+d a \wedge d b = - d b \wedge d a .
+$$
+
+2. Bilinearity: for any $\alpha , \beta \in \mathbb { R }$
+
+$$
+d \pmb { a } \wedge ( \alpha d \pmb { b } + \beta d \pmb { c } ) = \alpha d \pmb { a } \wedge d \pmb { b } + \beta d \pmb { a } \wedge d \pmb { c } .
+$$
+
+3. Rule of matrix multiplication (as a consequence of Property 2 and the definition)
+
+$$
+d \pmb { a } \wedge ( \pmb { A } d \pmb { b } ) = ( \pmb { A } ^ { T } d \pmb { a } ) \wedge d \pmb { b } ,
+$$
+
+for any $k \times k$ matrix A. (See Problem 9 in the Exercises.)
+
+Note that Properties 1 and 3 of the wedge product imply that, if $\pmb { A }$ is a symmetric matrix, then
+
+$$
+d { \pmb a } \wedge ( { \pmb A } d { \pmb a } ) = 0 .
+$$
+
+We now prove (3.30). We first verify that
+
+$$
+d pmb { q } \wedge d \pmb { p } = \frac { 1 } { 2 } ( J ^ { - 1 } d z ) \wedge d z .
+$$
+
+Indeed, we have
+
+$$
+\begin{array} { l } { { ( J ^ { - 1 } d z ) \wedge d z = \displaystyle \sum _ { i = 1 } ^ { d } [ d z _ { i } \wedge d z _ { d + i } - d z _ { d + i } \wedge d z _ { i } ] } } \\ { { { } } } \\ { { { } = \displaystyle \sum _ { i = 1 } ^ { d } [ d q _ { i } \wedge d p _ { i } - d p _ { i } \wedge d q _ { i } ] } } \\ { { { } } } \\ { { { } = 2 d q \wedge d p . } } \end{array}
+$$
+
+Hence (3.30) is equivalent to
+
+$$
+( J ^ { - 1 } d \hat { z } ) \wedge d \hat { z } = ( J ^ { - 1 } d z ) \wedge d z ,
+$$
+
+where
+
+$$
+d \hat { z } = \pmb { { \psi } } _ { z } ( z ) d z .
+$$
+
+Applying the rule of matrix multiplication, we obtain
+
+$$
+\begin{array} { r } { ( J ^ { - 1 } d \hat { z } ) \wedge d \hat { z } = \left( J ^ { - 1 } \pmb { \psi } _ { z } ( z ) d z \right) \wedge ( \pmb { \psi } _ { z } ( z ) d z ) , } \\ { = \left( \pmb { \psi } _ { z } ( z ) ^ { T } J ^ { - 1 } \pmb { \psi } _ { z } ( z ) d z \right) \wedge d z , } \end{array}
+$$
+
+and symplecticness of the map $\pmb { \psi }$ , i.e.
+
+$$
+\pmb { \psi } _ { z } ( z ) ^ { T } \pmb { J } ^ { - 1 } \pmb { \psi } _ { z } ( z ) = \pmb { J } ^ { - 1 }
+$$
+
+implies (3.31).
+
+As indicated in the introduction, the wedge product notation can be combined with implicit differentiation which makes it a powerful tool to verify symplecticness of an implicitly given transformation $\pmb { \psi }$ . As an illustration, let us come back to the canonical point transformation
+
+$$
+\begin{array} { c } { \hat { \pmb q } = { \pmb h } ( { \pmb q } ) , } \\ { { \pmb h } _ { { \pmb q } } ( { \pmb q } ) ^ { T } \hat { \pmb p } = { \pmb p } , } \end{array}
+$$
+
+as already discussed in Example 6. Implicit differentiation yields
+
+$$
+\begin{array} { c } { d \hat { \pmb q } = { \pmb h } _ { \pmb q } ( { \pmb q } ) d { \pmb q } , } \\ { { \pmb h } _ { \pmb q } ( { \pmb q } ) ^ { T } d \hat { \pmb p } + \displaystyle \sum _ { i } \hat { p } _ { i } h _ { { \pmb q } { \pmb q } } ^ { i } d { \pmb q } = d { \pmb p } , } \end{array}
+$$
+
+where $h ^ { j } ( \pmb q )$ denotes the ith component of the transformation $\pmb { h } ( \pmb q )$ . Taking wedge products with $d \hat { p }$ and $d \pmb q$ , respectively, leads to
+
+$$
+d \hat { \pmb { q } } \wedge d \hat { \pmb { p } } = ( h _ { \pmb { q } } ( \pmb { q } ) d \pmb { q } ) \wedge d \hat { \pmb { p } } = d \pmb { q } \wedge \left( h _ { \pmb { q } } ( \pmb { q } ) ^ { T } d \hat { \pmb { p } } \right) ,
+$$
+
+and, since
+
+$$
+\sum _ { i } d { \pmb q } \wedge ( \hat { p } _ { i } h _ { { \pmb q } { \pmb q } } ^ { i } ( { \pmb q } ) d { \pmb q } ) = \sum _ { i } \hat { p } _ { i } \left[ d { \pmb q } \wedge ( h _ { { \pmb q } { \pmb q } } ^ { i } ( { \pmb q } ) d { \pmb q } ) \right] = 0 ,
+$$
+
+to
+
+$$
+d \pmb { q } \wedge d \pmb { p } = d \pmb { q } \wedge \left( h _ { q } ( \pmb { q } ) ^ { T } d \hat { \pmb { p } } + \sum _ { i } \hat { p } _ { i } h _ { q \pmb { q } } ^ { i } d \pmb { q } \right) = d \pmb { q } \wedge \left( h _ { q } ( \pmb { q } ) ^ { T } d \hat { \pmb { p } } \right) ,
+$$
+
+respectively. This implies
+
+$$
+d \hat { \pmb { q } } \wedge d \hat { \pmb { p } } = d \pmb { q } \wedge \Big ( \pmb { h } _ { \pmb { q } } ( \pmb { q } ) ^ { T } d \hat { \pmb { p } } \Big ) = d \pmb { q } \wedge d \pmb { p } ,
+$$
+
+as desired.
+
+We will encounter more applications of this basic procedure in the following chapter.
+
+# 3.7 Exercises
+
+1. Lagrange’s equation.
+
+a. Assume that equation (3.14) defines, for each fixed $\pmb q$ , a one-to-one map between the conjugate momenta $p$ and the velocities $\dot { \pmb q }$ . Let us write the inverse relation as $\dot { \pmb q } = \pmb v ( \pmb p , \pmb q )$ . Use this map in the Hamiltonian (3.16) to evaluate $\nabla _ { \boldsymbol { q } } H$ and $\nabla _ { p } H$ . The result shows that the Lagrange equation (3.13) is equivalent to a canonical Hamiltonian system (3.4)–(3.5).
+
+b. Given the Lagrangian (3.17) verify the definition of the conjugate momenta (3.18) and find an explicit expression for the Hamiltonian $H$ in terms of $\pmb q$ and $\pmb { p }$ only. Show that
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } \pmb { q } = \frac { 1 } { m } \pmb { p } + \frac { 1 } { 2 m } \hat { b } \pmb { q } , } \\ { \displaystyle \frac { d } { d t } \pmb { p } = - \frac { \gamma } { \| \pmb { q } \| ^ { 3 } } \pmb { q } + \frac { 1 } { 2 m } \hat { b } \pmb { p } - \frac { 1 } { 4 m } \hat { b } ^ { T } \hat { b } \pmb { q } } \end{array}
+$$
+
+are the associated canonical equations of motion and that these equations are equivalent to (3.10).
+
+2. Angular momentum.
+
+a. Show that, angular momentum $m = q \times p$ is conserved for canonical equations with Hamiltonian
+
+$$
+H ( \pmb { q } , \pmb { p } ) = \frac { 1 } { 2 } \| \pmb { p } \| ^ { 2 } + \varphi ( \| \pmb { q } \| ) .
+$$
+
+If in addition $\varphi ( r ) = - 1 / r$ (Kepler problem), verify that the Runge–Lenz vector
+
+$$
+\pmb { e } = \pmb { p } \times \pmb { m } - \frac { \pmb { q } } { \Vert \pmb { q } \Vert }
+$$
+
+is also a first integral. You may use the vector identity
+
+$$
+\pmb { a } \times ( \pmb { b } \times \pmb { c } ) = \pmb { b } ( \pmb { a } \cdot \pmb { c } ) - \pmb { c } ( \pmb { a } \cdot \pmb { b } ) .
+$$
+
+b. Show that the canonical Equations (3.32)–(3.33) for a charged particle in a constant magnetic field $b$ possess the scalar quantity
+
+$$
+\mu = b \cdot ( q \times p )
+$$
+
+as a first integral. The preserved quantity is also called the magnetic momentum. In terms of the noncanonical Hamiltonian formulation (3.11)– (3.12), the magnetic momentum is given by
+
+$$
+\mu = b \cdot \left( q \times \left( p - \frac { 1 } { 2 } \pmb { b } \times \pmb { q } \right) \right) .
+$$
+
+3. Integrals of the N-body problem. Show that the total linear and angular momenta
+
+$$
+\pmb { p } _ { \mathrm { t o t } } = \sum _ { i = 1 } ^ { N } \pmb { p } _ { i } , \pmb { m } _ { \mathrm { t o t } } = \sum _ { i = 1 } ^ { N } \pmb { q } _ { i } \times \pmb { p } _ { i }
+$$
+
+are conserved quantities for an $N .$ -body system with distance-based pair potentials (the system does not need to be homogeneous).
+
+4. Variational equations. Consider a planar central-force problem
+
+$$
+H = \frac 1 2 \| \pmb { p } \| ^ { 2 } + \varphi ( \| \pmb { q } \| ) , \qquad \pmb { q } , \pmb { p } \in \mathbb { R } ^ { 2 } .
+$$
+
+a. Find the variational equations for this problem.
+
+b. Let $\pmb q ^ { * }$ be an equilibrium point $( \varphi ^ { \prime } ( \lVert \boldsymbol { q } ^ { * } \rVert ) = 0 )$ . Determine the eigenvalues and eigenvectors of the variational equations. [Hint: consider separately perturbations in (i) the radial $( q )$ direction and (ii) the tangential directions.] What does the eigenstructure suggest about the behavior of nearby solutions?
+
+5. Canonical transformations. Consider the planar central-force problem of problem 4 and the canonical change to polar coordinates described in Example 6.
+
+a. Show that the momentum corresponding to the angle variable, $p _ { \theta }$ , is just the third component $m _ { 3 } = q _ { 1 } p _ { 2 } - q _ { 2 } p _ { 1 }$ of the angular momentum vector $m$ , and, hence, is constant along any solution.
+
+b. Using the result of part [a], show how to reduce the planar central-force problem to a one-degree-of-freedom problem. In particular, show that the Kepler problem can be reduced to a one-degree-of-freedom problem with potential energy function
+
+$$
+\varphi _ { \mathrm { r e d u c e d } } ( r ) = \frac { m _ { 3 } ^ { 2 } } { 2 r ^ { 2 } } - \frac { 1 } { r } .
+$$
+
+Graph this potential and discuss the behavior of solutions.
+
+6. Canonical transformations. Show that the map $\pmb { \psi } _ { \epsilon }$ , defined by
+
+$$
+\begin{array} { l } { { Q = q + \varepsilon p , } } \\ { { P = p + \varepsilon F ( Q ) , } } \end{array}
+$$
+
+is symplectic for $\varepsilon > 0$ , provided the Jacobian matrix of the map $\pmb { F } : \mathbb { R } ^ { d }  \mathbb { R } ^ { d }$ at $Q$ is symmetric.
+
+7. Volume preservation. The divergence of a vector field $\pmb { f } : \mathbb { R } ^ { k }  \mathbb { R } ^ { k }$ is defined by
+
+$$
+{ \mathrm { d i v } } \pmb { f } : = \sum _ { i = 1 } ^ { k } { \frac { \partial } { \partial z _ { i } } } t _ { i } .
+$$
+
+Liouville’s theorem [7] states that the phase flow of a divergence-free vector field preserves volume. Show that Hamiltonian vector fields are divergence free, i.e., $\mathrm { d i v } [ J \nabla _ { z } H ] \left( z \right) \equiv 0$ , which implies conservation of volume for Hamiltonian systems.
+
+8. Volume preservation. The linear differential equation
+
+$$
+\frac { d } { d t } z = { \bf \cal A } z ,
+$$
+
+$z \in \mathbb { R } ^ { 4 }$ and
+
+$$
+\pmb { A } = \left[ \begin{array} { c c c c } { 3 } & { 0 } & { 0 } & { 0 } \\ { 0 } & { - 1 } & { 0 } & { 0 } \\ { 0 } & { 0 } & { - 1 } & { 0 } \\ { 0 } & { 0 } & { 0 } & { - 1 } \end{array} \right] ,
+$$
+
+generates a flow map that is volume preserving. Show that the flow map does not preserve the symplectic two-form (3.27) ( $d = 2 .$ ) for any permutation of the variables.
+
+9. Wedge product. Let da, db be two $k$ -vectors of differential one-forms on $\mathbb { R } ^ { m }$ . Verify the rule of matrix multiplication, i.e., show that
+
+$$
+d \pmb { a } \wedge ( \pmb { M } d \pmb { b } ) = ( \pmb { M } ^ { T } d \pmb { a } ) \wedge d \pmb { b } ,
+$$
+
+for any $k \times k$ matrix $M$ . Hint: Start from
+
+$$
+d \pmb { a } \wedge ( \pmb { M } d \pmb { b } ) = \sum _ { i } d a _ { i } \wedge \left( \sum _ { j } m _ { i j } d b _ { j } \right) .
+$$
+
+# 4
+
+# Geometric integrators
+
+In Chapter 2, we introduced the concept of a numerical integrator as a mapping which approximates the flow-map of a given system of differential equations. We have also seen a few instances of how such integrators behave, demonstrating concepts such as convergence and order of accuracy. We observed that the typical picture is a locally accurate approximation that gradually drifts further from the true trajectory (see Fig. 2.3, Fig. 2.5 and the left panel of Fig. 2.7); the rate of drift can be reduced by reducing the stepsize (and thereby also increasing the amount of computational work), but the qualitative picture does not change in any significant way.
+
+What stands out as remarkable, therefore, is the behavior, illustrated in the right panel of Fig. 2.7, of the Euler-B method, which retains bounded trajectories when applied to the harmonic oscillator. In Chapter 2, we provided an explanation for this in the form of a linear stability analysis showing that certain methods, including St¨ormer–Verlet and Euler-B, have eigenvalues on the unit circle when applied to the harmonic oscillator (or any other oscillatory linear system), if the stepsize is below some threshold value. The Euler-B and St¨ormer–Verlet methods (among others) possess a strong asymptotic stability property for linear systems.
+
+It is interesting to note that a related long-term stability property extends to nonlinear models. If we apply, for example, the St¨ormer–Verlet methods to the Lennard–Jones oscillator, we obtain the results illustrated in Fig. 4.1 (compare with Fig. 2.3 and Fig. 2.5). As in the case of the same method applied to the harmonic oscillator, the numerical method appears to be finding solution points on a periodic orbit not much different than the exact one. Note that it would be quite extraordinary to imagine that the actual period itself would be exactly resolved, so that we would expect the true and approximate solutions to drift slowly apart with time. On the other hand, the energy returns, in each period, to its initial value, and there is no noticeable steady accumulation of error in the energy. This is reflected in a qualitative agreement between the numerical and exact solutions. There is clearly some important feature of the St¨ormer–Verlet method, one that cannot be explained with the techniques (error analysis or linear stability analysis) mentioned in Chapter 2.
+
+![](images/e949ed94f314ca5c1de512721d55917e8f5c7cc3bb72f9fe67fea88c5afbc822.jpg)  
+Figure 4.1 Solution curves in the $q V \cdot$ -plane (left) and energy error (right) for the St¨ormer-Verlet method applied to the Lennard–Jones oscillator.
+
+If these differences were observed solely in one-degree-of-freedom systems such as nonlinear oscillators, they would only be of academic interest, but this is not the case. The situation becomes still more dramatic when we look at a more complicated example. For example, we will consider in this section a simple molecular model consisting of a system of $N .$ -point masses interacting in pair potentials. We will see that the St¨ormer–Verlet method facilitates integration on very long time intervals, when applied to this complicated multidimensional nonlinear model problem.
+
+In Chapter 3, we have seen some hints of a deeper theory when we discussed the structure of the flow map itself, focusing on those special properties of Hamiltonian systems
+
+$$
+\frac { d } { d t } z = J \nabla _ { z } H ( z ) ,
+$$
+
+such as the conservation of first integrals and the symplectic structure. We have seen that the symplectic property carries with it geometric implications regarding the way in which the flow map acts on sets of initial conditions. For example, the volume of a set of points in phase space is conserved by a Hamiltonian flow. The flows of conservative systems have a nonlinear structural stability property: solutions through points of a region of phase space cannot be squeezed together over time into a smaller region of phase space. Observations like this one led DE VOGELAERE in the 1950s [49] and later RUTH [166], CHANNEL [43] and FENG KANG [57] to wonder if the structural properties of the flow map of a Hamiltonian system, if imposed on the numerical integrator itself, might lead to improved behavior in simulations.
+
+Recall that a map $\pmb { \psi }$ from $\mathbb { R } ^ { 2 d }$ to $\mathbb { R } ^ { 2 d }$ is said to be symplectic if
+
+$$
+\left[ \frac { \partial } { \partial z } \pmb { \psi } ( z ) \right] ^ { T } \pmb { J } ^ { - 1 } \left[ \frac { \partial } { \partial z } \pmb { \psi } ( z ) \right] = \pmb { J } ^ { - 1 } .
+$$
+
+Equivalently, if we write
+
+$$
+\left[ \begin{array} { l } { Q } \\ { P } \end{array} \right] = \boldsymbol { \psi } \left( \left[ \begin{array} { l } { q } \\ { p } \end{array} \right] \right) ,
+$$
+
+then the symplecticness of the map is summarized by the condition
+
+$$
+d \pmb { Q } \wedge d \pmb { P } = d \pmb { q } \wedge d \pmb { p } ,
+$$
+
+in terms of the wedge product of differential one-forms.
+
+As in Chapter 2, we view a numerical method $\psi _ { \Delta t }$ as a mapping from one time level to another which, via iteration, generates discrete approximations $( \pmb q ^ { n } , \pmb { p } ^ { n } )$ . Any reasonable numerical integrator applied to (4.1) will preserve the symplecticness relation up to a certain error which is proportional to a power of the stepsize $\Delta t$ . We will term a numerical method a symplectic integrator if the symplecticness condition
+
+$$
+d \pmb { q } ^ { n + 1 } \wedge d \pmb { p } ^ { n + 1 } = d \pmb { q } ^ { n } \wedge d \pmb { p } ^ { n }
+$$
+
+is preserved exactly. The problem now is to derive such symplectic integrators and to enquire in detail about the benefits of using such methods for the simulation of nonlinear systems.
+
+To illustrate, let us walk through the simple one-degree-of-freedom example of the nonlinear oscillator discretized using the Euler-B method
+
+$$
+\begin{array} { l } { { q ^ { n + 1 } = q ^ { n } + \Delta t p ^ { n + 1 } , } } \\ { { p ^ { n + 1 } = p ^ { n } - \Delta t \varphi ^ { \prime } ( q ^ { n } ) . } } \end{array}
+$$
+
+Taking differentials of both sides of equations (4.4)–(4.5), and using the bilinearity of the wedge product, we have
+
+$$
+\begin{array} { c } { { d q ^ { n + 1 } \wedge d p ^ { n + 1 } = d ( q ^ { n } + \Delta t p ^ { n + 1 } ) \wedge d p ^ { n + 1 } } } \\ { { = d q ^ { n } \wedge d p ^ { n + 1 } + \Delta t d p ^ { n + 1 } \wedge d p ^ { n + 1 } . } } \end{array}
+$$
+
+Now the wedge product of anything with itself is zero, so we have
+
+$$
+\begin{array} { r l } & { d q ^ { n + 1 } \wedge d p ^ { n + 1 } = d q ^ { n } \wedge d p ^ { n + 1 } } \\ & { \qquad = d q ^ { n } \wedge d \big ( p ^ { n } - \Delta t \varphi ^ { \prime } ( q ^ { n } ) \big ) } \\ & { \qquad = d q ^ { n } \wedge d p ^ { n } - \Delta t d q ^ { n } \wedge d \varphi ^ { \prime } ( q ^ { n } ) . } \end{array}
+$$
+
+Since $d \varphi ^ { \prime } ( q ^ { n } ) = \varphi ^ { \prime \prime } ( q ^ { n } ) d q ^ { n }$ , the right-hand side reduces to
+
+$$
+d q ^ { n } \wedge d p ^ { n } - \Delta t d q ^ { n } \wedge ( \varphi ^ { \prime \prime } ( q ^ { n } ) d q ^ { n } ) = d q ^ { n } \wedge d p ^ { n } ,
+$$
+
+and this implies that
+
+$$
+d q ^ { n + 1 } \wedge d p ^ { n + 1 } = d q ^ { n } \wedge d p ^ { n } ,
+$$
+
+hence $\psi _ { \Delta t }$ is a two-dimensional symplectic map, i.e. an area-preserving map of the plane. In this and later chapters, we will introduce more general classes of symplectic methods for arbitrary Hamiltonian functions and show how their symplecticness enhances their numerical performance.
+
+There are many challenges that might cause this program to fail. First, it is not a priori clear that such symplectic integrators would, in typical cases, be more computable than the flow map itself. Fortunately, as we shall see in this and later chapters, for many types of Hamiltonian systems we can even develop explicit symplectic integrators whose per timestep cost is similar to that of the most popular non-symplectic methods. Another possible problem might arise from the following fact: the symplecticness condition is more general than the condition for having a Hamiltonian flow map. That is, there are symplectic maps that are not the flow map of any Hamiltonian system. Could it be that there are additional structures in a Hamiltonian flow that give rise to important aspects of some interesting physical phenomena or which contribute to the long-term stability of the dynamics? This topic will be visited in Chapter 5.
+
+Before proceeding with the development of symplectic integrators it is natural to ask first if there are other – perhaps more elementary – properties of a Hamiltonian flow whose preservation would improve the outlook for simulation.
+
+In particular, what of the energy integral? Isn’t it reasonable to demand that a numerical integrator for a conservative problem should retain the total energy as a first integral? In fact, it is possible to design such schemes. Unfortunately, these methods often exhibit disappointing numerical properties. They are generally implicit, requiring the solution of nonlinear equations at each timestep. Moreover in typical cases, they do not demonstrate the same level of agreement with the qualitative solution behavior that we observe using simpler and more easily implemented symplectic methods. Nonetheless there are often good reasons to maintain some integrals, such as angular momentum, during numerical simulation and we explain how this can be done.
+
+Another geometric property of Hamiltonian systems arising in typical applications such as the N-body problem is the so-called time-reversal symmetry. We believe that this property can have very important ramifications for the behavior of integrators, in many cases comparable to the effects of preserving symplectic structure. The reversing symmetry is therefore also introduced and discussed in this chapter.
+
+# 4.1 Symplectic maps and methods
+
+The Euler-B method can be applied, in a modified form, to the general Hamiltonian $H ( \pmb { q } , \pmb { p } )$ with $d \geq 1$ degrees of freedom. The equations are
+
+$$
+\begin{array} { r } { \pmb { q } ^ { n + 1 } = \pmb { q } ^ { n } + \Delta t \nabla _ { p } H ( \pmb { q } ^ { n } , \pmb { p } ^ { n + 1 } ) , } \\ { \pmb { p } ^ { n + 1 } = \pmb { p } ^ { n } - \Delta t \nabla _ { \pmb { q } } H ( \pmb { q } ^ { n } , \pmb { p } ^ { n + 1 } ) . } \end{array}
+$$
+
+By arguments similar to those mentioned in Chapter 2, this method is easily seen to be first-order accurate. Observe that it is not possible, as it was for the nonlinear oscillator, to solve for the variables at one time level in terms of the previous one: the propagation requires in general the solution of a nonlinear system for $p ^ { n + 1 }$ . This method is implicit. For sufficiently small $\Delta t$ , the solution of this system is guaranteed by the implicit function theorem. Let us examine this argument briefly, since it is typical of arguments used to justify the application of implicit methods. Define a function $\boldsymbol { F }$ by
+
+$$
+\begin{array} { r } { \pmb { F } ( \pmb { p } ^ { n } , \pmb { q } ^ { n } , \Delta t , \pmb { u } ) = \pmb { u } - \pmb { p } ^ { n } - \Delta t \nabla _ { \pmb { q } } H ( \pmb { q } ^ { n } , \pmb { u } ) . } \end{array}
+$$
+
+We assume here that $H$ is twice differentiable, so that $\boldsymbol { F }$ is differentiable in $\pmb { u }$ . Observe that $\pmb { F } ( \pmb { p } ^ { n } , \pmb { q } ^ { n } , 0 , \pmb { p } ^ { n } ) = \pmb { 0 }$ , and that $\begin{array} { r } { \frac { \partial F } { \partial { u } } ( p ^ { n } , \pmb { q } ^ { n } , 0 , \pmb { p } ^ { n } ) = I _ { d } } \end{array}$ is nonsingular. It follows from the implicit function theorem (see BUCK [35]) that we can solve the equation
+
+$$
+\begin{array} { r } { F ( p ^ { n } , q ^ { n } , \Delta t , \boldsymbol { u } ) = 0 , } \end{array}
+$$
+
+for $\pmb { u }$ in terms of the other arguments of $\boldsymbol { F }$ whenever $\Delta t$ is sufficiently small. Observe that the need to solve these nonlinear equations places a local restriction on the size of the timestep which could, in the event of rapid solution variation, be quite stringent.
+
+Once $p ^ { n + 1 }$ is known, calculation of $\pmb q ^ { n + 1 }$ from (4.6) is then completely explicit.
+
+The corresponding Euler- $A$ method is given by
+
+$$
+\begin{array} { r } { \pmb { q } ^ { n + 1 } = \pmb { q } ^ { n } + \Delta t \nabla _ { p } H ( \pmb { q } ^ { n + 1 } , \pmb { p } ^ { n } ) , } \\ { \pmb { p } ^ { n + 1 } = \pmb { p } ^ { n } - \Delta t \nabla _ { \pmb { q } } H ( \pmb { q } ^ { n + 1 } , \pmb { p } ^ { n } ) . } \end{array}
+$$
+
+It can be shown that this method is also first-order accurate.
+
+Euler-A and Euler-B methods are canonically symplectic. Let us show this for the Euler-B method using the wedge product notation. Taking differentials of the numerical method yields the implicit system of linear equations
+
+$$
+\begin{array} { r } { d pmb { q } ^ { n + 1 } = d \pmb { q } ^ { n } + \Delta t \left[ H _ { p q } d \pmb { q } ^ { n } + H _ { p p } d \pmb { p } ^ { n + 1 } \right] , } \\ { d \pmb { p } ^ { n + 1 } = d \pmb { p } ^ { n } - \Delta t \left[ H _ { q q } d \pmb { q } ^ { n } + H _ { q p } d \pmb { p } ^ { n + 1 } \right] , } \end{array}
+$$
+
+which can be thought of as the discrete variational equations associated with (4.6)–(4.7). For notational convenience, we have dropped the arguments in the second-order partial Jacobian matrices $H _ { q q }$ , $H _ { q p } = H _ { p q } ^ { T }$ , $H _ { p p }$ , i.e.
+
+$$
+H _ { q q } = \left( \frac { \partial ^ { 2 } { \cal H } } { \partial q _ { i } \partial q _ { j } } \right) , \quad H _ { q p } = \left( \frac { \partial ^ { 2 } { \cal H } } { \partial q _ { i } \partial p _ { j } } \right) , \quad H _ { p p } = \left( \frac { \partial ^ { 2 } { \cal H } } { \partial p _ { i } \partial p _ { j } } \right) .
+$$
+
+Observe that
+
+$$
+d \pmb { q } ^ { n } \wedge H _ { \pmb { q } \pmb { q } } d \pmb { q } ^ { n } = 0 ,
+$$
+
+and
+
+$$
+d { p } ^ { n + 1 } \wedge H _ { p p } d { p } ^ { n + 1 } = 0 ,
+$$
+
+because $H _ { q q }$ and $H _ { p p }$ are symmetric matrices. If we take the wedge product of (4.10) with $d p ^ { n + 1 }$ from the right, we find
+
+$$
+d \pmb { q } ^ { n + 1 } \wedge d \pmb { p } ^ { n + 1 } = d \pmb { q } ^ { n } \wedge d \pmb { p } ^ { n + 1 } + \Delta t H _ { p q } d \pmb { q } ^ { n } \wedge d \pmb { p } ^ { n + 1 } .
+$$
+
+Similarly
+
+$$
+\begin{array} { r } { d \pmb { q } ^ { n } \wedge d \pmb { p } ^ { n + 1 } = d \pmb { q } ^ { n } \wedge d \pmb { p } ^ { n } - \Delta t d \pmb { q } ^ { n } \wedge H _ { q p } d \pmb { p } ^ { n + 1 } , } \\ { = d \pmb { q } ^ { n } \wedge d \pmb { p } ^ { n } - \Delta t H _ { q p } ^ { T } d \pmb { q } ^ { n } \wedge d \pmb { p } ^ { n + 1 } , } \end{array}
+$$
+
+by taking the wedge product of (4.11) with $d \pmb q ^ { n }$ from the left. Upon plugging (4.13) into (4.12), we obtain the desired equality (4.3). A similar proof goes through for the Euler-A method (4.8)–(4.9). Therefore, the general forms of the Euler-A and Euler- $\cdot B$ methods are canonically symplectic. Euler-A and Euler-B are sometimes referred to collectively as the symplectic Euler methods.
+
+We can also find second-order symplectic methods without much difficulty. The implicit midpoint method is defined as follows
+
+$$
+\begin{array} { r } { z ^ { n + 1 } = z ^ { n } + { \Delta t } J \nabla H ( z ^ { n + 1 / 2 } ) , \qquad z ^ { n + 1 / 2 } = ( z ^ { n + 1 } + z ^ { n } ) / 2 . } \end{array}
+$$
+
+This method is evidently implicit. For implementation purposes, it is useful to write it as a composition of two “half-steps”: an implicit Euler step
+
+$$
+z ^ { n + 1 / 2 } = z ^ { n } + \frac { 1 } { 2 } \Delta t J \nabla H ( z ^ { n + 1 / 2 } ) ,
+$$
+
+followed by an explicit Euler step
+
+$$
+z ^ { n + 1 } = z ^ { n + 1 / 2 } + \frac { 1 } { 2 } \Delta t J \nabla H ( z ^ { n + 1 / 2 } ) .
+$$
+
+For implicit midpoint, the equation for $d z ^ { n }$ is equivalent to
+
+$$
+d z ^ { n + 1 } = d z ^ { n } + \Delta t J H _ { z z } \frac { d z ^ { n } + d z ^ { n + 1 } } { 2 } .
+$$
+
+Taking the wedge product with $J ^ { - 1 } d z ^ { n }$ and $J ^ { - 1 } d z ^ { n + 1 }$ , respectively, from the left, we obtain
+
+$$
+\begin{array} { r l } & { J ^ { - 1 } d z ^ { n + 1 } \wedge d z ^ { n } = J ^ { - 1 } d z ^ { n } \wedge d z ^ { n } + \Delta t J ^ { - 1 } J H _ { z z } \frac { d z ^ { n } + d z ^ { n + 1 } } 2 \wedge d z ^ { n } } \\ & { \qquad = J ^ { - 1 } d z ^ { n } \wedge d z ^ { n } + \frac { \Delta t } 2 H _ { z z } d z ^ { n + 1 } \wedge d z ^ { n } , } \end{array}
+$$
+
+and
+
+$$
+\begin{array} { l } { { J ^ { - 1 } d z ^ { n + 1 } \wedge d z ^ { n + 1 } = J ^ { - 1 } d z ^ { n } \wedge d z ^ { n + 1 } + \Delta t J ^ { - 1 } J H _ { z z } \frac { d z ^ { n } + d z ^ { n + 1 } } 2 \wedge d z ^ { n + 1 } } } \\ { { \qquad = J ^ { - 1 } d z ^ { n + 1 } \wedge d z ^ { n } - \displaystyle \frac { \Delta t } 2 H _ { z z } d z ^ { n + 1 } \wedge d z ^ { n } . } } \end{array}
+$$
+
+Here we have made use of Property 3 of the wedge product as stated in Section 3.6 and, in particular, used that
+
+$$
+d z ^ { n } \wedge A d z ^ { n } = d z ^ { n + 1 } \wedge A d z ^ { n + 1 } = 0 ,
+$$
+
+for any symmetric matrix $\pmb { A } \in \mathbb { R } ^ { 2 d \times 2 d }$ . Summing up, we arrive at the equality
+
+$$
+J ^ { - 1 } d z ^ { n + 1 } \wedge d z ^ { n + 1 } = J ^ { - 1 } d z ^ { n } \wedge d z ^ { n } ,
+$$
+
+implying symplecticness of the scheme with respect to the structure matrix J. Observe that this argument required at no point that $\jmath$ be the canonical structure matrix, only that it be constant, skew-symmetric, and invertible, thus we have shown: the implicit midpoint method preserves any constant symplectic structure.
+
+# 4.2 Construction of symplectic methods by Hamiltonian splitting
+
+In the above discussion, we have shown that several integrators are symplectic when applied to integrate Hamiltonian systems. In this section, we show that there is a simple technique that can often be used to produce good symplectic methods.
+
+Suppose that we can split the Hamiltonian $H$ into the sum of $k \ \geq \ 2$ Hamiltonians $H _ { j }$ , $i = 1 , \dots , k$ , i.e.
+
+$$
+H ( z ) = \sum _ { i = 1 } ^ { k } { H _ { i } ( z ) } ,
+$$
+
+with each Hamiltonian vector field
+
+$$
+\frac { d } { d t } z = J \nabla _ { z } H _ { i } ( z )
+$$
+
+explicitly solvable. A symplectic integrator is then derived as an appropriate composition of the corresponding flow maps. Since each flow map is obviously symplectic and any composition of symplectic maps yields a symplectic map, the resulting numerical method is symplectic. See problem 2 in the Exercises.
+
+As a simple example, consider a nonlinear oscillator $\begin{array} { r } { H ( q , p ) = \frac 1 2 p ^ { 2 } + \varphi ( q ) } \end{array}$ . The energy can be decomposed into kinetic and potential terms
+
+$$
+H = H _ { 1 } + H _ { 2 } , H _ { 1 } = \frac { 1 } { 2 } p ^ { 2 } , H _ { 2 } = \varphi ( q ) .
+$$
+
+Now each term is exactly integrable. The equations of motion for $H _ { 1 }$ are
+
+$$
+\begin{array} { r } { \dot { q } = p , } \\ { \dot { p } = 0 , } \end{array}
+$$
+
+which has the flow map
+
+$$
+\begin{array} { r } { \pmb { \phi } _ { t , H _ { 1 } } \left( \left[ \begin{array} { c } { q } \\ { p } \end{array} \right] \right) = \left[ \begin{array} { c } { q + t p } \\ { p } \end{array} \right] . } \end{array}
+$$
+
+Similarly, $H _ { 2 }$ has flow map
+
+$$
+\pmb { \phi } _ { t , H _ { 2 } } \left( \left[ \begin{array} { c } { { q } } \\ { { p } } \end{array} \right] \right) = \left[ \begin{array} { c } { { q } } \\ { { p - t \varphi ^ { \prime } ( q ) } } \end{array} \right] .
+$$
+
+Each of these maps is symplectic (each is the flow map of a Hamiltonian system), hence the map defined by
+
+$$
+\pmb { \psi } _ { \Delta t } : = \pmb { \phi } _ { \Delta t , H _ { 1 } } \circ \pmb { \phi } _ { \Delta t , H _ { 2 } }
+$$
+
+is also symplectic.
+
+We still need to show that such a composition method approximates the flow map with at least first order.
+
+FIRST-ORDER SPLITTING
+
+If $H = H _ { 1 } + H _ { 2 } + . . . + H _ { k }$ is any splitting into twice differentiable terms, then the composition method
+
+$$
+\pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { \Delta t , H _ { 1 } } \circ \pmb { \phi } _ { \Delta t , H _ { 2 } } \circ \cdot \cdot \cdot \circ \pmb { \phi } _ { \Delta t , H _ { k } }
+$$
+
+is (at least) a first-order symplectic integrator.
+
+Let us walk through a proof for the case $k = 2$ . In Chapter 5 a more detailed result will be given. We wish to compare the flow map $\pmb { \phi } _ { \Delta t , H }$ with $\psi _ { \Delta t }$ . It is enough to compare the images of an arbitrary point $z ^ { 0 }$ under the two maps. Using a Taylor series expansion in powers of $\Delta t$ and the definition of the flow map, it is easy to show that
+
+$$
+\begin{array} { r l } & { \pmb { \phi } _ { \Delta t , H } ( z ^ { 0 } ) = z ^ { 0 } + \Delta t \dot { z } ( 0 ) + \mathcal { O } ( \Delta t ^ { 2 } ) } \\ & { \qquad = z ^ { 0 } + \Delta t J \nabla H ( z ^ { 0 } ) + \mathcal { O } ( \Delta t ^ { 2 } ) . } \end{array}
+$$
+
+We can argue in a similar way that
+
+$$
+\phi _ { \Delta t , H _ { i } } ( z ^ { 0 } ) = z ^ { 0 } + \Delta t J \nabla H _ { i } ( z ^ { 0 } ) + \mathcal { O } ( \Delta t ^ { 2 } ) ,
+$$
+
+$j = 1 , 2$ . And then, performing similar expansions in $\Delta t$ , we arrive at
+
+$$
+\begin{array} { r l } & { \psi _ { \Delta t } ( z ^ { 0 } ) = \phi _ { \Delta t , H _ { 1 } } \left( \Phi _ { \Delta t , H _ { 2 } } ( z ^ { 0 } ) \right) } \\ & { \qquad = \phi _ { \Delta t , H _ { 2 } } ( z ^ { 0 } ) + \Delta t J \nabla H _ { 1 } \left( \phi _ { \Delta t , H _ { 2 } } ( z ^ { 0 } ) \right) + \mathcal { O } ( \Delta t ^ { 2 } ) } \\ & { \qquad = z ^ { 0 } + \Delta t J \nabla H _ { 2 } ( z ^ { 0 } ) + \Delta t J \nabla H _ { 1 } ( z ^ { 0 } ) + \mathcal { O } ( \Delta t ^ { 2 } ) } \\ & { \qquad = z ^ { 0 } + \Delta t J \nabla H ( z ^ { 0 } ) + \mathcal { O } ( \Delta t ^ { 2 } ) } \\ & { \qquad = \phi _ { \Delta t , H } ( z ^ { 0 } ) + \mathcal { O } ( \Delta t ^ { 2 } ) . } \end{array}
+$$
+
+This estimate of the local error, together with the evident smoothness of the flow map, proves that the composition method is at least first order.
+
+The only apparent drawback of this approach is that it requires the splitting of the given Hamiltonian into explicitly solvable subproblems. This may not always be possible or desirable. In many cases, the system may admit a partitioning, but without the individual terms being exactly integrable. In these cases, one may be able to construct effective schemes by substituting another symplectic integrator for the $\mathsf { e x a c t }$ flow map at some stage. The splitting technique may in this way simplify the development of an effective method by breaking down a complicated problem into a series of lesser challenges.
+
+A curious special case arises when $H _ { 1 }$ and $H _ { 2 }$ are first integrals of each other, i.e., $\{ H _ { 1 } , H _ { 2 } \}$ . Then the two flow maps commute (see problem 4 in the Exercises) and the composition method is exact
+
+$$
+\Phi _ { \Delta t , H _ { 1 } + H _ { 2 } } = \pmb { \phi } _ { \Delta t , H _ { 1 } } \circ \pmb { \phi } _ { \Delta t , H _ { 2 } } = \pmb { \phi } _ { \Delta t , H _ { 1 } } \circ \pmb { \phi } _ { \Delta t , H _ { 2 } } .
+$$
+
+# 4.2.1 Separable Hamiltonian systems
+
+The splitting described earlier for the special case of the oscillator is applicable to any separable Hamiltonian of the form
+
+$$
+H ( \pmb { q } , \pmb { p } ) = T ( \pmb { p } ) + V ( \pmb { q } ) .
+$$
+
+As we have seen in earlier chapters, such systems are ubiquitous in chemical and physical modeling, being the standard form for $N .$ -body simulations with a flat (i.e. Euclidean) kinetic energy metric.
+
+As before, the form of the energy function suggests a natural splitting into kinetic energy
+
+$$
+H _ { 1 } ( \pmb { p } ) = T ( \pmb { p } ) ,
+$$
+
+and potential energy
+
+$$
+H _ { 2 } ( \pmb q ) : = V ( \pmb q ) .
+$$
+
+The differential equations corresponding to $H _ { 2 }$ can be written
+
+$$
+\begin{array} { l } { { \displaystyle { \frac { d } { d t } } { \pmb q } = { \bf 0 } } , } \\ { { \displaystyle { \frac { d } { d t } } { \pmb p } = - \nabla _ { { \pmb q } } V ( { \pmb q } ) . } } \end{array}
+$$
+
+These equations are completely integrable, since $\pmb q$ is constant along solutions and $p$ therefore varies linearly with time. The flow map is
+
+$$
+\Phi _ { \tau , V } (  { \boldsymbol { q } } ,  { \boldsymbol { p } } ) = \left[ \begin{array} { c } {  { \boldsymbol { q } } } \\ {  { \boldsymbol { p } } - \tau \nabla _ { \ b { q } } V (  { \boldsymbol { q } } ) } \end{array} \right] .
+$$
+
+Similarly, we can derive the flow map for the kinetic term $\left( H _ { 1 } \right)$
+
+$$
+\pmb { \phi } _ { \tau , T } ( \pmb q , \pmb { p } ) = \left[ \pmb { q } + \tau \nabla _ { \pmb { p } } T ( \pmb { p } ) \right] .
+$$
+
+Now consider the composition of these two maps for $\tau = \Delta t$
+
+$$
+\pmb { \psi } _ { \Delta t } : = \pmb { \phi } _ { \Delta t , T } \circ \pmb { \phi } _ { \Delta t , V } .
+$$
+
+Applying this map to a point of phase space $( \pmb q ^ { n } , \pmb { p } ^ { n } )$ , we first compute a point $( { \bar { q } } , { \bar { p } } )$
+
+$$
+\begin{array} { l } { { \bar { \pmb q } = \pmb q ^ { n } , } } \\ { { \bar { \pmb p } = \pmb p ^ { n } - \Delta t \nabla _ { \pmb q } V ( \pmb q ^ { n } ) . } } \end{array}
+$$
+
+Next, apply $\pmb { \phi } _ { \Delta t , T }$ to this point, i.e.
+
+$$
+\begin{array} { r l } & { \pmb q ^ { n + 1 } = \pmb { \bar { q } } + \Delta t \nabla _ { p } T ( \pmb { \bar { p } } ) , } \\ & { \pmb { p } ^ { n + 1 } = \pmb { \bar { p } } . } \end{array}
+$$
+
+These equations can be simplified by the elimination of the intermediate values, to yield
+
+$$
+\begin{array} { l } { { { \pmb q } ^ { n + 1 } = { \pmb q } ^ { n } + \Delta t \nabla _ { p } T ( { \pmb p } ^ { n + 1 } ) , } } \\ { { { \pmb p } ^ { n + 1 } = { \pmb p } ^ { n } - \Delta t \nabla _ { { \pmb q } } V ( { \pmb q } ^ { n } ) . } } \end{array}
+$$
+
+This is evidently the Euler-B method introduced in the previous section specialized to the case of a mechanical Hamiltonian. While the Euler-B method is normally implicit, it becomes explicit when applied to this special class of Hamiltonians due to the separation of variable dependencies.
+
+By reversing the order in which the two maps are applied, we obtain another composition method, $\pmb { \phi } _ { \Delta t , V } \circ \pmb { \phi } _ { \Delta t , T }$ , which reduces after a similar calculation to the Euler-A method.
+
+An interesting point that should be mentioned is that not all symplectic maps are given by a splitting. For the general Hamiltonian, it is clear that the Euler-A and Euler-B methods are not obtained from any splitting. It is only for the special case of a separable Hamiltonian that these methods can be viewed in this special way.
+
+# 4.2.2 A second-order splitting method
+
+Higher-order splitting methods are also easily constructed. We will take up this theme in more detail in Chapter 6. For now, as an illustration, consider again the mechanical Hamiltonian and the splitting
+
+$$
+H = H _ { 1 } + H _ { 2 } + H _ { 3 } ,
+$$
+
+with
+
+$$
+H _ { 1 } = \frac { 1 } { 2 } V ( \pmb { q } ) , \qquad H _ { 2 } = T ( \pmb { p } ) , \qquad H _ { 3 } = \frac { 1 } { 2 } V ( \pmb { q } ) .
+$$
+
+The associated composition method is equivalent to
+
+$$
+\pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { \Delta t / 2 , V } \circ \pmb { \phi } _ { \Delta t , T } \circ \pmb { \phi } _ { \Delta t / 2 , V } .
+$$
+
+After simplification, it becomes clear that this integrator is nothing other than the second-order St¨ormer–Verlet method (2.16)–(2.18) of Chapter 2 written in terms of the canonical coordinates
+
+$$
+\begin{array} { c } { { p ^ { n + 1 / 2 } = p ^ { n } - \displaystyle \frac { 1 } { 2 } \Delta t \nabla _ { q } V ( q ^ { n } ) , } } \\ { { q ^ { n + 1 } = q ^ { n } + \Delta t \nabla _ { p } T ( p ^ { n + 1 / 2 } ) , } } \\ { { p ^ { n + 1 } = p ^ { n + 1 / 2 } - \displaystyle \frac { 1 } { 2 } \Delta t \nabla _ { q } V ( q ^ { n + 1 } ) . } } \end{array}
+$$
+
+Since it is a splitting method we may infer: the St¨ormer–Verlet method (4.14)– (4.16) is canonically symplectic.
+
+Just as the implicit midpoint method turned out to be the composition of implicit and explicit Euler steps, notice that the St¨ormer–Verlet method can be
+
+expressed as a composition of half-steps using the Euler-A and Euler-B methods, i.e.
+
+$$
+\begin{array} { r } { \phi _ { \triangle t , \frac { 1 } { 2 } V } \circ \phi _ { \triangle t , T } \circ \phi _ { \triangle t , \frac { 1 } { 2 } V } = \phi _ { \triangle t , \frac { 1 } { 2 } V } \circ \phi _ { \triangle t , \frac { 1 } { 2 } T } \circ \phi _ { \triangle t , \frac { 1 } { 2 } T } \circ \phi _ { \triangle t , \frac { 1 } { 2 } T } \circ \phi _ { \triangle t , \frac { 1 } { 2 } V } } \\ { = \phi _ { \frac { 1 } { 2 } \triangle t , V } \circ \phi _ { \frac { 1 } { 2 } \triangle t , T } \circ \phi _ { \frac { 1 } { 2 } \triangle t , T } \circ \phi _ { \frac { 1 } { 2 } \triangle t , V } . } \end{array}
+$$
+
+# 4.3 Time-reversal symmetry and reversible discretizations
+
+An important geometric property of Newton’s equations of motion is related to the invariance of a Hamiltonian $H = H ( \pmb { q } , \pmb { p } )$ under the reflection symmetry
+
+$$
+p \mapsto - p ,
+$$
+
+i.e. the Hamiltonian is an even function in the momentum $\pmb { p }$ . We consider the consequences of this property for the solution behavior of the corresponding Hamiltonian system
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } \pmb { q } = \nabla _ { p } H ( \pmb { q } , \pmb { p } ) , } \\ { \displaystyle \frac { d } { d t } \pmb { p } = - \nabla _ { \pmb { q } } H ( \pmb { q } , \pmb { p } ) . } \end{array}
+$$
+
+The key fact is this: if $( \pmb q ( t ) , \pmb p ( t ) )$ is a solution then also $( \pmb { \hat { q } } ( t ) , \pmb { \hat { p } } ( t ) ) : = ( \pmb { q } ( - t )$ , $- { \pmb p } ( - t ) )$ is.
+
+To prove this observe that
+
+$$
+\frac { d } { d t } \hat { \pmb { q } } ( t ) = - \pmb { \dot { q } } ( - t ) = - \nabla _ { p } H ( \pmb { q } ( - t ) , \pmb { p } ( - t ) ) = \nabla _ { p } H ( \hat { \pmb { q } } ( t ) , \hat { \pmb { p } } ( t ) ) ,
+$$
+
+and
+
+$$
+\frac { d } { d t } \pmb { \hat { p } } ( t ) = \pmb { \dot { p } } ( - t ) = - \nabla _ { \ b { q } } H ( \pmb { q } ( - t ) , \pmb { p } ( - t ) ) = - \nabla _ { \ b { q } } H ( \pmb { \hat { q } } ( t ) , \pmb { \hat { p } } ( t ) ) .
+$$
+
+Here we used the general fact that if $h ( x , y )$ is an even function of $y$ , then $h _ { x }$ is also even in $y$ , and $h _ { y }$ is odd in $y$ , meaning that $h _ { x } ( x , - y ) = h _ { x } ( x , y )$ , and $h _ { y } ( x , - y ) = - h _ { y } ( x , y )$ .
+
+The invariance of the Hamiltonian with respect to $p \mapsto - p$ evidently implies that for every solution of the Hamiltonian system, there is another solution which traverses the same positional curve but in the opposite direction, with a negated momentum.
+
+Another way of saying this is that if we evolve the solution $\tau$ units in time forward from a given point $z ^ { 0 } = ( q ^ { 0 } , p ^ { 0 } )$ , then negate the momentum, evolve the solution $\tau$ units further, then negate the momentum again, we end up back at our starting point $z ^ { 0 }$ . A system that has this property is said to be time reversible.
+
+![](images/7d408721a541001695a89e2174930ff9b819f779b3827438020977fb1802de4c.jpg)  
+Figure 4.2 The time-reversal symmetry in a one-degree-of-freedom system. A point $z ^ { 0 }$ of the phase plane is mapped $\tau$ units forward along the trajectory, reflected about the line $p = 0$ , again evolved forward in time $\tau$ units, and, finally, reflected again about the $p$ -axis, arriving back at the initial point $z ^ { 0 }$ .
+
+In the planar case (one-degree-of-freedom case), time reversibility implies that the phase portrait is symmetric with respect to the line $p = 0$ , with directionality of trajectories reversed about this axis (Fig. 4.2).
+
+# 4.3.1 Time-reversible maps
+
+Let us develop the concept of time-reversible systems in a somewhat more general setting. Upon introducing the matrix
+
+$$
+{ \pmb S } = \left[ \begin{array} { c c } { + { \pmb I } _ { d } } & { \ { \pmb 0 } } \\ { { \pmb 0 } } & { - { \pmb I } _ { d } } \end{array} \right] ,
+$$
+
+the time-reversal symmetry can be rewritten as
+
+$$
+H ( z ) = H ( \pmb { S } z ) , \qquad z = ( \pmb { q } , \pmb { p } ) ^ { T } .
+$$
+
+This property of a Hamiltonian $H$ implies an associated transformation property for the vector field
+
+$$
+\begin{array} { r l } { \nabla _ { z } H ( z ) = \nabla _ { z } H ( \pmb { S } z ) } \\ { = \pmb { S } ^ { T } \nabla _ { \hat { z } } H ( \pmb { S } z ) , } \end{array}
+$$
+
+$\hat { z } = S z$ , implying
+
+$$
+\begin{array} { r } { J \nabla _ { z } H ( z ) = J S ^ { T } \nabla _ { \hat { z } } H ( S z ) } \\ { = - S J \nabla _ { \hat { z } } H ( S z ) , } \end{array}
+$$
+
+or, with $\dot { z } = f ( z ) = J \nabla _ { z } H ( z )$ ,
+
+$$
+\pmb { f } ( z ) = - \pmb { S } \pmb { f } ( \pmb { S } z ) .
+$$
+
+We call a differential equation with this property time reversible with respect to the involution $s$ .1
+
+Now solving ${ d z } / { d t } = - S f ( S z )$ is precisely equivalent to applying the combination of a coordinate transformation $z  S z$ with a time transformation $d t / d \tau = - 1$ to the differential equation $d z / d t = { \pmb f } ( z )$ . In other words, applying the symmetry and simultaneously negating time does not effect the system. The flow map therefore satisfies
+
+$$
+\pmb { \phi } _ { \tau , H } ( z ) = \pmb { S } \pmb { \phi } _ { - \tau , H } ( \pmb { S } z ) .
+$$
+
+Let $[ \pmb { \phi } _ { \tau , H } ] ^ { - 1 }$ denote the inverse of the mapping $\pmb { \phi } _ { \tau , H }$ . Then we know that $\pmb { \phi } _ { - \tau , H } = [ \pmb { \phi } _ { \tau , H } ] ^ { - 1 }$ for any flow map, we therefore obtain
+
+$$
+{ } \pmb { \phi } _ { \tau , H } ( z ) = \pmb { S } \left[ \pmb { \phi } _ { \tau , H } \right] ^ { - 1 } ( \pmb { S } z ) .
+$$
+
+We call any invertible mapping $\pmb { \psi }$ that satisfies
+
+$$
+\pmb { \psi } ( z ) = \pmb { S } \pmb { \psi } ^ { - 1 } ( \pmb { S } z )
+$$
+
+time reversible under the involution $s$ .
+
+# 4.3.2 Linear-reversible maps
+
+Now let us discuss the case where the underlying map is a linear function. We say that
+
+$$
+\pmb { \psi } ( z ) = P z
+$$
+
+is time reversible if the matrix $P$ satisfies the identity
+
+$$
+P = S P ^ { - 1 } S .
+$$
+
+Since $S = S ^ { - 1 }$ , the matrix $P ^ { - 1 }$ is a similarity transformation of $P$ ; i.e. $P$ and $P ^ { - 1 }$ have identical eigenvalues. Thus, as for symplectic matrices, real matrices satisfying time-reversal symmetry have an eigenvalue $\lambda$ if and only if also $1 / \lambda$ , $\bar { \lambda }$ , and $1 / \bar { \lambda }$ lie in the spectrum.
+
+$^ 1 \mathsf { A }$ matrix $S \in \mathbb { R } ^ { d \times d }$ is called an involution if $S S = I _ { d }$
+
+# 4.3.3 Time-reversible methods by symmetric composition
+
+The method $\psi _ { \Delta { t } } ^ { * }$ defined by
+
+$$
+\pmb { { \psi } } _ { \Delta t } ^ { * } = \left[ \pmb { { \psi } } _ { - \Delta t } \right] ^ { - 1 }
+$$
+
+is called the adjoint method of $\psi _ { \Delta t }$ . In other words, given a method $\psi _ { \Delta t }$ its adjoint method $\psi _ { \Delta { t } } ^ { * }$ is (implicitly) defined by
+
+$$
+z ^ { n } = \pmb { \psi } _ { - \Delta t } ( z ^ { n + 1 } ) ,
+$$
+
+and
+
+$$
+\begin{array} { r } { \pmb { \psi } _ { \Delta t } ^ { * } ( z ^ { n } ) : = z ^ { n + 1 } . } \end{array}
+$$
+
+From this definition we readily obtain that the adjoint of the adjoint method is the original method, i.e. $\psi _ { \Delta { t } } = [ \psi _ { \Delta { t } } ^ { * } ] ^ { * }$ . It is also readily verified that the local error of $\psi _ { \Delta t }$ and its adjoint method are of the same order with respect to the stepsize $\Delta t$ . A method $\psi _ { \Delta t }$ is called symmetric if $\pmb { \psi } _ { \Delta t } = \pmb { \psi } _ { \Delta t } ^ { * }$ , i.e., ${ \pmb { \psi } } _ { - \Delta t } = { \pmb { \psi } } _ { \Delta t } ^ { - 1 }$
+
+As an illustration, the explicit Euler method
+
+$$
+z ^ { n + 1 } = z ^ { n } + \Delta t J \nabla _ { z } H ( z ^ { n } ) ,
+$$
+
+is not symmetric. The inverse $[ { \pmb { \psi } } _ { \Delta t } ] ^ { - 1 }$ is obtained by exchanging $z ^ { n }$ and $z ^ { n + 1 }$ , i.e.
+
+$$
+z ^ { n } = z ^ { n + 1 } + \Delta t J \nabla _ { z } H ( z ^ { n + 1 } ) .
+$$
+
+Upon replacing $\Delta t$ by $- \Delta t$ and rearranging terms, we get the implicit Euler method
+
+$$
+z ^ { n + 1 } = z ^ { n } + \Delta t J \nabla _ { z } H ( z ^ { n + 1 } ) .
+$$
+
+Thus the implicit Euler method is the adjoint of the explicit Euler method and vice versa. The symplectic Euler-B method
+
+$$
+\begin{array} { r l } & { \pmb { q } ^ { n + 1 } = \pmb { q } ^ { n } + \Delta t \nabla _ { p } H ( \pmb { q } ^ { n } , \pmb { p } ^ { n + 1 } ) , } \\ & { \pmb { p } ^ { n + 1 } = \pmb { p } ^ { n } - \Delta t \nabla _ { \pmb { q } } H ( \pmb { q } ^ { n } , \pmb { p } ^ { n + 1 } ) } \end{array}
+$$
+
+is also not symmetric. Its adjoint is the symplectic Euler-A method
+
+$$
+\begin{array} { r } { \pmb { q } ^ { n + 1 } = \pmb { q } ^ { n } + \Delta t \nabla _ { p } H ( \pmb { q } ^ { n + 1 } , \pmb { p } ^ { n } ) , } \\ { \pmb { p } ^ { n + 1 } = \pmb { p } ^ { n } - \Delta t \nabla _ { \pmb { q } } H ( \pmb { q } ^ { n + 1 } , \pmb { p } ^ { n } ) . } \end{array}
+$$
+
+Knowing a numerical method $\psi _ { \Delta t }$ and its adjoint method, a symmetric method $\hat { \pmb { { \psi } } } _ { \Delta t }$ is immediately available through the following concatenation (composition) of the two methods
+
+$$
+\hat { \pmb { \psi } } _ { \Delta t } : = \pmb { \psi } _ { \Delta t / 2 } ^ { * } \circ \pmb { \psi } _ { \Delta t / 2 } .
+$$
+
+Let us verify this statement
+
+$$
+\begin{array} { r l } & { \hat { \psi } _ { - \Delta t } = { \pmb { \psi } } _ { - \Delta t / 2 } ^ { * } \circ { \pmb { \psi } } _ { - \Delta t / 2 } } \\ & { \qquad = \left[ { \pmb { \psi } } _ { \Delta t / 2 } \right] ^ { - 1 } \circ \left[ { \pmb { \psi } } _ { \Delta t / 2 } ^ { * } \right] ^ { - 1 } } \\ & { \qquad = \left[ { \pmb { \psi } } _ { \Delta t / 2 } ^ { * } \circ { \pmb { \psi } } _ { \Delta t / 2 } \right] ^ { - 1 } } \\ & { \qquad = \left[ \hat { \pmb { \psi } } _ { \Delta t } \right] ^ { - 1 } . } \end{array}
+$$
+
+Take the implicit Euler method as $\psi _ { \Delta t }$ . Then $\hat { \pmb { { \psi } } } _ { \Delta t }$ is the concatenation of the implicit with the $\mathsf { e x }$ plicit Euler method, i.e.
+
+$$
+\begin{array} { l } { { z ^ { n + 1 / 2 } = z ^ { n } + \displaystyle \frac { \Delta t } { 2 } J \nabla _ { z } H ( z ^ { n + 1 / 2 } ) , } } \\ { { z ^ { n + 1 } = z ^ { n + 1 / 2 } + \displaystyle \frac { \Delta t } { 2 } J \nabla _ { z } H ( z ^ { n + 1 / 2 } ) , } } \end{array}
+$$
+
+which, since
+
+$$
+z ^ { n + 1 / 2 } = \frac { z ^ { n } + z ^ { n + 1 } } { 2 } ,
+$$
+
+is equivalent to the implicit midpoint method. Choosing $\psi _ { \Delta t }$ to be the map corresponding to the explicit Euler method, we obtain the trapezoidal rule for $\hat { \pmb { { \psi } } } _ { \Delta t }$ .
+
+Similarly, concatenation of half steps with the Euler-B method with the Euler-A method yields the series of steps
+
+$$
+\begin{array} { c } { { q ^ { n + 1 / 2 } = q ^ { n } + \displaystyle \frac { 1 } { 2 } \Delta t \nabla _ { p } H ( q ^ { n } , p ^ { n + 1 / 2 } ) , } } \\ { { \displaystyle p ^ { n + 1 / 2 } = p ^ { n } - \displaystyle \frac { 1 } { 2 } \Delta t \nabla _ { q } H ( q ^ { n } , p ^ { n + 1 / 2 } ) , \ ~ } } \\ { { \displaystyle q ^ { n + 1 } = q ^ { n + 1 / 2 } + \displaystyle \frac { 1 } { 2 } \Delta t \nabla _ { p } H ( q ^ { n + 1 } , p ^ { n + 1 / 2 } ) , \ ~ } } \\ { { \displaystyle p ^ { n + 1 } = p ^ { n } - \displaystyle \frac { 1 } { 2 } \Delta t \nabla _ { q } H ( q ^ { n + 1 } , p ^ { n + 1 / 2 } ) . \ ~ } } \end{array}
+$$
+
+After elimination of redundancy, we arrive at the generalized St¨ormer–Verlet/leapfrog method
+
+$$
+\begin{array} { c } { { \pmb q ^ { n + 1 } = \pmb q ^ { n } + \displaystyle \frac { 1 } { 2 } \Delta t ( \nabla _ { p } H ( \pmb q ^ { n } , \pmb p ^ { n + 1 / 2 } ) + \nabla _ { p } H ( \pmb q ^ { n + 1 } , \pmb p ^ { n + 1 / 2 } ) ) , } } \\ { { \pmb p ^ { n + 1 / 2 } = \pmb p ^ { n } - \displaystyle \frac { 1 } { 2 } \Delta t \nabla _ { q } H ( \pmb q ^ { n } , \pmb p ^ { n + 1 / 2 } ) , } } \\ { { \pmb p ^ { n + 1 } = \pmb p ^ { n } - \displaystyle \frac { 1 } { 2 } \Delta t \nabla _ { q } H ( \pmb q ^ { n + 1 } , \pmb p ^ { n + 1 / 2 } ) . } } \end{array}
+$$
+
+This is an implicit second-order symplectic method which specializes to the St¨ormer–Verlet method in the case of N-body systems.
+
+It is worthwhile to note that, in both of the above examples, the concatenation of non-symmetric first-order methods yields a symmetric method of second order. More generally, one can prove the following:
+
+Theorem 1 The order of a symmetric method is necessarily even.
+
+Proof. Suppose by way of contradiction that the order of a given symmetric method is odd, so that the leading-order term in the local error expansion is even. We have
+
+$$
+\pmb { \psi } _ { \Delta t } ( z ) = \pmb { \phi } _ { \Delta t } ( z ) + \pmb { C } _ { 2 k } ( z ) \Delta t ^ { 2 k } + \pmb { \mathcal { O } } ( \Delta t ^ { 2 k + 1 } ) ,
+$$
+
+and
+
+$$
+\begin{array} { r } { \pmb { \psi } _ { - \Delta t } ( z ) = \pmb { \phi } _ { - \Delta t } ( z ) + \pmb { C } _ { 2 k } ( z ) \Delta t ^ { 2 k } + \pmb { \mathcal { O } } ( \Delta t ^ { 2 k + 1 } ) . } \end{array}
+$$
+
+Because of $\pmb { \psi } _ { \Delta t } ( z ) = z + \mathcal { O } ( \Delta t )$ and a similar property of $\pmb { \phi } _ { \Delta t }$ , the above two expansions immediately lead to
+
+$$
+\begin{array} { r } { \phi _ { - \Delta t } \circ \pmb { \psi } _ { \Delta t } \left( z \right) = z + \pmb { C } _ { 2 k } ( z ) \Delta t ^ { 2 k } + \pmb { \mathcal { O } } ( \Delta t ^ { 2 k + 1 } ) , } \end{array}
+$$
+
+and
+
+$$
+\begin{array} { r } { \pmb { \psi } _ { - \Delta t } \circ \pmb { \phi } _ { \Delta t } \left( z \right) = z + \pmb { C } _ { 2 k } ( z ) \Delta t ^ { 2 k } + \pmb { \mathcal { O } } ( \Delta t ^ { 2 k + 1 } ) . } \end{array}
+$$
+
+We can easily show the following: a smooth map $\boldsymbol { F }$ defined by
+
+$$
+\pmb { F } ( z ) = z + \epsilon \pmb { G } ( z )
+$$
+
+is invertible for sufficiently small $\epsilon$ , and
+
+$$
+F ^ { - 1 } ( z ) = z - \epsilon G ( z ) + O ( \epsilon ^ { 2 } ) .
+$$
+
+Applying this with $\pmb { F } = \pmb { \psi } _ { - \Delta t } \circ \pmb { \phi } _ { \Delta t }$ , $G ( z ) = C _ { 2 k } ( z )$ and $\epsilon = \Delta t ^ { 2 k }$ , we find
+
+$$
+\phi _ { \Delta t } ^ { - 1 } \circ \pmb { \psi } _ { - \Delta t } ^ { - 1 } \left( z \right) = z - C _ { 2 k } ( z ) \Delta t ^ { 2 k } + \mathcal { O } ( \Delta t ^ { 2 k + 1 } ) .
+$$
+
+On the other hand, since $\pmb { \phi } _ { \Delta t }$ is self-adjoint and we have assumed the same property for $\psi _ { \Delta t }$ , it follows that
+
+$$
+\begin{array} { r } { \phi _ { - \Delta t } \circ \pmb { \psi } _ { \Delta t } \left( z \right) = z - C _ { 2 k } ( z ) \Delta t ^ { 2 k } + \mathcal { O } ( \Delta t ^ { 2 k + 1 } ) . } \end{array}
+$$
+
+Comparing this formula with (4.19) we conclude that $C _ { 2 k } = \bf 0$ , contradicting our assumption that the leading term in the local error was of even order. ✷
+
+Given a time-reversible Hamiltonian system or a general differential equation
+
+$$
+\frac { d } { d t } z = \pmb { f } ( z ) ,
+$$
+
+satisfying (4.17), then a numerical method is called time reversible if
+
+$$
+\pmb { \psi } _ { \Delta t } ( z ^ { n } ) = \pmb { S } \pmb { \psi } _ { \Delta t } ^ { - 1 } ( \pmb { S } z ^ { n } ) .
+$$
+
+This definition is in accordance with (4.18). Provided the numerical method is symmetric this definition is equivalent to
+
+$$
+\pmb { \psi } _ { \Delta t } ( z ^ { n } ) = \pmb { S } \pmb { \psi } _ { - \Delta t } ( \pmb { S } z ^ { n } ) .
+$$
+
+However this equality is satisfied by all numerical methods we have encountered so far when applied to a differential equation satisfying (4.17). Hence we can conclude that symmetric methods are time-reversible. See problem 11 in the Exercises.
+
+# 4.4 First integrals
+
+First integrals play an important role in Hamiltonian mechanics [149, 124]. We have already seen several instances of first integrals in Chapter 3 and noted that first integrals lead essentially to a reduction in the number of degrees of freedom. Can this property be reproduced by a numerical method? The answer is no in general if one looks at the class of symplectic integration methods. However, there are a number of important exceptions and we will discuss the most important ones in the following two subsections.
+
+# 4.4.1 Preservation of first integrals by splitting methods
+
+Splitting methods can sometimes be shown to exactly conserve certain first integrals. We begin by considering the important example of an $N .$ -body system with pairwise distance-dependent interactions
+
+$$
+H = \sum _ { i = 1 } ^ { N } \frac { \lVert \pmb { p } _ { i } \rVert ^ { 2 } } { 2 m _ { i } } + \sum _ { i = 1 } ^ { N - 1 } \sum _ { j = i + 1 } ^ { N } \varphi _ { i j } ( \lVert \pmb { q } _ { i } - \pmb { q } _ { j } \rVert ) .
+$$
+
+Such a system is in the form $H ( \pmb { q } , \pmb { p } ) = T ( \pmb { p } ) + V ( \pmb { q } )$ , hence the splitting technique discussed in Section 4.2.1 is directly applicable. In particular the St¨ormer–Verlet method provides an elementary time-reversible and symplectic discretization for this problem.
+
+On the other hand, as shown in Chapter 3, (4.20) has other properties and it is interesting to ask if these are also conserved under discretization. Specifically, both the total linear momentum $\begin{array} { r } { p _ { \mathrm { t o t } } = \sum _ { j = 1 } ^ { N } p _ { j } } \end{array}$ and the total angular momentum $\begin{array} { r } { \pmb { m } _ { \mathrm { t o t } } = \sum _ { j = 1 } ^ { N } \pmb { q } _ { j } \times \pmb { p } _ { j } } \end{array}$ j=1  are conserved by the flow. Let $p _ { \mathrm { t o t } } ^ { n }$ and $m _ { \mathrm { t o t } } ^ { n }$ represent the discrete forms of the linear and angular momenta; it is desirable that these be preserved under iteration, i.e. that
+
+$$
+\pmb { p } _ { \mathrm { t o t } } ^ { n + 1 } = \pmb { p } _ { \mathrm { t o t } } ^ { n } , \quad \pmb { m } _ { \mathrm { t o t } } ^ { n + 1 } = \pmb { m } _ { \mathrm { t o t } } ^ { n } .
+$$
+
+To examine these directly, we can begin by writing out the discrete equations for each particle
+
+$$
+\begin{array} { c } { { q _ { j } ^ { n + 1 } = q _ { j } ^ { n } + \displaystyle \frac { 1 } { m _ { j } } p _ { j } ^ { n + 1 / 2 } , } } \\ { { p _ { j } ^ { n + 1 / 2 } = p _ { j } ^ { n } + \displaystyle \sum _ { i \neq j } \displaystyle \frac { \varphi _ { i j } ^ { \prime } ( r _ { i j } ^ { n } ) } { r _ { i j } ^ { n } } ( q _ { j } ^ { n } - q _ { i } ^ { n } ) , } } \\ { { p _ { j } ^ { n + 1 } = p _ { j } ^ { n + 1 / 2 } + \displaystyle \sum _ { i \neq j } \displaystyle \frac { \varphi _ { i j } ^ { \prime } ( r _ { i j } ^ { n + 1 } ) } { r _ { i j } ^ { n + 1 } } ( q _ { j } ^ { n + 1 } - q _ { i } ^ { n + 1 } ) . } } \end{array}
+$$
+
+Now the angular momentum can be computed directly as follows
+
+$$
+\begin{array} { l } { { \displaystyle m _ { \mathrm { t o t } } ^ { n + 1 } = \sum _ { j = 1 } ^ { N } q _ { j } ^ { n + 1 } \times p _ { j } ^ { n + 1 } } } \\ { { \displaystyle \quad \quad = \sum _ { j = 1 } ^ { N } q _ { j } ^ { n + 1 } \times ( p _ { j } ^ { n + 1 / 2 } + \sum _ { i \neq j } \frac { \varphi _ { i j } ^ { \prime } ( r _ { i j } ^ { n + 1 } ) } { r _ { i j } ^ { n + 1 } } ( q _ { j } ^ { n + 1 } - q _ { i } ^ { n + 1 } ) ) } } \\ { { \displaystyle \quad \quad = \sum _ { j = 1 } ^ { N } q _ { j } ^ { n + 1 } \times p _ { j } ^ { n + 1 / 2 } + \sum _ { j = 1 } ^ { N } q _ { j } ^ { n + 1 } \times \sum _ { i \neq j } \tau _ { i j } ( q _ { j } ^ { n + 1 } - q _ { i } ^ { n + 1 } ) ) , } } \end{array}
+$$
+
+where we have written
+
+$$
+\tau _ { i j } : = \frac { \varphi _ { i j } ^ { \prime } ( r _ { i j } ^ { n + 1 } ) } { r _ { i j } ^ { n + 1 } } .
+$$
+
+Continuing
+
+$$
+\begin{array} { l } { { \displaystyle m _ { t \ o t } ^ { n + 1 } = \sum _ { j = 1 } ^ { N } q _ { j } ^ { n + 1 } \times p _ { j } ^ { n + 1 / 2 } + \sum _ { j = 1 } ^ { N } \sum _ { i \ne j } q _ { j } ^ { n + 1 } \times \tau _ { i j } ( q _ { j } ^ { n + 1 } - q _ { i } ^ { n + 1 } ) } } \\ { { \displaystyle \qquad = \sum _ { j = 1 } ^ { N } q _ { j } ^ { n + 1 } \times p _ { j } ^ { n + 1 / 2 } + \sum _ { j = 1 } ^ { N } \sum _ { i \ne j } \tau _ { i j } ( q _ { j } ^ { n + 1 } \times q _ { j } ^ { n + 1 } - q _ { j } ^ { n + 1 } \times q _ { i } ^ { n + 1 } ) } } \\ { { \displaystyle \qquad = \sum _ { j = 1 } ^ { N } q _ { j } ^ { n + 1 } \times p _ { j } ^ { n + 1 / 2 } + \sum _ { j = 1 } ^ { N } \sum _ { i \ne j } \tau _ { i j } q _ { j } ^ { n + 1 } \times q _ { i } ^ { n + 1 } . } } \end{array}
+$$
+
+Note that the second term on the right-hand side can be broken down into a sum of pairs of terms $\left( i < j \right)$
+
+$$
+\tau _ { i j } q _ { j } ^ { n + 1 } \times q _ { i } ^ { n + 1 } + \tau _ { j i } \pmb { q } _ { i } ^ { n + 1 } \times \pmb { q } _ { j } ^ { n + 1 } .
+$$
+
+It is easy to see that $\tau _ { i j } ~ = ~ \tau _ { j i }$ , since these coefficients depend only on the distances between particles, thus, taking into account the antisymmetry of the cross product, we must have
+
+$$
+\tau _ { i j } { \pmb q } _ { j } ^ { n + 1 } \times { \pmb q } _ { i } ^ { n + 1 } + \tau _ { j i } { \pmb q } _ { i } ^ { n + 1 } \times { \pmb q } _ { j } ^ { n + 1 } = { \pmb 0 } ,
+$$
+
+and
+
+$$
+\pmb { m } _ { \mathrm { t o t } } ^ { n + 1 } = \sum _ { j = 1 } ^ { N } \pmb { q } _ { j } ^ { n + 1 } \times \pmb { p } _ { j } ^ { n + 1 / 2 } .
+$$
+
+Using (4.21) and simplifying, we find
+
+$$
+\begin{array} { l } { { \displaystyle m _ { \mathrm { t o t } } ^ { n + 1 } = \sum _ { j = 1 } ^ { N } ( { \bf q } _ { j } ^ { n } + \frac { 1 } { m _ { j } } p _ { j } ^ { n + 1 / 2 } ) \times p _ { j } ^ { n + 1 / 2 } } } \\ { { \displaystyle ~ = \sum _ { j = 1 } ^ { N } { \bf q } _ { j } ^ { n } \times p _ { j } ^ { n + 1 / 2 } } . } \end{array}
+$$
+
+Upon substituting (4.22) into (4.24), a line of argumentation analogous to that we have used above leads to
+
+$$
+\pmb { m } _ { \mathrm { t o t } } ^ { n + 1 } = \sum _ { j = 1 } ^ { N } \pmb { q } _ { j } ^ { n } \times \pmb { p } _ { j } ^ { n } = \pmb { m } _ { \mathrm { t o t } } ^ { n } .
+$$
+
+An even easier argument establishes the conservation of total linear momentum.
+
+More generally, consider a splitting method with $H = H _ { 1 } + H _ { 2 } + . . . + H _ { k }$ , and suppose that a given first integral $F$ is also a first integral for each of the Hamiltonians $H _ { j }$ , i.e.
+
+$$
+\{ F , H _ { i } \} = 0 , \qquad i = 1 , \ldots , k .
+$$
+
+In this case, a numerical method constructed based on a concatenation of the flows of each of the Hamiltonians $H _ { j }$ will also automatically preserve $F$ . Thus we might as well have shown the conservation of angular momentum above by showing that the Poisson brackets of each component of $m _ { \mathrm { t o t } }$ with $\tau$ and with $V$ all vanish.
+
+Example 1 Let us consider the Kepler problem in $\mathbb { R } ^ { 3 }$ with Hamiltonian
+
+$$
+H = { \frac { 1 } { 2 } } { \pmb { p } } \cdot { \pmb { p } } - { \frac { 1 } { \| { \pmb { q } } \| } } .
+$$
+
+A splitting method based on the splitting into kinetic and potential energy will certainly preserve linear and angular momentum. As a result the numerical solution will stay in a plane as determined by the initial data. However the numerically computed positions will not stay on a closed orbit. This is because the Runge–Lenz vector
+
+$$
+\pmb { e } = \pmb { p } \times \pmb { m } - \frac { \pmb { q } } { \Vert \pmb { q } \Vert }
+$$
+
+is a first integral of $H$ but not of $T$ and $V$ individually.
+
+# 4.4.2 Implicit midpoint preserves quadratic first integrals
+
+There are other instances of exact conservation of first integrals under symplectic discretization. For example, the implicit midpoint method exactly preserves any quadratic first integral of the form
+
+$$
+F = \frac { z ^ { T } A z } { 2 } + b ^ { T } z ,
+$$
+
+where $\pmb { A }$ is a symmetric matrix. Let us prove this for an arbitrary differential equation
+
+$$
+{ \frac { d } { d t } } z = { \pmb f } ( z )
+$$
+
+that satisfies
+
+$$
+\frac { d } { d t } F = ( \pmb { A } z + \pmb { b } ) ^ { T } \pmb { f } ( z ) = 0 .
+$$
+
+The implicit midpoint method yields
+
+$$
+z ^ { n + 1 } = z ^ { n } + \Delta t f ( z ^ { n + 1 / 2 } ) , \qquad z ^ { n + 1 / 2 } = \frac { z ^ { n + 1 } + z ^ { n } } 2 ,
+$$
+
+and we have to show that
+
+$$
+\frac { ( z ^ { n + 1 } ) ^ { T } A z ^ { n + 1 } } { 2 } + b ^ { T } z ^ { n + 1 } = \frac { ( z ^ { n } ) ^ { T } A z ^ { n } } { 2 } + b ^ { T } z ^ { n } .
+$$
+
+We multiply the first equation in (4.25) by $( { \pmb A } z ^ { n + 1 / 2 } + { \pmb b } ) ^ { T }$ from the left. We obtain
+
+$$
+\begin{array} { r l } & { \left( A z ^ { n + 1 / 2 } + b \right) ^ { T } z ^ { n + 1 } = \left( A z ^ { n + 1 / 2 } + b \right) ^ { T } z ^ { n } + \Delta t \left( A z ^ { n + 1 / 2 } + b \right) ^ { T } f \left( z ^ { n + 1 / 2 } \right) } \\ & { \qquad = \left( A z ^ { n + 1 / 2 } + b \right) ^ { T } z ^ { n } , } \end{array}
+$$
+
+and the desired result follows since
+
+$$
+{ \frac { 1 } { 2 } } \left( \pmb { A } z ^ { n } \right) ^ { T } z ^ { n + 1 } = { \frac { 1 } { 2 } } \left( \pmb { A } z ^ { n + 1 } \right) ^ { T } z ^ { n } .
+$$
+
+This implies, for example, that the implicit midpoint method exactly conserves linear and angular momentum and the total energy of a linear Hamiltonian system.
+
+Similarly, one can show that the symplectic Euler methods and the generalized leapfrog method preserve any first integral of the form
+
+$$
+\boldsymbol { F } = \boldsymbol { q } ^ { T } \boldsymbol { A } \boldsymbol { p } + \boldsymbol { b } ^ { T } \boldsymbol { z } .
+$$
+
+(See problem 9 in the Exercises.)
+
+# 4.5 Case studies
+
+The splitting technique is a remarkably versatile tool for designing symplectic methods. It will be encountered frequently in the later chapters of this book. In the remainder of this chapter, we give several detailed examples of how splitting methods can be easily constructed for some special applications.
+
+# 4.5.1 Application to $N .$ -body systems: a molecular dynamics model problem
+
+We apply the St¨ormer–Verlet integrator to simulate a simplified molecular system consisting of $N$ equal mass particles interacting pairwise via a Lennard–Jones potential $\varphi _ { \mathsf { L J } } ( r ) = \epsilon \left[ ( \bar { r } / r ) ^ { 1 } 2 - 2 ( \bar { r } / r ) ^ { 6 } \right]$ . We chose $\epsilon = 0 . 4$ and $\bar { r } = 1$ . In this experiment we study the natural rearrangement of the particles over time.
+
+In our numerical simulation we took $N = 4 0 0$ and placed all particles on to a regular cartesian lattice at the points $( i , j ) \in \mathbb { R } ^ { 2 }$ , $i , j = 0 , 1 , \ldots , 1 9 . \ { \mathsf { N e x t } }$ we perturbed each of the particles from the exact lattice positions by a small uniformly distributed random offset (magnitude no more than 0.01) so that the resulting particle positions were near – but not exactly at – the lattice sites. We then simulated the system using the St¨ormer–Verlet method. If the cartesian lattice were a stable equilibrium structure for the Lennard–Jones system, we would expect the particles to oscillate (chaotically) within small domains near the lattice sites, but the cartesian lattice is not stable: the system instead rearranges itself into a more favorable configuration which is near to a triangular lattice. This behavior is illustrated in Fig. 4.3, where snapshots of the dynamics of a system of 400 particles at various times are shown.
+
+At this energy level, the particles are mostly held together by the attractive effect of the Lennard–Jones potential, although it is possible for particles to be ejected occasionally from the larger cluster. The triangular lattice is the local structure that minimizes the energy. The evolving cluster of particles tends to spend a substantially greater proportion of time in the vicinity of this type of lattice configuration. One typically observes that the evolution is not entirely uniform: particles arrange themselves into ordered regions (sometimes referred to as domains) surrounded by so-called lines of dislocation or grain boundaries. The shape of each domain and of the entire system is irregular and may continue to evolve with time, but the lattice structure will generally remain.
+
+![](images/953ff4df0017b7e2cb8f32000f00ae067ddd5c4362821a4e5578ac62b9eb8390.jpg)  
+Figure 4.3 Snapshots of the dynamics of a 400 atom planar Lennard–Jones system at various times between $t = 0$ and $t = 1 6 0$ .
+
+The structure of the lattice can be characterized by means of a so-called order parameter. We define the order parameter as follows. For each particle, we first define the neighbor set $\mathcal { T } _ { j }$ by
+
+$$
+\mathcal { T } _ { i } = \{ j \neq i : \| \pmb { q } _ { j } - \pmb { q } _ { i } \| < \Delta \}
+$$
+
+typically fixing $\Delta$ at a small multiple of the displacement $\bar { r }$ used in the definition of the Lennard–Jones potential, say $\Delta = 1 . 3 \bar { r }$ . For each pair of particles in the neighbor set, with indices $j$ and $k$ , say, we define the angle $\theta _ { j i k }$ with vertex at $\pmb q _ { j }$ and sides defined by $\pmb { u } = \pmb { q } _ { j } - \pmb { q } _ { i }$ and $v = q _ { k } - q _ { i }$ . The so-called $C _ { m }$ , $m \geq 1$ , order parameter is defined in terms of these angles by
+
+$$
+\mu _ { m } = \sum _ { i = 1 } ^ { N } \sum _ { j , k \in \mathbb { Z } _ { i } } \cos ( m \theta _ { j i k } ) .
+$$
+
+The order parameter $\mu _ { 6 }$ is maximized when the atoms are at the vertices of a hexagonal lattice. If we graph these order parameters against time we see the curves shown in Fig. 4.4. Observe that, following a relaxation phase, there is transition in both order parameters, illustrating the transition from rectangular to hexagonal lattice configurations.
+
+At these energies, the defects are generally not stable structures; instead they can be observed to evolve very slowly with time, eventually disappearing from the lattice. After 16000 steps we have arrived at very near a hexagonal lattice. The elimination of the final defects is typically associated to ejection of a particle, as we see in the final frame of Fig. 4.3. The $\mu _ { 6 }$ order parameter (Fig. 4.4) continues to rise until about $t = 2 0 0$ , where it stabilizes around $\mu _ { 6 } = 4 0 0 0$ .
+
+![](images/703f077aaf512531c363b05d246186b85be827fad88c9b92a5dfbd29a65fa73d.jpg)  
+Figure 4.4 Long-term evolution of parameters $\mu _ { 4 }$ and $\mu _ { 6 }$ for the 400-atom Lennard–Jones system.
+
+It is now natural to ask what meaning can be assigned to the simulation results. We will take up this issue in greater detail in Chapter 5. For now, we employ a crude measure of the accuracy of the simulation, the energy, which we have plotted against time in Fig. 4.5 for a relatively long simulation of 100000 timesteps (i.e. to $t = 1 0 0 0$ ). Despite the presence of a large number of degrees of freedom and a complicated (chaotic) motion, the energy fluctuates within a narrow band around the true value.
+
+![](images/1961e1dee30e776a0ad9e20f45017f346eea31947a5d08aea62254b837ca5e96.jpg)  
+Figure 4.5 Energy vs. time for the 400-atom planar Lennard–Jones system solved on the time interval [0, 1000].
+
+Whereas for the Lennard–Jones oscillator (Fig. 4.1) the behavior might be explained as a consequence of the numerical method inheriting periodic solutions (a desirable property, no doubt, but one that might be restricted to very lowdimensional systems), the results here seem to indicate a more generic stability property.
+
+The challenges evident in this planar molecular model become much more acute when we turn to three-dimensional problems, where the local minima proliferate. For such applications, integrators exhibiting good long-term stability are very important indeed.
+
+# 4.5.2 Particle in a magnetic field
+
+We next present a method to simulate the motion of a particle moving in a magnetic field. This scheme demonstrates the versatility of the splitting formalism. As discussed in Chapter 3, a classical particle of mass $m$ moving in a potential field $V$ and subject to a constant magnetic field $\pmb { b } = ( b _ { 1 } , b _ { 2 } , b _ { 3 } ) ^ { T }$ can be modeled as a Hamiltonian system with
+
+$$
+H = \frac { 1 } { 2 m } \| \pmb { p } \| ^ { 2 } + V ( \pmb { q } ) ,
+$$
+
+and symplectic structure matrix
+
+$$
+\begin{array} { r } { J = \left[ \begin{array} { c c } { \mathbf { 0 } } & { + I } \\ { - I } & { \widehat { \boldsymbol { b } } } \end{array} \right] , \qquad \mathrm { w h e r e } \qquad \widehat { \boldsymbol { b } } = \left[ \begin{array} { c c c } { 0 } & { - b _ { 3 } } & { b _ { 2 } } \\ { b _ { 3 } } & { 0 } & { - b _ { 1 } } \\ { - b _ { 2 } } & { b _ { 1 } } & { 0 } \end{array} \right] . } \end{array}
+$$
+
+A splitting method can be based on the same splitting which gave the Euler-B method in the last section. The only difference lies in the modification of the structure matrix to incorporate the magnetic field.
+
+Consider first the potential term $\begin{array} { r } { H _ { 2 } = V ( \pmb q ) } \end{array}$ . Upon writing out the differential equations $\dot { z } = J \nabla _ { z } H _ { 2 } ( z )$ in terms of $\pmb q$ and $p$ we find
+
+$$
+\begin{array} { l } { { \displaystyle { \frac { d } { d t } } { \pmb q } = { \bf 0 } } , } \\ { { \displaystyle { \frac { d } { d t } } { \pmb p } = - \nabla _ { { \pmb q } } V ( { \pmb q } ) , } } \end{array}
+$$
+
+which has the solution after one timestep $\bar { \pmb q } = { \pmb q } ^ { n }$ , $\bar { p } = p ^ { n } - \Delta t \nabla _ { q } V ( q ^ { n } )$ . On the other hand, the differential equations for the kinetic term $H _ { 1 } = \| \pmb { p } \| ^ { 2 } / 2 m$ are
+
+$$
+\begin{array} { l } { \displaystyle { \frac { d } { d t } \boldsymbol { q } = \boldsymbol { p } / m , } } \\ { \displaystyle { \frac { d } { d t } p = \frac { 1 } { m } \boldsymbol { b } \times \boldsymbol { p } = \frac { 1 } { m } \widehat { \boldsymbol { b } } p . } } \end{array}
+$$
+
+This is a linear system and hence is integrable. In fact, the second equation can be written
+
+$$
+\frac { d } { d t } p = \Omega { \pmb p } = \left[ \begin{array} { c c c } { 0 } & { - \omega _ { 3 } } & { \omega _ { 2 } } \\ { \omega _ { 3 } } & { 0 } & { - \omega _ { 1 } } \\ { - \omega _ { 2 } } & { \omega _ { 1 } } & { 0 } \end{array} \right] { \pmb p } ,
+$$
+
+$\pmb { \varOmega } : = \widehat { \pmb { b } } / m$ , which has solution $\pmb { p } ( t ) = \mathrm { e x p } \left( \Omega t \right) \pmb { p } ( 0 )$ . This exponential can be explicitly computed using “Rodrigues’ Formula”
+
+$$
+\exp \left( \Omega t \right) = I + \frac { \sin ( \omega t ) } { \omega } \Omega + 2 \left[ \frac { \sin ( \omega t / 2 ) } { \omega } \right] ^ { 2 } \Omega ^ { 2 } ,
+$$
+
+where $\omega = \sqrt { \omega _ { 1 } ^ { 2 } + \omega _ { 2 } ^ { 2 } + \omega _ { 3 } ^ { 2 } }$ . The solution for $\pmb q$ is then obtained by integration, i.e.
+
+$$
+\begin{array} { l } { { \displaystyle { \pmb q } ( t ) = { \pmb q } ( 0 ) + \frac { 1 } { m } \int _ { 0 } ^ { t } \exp ( \varOmega s ) { \pmb p } ( 0 ) d s } \ ~ } \\ { { \displaystyle ~ = { \pmb q } ( 0 ) + \frac { 1 } { m } \left[ t I + \frac { 1 - \cos ( \omega t ) } { \omega ^ { 2 } } \pmb \Omega - \frac { \sin ( \omega t ) - \omega t } { \omega ^ { 3 } } \Omega ^ { 2 } \right] { \pmb p } ( 0 ) } } \\ { { \displaystyle ~ = { \pmb q } ( 0 ) + \frac { 1 } { m } { \pmb F } ( t ) { \pmb p } ( 0 ) } , } \end{array}
+$$
+
+where the last equation is to be understood as the defining equation for the $3 \times 3$ matrix $\pmb { F } ( t )$ .
+
+As in the canonical case, the symmetric “leapfrog splitting” method
+
+$$
+\pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { \frac { 1 } { 2 } \Delta t , V } \circ \pmb { \phi } _ { \Delta t , T } \circ \pmb { \phi } _ { \frac { 1 } { 2 } \Delta t , V }
+$$
+
+again yields a second-order method. The idea of using a splitting in this way to propagate a particle in a magnetic field was suggested to one of us by J.C. SCOVEL, therefore we feel that it is appropriate to name the scheme accordingly.
+
+$$
+\begin{array} { c } { { \displaystyle p ^ { n + 1 / 2 } = p ^ { n } - \frac { \Delta t } { 2 } \nabla _ { q } V ( q ^ { n } ) , } } \\ { { \displaystyle q ^ { n + 1 } = q ^ { n } + \frac { 1 } { m } F ( \Delta t ) p ^ { n + 1 / 2 } , } } \\ { { \displaystyle p ^ { n + 1 } = \exp ( \Delta t \Omega ) p ^ { n + 1 / 2 } - \frac { \Delta t } { 2 } \nabla _ { q } V ( q ^ { n + 1 } ) . } } \end{array}
+$$
+
+# Numerical experiment
+
+Let us compare with numerical experiments Scovel’s method and the symplectic implicit midpoint method, treating the case of a particle of mass $m = 1$ moving in a magnetic field $\pmb { b } = ( 0 , 0 , 1 ) ^ { T }$ under the influence of an attractive Coloumb potential $V = - 1 / | | \pmb q | |$ .
+
+To evaluate the quality of a numerical solution to this problem, we look to the first integrals, namely the energy $H$ and the magnetic momentum
+
+$$
+\mu = b \cdot \left( q \times \left( p - \frac { 1 } { 2 } \pmb { b } \times \pmb { q } \right) \right) .
+$$
+
+(See the Exercises in Chapter 3.)
+
+The initial conditions we used were $\pmb { q } = ( 1 , 1 , 1 ) ^ { T }$ and $\pmb { p } = ( 0 , 0 , 0 ) ^ { T }$ . In Fig. 4.6, we plot the relative error in energy and the projection of the solution trajectory on to the $\left( q _ { 1 } , q _ { 2 } \right)$ -plane for Scovel’s method and $\Delta t = 0 . 1$ .
+
+![](images/0f232815ccac8ca7ca53333f3c5bc9630d7d26c22f7a9e3e1c48225459d58e49.jpg)  
+Figure 4.6 Energy and projected trajectory using Scovel’s method, $\Delta t = 0 . 1$ .
+
+While Scovel’s method is explicit, the implicit midpoint method requires the solution of a nonlinear system of equations at each timestep. For this purpose, we use the following procedure. The nonlinear equations defining the half-step in the implicit midpoint scheme are solved by a fixed-point iteration in $\left( \bar { \pmb q } _ { k } , \bar { \pmb p } _ { k } \right)$
+
+$$
+\begin{array} { l } { \displaystyle \bar { \pmb q } _ { k + 1 } = \pmb q ^ { n } + \frac { \Delta t } { 2 } \bar { \pmb p } _ { k } , } \\ { \displaystyle \bar { \pmb p } _ { k + 1 } = \pmb p ^ { n } + \frac { \Delta t } { 2 } \pmb b \times \bar { \pmb p } _ { k } - \frac { \Delta t } { 2 } \nabla _ { \pmb q } V ( \bar { \pmb q } _ { k } ) , } \end{array}
+$$
+
+for $k = 0 , 1 , 2 , \ldots .$ with $\bar { p } ^ { 0 } = p ^ { n }$ . The iteration is stopped once
+
+$$
+| | \bar { \pmb q } _ { k } - \bar { \pmb q } _ { k - 1 } | | _ { \infty } + | | \bar { \pmb p } _ { k } - \bar { \pmb p } _ { k - 1 } | | _ { \infty } \ \leq \ \epsilon ,
+$$
+
+![](images/4787764b3d529ef8c8024c3d875356eff7965094ff71ed18ed6beca68b5242ea.jpg)  
+Figure 4.7 (Left) Maximum error in the energy versus stepsize for the implicit midpoint rule (solid) and Scovel’s method $( \times )$ . (Right) Precision versus work (number of force evaluations per unit time interval) diagram for the implicit midpoint method (solid) and Scovel’s method $( \times )$ .
+
+with $\epsilon = 1 0 ^ { - 9 }$ . We then set
+
+$$
+{ \pmb q } ^ { n + 1 / 2 } = \bar { \pmb q } _ { k } , \qquad { \pmb p } ^ { n + 1 / 2 } = \bar { \pmb p } _ { k } ,
+$$
+
+and proceed with half a timestep of the explicit Euler method. This completes one timestep with the implicit midpoint method.
+
+In Fig. 4.7(a), we plot the maximum relative error in energy, i.e.
+
+$$
+E _ { \mathrm { m a x } } = \operatorname* { m a x } _ { n = 1 , 2 , \ldots } { \frac { | H ( z ^ { 0 } ) - H ( z ^ { n } ) | } { | H ( z ^ { 0 } ) | } } ,
+$$
+
+as a function of the stepsize $\Delta t$ . We see that the implicit midpoint rule is slightly more accurate than Scovel’s method. In Fig. 4.7(b), we graph the numerical error against the number of force evaluations per unit time interval. Scovel’s method method is the clear winner. The efficiency differences between the explicit and implicit methods generally become more pronounced in systems with higher dimension, or with more costly force calculations. This rule of thumb might not apply in cases where highly accurate solutions are required and higher-order methods need to be used.
+
+# 4.5.3 Weakly coupled systems
+
+Suppose that our Hamiltonian $H$ can be written as a sum of $k$ decoupled terms $H _ { j }$ together with a coupling term $H _ { c }$ , i.e.
+
+$$
+H = H _ { 1 } + H _ { 2 } + \ldots + H _ { k } + H _ { c } ,
+$$
+
+and
+
+$$
+\{ H _ { i } , H _ { j } \} = 0 ,
+$$
+
+for all $i , j = 1 , \dots , k$ . The condition (4.33) implies that the flow map associated with the Hamiltonian
+
+$$
+\tilde { H } = H _ { 1 } + H _ { 2 } + \cdot \cdot \cdot + H _ { k }
+$$
+
+satisfies
+
+$$
+\pmb { \phi } _ { t , \tilde { H } } = \pmb { \phi } _ { t , H _ { 1 } } \circ \pmb { \phi } _ { t , H _ { 2 } } \circ \cdot \cdot \cdot \circ \pmb { \phi } _ { t , H _ { k } } .
+$$
+
+If, in addition, all the Hamiltonians $H _ { j }$ and $H _ { c }$ are explicitly integrable, then we can easily obtain a splitting method from the composition of the flow maps $\boldsymbol { \Phi } _ { t , \tilde { H } }$ and Φt,Hc .
+
+As an illustration, consider the gravitational model for a pair of planets orbiting a star. In the star-centered frame, the Hamiltonian is
+
+$$
+H = \frac { 1 } { 2 m _ { 1 } } \lVert { \pmb p } _ { 1 } \rVert ^ { 2 } + \frac { 1 } { 2 m _ { 2 } } \lVert { \pmb p } _ { 2 } \rVert ^ { 2 } - \frac { G m _ { 1 } m _ { \odot } } { \lVert { \pmb q } _ { 1 } \rVert } - \frac { G m _ { 2 } m _ { \odot } } { \lVert { \pmb q } _ { 2 } \rVert } - \frac { G m _ { 1 } m _ { 2 } } { \lVert { \pmb q } _ { 1 } - { \pmb q } _ { 2 } \rVert } ,
+$$
+
+where $G$ is the universal gravitational constant, and $m _ { 1 } , ~ m _ { 2 }$ , and $m _ { \odot }$ represent the masses of the two planets and the star, respectively. We divide $H$ into three parts
+
+$$
+\begin{array} { l } { { \displaystyle H _ { 1 } = \frac { 1 } { 2 m _ { 1 } } \| { \pmb p } _ { 1 } \| ^ { 2 } - \frac { G m _ { 1 } m _ { \odot } } { \| { \pmb q } _ { 1 } \| } } , } \\ { { \displaystyle H _ { 2 } = \frac { 1 } { 2 m _ { 2 } } \| { \pmb p } _ { 2 } \| ^ { 2 } - \frac { G m _ { 2 } m _ { \odot } } { \| { \pmb q } _ { 2 } \| } } , } \end{array}
+$$
+
+and
+
+$$
+H _ { c } = - \frac { G m _ { 1 } m _ { 2 } } { \left\| \pmb q _ { 1 } - \pmb q _ { 2 } \right\| } .
+$$
+
+A second-order splitting method is then given by
+
+$$
+\begin{array} { r } { \pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { \frac { 1 } { 2 } \Delta t , H _ { c } } \circ \pmb { \phi } _ { \Delta t , H _ { 1 } + H _ { 2 } } \circ \pmb { \phi } _ { \frac { 1 } { 2 } \Delta t , H _ { c } } . } \end{array}
+$$
+
+The Hamiltonians $H _ { 1 }$ and $H _ { 2 }$ describe completely decoupled Kepler problems, hence they can be solved in principle. The coupling term $H _ { c }$ depends only on position variables, so it, too, can be integrated exactly. A method of this type was used to advantage by WISDOM AND HOLMAN [203] in a celebrated study of the long-term dynamics of the Solar System.
+
+There are some subtleties here: while Kepler problems are exactly solvable using the available integrals, not all methods are suitable for use in a timestepping setting, where many such computations may be needed. Another aspect that will govern the overall efficiency of the method is the extent to which the perturbation due to the coupling term $H _ { 1 2 }$ can be viewed as small compared with the Kepler terms. If the coupling is strong, we can expect large errors to crop up at each step of computation. More discussion of gravitational N-body problems will be found in Chapter 9.
+
+# 4.5.4 Linear/nonlinear splitting
+
+There are many phenomena which are described, in zeroth-order approximation, by a quadratic Hamiltonian. For example, we might have
+
+$$
+H = \frac { 1 } { 2 } { \pmb p } ^ { T } { \pmb M } ^ { - 1 } { \pmb p } + \frac { 1 } { 2 } { \pmb q } ^ { T } { \pmb K } { \pmb q } + \epsilon H _ { \sf N } ( { \pmb q } , { \pmb p } ) ,
+$$
+
+where  can be viewed as a small perturbation parameter. For these problems it is often useful to employ a splitting technique in which the quadratic part is evolved separately from $H _ { \mathsf { N } }$ .
+
+In most cases, $H _ { \mathsf { N } }$ may be regarded as position dependent only and, hence, is integrable. If $H _ { \mathsf { N } }$ is not exactly integrable, an alternate symplectic method can often be used for its evolution. An example for linear/nonlinear splitting is given by the Fermi–Pasta–Ulam problem (see problem 5 in the Exercises) [60, 192]. Some discussion of linear/nonlinear splittings in the context of Hamiltonian partial differential equations may be found in [129].
+
+# 4.6 Exercises
+
+1. Canonical methods. Show that the Euler-A method is canonical.
+
+2. Composition of symplectic maps. Show that the composition of two symplectic maps $\pmb { \psi } _ { 1 }$ , $\pmb { \psi } _ { 2 }$ yields a symplectic map.
+
+3. Kepler problem. Discretize the planar Kepler problem with Hamiltonian
+
+$$
+H ( \pmb { q } , \pmb { p } ) = \frac { 1 } { 2 } \pmb { p } ^ { T } \pmb { p } - \frac { 1 } { | | \pmb { q } | | } ,
+$$
+
+and initial conditions $\pmb { q } = ( 1 , 0 ) ^ { T }$ and $\pmb { p } = ( 0 , 1 ) ^ { T }$ , by the explicit St¨ormer– Verlet method and the implicit midpoint rule. Use functional iteration to solve the nonlinear equations resulting from the implicit midpoint rule (see Section 4.5.2). Compare the two methods based on the conservation of energy versus stepsize and the number of force field evalations per timestep. Take the stepsize $\Delta t$ from the interval [0.01, 0.0001] and integrate over a time interval [0, 10].
+
+4. Commuting flow maps. Show that if the Poisson bracket of two functions $F$ and $G$ , $\{ F , G \}$ , vanishes identically, then the corresponding flow maps $\pmb { \phi } _ { \tau , F }$ and $\phi _ { \tau , G }$ satisfy
+
+$$
+\phi \circ \pmb { \phi } _ { \tau , F } \circ \pmb { \phi } _ { \tau , G } - \phi \circ \pmb { \phi } _ { \tau , G } \circ \pmb { \phi } _ { \tau , F } = \mathscr { O } ( \tau ^ { 2 } ) ,
+$$
+
+for any smooth function $\phi : \mathbb { R } ^ { 2 d }  \mathbb { R }$ . (This result is a first step to show that the two flow maps commute if and only if $\{ F , G \} = 0$ ; see Chapter 5.) Hint: differentiate the given formula with respect to $\tau$ and make use of the Poisson bracket notation.
+
+5. Fermi–Pasta–Ulam problem. The “Fermi–Pasta–Ulam problem” [60, 192] has Hamiltonian
+
+$$
+H = \frac { 1 } { 2 m } \sum _ { i = 1 } ^ { N - 1 } p _ { i } ^ { 2 } + \frac { \kappa } { 2 } \sum _ { i = 1 } ^ { N - 1 } r _ { i } ^ { 2 } + \frac { \lambda } { s } \sum _ { i = 1 } ^ { N - 1 } \epsilon r _ { i } ^ { s } , r _ { i } = q _ { i + 1 } - q _ { i } , q _ { 0 } = q _ { N } = 0 ,
+$$
+
+where $\kappa$ is the linear elastic constant (Hooke’s spring), $\lambda$ is a small parameter, and $s$ is a small positive integer (usually $s = 3$ or $s = 4$ ). Choosing $m = \kappa =$ 1, $N = 3 2$ , $s = 3$ , and $\lambda = 1 / 4$ ,
+
+a. Implement the Euler-B method for this problem.
+
+b. Design and implement a first-order “linear/nonlinear” splitting method for this problem.
+
+c. Apply each of the two methods with the following initial condition
+
+$$
+q _ { i } = \left( \frac { 2 } { N } \right) ^ { 1 / 2 } \sin \frac { i \pi } { N } , \qquad p _ { i } = 0 ,
+$$
+
+$i = 1 , \ldots , N { - } 1$ , over a time interval of 200 periods of length $T = 2 \pi / \omega$ , $\omega = 2 \sin ( \pi / ( 2 N ) )$ [192]. Monitor the total energy $H$ and the harmonic energy
+
+$$
+E _ { \mathrm { { h a r m o n i c } } } = { \frac { 1 } { 2 m } } \sum _ { i = 1 } ^ { N - 1 } p _ { i } ^ { 2 } + { \frac { \kappa } { 2 } } \sum _ { i = 1 } ^ { N - 1 } r _ { i } ^ { 2 } .
+$$
+
+Compare the methods in terms of accuracy and efficiency. For further comparison, also implement the fourth-order explicit Runge–Kutta method of Section 2.4. Changing the value of $\lambda$ , what behavior in Eharmonic do you observe for larger and smaller values of $\lambda ?$
+
+6. Discretized Schr¨odinger equation. Differential equations involving complex variables arise in quantum mechanics following discretization in the spatial variables. In a simplified case such systems would take the form of a linear system
+
+$$
+\dot { z } = - \mathrm { i } H z ,
+$$
+
+where the dimension of the complex vector $\boldsymbol { z } \in \mathbb { C } ^ { d }$ is typically very large, and $H$ is a real symmetric matrix. This can be viewed as a canonical Hamiltonian system over a symplectic structure on $\mathbb { C } ^ { d }$ . We introduce the complex-valued Hermitian inner product
+
+$$
+\langle \pmb { u } , \pmb { v } \rangle _ { \mathsf { C } } = \sum _ { i = 1 } ^ { d } \bar { u } _ { i } v _ { i } ,
+$$
+
+where $\bar { W }$ denotes the complex conjugate of a complex number $W \in \mathbb { C }$ . The symplectic two-form $\Omega$ is now defined in terms of the imaginary part of the Hermitian inner product [124]
+
+$$
+\Omega ( \pmb { \xi } , \pmb { \eta } ) = \mathsf { I m } \langle \pmb { \xi } , \pmb { \eta } \rangle _ { \mathsf { C } } , \qquad \pmb { \xi } , \pmb { \eta } \in \mathbb { C } ^ { d } .
+$$
+
+The real inner product needed to define the gradient is given by
+
+$$
+\langle \pmb { u } , \pmb { v } \rangle = \mathsf { R e } \langle \pmb { u } , \pmb { v } \rangle _ { \mathsf { C } } .
+$$
+
+a. Using the standard definition
+
+$$
+\langle \nabla _ { z } H ( z ) , u \rangle = \operatorname* { l i m } _ { \varepsilon \to 0 } { \frac { H ( z + \varepsilon u ) - H ( z ) } { \varepsilon } }
+$$
+
+of a gradient, show that
+
+$$
+\nabla _ { z } H ( z ) = H z ,
+$$
+
+for the quadratic Hamiltonian
+
+$$
+H ( z ) = { \frac { 1 } { 2 } } \langle z , H z \rangle .
+$$
+
+Also verify that the structure matrix associated with the symplectic twoform $\Omega$ is
+
+$$
+J = - \mathsf { i } I _ { d } ,
+$$
+
+i.e.
+
+$$
+\Omega ( \pmb { \xi } , \pmb { \eta } ) = \langle \pmb { \xi } , \pmb { J } ^ { - 1 } \pmb { \eta } \rangle .
+$$
+
+b. Show that the two-norm $\| z \| _ { 2 }$ is a conserved quantity of the differential equation (4.34). Discretize the Schr¨odinger equation (4.34) by the implicit midpoint method. Is the resulting discretization symplectic and will it preserve the two-norm $\Vert z \Vert _ { 2 } ?$ Note: recall that the two-norm of a vector $z = ( z _ { 1 } , z _ { 2 } , \ldots , z _ { d } ) ^ { T }$ in $\mathbb { C } ^ { d }$ is defined by
+
+$$
+\| z \| = \langle z , z \rangle ^ { 1 / 2 } = ( | z _ { 1 } | ^ { 2 } + | z _ { 2 } | ^ { 2 } + . . . + | z _ { d } | ^ { 2 } ) ^ { 1 / 2 } ,
+$$
+
+where $\left| Z _ { j } \right|$ represents the complex modulus of $Z _ { I }$ , i.e. the square root of the sum of squares of the real and imaginary parts.
+
+c. By separating $z = x + \mathrm { i } y$ into its real and imaginary parts, show that (4.34) can be rewritten as a canonical and separable Hamiltonian system with $d$ degrees of freedom. If the St¨ormer–Verlet method is applied to this system, is the two-norm of the solution still conserved?
+
+7. Time-dependent Hamiltonian systems. A time-dependent or non-autonomous Hamiltonian system in $R ^ { 2 d }$ has an energy function
+
+$$
+H = H ( \pmb { q } , \pmb { p } , t ) .
+$$
+
+The differential equations associated to such a system are taken to be
+
+$$
+\begin{array} { r } { \dot { \pmb q } = + \nabla _ { \pmb { p } } H ( \pmb q , \pmb { p } , t ) , } \\ { \dot { \pmb { p } } = - \nabla _ { \pmb { q } } H ( \pmb q , \pmb { p } , t ) . } \end{array}
+$$
+
+The key difference between an autonomous (time-independent) and nonautonomous system is that, in the latter case, the energy is no longer a conserved quantity of the motion. On the other hand, it is possible to construct an extended system for any non-autonomous system by identifying $t$ with an additional variable $Q$ , corresponding momentum $P$ , and Hamiltonian
+
+$$
+\tilde { H } = H ( \pmb { q } , \pmb { p } , Q ) + P .
+$$
+
+a. Write out the differential equations for the extended Hamiltonian $\tilde { H }$ . Show that if the extended system is solved with initial conditions $\pmb q ( t _ { 0 } ) =$ $\pmb q ^ { 0 }$ , $\pmb { p } ( t _ { 0 } ) = \pmb { p } ^ { 0 }$ , $Q ( t _ { 0 } ) = t _ { 0 }$ , $P ( t _ { 0 } ) = 0$ , then the solution obtained is the same as that of the original Hamiltonian $( H )$ for the initial conditions $\pmb q ( t _ { 0 } ) = \pmb q ^ { 0 }$ , $\pmb { p } ( t _ { 0 } ) = \pmb { p } ^ { 0 }$ . Thus a non-autonomous Hamiltonian system is equivalent to an autonomous system with an additional degree of freedom.
+
+b. A symplectic integrator applied to the extended Hamiltonian system can typically be reduced to an integrator for the original system. By applying Euler-B to (4.35) and simplifying the resulting equations, show that, in terms of the original variables, the method is equivalent to
+
+$$
+\begin{array} { r } { \pmb q ^ { n + 1 } = \pmb q ^ { n } + \Delta t \nabla _ { p } H ( \pmb q ^ { n } , \pmb p ^ { n + 1 } , t _ { n } ) , } \\ { \pmb p ^ { n + 1 } = \pmb p ^ { n } - \Delta t \nabla _ { p } H ( \pmb q ^ { n } , \pmb p ^ { n + 1 } , t _ { n } ) . } \end{array}
+$$
+
+c. Find the appropriate generalization of the St¨ormer–Verlet method to non-autonomous Hamiltonian systems of the form $H ( \pmb { q } , \pmb { p } ) = T ( \pmb { p } ) +$ $V ( \pmb q , t )$ .
+
+d. (Refers to problem $^ { 6 }$ .) In many applications arising in quantum mechanics, the matrix $H$ in (4.34) must be regarded as time dependent. Often, the system takes the form
+
+$$
+\pmb { H } = \pmb { H } _ { 0 } + \varepsilon \pmb { H } _ { 1 } ( t ) ,
+$$
+
+where $H _ { 0 }$ is independent of $t$ and easily diagonalized (i.e. has eigenvalues that can easily be computed), while $H _ { 1 } ( t )$ is very sparse (has many zero elements) or is possibly diagonal, and $\varepsilon > 0$ is a small coupling parameter. Based on this additive decomposition, and an extension of the Hamiltonian as outlined above, develop an appropriate symplectic splitting method for the non-autonomous, Hamiltonian system (4.34).
+
+8. General reversing symmetry and magnetic fields. Recall that a general differential equation ${ d z } / { d t } = { { \pmb f } } ( z )$ is reversible with respect to an involution S if $- { \pmb f } ( z ) = { \pmb S } { \pmb f } ( { \pmb S } z )$ .
+
+a. With this definition, show that the equations of motion for a particle in a constant magnetic field are not time reversible with respect to the involution $p  - p$ .
+
+b. Consider an augmented system obtained by treating the constant vector $b$ as a variable of the system
+
+$$
+\begin{array} { l } { \displaystyle { \frac { d } { d t } q = p / m , } } \\ { \displaystyle { \frac { d } { d t } p = - \nabla _ { q } V ( q ) + \frac { 1 } { m } b \times p , } } \\ { \displaystyle { \frac { d } { d t } b = 0 . } } \end{array}
+$$
+
+Show that this system is time reversible with respect to the involution defined by $p  - p , \ b  - b$ .
+
+c. Consider the implication of part (b) for the flow map of the system. What property should a method have to be considered time reversible for the magnetic field problem? In what sense is Scovel’s method a timereversible scheme?
+
+9. Preservation of first integrals. Show for any of the two symplectic Euler methods that first integrals of the general form
+
+$$
+F = \pmb { q } ^ { T } \pmb { A } p
+$$
+
+are exactly preserved. What can you conclude for the generalized leapfrog method?
+
+10. Canonical Hamiltonian with a magnetic field. The equations of motion for a particle in a constant magnetic field can be recast in an alternative, canonical Hamiltonian form. For a constant magnetic field $b$ , this was discussed in Chapter 3. Here we generalize the canonical approach to nonconstant magnetic fields $b ( q )$ , $\pmb q \in \mathbb { R } ^ { 3 }$ .
+
+a. We assume that
+
+$$
+\sum _ { i = 1 } ^ { 3 } \frac { \partial } { \partial q _ { i } } b _ { i } ( \pmb q ) = 0 .
+$$
+
+Hence, one can introduce a (non-unique) vector potential $\pmb { A }$ such that $\nabla _ { q } \times \pmb { A } ( \pmb { q } ) = \pmb { b } ( \pmb { q } )$ . For a constant vector $b$ , what is $A ( q ) ?$
+
+b. Write out the differential equations for the canonical Hamiltonian
+
+$$
+H _ { c } ( \pmb { p } , \pmb { q } ) = \frac { 1 } { 2 m } | | \pmb { p } + \pmb { A } ( \pmb { q } ) | | ^ { 2 } - \frac { \gamma } { | | \pmb { q } | | }
+$$
+
+and compare with (3.32)–(3.33) of Chapter 3.
+
+c. Devise symplectic methods for the canonical equations of motion. Discuss their respective advantages and disadvantages.
+
+11. Time-reversible methods. Show that the generalized St¨ormer–Verlet method and the implicit midpoint rule are both time reversible when applied to a time-reversible Hamiltonian system. Use the symmetry property of the two methods and show that
+
+$$
+\pmb { \psi } _ { \Delta t } ( z ^ { n } ) = \pmb { S } \pmb { \psi } _ { - \Delta t } ( \pmb { S } z ^ { n } ) .
+$$
+
+On the contrary, both symplectic Euler methods also satisfy the above identity but, since they are not symmetric, they are not time reversible. Verify this statement for the symplectic Euler-B method.
+
+# 5
+
+# The modified equations
+
+We have seen in the previous chapter that integrators preserving symplectic structure and/or first integrals can often be constructed in a straightforward way. In this chapter, we consider the properties of those methods and the implications for long-term simulations.
+
+The traditional approach of numerical analysis generally assumes that the purpose of simulation is the faithful reproduction of a particular solution or trajectory, but individual trajectories typically are not of primary interest in most modern, scientific research; 1 rather, the scientist typically treats the trajectory as a particular realization of a fundamentally stochastic evolution modelling in some way the myriad undetermined perturbations present in a “real-world” environment. It was the important discovery of LORENZ [119] that differential equations can exhibit a chaotic solution behavior that includes an essentially stochastic or “random” component. The scientist views the model being analyzed as representative of a class of nearby models based on parameters which are typically only empirically (and approximately) determined. Furthermore, exact initial conditions are also typically not available. Some classical examples of such a scenario are molecular dynamics and numerical weather prediction.
+
+It is now apparent that most modern large-scale simulations are conducted with timesteps and time intervals such that the numerical solution cannot be thought of as close to any particular model solution. The purpose of wedding the development of integrators to the standard axiomatic principle of timestepping – that one is attempting to approximate a particular trajectory – is thus called into question. Although high accuracy often is not needed in nonlinear dynamics computations, we must recognize certain important constraints imposed by the laws of nature. For example, there is widespread agreement that a conservative system should be sampled on or near the surface of constant energy, although it should be evident by now that this alone is not enough of a restriction (any arbitrary sequence of random data points in the phase space could be easily projected to the energy surface, but would not be expected to provide a reasonable approximation of a trajectory). The presence of first integrals such as energy and weaker adiabatic invariants (which exhibit only a mild variation over long time intervals) can provide helpful criteria for assessing the validity of a simulation, even in a nonlinear setting.
+
+In this chapter, we begin our investigation of the implications of geometric properties for the behavior of a numerical method. The cornerstone of this theory is the principle of backward error analysis. In the context of numerical linear algebra, backward error analysis was promulgated by WILKINSON [202] and others and has been used as a means of evaluating the propagation of rounding errors in various matrix algorithms. Let us illustrate with the problem of solving a system of $N$ linear equations in $N$ unknowns
+
+$$
+\pmb { A x } = \pmb { b } ,
+$$
+
+where the $N \times N$ nonsingular matrix $\pmb { A }$ and right-hand side vector $\pmb { b } \in \mathbb { R } ^ { N }$ are known, and a vector $\boldsymbol { x } \in \mathbb { R } ^ { N }$ is to be computed by the standard technique of Gaussian elimination, i.e. reduction of the matrix A to an upper triangle matrix via successive elementary row operations (replacing a row of the matrix by the sum of the row and a scalar multiple of another), and corresponding modification of the right-hand side. At each stage of the calculation in finite precision, rounding errors are introduced. These rounding errors are compounded by successive operations, and this may result in a serious growth in error. In a forward error analysis, the potential magnitude of this error growth is evaluated, resulting in a bound for the total error as a function of the dimension of the system and the magnitude of the rounding errors introduced at each step.
+
+For Gaussian elimination, it has been found that an alternative backward error analysis is far more meaningful. The philosophy of backward error is based on recognition that the problem being solved is, itself, typically only an approximation to the actual problem of interest, since the elements of the matrix A and vector $^ { b }$ are, themselves, generally subject to small errors of measurement, prior computation, and/or finite representation. It can be shown that the solution obtained by a numerical finite-precision arithmetic implementation of Gaussian elimination is the exact solution of a nearby linear system, i.e. the approximate solution $\widehat { \boldsymbol { x } }$ obtained by the numerical scheme satisfies a perturbed linear system of the form
+
+$$
+( \pmb { A } + \Delta \pmb { A } ) \widehat { \pmb { x } } = \pmb { b } + \Delta \pmb { b } ,
+$$
+
+where the magnitudes of the matrix $\Delta A$ and vector $\Delta b$ can be bounded by the product of a constant, the growth factor, and the magnitude of the rounding errors.
+
+It is this idea which we will now develop for the purposes of understanding geometric integrators. In this analogy, the linear system is replaced by a system of differential equations satisfying some geometric properties (for example, Hamiltonian, symplecticness, integral preserving). Truncation errors introduced by the integrator play the same role as rounding errors do in the linear algebra context. It is shown that, in a practical sense, the numerical solution obtained from an appropriate geometric integrator is the exact solution to a perturbed system of differential equations satisfying the same geometric property (or properties). The existence of such a backward error interpretation has direct implications for the qualitative behavior of the numerical solution and, ultimately, in the effectiveness of the method compared with others.
+
+# 5.1 Forward v. backward error analysis
+
+The discretization of a sufficiently smooth differential equation,
+
+$$
+\frac { d } { d t } z = \pmb { f } ( z ) ,
+$$
+
+by a one-step method
+
+$$
+z ^ { n + 1 } = \pmb { \psi } _ { \Delta t } ( z ^ { n } ) , \qquad t _ { n + 1 } = t _ { n } + \Delta t ,
+$$
+
+of order $p \geq 1$ implies that there exists a constant $M > 0$ such that
+
+$$
+\begin{array} { r } { | | \psi _ { \Delta t } ( z ) - \phi _ { \Delta t , t } ( z ) | | \leq M \Delta t ^ { p + 1 } , } \end{array}
+$$
+
+for all $z$ in an appropriate subset of phase space $\mathbb { R } ^ { k }$ and for all $\Delta t$ sufficiently small. Here $\pmb { \phi } _ { \Delta t , f }$ denotes the exact time- $\Delta t$ -flow of the vector field $\boldsymbol { f }$ . As already mentioned in Section 2.1.2, the difference between the exact solution $z ( t _ { n } )$ and the numerically computed approximation $z ^ { n }$ at $t ~ = ~ t _ { n }$ satisfies an upper bound
+
+$$
+| | z ( t _ { n } ) - z ^ { n } | | \leq K \left( e ^ { t _ { n } L } - 1 \right) \Delta t ^ { p } ,
+$$
+
+$L > 0$ the Lipschitz constant of $\boldsymbol { f }$ and $K > 0$ a constant independent of $t _ { n }$ and $\Delta t$ . It is obvious that this estimate becomes useless whenever $t _ { n } L \gg 1$ unless a very small timestep $\Delta t$ is taken. This requirement is certainly not satisfied in simulations of large nonlinear systems where low-order methods are typically used to integrate to very long times $t _ { n }$ .
+
+Backward error (or modified equations) analysis in the context of (partial) differential equations can be traced back to the work of WARMING AND HYETT [199]. The idea is simple: we derive a modified differential equation (the modified differential equation depends on the stepsize $\Delta t$ )
+
+$$
+\frac { d } { d t } z = \tilde { { \pmb f } } ( z ; \Delta t ) ,
+$$
+
+and choose the modified vector field $\tilde { \pmb { f } } ( \Delta t ) : \mathbb { R } ^ { k }  \mathbb { R } ^ { k }$ such that the numerical method $\psi _ { \Delta t }$ is a more accurate solution to this modified problem.
+
+Let us demonstrate the basic idea by going through a simple example. Assume we discretize the differential equation (5.2) by the explicit Euler method
+
+$$
+z ^ { n + 1 } = z ^ { n } + { \Delta t } f ( z ^ { n } ) .
+$$
+
+This approximation has to be compared with the flow map $\boldsymbol { \phi } _ { t , f }$ at $t = \Delta t$ . The first two terms in the Taylor series expansion of $\pmb { \phi } _ { t = \Delta t , f }$ are given by
+
+$$
+\begin{array} { r l r } {  { z ( t _ { n + 1 } ) = \pmb { \phi } _ { \Delta t , f } ( z ^ { n } ) } } \\ & { } & { = z ^ { n } + \Delta t \pmb { f } ( z ^ { n } ) + \frac { \Delta t ^ { 2 } } { 2 } \pmb { f } ^ { \prime } ( z ^ { n } ) \pmb { f } ( z ^ { n } ) + \mathcal { O } ( \Delta t ^ { 3 } ) , } \end{array}
+$$
+
+where $\pmb { f } ^ { \prime } ( z )$ denotes the Jacobian of $\boldsymbol { f }$ at $z$ . Taking the difference of $\psi _ { \Delta t } ( z ^ { n } )$ and $\pmb { \phi } _ { \Delta t , f } \left( z ^ { n } \right)$ , we obtain, as expected,
+
+$$
+\pmb { \phi } _ { \Delta t , t } ( z ^ { n } ) - \pmb { \psi } _ { \Delta t } ( z ^ { n } ) = \frac { \Delta t ^ { 2 } } { 2 } \pmb { f } ^ { \prime } ( z ^ { n } ) \pmb { f } ( z ^ { n } ) + \pmb { \mathcal { O } } ( \Delta t ^ { 3 } ) .
+$$
+
+Let us now consider the modified differential equation
+
+$$
+\frac { d } { d t } z = \tilde { { \bf f } } _ { 1 } ( z ; \Delta t ) : = { \bf f } ( z ) - \frac { \Delta t } { 2 } { \bf f } ^ { \prime } ( z ) { \bf f } ( z ) ,
+$$
+
+with associated flow map $\pmb { \phi } _ { t , \tilde { f } _ { 1 } }$ . At $t = \Delta t$ , we obtain (neglecting terms of order $\Delta t ^ { 3 }$ and higher)
+
+$$
+\begin{array} { l } { \phi _ { \Delta t , \tilde { f } _ { 1 } } ( z ^ { n } ) \approx \displaystyle \bigg [ z ^ { n } + t \tilde { f } _ { 1 } ( z ^ { n } ; \Delta t ) + \frac { t ^ { 2 } } { 2 } \tilde { f } _ { 1 } ^ { \prime } ( z ^ { n } ; \Delta t ) \tilde { f } _ { 1 } ( z ^ { n } ; \Delta t ) \bigg ] _ { t = \Delta t } } \\ { \approx z ^ { n } + \Delta t \displaystyle \left[ f ( z ^ { n } ) - \frac { \Delta t } { 2 } { \bf f } ^ { \prime } ( z ^ { n } ) { \bf f } ( z ^ { n } ) \right] + \frac { \Delta t ^ { 2 } } { 2 } { \bf f } ^ { \prime } ( z ^ { n } ) { \bf f } ( z ^ { n } ) . } \end{array}
+$$
+
+Thus
+
+$$
+\boldsymbol { \phi } _ { \Delta t , \tilde { t } _ { 1 } } ( \boldsymbol { z } ^ { n } ) = \boldsymbol { z } ^ { n } + \Delta t \boldsymbol { f } ( \boldsymbol { z } ^ { n } ) + \mathcal { O } ( \Delta t ^ { 3 } ) ,
+$$
+
+and comparison with (5.5) shows that the Euler method is a second-order discretization of the modified differential equation (5.6). This procedure can be continued. We make the ansatz
+
+$$
+\tilde { f } _ { i } ( z ; \Delta t ) = f ( z ) + \Delta t \delta f _ { 1 } ( z ) + \Delta t ^ { 2 } \delta f _ { 2 } ( z ) + . . . + \Delta t ^ { i } \delta f _ { i } ( z ) ,
+$$
+
+with $\delta { \pmb f } _ { 1 } ( z ) = - ( 1 / 2 ) { \pmb f } ^ { \prime } ( z ) { \pmb f } ( z )$ . As for the modification $\delta f _ { 1 }$ , the functions $\delta f _ { j }$ , $j = 2 , \dots , i$ , are obtained by computing the Taylor series expansion of the flow map $\boldsymbol { \phi } _ { t , \tilde { f } _ { i } }$ and choosing the modified differential equation2 such that
+
+$$
+\begin{array} { r } { \Phi _ { t = \Delta t , \tilde { t _ { i } } } ( z ^ { n } ) = z ^ { n } + \Delta t f ( z ^ { n } ) + \mathcal { O } ( \Delta t ^ { i + 2 } ) . } \end{array}
+$$
+
+Hence Euler’s method can be viewed as a discretization of order $p = i + 1$ for the modified differential equation (5.7). If we assume for the moment that we can increase the index $j$ to infinity and that the limit is well defined, then we may take $\tilde { \pmb { f } } ( \Delta t ) : = \tilde { \pmb { f } } _ { i = \infty } ( \Delta t )$ in (5.4) and the Euler method would be the exact solution to the modified differential equation (5.4) at $t = \Delta t$ , i.e.
+
+$$
+\pmb { \psi } _ { \Delta t } ( z ) = \pmb { \phi } _ { \Delta t , \tilde { t } } ( z ) .
+$$
+
+This equation is the equivalent to the backward error equation (5.1) for Gaussian elimination.
+
+It is important to keep in mind that backward error analysis requires that the stepsize $\Delta t$ is kept constant. Otherwise different modified differential equations are obtained at each integration step and the numerical method cannot be considered as the “exact” solution of a single modified differential equation.
+
+Let us return to general numerical one-step methods of order $p \geq 1$ . Ideally, we would like to find a modified differential equation (5.4) such that
+
+(i) the modified vector field $\tilde { \pmb { f } } ( \Delta t )$ is close to the given vector field $\boldsymbol { f }$ , i.e.,
+
+$$
+\begin{array} { r } { | | \pmb { f } ( z ) - \tilde { \pmb { f } } ( z ; \Delta t ) | | = \mathcal { O } ( \Delta t ^ { p } ) , } \end{array}
+$$
+
+$p \geq 1$ the order of the numerical method $\psi _ { \Delta t }$ , and (ii) the numerical computed solutions can be considered as the exact solutions of the modified vector field $\tilde { \pmb { f } } ( \Delta t )$ , i.e., the equality (5.8) holds.3
+
+Let us suppose for the moment that (i) and (ii) can indeed be achieved. We may compare the solution behavior of the modified equation (5.4) to the solutions of the given problem (5.2). In general, not much has been gained yet: the solutions of these two differential equations will, in general, still diverge exponentially fast as the time interval $t _ { n }$ is increased. Backward error analysis becomes useful as soon as one can show that the modified equation shares some qualitative features with the given problem. We will come back to this point in Section 5.1.2.
+
+# 5.1.1 Linear systems
+
+In this section, we focus on linear differential equations
+
+$$
+\frac { d } { d t } z = { \bf \cal A } z ,
+$$
+
+$z \in \mathbb { R } ^ { k }$ , $\pmb { A } \in \mathbb { R } ^ { k \times k }$ .
+
+While linear differential equations are certainly too special to be of practical relevance, restriction to this class of problems allows us to satisfy condition (5.8) exactly and to present the basic ideas of backward error analysis in a simple context. We have already encountered the basic ingredients in Section 2.6 when we discussed numerical methods for the harmonic oscillator using eigenvalues. Nonlinear problems have to be treated with different techniques and we will come back to them in Section 5.2.
+
+The general solution of a linear equation (5.9) can be obtained in the following manner. We make the ansatz
+
+$$
+\boldsymbol { z } ( t ) = \mathsf { R e } \{ \boldsymbol { v } \boldsymbol { \mathrm { e } } ^ { \lambda t } \} ,
+$$
+
+where $\pmb { v } \in \mathbb { C } ^ { k }$ is a complex-valued vector, $\lambda \in \mathbb { C }$ is a complex number, and $\mathsf { R e } \left( z \right)$ denotes the real part of a complex number $Z$ . Upon substituting this trial solution into the equation (5.9), we obtain the algebraic condition
+
+$$
+\mathsf { R e } \left\{ \left[ \pmb { A } - \lambda \pmb { I } _ { k } \right] \pmb { v } \mathrm { e } ^ { \lambda t } \right\} = \mathbf { 0 } .
+$$
+
+Since this equation has to hold for all $t$ , we have to have
+
+$$
+\left[ \pmb { A } - \lambda \pmb { I } _ { k } \right] \pmb { v } = \pmb { 0 } ,
+$$
+
+and, hence, $\lambda$ is an eigenvalue of $\pmb { A }$ and $\pmb { v }$ an associated eigenvector. Denote the set of eigenvalues of $\pmb { A }$ by $\lambda _ { j }$ , $i = 1 , \ldots , k$ , with associated eigenvectors $\pmb { v } _ { j }$ , then the general solution of (5.9) can be represented as4
+
+$$
+z ( t ) = \sum _ { i } { \mathsf { R e } } \left\{ c _ { i } { \pmb v } _ { i } \mathrm { e } ^ { \lambda _ { i } t } \right\} ,
+$$
+
+where $C _ { I }$ , $i = 1 , \dots , k$ , are complex numbers determined by the initial condition $z ( 0 ) = z _ { 0 }$ , i.e.,
+
+$$
+z _ { 0 } = \sum _ { i } { \mathsf { R e } } \{ c _ { i } \ : v _ { i } \} .
+$$
+
+4Here we have assumed, for simplicity, that all eigenvalues are distinct from each other and the eigenvectors form a complete basis in Rk .
+
+Example 1Let us discuss the harmonic oscillator
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } q = \omega p , } \\ { \displaystyle \frac { d } { d t } p = - \omega q , } \end{array}
+$$
+
+with frequency $\omega > 0$ . The associated matrix
+
+$$
+\pmb { A } = \left[ \begin{array} { c c } { 0 } & { \omega } \\ { - \omega } & { 0 } \end{array} \right]
+$$
+
+has eigenvalues $\lambda _ { 1 / 2 } = \pm i \omega$ and (normalized) eigenvectors
+
+$$
+v _ { 1 } = { \frac { 1 } { \sqrt 2 } } \left[ { - i \atop 1 } \right] , \qquad v _ { 2 } = { \frac { 1 } { \sqrt 2 } } \left[ { 1 \atop - i } \right] .
+$$
+
+The general solution can be written as
+
+$$
+q ( t ) = c _ { 1 } \mathsf { R e } \{ - i \mathsf { e } ^ { i \omega t } \} + c _ { 2 } \mathsf { R e } \{ \mathsf { e } ^ { - i \omega t } \} = c _ { 1 } \mathsf { S i n } ( \omega t ) + c _ { 2 } \mathsf { C o s } ( \omega t ) ,
+$$
+
+and
+
+$$
+p ( t ) = c _ { 1 } \mathsf { R e } \left\{ \mathsf { e } ^ { i \omega t } \right\} + c _ { 2 } \mathsf { R e } \left\{ - i \mathsf { e } ^ { - i \omega t } \right\} = c _ { 1 } \mathsf { c o s } ( \omega t ) - c _ { 2 } \mathsf { s i n } ( \omega t ) ,
+$$
+
+where $c _ { 1 } = p ( 0 )$ and $c _ { 2 } = q ( 0 )$ .
+
+Let us return to numerical approximations of (5.9). Any one-step method discussed in Chapters 2 and 4 will lead to a discretization of type (see Section 2.6)
+
+$$
+\begin{array} { r } { z ^ { n + 1 } = \pmb { \psi } _ { \Delta t } ( z ^ { n } ) , } \\ { = \widehat { R } ( \Delta t ) z ^ { n } . } \end{array}
+$$
+
+Here $\widehat { R } ( \Delta t )$ is a $k \times k$ matrix depending on the stepsize $\Delta t$ . To be able to relate the numerical solutions $z ^ { n }$ back to the analytic solution, we write
+
+$$
+z ^ { n } = \mathsf { R e } \{ \pmb { u } \mathrm { e } ^ { \tilde { \lambda } t _ { n } } \} , \qquad t _ { n } = { n } \cdot \Delta t ,
+$$
+
+and obtain the algebraic condition
+
+$$
+\left[ \widehat { R } ( \Delta t ) - \mu I _ { k } \right] \pmb { u } = \mathbf { 0 }
+$$
+
+for $\pmb { u }$ and
+
+$$
+\boldsymbol { \mu } = \mathrm { e } ^ { \tilde { \lambda } \Delta t } .
+$$
+
+Hence, for any fixed value of $\Delta t$ , we have to find all eigenvectors $\pmb { u } _ { j }$ and eigenvalues $\mu _ { i } , i = 1 , \ldots , k$ , of the matrix $\widehat { R } ( \Delta t )$ . Then the numerical approximation
+
+$z ^ { n }$ is given by
+
+$$
+z ^ { n } = \sum _ { j } \mathsf { R e } \{ d _ { i } { \pmb u } _ { i } \mu _ { i } ^ { n } \} = \sum _ { j } \mathsf { R e } \{ d _ { i } { \pmb u } _ { i } \mathrm { e } ^ { \tilde { \lambda } _ { i } t _ { n } } \} ,
+$$
+
+with
+
+$$
+\tilde { \lambda } _ { i } = \frac { 1 } { \Delta t } \ln \mu _ { i } ,
+$$
+
+and the complex numbers $d _ { i }$ are determined by the initial $z ^ { 0 } = z ( 0 )$ .
+
+Example 2The explicit Euler method,applied to (5.9), leads to
+
+$$
+\widehat { \pmb { R } } ( \Delta t ) = \pmb { I } _ { k } + \Delta t \pmb { A } .
+$$
+
+It is easy to verify that an eigenvector $\pmb { v }$ of the matrix $\pmb { A }$ is also an eigenvector of $\widehat { R } ( \Delta t )$ , i.e. $v = u$ . This observation leads immediately to
+
+$$
+\mu _ { i } = 1 + \Delta t \lambda _ { i } ,
+$$
+
+where $\lambda _ { j }$ is an eigenvalue of $\pmb { A }$ . More generally, any (non-partitioned) Runge–Kutta (RK) method (see Section 2.4) leads to a matrix $\widehat { R } ( \Delta t )$ which has a set of eigenvectors identical to that of $\pmb { A }$ . Hence $\mu$ is equal to a rational polynomial in $\lambda$ . For example, the implicit midpoint rule leads to
+
+$$
+\mu _ { i } = \frac { 1 + ( \Delta t / 2 ) \lambda _ { i } } { 1 - ( \Delta t / 2 ) \lambda _ { i } } .
+$$
+
+Let us apply these formulas to the harmonic oscillator (5.10)–(5.11). The explicit Euler method yields
+
+$$
+\mu _ { 1 / 2 } = 1 \pm i \omega \Delta t = r \mathrm { e } ^ { \pm i \tilde { \omega } \Delta t } ,
+$$
+
+where
+
+$$
+r = \sqrt { 1 + ( \omega \Delta t ) ^ { 2 } } , ~ \tilde { \omega } = \frac { \tan ^ { - 1 } ( \omega \Delta t ) } { \Delta t } .
+$$
+
+This expression has to be compared with $\mathrm { e } ^ { \pm i \omega \Delta t }$ . We see that the numerical solutions grow in magnitude since $r > 1$ and that there is a shift in phase since $\tilde { \omega } < \omega$ . On the other hand, the implicit midpoint rule leads to $r = 1$ and
+
+$$
+\tilde { \omega } = \frac { 2 } { \Delta t } \tan ^ { - 1 } \left( { \omega \Delta t } / { 2 } \right) .
+$$
+
+Hence, the numerical solutions have constant magnitude but there is still a shift in phase, i.e., $\tilde { \omega } < \omega$ . ✷
+
+We now give (5.13) a time-continuous interpretation, i.e.,
+
+$$
+\boldsymbol { z } ( t ) = \sum _ { i } \mathsf { R e } \left\{ d _ { i } \boldsymbol { u } _ { i } \mathrm { e } ^ { \tilde { \lambda } _ { i } t } \right\} ,
+$$
+
+and develop the modified equation corresponding to the scheme (5.12). For a fixed value of $\Delta t$ , denote the matrix of eigenvectors $\pmb { u } _ { j }$ of $\widehat { R } ( \Delta t )$ by ${ \cal U } ( \Delta t )$ and the diagonal matrix of eigenvalues $\mu _ { j }$ by $M ( \Delta t )$ . Then, upon dropping the stepsize dependence of all matrices involved, the identity
+
+$$
+\widehat { \pmb { R } } = { \pmb { U } } { \pmb { M } } { \pmb { U } } ^ { - 1 }
+$$
+
+is obtained, which leads to the matrix
+
+$$
+{ \tilde { \pmb { A } } } : = { \pmb { U } } { \pmb { \Lambda } } { \pmb { U } } ^ { - 1 } ,
+$$
+
+where $\pmb { \Lambda }$ is a diagonal matrix with its diagonal entries equal to $\tilde { \lambda } _ { j }$ . Indeed, since
+
+$$
+\mathrm { e } ^ { t \tilde { A } } | _ { t = n \Delta t } = U \mathrm { e } ^ { n \Delta t \Lambda } U ^ { - 1 } = U \left[ \mathrm { e } ^ { \Delta t A } \right] ^ { n } U ^ { - 1 } = U \left[ M \right] ^ { n } U ^ { - 1 } = \left[ \widehat { R } \right] ^ { n } ,
+$$
+
+we can conclude that (5.12) can be viewed as the exact solution of the modified linear differential equation
+
+$$
+\frac { d } { d t } z = \tilde { \pmb { A } } ( \Delta t ) z
+$$
+
+sampled at time intervals $\Delta t$
+
+Example 3 Let us apply a general Runge-Kutta method to the harmonic oscillator (5.10)–(5.11). We write
+
+$$
+\mu _ { 1 / 2 } = r \mathrm { e } ^ { \pm i \tilde { \omega } \Delta t } ,
+$$
+
+with both $\tilde { \omega }$ and $r$ depending on $\Delta t$ . Then the modified differential equation is of the form
+
+$$
+\frac { d } { d t } z = \tilde { \omega } ( \Delta t ) J z + \frac { \log r ( \Delta t ) } { \Delta t } z ,
+$$
+
+and, hence
+
+$$
+\tilde { \pmb { A } } ( \Delta t ) : = \tilde { \omega } ( \Delta t ) \pmb { J } + \frac { \log r ( \Delta t ) } { \Delta t } \pmb { I } _ { 2 } .
+$$
+
+The harmonic oscillator has energy
+
+$$
+H = { \frac { \omega } { 2 } } \left[ q ^ { 2 } + p ^ { 2 } \right] .
+$$
+
+If we evaluate the energy along solutions of the modified equations, then we obtain
+
+$$
+\frac { d } { d t } H = \frac { 2 \log r ( \Delta t ) } { \Delta t } H .
+$$
+
+Hence a RK method conserves energy if and only if $r ( \Delta t ) = 1$ . This is the case for all Gauss–Legendre $\mathsf { R K }$ methods, which also happen to be symplectic. In fact, a Gauss–Legendre RK method, applied to the harmonic oscillator (5.10)–(5.11), can be thought of as the exact solution to a modified harmonic oscillator (Hamiltonian system) with modified Hamiltonian
+
+$$
+\tilde { \cal H } = { \frac { \tilde { \omega } ( \Delta t ) } { 2 } } \left[ q ^ { 2 } + p ^ { 2 } \right] ,
+$$
+
+i.e. a harmonic oscillator with frequency $\tilde { \omega } ( \Delta t )$
+
+This last example showed that the modified equation (5.15) may inherit the Hamiltonian structure of the given equations of motion provided a proper discretization is used. In particular, for the harmonic oscillator, the symplectic Gauss–Legendre RK methods conserve energy exactly and can be viewed as exact solutions to a “modified” harmonic oscillator. In the following section we will explore the relation of symplectic methods and conservation of energy in the context of general nonlinear Hamiltonian systems before presenting more detailed results in Section 5.2.
+
+# 5.1.2 The nearby Hamiltonian
+
+Let us suppose that (5.2) is a Hamiltonian differential equation, then it would be desirable that the modified vector field $\tilde { \pmb { f } } ( \Delta t )$ is also Hamiltonian with modified Hamiltonian function $\tilde { H } ( \Delta t )$ . As we will discuss in more detail in Section 5.2, symplectic integration methods indeed give rise to modified differential equations that are Hamiltonian. In particular:
+
+(i) the modified Hamiltonian $\tilde { H } ( \Delta t )$ is close to the originally given Hamiltonian $H$ , i.e.
+
+$$
+\mid \tilde { H } ( z ; \Delta t ) - H ( z ) \mid = \mathcal { O } ( \Delta t ^ { p } ) ,
+$$
+
+$p \geq 1$ the order of the method, and
+
+$$
+\tilde { \pmb { f } } ( \boldsymbol { z } ; \Delta t ) = \pmb { J } \nabla _ { \boldsymbol { z } } \tilde { H } ( \boldsymbol { z } ; \Delta t ) .
+$$
+
+The connection between symplectic integration methods and Hamiltonian modified equations has, for example, been explored in the work of AUERBACH AND FRIEDMAN [12], FENG [59], SANZ-SERNA [171], and YOSHIDA [206]. A more systematic treatment has, for example, been given by HAIRER [77], REICH [153], BENETTIN AND GIORGILLI [16], TANG [191], and CALVO, MURUA, AND SANZ-SERNA [40].
+
+Thus a symplectic integrator solves a slightly perturbed Hamiltonian problem “exactly.” If the qualitative solution behavior of the given problem is “stable” under small perturbations of the Hamiltonian, then, roughly speaking, a symplectic method will reproduce this qualitative solution behavior. Examples of such instances will be discussed in Section 5.2.3. On the other hand, non-symplectic methods, for which the modified vector field is not Hamiltonian, will change the qualitative solution behavior of a Hamiltonian problem in a significant way. In terms of the dynamics at equilibria for example, a non-Hamiltonian perturbation may change stable centers into sources or sinks.
+
+Let us have a closer look at the explicit Euler method and the symplectic Euler-A method (4.8)–(4.9) from Section 4.1 when applied to Hamiltonian differential equations
+
+$$
+\begin{array} { l } { { \displaystyle { \frac { d } { d t } } { \pmb q } = { \pmb M } ^ { - 1 } { \pmb p } } , \ } \\ { { \displaystyle { \frac { d } { d t } } { \pmb p } = - \nabla _ { \pmb q } V ( { \pmb q } ) . } \ } \end{array}
+$$
+
+According to the general formula (5.6), the explicit Euler method gives rise to a modified system (5.7) with the first-order modification given by
+
+$$
+\begin{array} { l } { { \displaystyle \delta f _ { 1 } ( \boldsymbol { q } , \boldsymbol { p } ) = - \frac { 1 } { 2 } \left[ \begin{array} { c c } { { \bf 0 } } & { { \cal M } ^ { - 1 } } \\ { { - \cal V } _ { \boldsymbol { q } \boldsymbol { q } } ( \boldsymbol { q } ) } & { { \bf 0 } } \end{array} \right] \left[ \begin{array} { c } { { \cal M } ^ { - 1 } { \boldsymbol { p } } } \\ { { - \nabla _ { \boldsymbol { q } } \boldsymbol { V } } ( \boldsymbol { q } ) } \end{array} \right] , } } \\ { { \displaystyle ~ = \frac { 1 } { 2 } \left[ \begin{array} { c } { { \cal M } ^ { - 1 } \nabla _ { \boldsymbol { q } } \boldsymbol { V } ( \boldsymbol { q } ) } \\ { { \cal V } _ { \boldsymbol { q } \boldsymbol { q } } ( \boldsymbol { q } ) { \cal M } ^ { - 1 } \boldsymbol { p } } \end{array} \right] . } } \end{array}
+$$
+
+This vector field is not conservative. Next we consider the symplectic Euler-A method
+
+$$
+\begin{array} { l } { { { \pmb q } ^ { n + 1 } = { \pmb q } ^ { n } + \Delta t { \pmb M } ^ { - 1 } { \pmb p } ^ { n } , } } \\ { { { \pmb p } ^ { n + 1 } = { \pmb p } ^ { n } - \Delta t \nabla _ { \pmb q } V ( { \pmb q } ^ { n + 1 } ) . } } \end{array}
+$$
+
+Taylor expansion of the second equation yields
+
+$$
+\pmb { p } ^ { n + 1 } = \pmb { p } ^ { n } - \Delta t \nabla _ { q } V ( \pmb { q } ^ { n } ) - \Delta t ^ { 2 } V _ { q q } ( \pmb { q } ^ { n } ) \pmb { M } ^ { - 1 } \pmb { p } ^ { n } + \pmb { \mathcal { O } } ( \Delta t ^ { 3 } ) .
+$$
+
+If we compare this with the Taylor series expansion of the exact time- $\Delta t$ -flow map, then we obtain the first-order modification
+
+$$
+\delta f _ { 1 } ( \pmb { q } , \pmb { p } ) = \frac { 1 } { 2 } \left[ \begin{array} { c } { { { \cal M } ^ { - 1 } \nabla _ { \pmb { q } } { \cal V } ( \pmb { q } ) } } \\ { { - { \cal V } _ { \pmb { q } \pmb { q } } ( \pmb { q } ) { \cal M } ^ { - 1 } \pmb { p } } } \end{array} \right]
+$$
+
+in the expansion (5.7). This term is conservative and can be written as
+
+$$
+\delta f _ { 1 } ( q , p ) = \left[ { + \nabla _ { p } \delta H _ { 1 } ( q , p ) } \right] , \quad \mathrm { w i t h } \quad \delta H _ { 1 } : = \frac { 1 } { 2 } p ^ { T } M ^ { - 1 } \nabla _ { q } V ( q ) .
+$$
+
+Thus the symplectic Euler-A method is a second-order integrator for a modified Hamiltonian system with Hamiltonian
+
+$$
+\tilde { H } _ { 1 } ( \Delta t ) = \frac { \pmb { p } ^ { T } \pmb { M } ^ { - 1 } \pmb { p } } { 2 } + V ( \pmb { q } ) + \frac { \Delta t } { 2 } \pmb { p } ^ { T } \pmb { M } ^ { - 1 } \nabla _ { \pmb { q } } V ( \pmb { q } ) .
+$$
+
+Example 4Let us consider the reduced Kepler problem
+
+$$
+\frac { d } { d t } r = p _ { r } , \quad \frac { d } { d t } p _ { r } = \frac { I ^ { 2 } } { r ^ { 3 } } - \frac { m _ { 3 } } { r ^ { 2 } }
+$$
+
+with Hamiltonian
+
+$$
+H ( r , p _ { r } ) = { \frac { 1 } { 2 } } p _ { r } ^ { 2 } + { \frac { I ^ { 2 } } { 2 r ^ { 2 } } } - { \frac { m _ { 3 } } { r } } .
+$$
+
+Here $r > 0$ is the distance of the planet to the origin (“sun”) and $m _ { 3 }$ is the (constant) angular momentum of the planet. We discretize the equations of motion by the Euler-A method and obtain
+
+$$
+r ^ { n + 1 } = r ^ { n } + \Delta t p _ { r } ^ { n } , \quad p _ { r } ^ { n + 1 } = p _ { r } ^ { n } - \Delta t \left[ \frac { m _ { 3 } } { ( r ^ { n + 1 } ) ^ { 2 } } - \frac { I ^ { 2 } } { ( r ^ { n + 1 } ) ^ { 3 } } \right] .
+$$
+
+To first order in $\Delta t$ , the associated modified Hamiltonian is
+
+$$
+\tilde { H } _ { 1 } ( r , p _ { r } ; \Delta t ) = H ( r , p _ { r } ) + \frac { \Delta t } { 2 } \left[ \frac { m _ { 3 } } { r ^ { 2 } } - \frac { I ^ { 2 } } { r ^ { 3 } } \right] p _ { r } .
+$$
+
+![](images/d98d11b8b1399f45722831a299b6ee2830ac50b6a5568db29da86f4b4165d9d2.jpg)  
+Figure 5.1 Maximum error in the energy with respect to the Hamiltonian $H$ (o) and the modified Hamiltonian $\tilde { H } _ { 1 } ( \Delta t ) \ ( \times )$ as a function of the stepsize $\Delta t$ .
+
+In Fig. 5.1, we plot the error in energy along numerically computed trajectories w.r.t. the Hamiltonian $H$ and the modified Hamiltonian $\tilde { H } _ { 1 } ( \Delta t )$ . The initial conditions $( r , p _ { r } ) = ( 1 , 0 . 5 )$ were used while the stepsize was chosen from $\Delta t \in [ 0 . 0 1 ,$ 0.1]. It can be seen that the numerical solution converges with first order in $\Delta t$ to $H = c o n s t$ . and with second order to $\tilde { H } _ { 1 } ( \Delta t ) = c o n s t .$ ., as predicted. An important point is that both $H$ and $\tilde { H } _ { 1 } ( \Delta t )$ possess the same qualitative solution behavior, i.e. the solutions are periodic. Its shape and period are, of course, different for the exact solution and its numerical approximation. This can be seen from Fig. 5.2. Note that the modified
+
+![](images/72298448d18446312d71f707235722d27e1b01b4a8497899dc9b28c0bf9f2396.jpg)  
+Figure 5.2 The numerical solution for $\Delta t = 0 . 2 \ ( \times )$ as compared with the exact solution of the Kepler problem and the exact solution of the modified problem with Hamiltonian $\tilde { H } _ { 1 } ( \Delta t = 0 . 2 )$ .
+
+Hamiltonian equations are
+
+$$
+\frac { d } { d t } r = p _ { r } + \frac { \Delta t } { 2 } \left[ \frac { m _ { 3 } } { r ^ { 2 } } - \frac { I ^ { 2 } } { r ^ { 3 } } \right] , \quad \frac { d } { d t } p _ { r } = \frac { c ^ { 2 } } { q ^ { 3 } } - \frac { m _ { 3 } } { r ^ { 2 } } + p _ { r } \frac { \Delta t } { 2 } \left[ \frac { 2 } { r ^ { 3 } } - \frac { 3 I ^ { 2 } } { r ^ { 4 } } \right] .
+$$
+
+# 5.2 The modified equations
+
+In this section, we examine in more detail the development of the modified equations and discuss their geometric properties in the context of Hamiltonian dynamics and symplectic integration.
+
+# 5.2.1 Asymptotic expansion of the modified equations
+
+Let us return to the formal expansion (5.7) of the modified vector field $\tilde { \pmb { f } } _ { i } ( \Delta t )$ . The correcting vector fields $\delta f _ { j }$ , $j = 1 , \dots , i$ , are determined by Taylor series expansion of the flow map $\pmb { \phi } _ { t = \Delta t , \tilde { \pmb { f } } _ { i } }$ and the numerical method $\psi _ { \Delta t }$ in terms of $\Delta t$ and by matching the first $j + 1$ terms in the two expansions. Here we describe a somewhat more abstract recursive approach [158]. Let us assume that a modified vector field $\tilde { \pmb { f } } _ { i } ( \Delta t )$ has been found such that the numerical method $\psi _ { \Delta t }$ is an integrator of order $p = i + 1$ with respect to this modified differential equation, i.e., the flow map $\pmb { \phi } _ { t , \tilde { f } _ { i } } ( z )$ satisfies
+
+$$
+\pmb { \phi } _ { \Delta t , \tilde { t } _ { i } } ( z ) - \pmb { \psi } _ { \Delta t } ( z ) = \mathscr { O } ( \Delta t ^ { i + 2 } ) .
+$$
+
+Then we define
+
+$$
+\delta { \pmb f } _ { i + 1 } ( z ) = \operatorname* { l i m } _ { \tau  0 } \frac { \pmb { \psi } _ { \tau } - \pmb { \phi } _ { \tau , \tilde { \pmb f } _ { i } ( \tau ) } ( z ) } { \tau ^ { i + 2 } } ,
+$$
+
+and introduce a new modified vector field $\tilde { \pmb { f } } _ { i + 1 } ( \Delta t )$ by
+
+$$
+\tilde { \pmb { f } } _ { i + 1 } ( \Delta t ) : = \tilde { \pmb { f } } _ { i } ( \Delta t ) + \Delta t ^ { i + 1 } \pmb { \delta } \pmb { f } _ { i + 1 } .
+$$
+
+This numerical method $\psi _ { \Delta t }$ is now a method of order $p = i + 2$ with respect to the new modified vector field $\tilde { \pmb { f } } _ { i + 1 } ( \Delta t )$ as can be seen from
+
+$$
+\begin{array} { r l } & { \boldsymbol { \phi } _ { \Delta t , \tilde { t } _ { i + 1 } } ( z ) - \boldsymbol { \psi } _ { \Delta t } ( z ) = \boldsymbol { \phi } _ { \Delta t , \tilde { t } _ { i } } ( z ) + \Delta t ^ { i + 2 } \delta { { f } _ { i + 1 } } ( z ) + \mathcal { O } ( \Delta { { t } ^ { i + 3 } } ) - \boldsymbol { \psi } _ { \Delta t } ( z ) } \\ & { \qquad = \Delta t ^ { i + 2 } \delta { { f } _ { i + 1 } } ( z ) + \boldsymbol { \phi } _ { \Delta t , \tilde { t } _ { i } } ( z ) - \boldsymbol { \psi } _ { \Delta t } ( z ) + \mathcal { O } ( \Delta { { t } ^ { i + 3 } } ) } \\ & { \qquad = \mathcal { O } ( \Delta { { t } ^ { i + 3 } } ) . } \end{array}
+$$
+
+The recursion is started with $\tilde { \pmb { f } } _ { 0 } : = { \pmb f }$ . For a method of order $p \geq 2$ , the first $p - 1$ vector fields $\delta f _ { j }$ are identical zero.
+
+Unfortunately, this series does not, in general, converge as $i  \infty$ , i.e., the recursion (5.18)–(5.19) yields only an asymptotic expansion. Estimates for the difference between the flow maps of the modified equations and the numerical method are available if the involved maps are real analytic and bounded on an open (complex) neighborhood of a compact subset ${ \mathcal { K } } \subset \mathbb { R } ^ { k }$ of phase space. In particular, BENETTIN AND GIORGILLI [16], HAIRER AND LUBICH [79], and REICH [158], using different techniques, derive an estimate of type
+
+$$
+| | \pmb { \psi } _ { \Delta t } ( z ) - \pmb { \phi } _ { \Delta t , \tilde { t } _ { i } } ( z ) | | \leq c _ { 1 } \Delta t ( c _ { 2 } ( i + 1 ) \Delta t ) ^ { i + 1 } ,
+$$
+
+for all $z \in \kappa$ , where $c _ { 1 } , c _ { 2 } > 0$ are appropriate constants independent of the iteration index $j$ and the stepsize $\Delta t$ . This formula indicates that the sequence of modified vector fields $\tilde { \pmb { f } } _ { i } ( \Delta t )$ converges before it starts to diverge for larger values
+
+![](images/423dcec0e17e55e3ebc9a290255ef967ec4721d6e4a995ff1c17f81a9724e8e2.jpg)  
+Figure 5.3 The function $f ( i ) = ( i \Delta t ) ^ { i }$ plotted for $\Delta t = 0 . 1$ $( + )$ , $\Delta t = 0 . 0 1$ (o), and $\Delta t = 0 . 0 0 1$ ( ) in the range $f ( j ) \leq 1$ .
+
+of $j$ ( $\Delta t$ fixed). The point of divergence is shifted to larger and larger values of $j$ as $\Delta t \to 0$ . See Fig. 5.3 for an illustration.
+
+Set $j _ { * }$ equal the integer part of
+
+$$
+s ( \Delta t ) : = \frac { 1 } { c _ { 2 } e \Delta t } - 1 .
+$$
+
+This choice implies
+
+$$
+\begin{array} { r } { c _ { 2 } \big ( i _ { * } + 1 \big ) \Delta t < c _ { 2 } \big ( s + 1 \big ) \Delta t = e ^ { - 1 } , } \end{array}
+$$
+
+$$
+j _ { * } + 1 > s ,
+$$
+
+and, hence, makes the expression on the right-hand side of (5.20) exponentially small in the stepsize $\Delta t$ :
+
+$$
+\begin{array} { r l } & { \lvert | \pmb { \psi } _ { \Delta t } ( z ) - \pmb { \phi } _ { \Delta t , \tilde { t } _ { i _ { * } } } ( z ) \rvert | \leq c _ { 1 } \Delta t e ^ { - i _ { * } - 1 } } \\ & { \qquad \leq c _ { 1 } \Delta t e ^ { - s } } \\ & { \qquad \leq 3 c _ { 1 } \Delta t e ^ { - \gamma / \Delta t } , } \end{array}
+$$
+
+with $\gamma = 1 / { \left( c _ { 2 } e \right) }$ . The modified differential equation is now defined by
+
+$$
+\frac { d } { d t } z = \tilde { \pmb { f } } ( z ; \Delta t ) : = \tilde { \pmb { f } } _ { i _ { * } } ( z ; \Delta t ) .
+$$
+
+Following standard forward error analysis (see Sections 2.1.2 and 2.3), the difference of the exact solution $z ( t _ { n } )$ of the modified differential equation (5.22) and the numerical computed $z ^ { n }$ at $t = t _ { n }$ is bounded by
+
+$$
+| | z ( t _ { n } ) - z ^ { n } | | \leq K \left( e ^ { t _ { n } \bar { L } } - 1 \right) e ^ { - \gamma / \Delta t } ,
+$$
+
+$K > 0$ an appropriate constant and $\bar { L } > 0$ the Lipschitz constant of the numerical method as introduced in Section 2.3. In contrast to forward error analysis with respect to the given differential equation, this term remains (exponentially) small over periods of time
+
+$$
+t _ { n } \ll \frac { \gamma } { \Delta t \bar { L } }
+$$
+
+[79]. Often this time interval is still not long enough, and more sophisticated error concepts, such as shadowing [76, 173] have to be used in addition to backward error analysis.
+
+# 5.2.2 Conservation of energy for symplectic methods
+
+If a Hamiltonian differential equation
+
+$$
+\frac { d } { d t } z = J \nabla _ { z } H ( z )
+$$
+
+is discretized by a symplectic method, then the modified vector fields $\tilde { \pmb { f } } _ { i } ( \Delta t )$ are Hamiltonian,5 i.e., there exists a Hamiltonian $\tilde { H } _ { i } ( \Delta t )$ such that
+
+$$
+\frac { d } { d t } z = \tilde { f } _ { i } ( z ; \Delta t ) = J \nabla _ { z } \tilde { H } _ { i } ( z ; \Delta t ) .
+$$
+
+A proof of this result will be given in Section 5.3.
+
+In case all the involved functions and maps are real analytic and bounded, the difference between the numerical method $\psi _ { \Delta t }$ and the flow map $\pmb { \phi } _ { \Delta t , \tilde { \pmb { f } } }$ of an optimally truncated modified equation (5.22) can be made exponentially small, i.e., an estimate (5.21) holds. Let us denote the corresponding Hamiltonian by $\tilde { H } ( \Delta t )$ . For a symplectic method of order $p \geq 1$ , we have
+
+$$
+H ( z ) - \tilde { H } ( z ; \Delta t ) = \mathcal { O } ( \Delta t ^ { p } ) .
+$$
+
+Let us now investigate the conservation of the modified Hamiltonian $\tilde { H } ( \Delta t )$ along numerically computed solutions. After $n$ steps, we obtain:
+
+$$
+\begin{array} { r l r } {  { | \tilde { H } ( z ^ { n } ; \Delta t ) - \tilde { H } ( z ^ { 0 } ; \Delta t ) | \leq \sum _ { i = 1 } ^ { n } | \tilde { H } ( z ^ { i } ; \Delta t ) - \tilde { H } ( z ^ { i - 1 } ; \Delta t ) | } } \\ & { } & { \leq \displaystyle \sum _ { i = 1 } ^ { n } | \tilde { H } ( \psi _ { \Delta t } ( z ^ { i - 1 } ) ; \Delta t ) - \tilde { H } ( \phi _ { \Delta t , \tilde { t } } ( z ^ { i - 1 } ) ; \Delta t ) | } \\ & { } & { \leq \displaystyle \sum _ { i = 1 } ^ { n } \lambda | | \psi _ { \Delta t } ( z ^ { i - 1 } ) - \phi _ { \Delta t , \tilde { t } } ( z ^ { i - 1 } ) | | } \\ & { } & { < 3 \lambda n \Delta t c _ { 1 } e ^ { - \gamma / \Delta t } , } \end{array}
+$$
+
+$\lambda > 0$ the Lipschitz constant of $\tilde { H } ( \Delta t )$ . Here we have used the estimate (5.21) and the fact that $\tilde { H } ( \Delta t )$ is a first integral of the modified vector field $\tilde { \pmb { f } } ( \Delta t )$ which implies that
+
+$$
+\begin{array} { r } { \tilde { H } ( z ^ { i - 1 } ; \Delta t ) = \tilde { H } ( \Phi _ { \Delta t , \tilde { t } } ( z ^ { i - 1 } ) ; \Delta t ) . } \end{array}
+$$
+
+Thus the drift in the energy $\tilde { H } ( \Delta t )$ remains exponentially small over exponentially long time intervals
+
+$$
+t _ { N } = n \cdot \Delta t \leq e ^ { \gamma / ( 2 \Delta t ) } .
+$$
+
+This estimate and (5.25) imply the conservation of the given Hamiltonian $H$ over an exponentially long period of time up to terms of order $\Delta t ^ { p }$ . This result was first mentioned by NEISHTADT [143]. Explicit proofs can be found in the papers by BENETTIN AND GIORGILLI [16], HAIRER AND LUBICH [79], and REICH [158]
+
+Example 5 The following experiment to illustrate the superior conservation of energy by a symplectic method follows an idea first used by BENETTIN AND GIORGILLI [16]. Consider the following one degree-of-freedom system
+
+$$
+\dot { q } = p , \qquad \dot { p } = - V ^ { \prime } ( q ) , \qquad V ( q ) = e ^ { - q ^ { 2 } / 2 } .
+$$
+
+For $| q |$ sufficiently large, e.g., $| q | > 2 0$ , the force $F ( q ) = - V ^ { \prime } ( q )$ will be below machine precision in a standard double precision computation. Hence any numerical method will be essentially exact in that region of phase space and the modified equations can be identified with $\dot { q } = p , \ \dot { p } = 0$ . Let us now perform a sequence of experiments with initial values $q ( 0 ) \ = \ - 2 0$ , $p ( 0 ) = 1$ . We compute the solution up to the point where $| q ( t ) | > 2 0$ again. Now recall that we may assume that $\tilde { \cal H } = { \cal H } = p ^ { 2 } / 2$ for $| q | > 2 0$ . Hence we measure the change in energy from its initial to its final value, which gives us precisely the drift in energy due to the non-exact nature of backward error analysis. The numerically computed drift in the energy compared to the “fitted” exponential function $1 5 0 e ^ { - 1 1 . 8 / \Delta t }$ can be found in Fig. 5.4. ✷
+
+![](images/a6ba777ac90b612a6a2b33f9b10e62a884fc217ab20207fa4458fdcb7686f32c.jpg)  
+Figure 5.4 Demonstration of the exponential decay in the energy drift as $\Delta t \to 0$ for a simple one-dimensional collision problem.
+
+The nearly exact conservation of a modified Hamiltonian $\tilde { H }$ has an interesting consequence in relation to exact conservation of energy. Following essentially the argument of GE AND MARSDEN [69], we assume that (5.23) does not possess any first integrals other than functions of the Hamiltonian $H$ . By backward error analysis, there is a modified Hamiltonian $\tilde { H } ( \Delta t )$ such that a symplectic method is the “exact” time- $\Delta t$ -flow map corresponding to (5.24). If one would insist that the symplectic method also exactly conserves the Hamiltonian $H$ , then one would obtain that the Poisson bracket of $H$ and $\tilde { H } ( \Delta t )$ is identically zero, i.e.
+
+$$
+\{ H , \tilde { H } ( \Delta t ) \} = 0 .
+$$
+
+This relation together with the assumption that $H$ has no first integral except functions of $H$ implies that the modified Hamiltonian has to be of the form
+
+$$
+\tilde { H } ( z ; \Delta t ) = \rho ( H ( z ) ; \Delta t ) ,
+$$
+
+where $\rho$ is some function of $H$ and possibly $\Delta t$ . However, this has the implication that, on level sets of constant energy $E = H$ , the modified vector field is equivalent to the given vector field up to a multiplication by the constant factor $\rho ^ { \prime } ( E ; \Delta t )$ . Hence,
+
+$$
+\pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { \rho ^ { \prime } \Delta t , H } ,
+$$
+
+up to terms exponentially small in $\Delta t$ and our symplectic and energy conserving method would solve the given Hamiltonian problem “exactly” up to a rescaling
+
+of time. This will be impossible, in general, and therefore exact conservation of energy and symplecticness are conflicting issues.
+
+# 5.2.3 Applications
+
+Let us now give a very brief outline of how backward error analysis and the existence of a modified Hamiltonian problem can guide us in understanding the numerical behavior of symplectic integration methods. We first consider the two extreme ends of possible solution behavior: (i) completely integrable and (ii) hyperbolic, i.e. fully chaotic. Finally, we briefly discuss the behavior of an adiabatic invariant under symplectic discretization.
+
+# Integrable systems
+
+Let us assume that our given Hamiltonian system (5.23) can be, at least formally, transformed to a new set of canonical variables $( \mathsf { I } , \phi )$ and that the transformed Hamiltonian takes the simple form $H _ { 0 } ( \mathbf { l } )$ . The associated equations of motion
+
+$$
+\frac { d } { d t } \mathbf { I } = \mathbf { 0 } , \qquad \frac { d } { d t } \pmb { \phi } = \nabla _ { | } H _ { 0 } ( \mathbf { I } )
+$$
+
+are then solvable and the given problem is called integrable. The variables $( \mathsf { I } , \phi )$ are called action-angle variables [7, 8].
+
+A classical problem in mechanics is the behavior of integrable systems under small perturbations. One is typically led to consider Hamiltonian functions of the form
+
+$$
+H ( \mathbf { l } , \pmb { \phi } , \varepsilon ) = H _ { 0 } ( \mathbf { l } ) + \varepsilon H _ { 1 } ( \mathbf { l } , \pmb { \phi } , \varepsilon ) ,
+$$
+
+where $\varepsilon > 0$ is small parameter and $H _ { 1 }$ is $2 \pi$ -periodic with respect to all the components in the angle variable $\phi$ . Let us assume that $H _ { 0 }$ is convex in I and that both $H _ { 0 }$ and $H _ { 1 }$ are real-analytic functions. Then the NEKHOROSHEV theorem [144, 116] states that the action variable $\mathsf { I } ( t )$ drifts by no more than terms of order ${ \mathcal O } ( \varepsilon ^ { 1 / 2 n } )$ over an exponentially long time interval $| t | < e ^ { c / \varepsilon ^ { 1 / 2 n } }$ . Here $c > 0$ is some constant and $n$ is the number of degrees of freedom. See [116] for a precise statement of this result and its proof.
+
+Let us now apply a symplectic integrator to an integrable Hamiltonian system of the form (5.23). Note that we do not make use of action-angle variables at this point. Under appropriate conditions, backward error analysis will lead to a modified Hamiltonian
+
+$$
+\tilde { H } ( z ) = H ( z ) + \Delta t ^ { p } \delta H ( z , \Delta t ) ,
+$$
+
+
+<!-- chunk 0003: pages 141-210 -->
+plus a remainder term exponentially small in $\Delta t$ . The modified Hamiltonian $\tilde { H }$ can be, at least formally, transformed to action-angle variables $( \mathsf { I } , \phi )$ which yields a Hamiltonian of the form
+
+$$
+\tilde { H } ( \mathbf { I } , \pmb { \phi } ; \Delta t ) = H _ { 0 } ( \mathbf { I } ) + \Delta t ^ { p } \tilde { H } _ { 1 } ( \mathbf { I } , \pmb { \phi } ; \Delta t ) .
+$$
+
+This perturbed Hamiltonian can be investigated by the NEKKHOROSHEV theorem with $\varepsilon = \Delta t ^ { p }$ . In particular, the key ingredients of the elegant proof by LOSCHAK AND NEISHTADT [116] are conservation of total energy $\tilde { H }$ , the conservation of an adiabatic invariant $J = \pmb { \omega } _ { * } ^ { T } \mathbb { I }$ , where $\pmb { \omega } _ { * } = \nabla _ { \mathrm { l } } H _ { 0 } ( \mathbf { l } _ { * } )$ is a completely resonant frequency vector close to $\pmb { \omega } = \nabla _ { \mathsf { I } } H _ { 0 } ( \pmb { \mathsf { I } } )$ , and convexity of $H _ { 0 } ( \mathbf { l } )$ . These three conditions also hold for the modified equations and the long-time conservation of the action variables also applies to the numerical integration scheme. This result extends to the symplectic integration of perturbed integrable systems of the form (5.26). An elegant proof has been given by MOAN [135] using results of KUKSIN AND POSCHEL ¨ [100] on the embedding of symplectic maps into the flow of non-autonomous Hamiltonian systems.
+
+An extensive discussion of integrable and near-integrable systems and their behavior under symplectic integration can also be found in the monograph [80].
+
+# Hyperbolic systems
+
+Completely contrary to integrable systems, solutions of hyperbolic systems [76] diverge exponentially everywhere in phase space. This makes the solution behavior unpredictable over long time intervals and leads to “chaotic” dynamics. Strictly hyperbolic systems are difficult to find, but the notion of hyperbolicity is very fruitful for mathematical studies. Firstly, Hamiltonian hyperbolic systems remain hyperbolic under small changes in the Hamiltonian (structural stability), secondly the statistical mechanics of hyperbolic systems is quite well understood. Let us hence assume that a hyperbolic Hamiltonian system is integrated numerically by a symplectic method. We can assume that the associated modified Hamiltonian system is also hyperbolic. We also know that a symplectic method will approximately conserve energy over exponentially long time intervals. However, because of the exponential divergence of solutions, the numerical computed trajectory will not stay close to the exact solution of the modified problem over time periods larger than $\mathcal { O } ( \Delta t ^ { - 1 } )$ . On the other hand, hyperbolic systems possess a shadowing property [76, 173]. Applied to our situation, one can conclude that any numerical trajectory can be shadowed by some exact solution of the modified problem over exponentially long periods of time (before a significant drift in energy is observed). In what sense is that information useful? Often one is not interested in an individual solution but in the time average of some observable $\mathcal { A }$ along trajectories. It turns out that for a hyperbolic Hamiltonian system the limit
+
+$$
+\langle \mathcal { A } \rangle = \operatorname* { l i m } _ { \tau \to \infty } \frac { 1 } { \tau } \int _ { 0 } ^ { \tau } \mathcal { A } ( \pmb { q } ( t ) , \pmb { p } ( t ) ) d t
+$$
+
+is independent of the chosen trajectory for almost all initial values $\left( q _ { 0 } , p _ { 0 } \right)$ provided that the initial conditions are from one and the same energy $E$ hypersurface, i.e.
+
+$$
+H ( q _ { 0 } , p _ { 0 } ) = E .
+$$
+
+In other words, the infinite time average $\langle \mathcal { A } \rangle$ depends only on the energy of the trajectory.6 Computationally, we can only perform finite-time averages
+
+$$
+\bar { \boldsymbol { \mathcal { A } } } ( \tau ) = \frac { 1 } { \tau } \int _ { 0 } ^ { \tau } \boldsymbol { \mathcal { A } } ( \boldsymbol { q } ( t ) , \boldsymbol { p } ( t ) ) d t .
+$$
+
+But the existence of a large deviation theorem [207] implies that the set of all initial points for which
+
+$$
+| \bar { \mathcal { A } } ( \tau ) - \langle \mathcal { A } \rangle | \geq \delta
+$$
+
+has a measure that goes to zero exponentially fast in $\tau$ for a given fixed tolerance $\delta > 0$ . Since, roughly speaking, numerical trajectories obtained from a symplectic integration method shadow some exact solution of a slightly perturbed hyperbolic Hamiltonian system, the same statement is true for numerically computed time averages. A precise formulation of such a result has been given by REICH in [158].
+
+Numerical evidence for such a behavior can indeed be found even if the system is not provably hyperbolic. As a demonstration, we simulate a molecular $N .$ -body problem similar to what has been used in Section 4.5. A total of $N = 4 9$ particles move in the $\left( x , y \right)$ -plane under the influence of a pair-wise repulsive potential and periodic boundary conditions are applied in the $x$ and $y$ directions. The equations of motion conserve energy and total linear momentum. We take the mean kinetic energy (temperature) as our observable; i.e.,
+
+$$
+\mathcal { A } = \frac { 1 } { 2 N } \sum _ { i = 1 } ^ { N } | | p _ { i } | | ^ { 2 } .
+$$
+
+We perform four simulations with random initial conditions from the constant energy level $E = H ( \pmb { q } _ { 0 } , \pmb { p } _ { 0 } ) = 2 0 0 0$ with zero total linear momentum. The computed finite-time averages $\bar { \mathcal { A } } ( \tau )$ , $\tau \in [ 0 , 1 0 ]$ , can be found in Fig. 5.5. The averages at $\tau = 1 0$ are all within a $\delta = 0 . 0 1$ distance of each other.
+
+This property of a symplectic integration method helps to explain the great success of the St¨ormer–Verlet method for molecular dynamics simulations [198, 4]. See Chapter 11 for further details.
+
+![](images/fa555c141d286437cbffb409d2e09cf72aae07be99f67d47986a33eb9f2782a3.jpg)  
+Figure 5.5 Time-averaged temperature computed along four different trajectories with one and the same initial energy $E = 2 0 0 0$ and zero total linear momentum.
+
+# Adiabatic invariants
+
+We have extensively discussed and used the harmonic oscillator
+
+$$
+\ddot { q } = - \omega ^ { 2 } q ,
+$$
+
+as an example throughout the book because of its simplicity. Let us now complicate the matter slightly by considering a harmonic oscillator with slowly varying frequency; for example
+
+$$
+\omega ( \varepsilon t ) = \frac { 1 } { \sqrt { 1 + 0 . 2 5 \sin ( 2 \pi \varepsilon t ) } } ,
+$$
+
+with $\varepsilon \ll 1$ a small parameter [7]. The behavior of such a time-dependent Hamiltonian system with Hamiltonian
+
+$$
+H ( p , q , \varepsilon t ) = \frac { 1 } { 2 } \left( p ^ { 2 } + \omega ( \varepsilon t ) ^ { 2 } q ^ { 2 } \right) ,
+$$
+
+becomes more transparent when going to action-angle variables $( J , \phi )$ . Upon using the generating function [7, 8, 73] (compare also Section 6.4)
+
+$$
+S ( q , \phi , t ) = { \frac { 1 } { 2 } } \omega ( \varepsilon t ) q ^ { 2 } \cot \phi
+$$
+
+the transformation is defined by
+
+$$
+p = { \frac { \partial S } { \partial q } } = \omega ( \varepsilon t ) q \cot \phi ,
+$$
+
+and
+
+$$
+J = - { \frac { \partial S } { \partial \phi } } = { \frac { 1 } { 2 } } \omega ( \varepsilon t ) q ^ { 2 } { \frac { 1 } { \sin ^ { 2 } \phi } } .
+$$
+
+We can solve this system for $( q , p )$ to obtain
+
+$$
+\begin{array} { l } { q = \sqrt { \displaystyle \frac { 2 J } { \omega } } \sin \phi , } \\ { p = \sqrt { 2 \omega J } \cos \phi . } \end{array}
+$$
+
+The corresponding transformed Hamiltonian is
+
+$$
+\begin{array} { l } { \displaystyle \bar { H } ( J , \phi , \varepsilon t ) = H ( p , q , \varepsilon t ) + \frac { \partial S } { \partial t } } \\ { \displaystyle = \omega ( \varepsilon t ) J + \frac { \varepsilon } { 2 } \frac { \omega ^ { \prime } ( \varepsilon t ) } { \omega ( \varepsilon t ) } J \sin 2 \phi } \\ { \displaystyle = \omega ( \varepsilon t ) J + \varepsilon f ( J , \phi , \varepsilon t ) , } \end{array}
+$$
+
+$\begin{array} { r } { f ( J , \phi , \varepsilon t ) = \frac { \varepsilon } { 2 } \frac { \omega ^ { \prime } ( \varepsilon t ) } { \omega ( \varepsilon t ) } J \sin 2 \phi } \end{array}$
+
+Following the work of NEISHTADT [143], it is known that there exists another symplectic change of coordinates $( J , \dot { \phi } ) \stackrel { \cdot } {  } ( \tilde { J } , \tilde { \phi } )$ which is $\varepsilon$ close to the identity such that the transformed Hamiltonian is of the form
+
+$$
+\hat { H } ( \tilde { J } , \tilde { \phi } , t ) = \omega ( \varepsilon t ) \tilde { J } + \varepsilon ^ { 2 } \tilde { g } ( \tilde { J } , \varepsilon t ; \varepsilon ) + e ^ { - c / \varepsilon } \tilde { f } ( \tilde { J } , \tilde { \phi } , \varepsilon t ; \varepsilon ) ,
+$$
+
+$c > 0$ some constant and $\tilde { f }$ and $\tilde { g }$ are bounded functions. Hence we have
+
+$$
+| J ( 0 ) - J ( t ) | = \mathcal { O } ( \varepsilon ) , \qquad \mathrm { f o r } \qquad | t | \leq e ^ { c / ( 2 \varepsilon ) } ,
+$$
+
+and the action variable $J$ is called an adiabatic invariant [7, 8, 73]. The action variable $J$ can also be given a geometric interpretation. Over short time intervals, the motion is essentially periodic with a practically constant frequency $\omega _ { 0 } ~ \approx$ $\omega ( \varepsilon t )$ . Denote the area enclosed by the periodic orbits of
+
+$$
+\dot { q } = p , \qquad \dot { p } = - \omega _ { 0 } ^ { 2 } q ,
+$$
+
+by $A$ , then
+
+$$
+J = \frac { 1 } { 2 \pi } \oint p d q = \frac { A } { 2 \pi } .
+$$
+
+Note that the energy $H = \bar { H }$ will show a systematic drift since $J$ is nearly constant and the product $\begin{array} { r } { \omega ( \varepsilon t { } ) J \approx H } \end{array}$ will follow changes in the frequency $\omega$ which can be of order one.
+
+If the time-dependent equation of motion
+
+$$
+\ddot { q } = - \omega ( \varepsilon t ) ^ { 2 } q
+$$
+
+is solved by a symplectic second-order integration method (see the Exercises of Chapter 4 as well as Example 6 below), then there exists a modified timedependent Hamiltonian $\tilde { H } ( \Delta t )$ which, written in action-angle variables, takes the form
+
+$$
+\tilde { H } ( J , \phi , \varepsilon t , \Delta t ) = \omega ( \varepsilon t ) J + \varepsilon t ( J , \phi , \varepsilon t ) + \Delta t ^ { 2 } g ( J , \phi , \varepsilon t ; \varepsilon , \Delta t ) ,
+$$
+
+$g$ an appropriate function. Now assume that $\Delta t ^ { 2 }$ is bounded by $\varepsilon \colon \Delta t ^ { 2 } < K \varepsilon$ . Then it can be shown that an estimate of type (5.27) also holds for the numerical method [159]. See also [175] for further numerical experiments.
+
+Example 6Any time-dependent Hamiltonian $H ( \pmb { q } , \pmb { p } , t )$ can be treated within the framework of autonomous Hamiltonian systems by enlarging the phase space by two additional variables $( Q , P )$ . This has been discussed in the Exercises of Chapter 4. Let us apply the idea to the Hamiltonian
+
+$$
+H ( q , p , t ) = { \frac { 1 } { 2 } } \left[ p + \omega ( \varepsilon t ) ^ { 2 } q ^ { 2 } \right] , \qquad \omega ( \varepsilon t ) = { \frac { 1 } { \sqrt { 1 + 0 . 2 5 \sin ( 2 \pi \varepsilon t ) } } } .
+$$
+
+We define the extended Hamiltonian $\bar { H } ( q , p , Q , P )$ as
+
+$$
+\bar { H } = \frac 1 2 \left[ p + \omega ( Q ) ^ { 2 } q ^ { 2 } \right] + \varepsilon P .
+$$
+
+The associated equations of motion are
+
+$$
+\begin{array} { l } { \displaystyle { \frac { d } { d t } q = p , } } \\ { \displaystyle { \frac { d } { d t } p = - \omega ( Q ) ^ { 2 } q , } } \\ { \displaystyle { \frac { d } { d t } Q = \varepsilon , } } \\ { \displaystyle { \frac { d } { d t } P = - \omega ( Q ) \omega ^ { \prime } ( Q ) q ^ { 2 } . } } \end{array}
+$$
+
+The variable $Q$ is equal to slow time $\varepsilon t$ , i.e. $Q = \varepsilon t$ . The equations can be integrated by a second-order splitting method using the split Hamiltonian
+
+$$
+\bar { \cal H } _ { 1 } = \frac { 1 } { 4 } \omega ( Q ) ^ { 2 } q ^ { 2 } , \qquad \bar { \cal H } _ { 2 } = \frac { 1 } { 2 } p ^ { 2 } + \varepsilon { \cal P } , \qquad \bar { \cal H } _ { 3 } = \frac { 1 } { 4 } \omega ( Q ) ^ { 2 } q ^ { 2 } .
+$$
+
+One can iminate the variable $P$ and obtains a modified St¨ormer–Verlet method.
+
+We perform a series of experiments with constant $\Delta t$ and increasing values of $\varepsilon$ in the range $\varepsilon \in [ 0 . 0 0 1 , 0 . 0 5 ]$ . The initial conditions are $q ( 0 ) = 1$ and $p ( 0 ) = 0$ . We monitor the time evolution of the adiabatic invariant
+
+$$
+J = \frac { 1 } { 2 \omega } \left[ p ^ { 2 } + \omega ^ { 2 } q ^ { 2 } \right] ,
+$$
+
+and plot
+
+$$
+\Delta J _ { m a x } = \operatorname* { m a x } _ { t \in [ 0 1 0 0 ] } | J ( t ) - J ( 0 ) |
+$$
+
+as a function of $\varepsilon$ for several values of $\Delta t$ . See Fig. 5.6. As expected, we obtain a behavior of type
+
+$$
+\Delta J _ { m a x } ( \Delta t , \varepsilon ) \approx c _ { 1 } \Delta t ^ { 2 } + c _ { 2 } \varepsilon .
+$$
+
+![](images/e85eb9278337cd7c9dad765d811009020db9f4320d8b7bfe33264f60b79234cc.jpg)  
+Figure 5.6 Variation in the adiabatic invariant $\jmath$ as a function of $\varepsilon$ for different values of the stepsize $\Delta t$ . ✷
+
+# 5.3 Geometric integration and modified equations
+
+An important aspect of backward error analysis is to show that the modified equations possess the same qualitative solution behavior as the given problem. A rigorous proof of such a statement is, in most cases, difficult. But it can be shown relatively easily that certain geometric aspects are preserved if the numerical method is chosen appropriately. We have discussed this already for
+
+Hamiltonian systems and symplectic integration methods. The following more general result can be formulated:
+
+Theorem 1 Whenever the flow map of a given differential equation posesses some geometric properties such as existence of first integrals, time reversiblity, preservation of volume, symplecticness, and the numerical discretization preserves these properties exactly, then the flow map of the modified differential equation will also satisfy these geometric properties. ✷
+
+Proof. A proof of the theorem can be found in [153, 158]. See also [77, 16, 83, 74, 80].
+
+Because of its importance, we discuss the case of symplectic methods in detail. Recall that the modified vector fields are recursively defined by
+
+$$
+\delta { \pmb f } _ { i + 1 } : = \operatorname* { l i m } _ { \tau  0 } \frac { { \pmb \psi } _ { \tau } - { \pmb \phi } _ { \tau , \tilde { \pmb f } _ { i } ( \tau ) } } { \tau ^ { i + 2 } } .
+$$
+
+We introduce the short-hand notation
+
+$$
+\pmb { \phi } _ { \tau } : = \pmb { \phi } _ { \tau , \tilde { \pmb { f } } _ { i } ( \tau ) } ,
+$$
+
+and obtain the relation
+
+$$
+\partial _ { z } \pmb { \psi } _ { \tau } = \partial _ { z } \pmb { \phi } _ { \tau } + \tau ^ { i + 2 } \partial _ { z } [ \delta \pmb { f } _ { i + 1 } ] + \mathcal { O } ( \tau ^ { i + 3 } ) .
+$$
+
+Let us now investigate the expression
+
+$$
+\pmb { F } _ { \tau } : = \frac { 1 } { \tau ^ { i + 2 } } \left[ \left( \partial _ { z } \pmb { \psi } _ { \tau } \right) ^ { T } \pmb { J } ^ { - 1 } \partial _ { z } \pmb { \psi } _ { \tau } - \left( \partial _ { z } \pmb { \phi } _ { \tau } \right) ^ { T } \pmb { J } ^ { - 1 } \partial _ { z } \pmb { \phi } _ { \tau } \right] .
+$$
+
+Since both $\psi _ { \tau }$ and $\pmb { \phi } _ { \tau }$ are symplectic maps, we have $\pmb { F } _ { \tau } = \pmb { 0 }$ .
+
+The next step is to make use of (5.28). This yields
+
+$$
+\begin{array} { r l } & { { \cal F } _ { \tau } = - \left( \partial _ { z } [ \delta { \cal F } _ { i + 1 } ] \right) ^ { T } J ^ { - 1 } \partial _ { z } \phi _ { \tau } - \left( \partial _ { z } \phi _ { \tau } \right) ^ { T } J ^ { - 1 } \partial _ { z } [ \delta { \cal F } _ { i + 1 } ] + { \cal O } ( \tau ) } \\ & { \quad \quad = - \left( \partial _ { z } [ \delta { \cal F } _ { i + 1 } ] \right) ^ { T } J ^ { - 1 } - J ^ { - 1 } \partial _ { z } [ \delta { \cal F } _ { i + 1 } ] + { \cal O } ( \tau ) . } \end{array}
+$$
+
+Hence, upon taking the limit $\tau  0$ , one derives the condition
+
+$$
+\begin{array} { r } { \left( \partial _ { z } [ \delta \pmb { f } _ { i + 1 } ] \right) ^ { T } J ^ { - 1 } + J ^ { - 1 } \partial _ { z } [ \delta \pmb { f } _ { i + 1 } ] = \mathbf { 0 } , } \end{array}
+$$
+
+which is equivalent to $\delta f _ { j + 1 }$ being locally Hamiltonian [7]. The existence of a global modified Hamiltonian can be deduced either from the fact that the domain $z \in \Omega \subset \mathbb { R } ^ { 2 d }$ is simply connected or by explicit construction of a global Hamiltonian $\delta H _ { i + 1 }$ . For composition methods this is possible using the results of Section 5.4. Another explicit construction is provided by the generating function approach to the design of symplectic methods [16, 80]. We will discuss this approach briefly in Chapter 6.
+
+Other applications of the theorem can be proven in a similar manner. See the exercises at the end of this chapter. ✷
+
+Let us now focus on another application of Theorem 1. If a Hamiltonian $H$ is in involution with a function $F$ , i.e. $\{ H , F \} = 0$ , then $F$ is a first integral of the equations of motion with Hamiltonian $H$ . Let $\pmb { \phi } _ { \tau , F }$ denote the flow map of
+
+$$
+\frac { d } { d \tau } z = J \nabla _ { z } F ( z ) .
+$$
+
+Since the Poisson bracket of $F$ and $H$ is zero, the two associated flow maps commute, i.e.
+
+$$
+\pmb { \phi } _ { t , H } \circ \pmb { \phi } _ { \tau , F } = \pmb { \phi } _ { \tau , F } \circ \pmb { \phi } _ { t , H } ,
+$$
+
+which is equivalent to
+
+$$
+\begin{array} { r } { \pmb { \phi } _ { t , H } = \pmb { \phi } _ { - \tau , F } \circ \pmb { \phi } _ { t , H } \circ \pmb { \phi } _ { \tau , F } = \pmb { \phi } _ { \tau , F } ^ { - 1 } \circ \pmb { \phi } _ { t , H } \circ \pmb { \phi } _ { \tau , F } . } \end{array}
+$$
+
+Hence the flow map $\Phi _ { t , H }$ is invariant under the transformation ${ \pmb \psi } _ { \tau } : = { \pmb \phi } _ { \tau , F }$ . In fact, the reverse statement, called NOETHER’s theorem, that any one-parameter family of symmetries gives rise to a first integral, is also true. See OLVER [149], ARNOLD [7], and MARSDEN AND RATIU [124] for an extensive discussion of symmetries in classical mechanics.
+
+For example, consider the differential equation
+
+$$
+\frac { d } { d \tau } \pmb { q } = \pmb { f } ( \pmb { q } ) ,
+$$
+
+and denote the associated flow map by $\phi _ { \tau }$ . Then we can consider the oneparameter family of canonical point transformations $\pmb { \psi } _ { \tau }$ defined by (compare Section 3.5)
+
+$$
+\begin{array} { r l } & { \bar { \pmb q } ( \tau ) = \pmb { \phi } _ { \tau } ( \pmb q ) , } \\ & { \bar { \pmb p } ( \tau ) = [ \nabla _ { \pmb q } \pmb \phi _ { \tau } ( \pmb q ) ] ^ { - 1 } \pmb p . } \end{array}
+$$
+
+This transformation is equivalent to the flow map of a Hamiltonian system with Hamiltonian $F = p ^ { T } f ( q )$ , i.e.,
+
+$$
+\pmb { \psi } _ { \tau } = \pmb { \phi } _ { \tau , F } .
+$$
+
+Hence, if $F$ is a first integral of $H$ , i.e. $\{ H , F \} = 0$ , then $\Phi _ { t , H }$ is invariant under $\psi _ { \tau }$ and vice versa.
+
+Example7 Let us look at the following particular class of linear transformations. Given a linear matrix group7 $\mathcal { G } \subset \mathbb { R } ^ { d \times d }$ , we can apply elements (matrices) of $\mathcal { G }$ to $\pmb q$ , hence defining new coordinates
+
+$$
+\bar { \pmb q } = { \pmb Q } \pmb q , \qquad { \pmb Q } \in \mathcal { G } \subset \mathbb { R } ^ { d \times d } .
+$$
+
+Any matrix group $\mathcal { G }$ has an associated matrix algebra $\textbf { \mathfrak { g } } \subset \mathbb { R } ^ { d \times d }$ . The important property for our purposes is that the matrix exponential of any matrix $\pmb { A } \in \mathfrak { g }$ yields a matrix that is in the associated group $\mathcal { G }$ . In fact any matrix $Q \in { \mathcal { G } }$ can be represented by the matrix exponential of some matrix $\pmb { A }$ in $\pmb { 9 }$ [149]. Hence we consider the linear differential equation
+
+$$
+{ \dot { \pmb q } } = { \pmb A } \pmb q , \qquad { \pmb A } \in { \pmb g } ,
+$$
+
+and obtain
+
+$$
+\bar { \pmb q } ( \tau ) = \pmb Q ( \tau ) \pmb q , \qquad \pmb Q ( \tau ) = e ^ { \tau \pmb A } .
+$$
+
+To derive a symplectic transformation from $( \pmb q , \pmb p )$ to $( { \bar { q } } , { \bar { p } } )$ , we follow (5.30) and introduce canonical momenta
+
+$$
+\bar { \pmb { p } } ( \tau ) = \pmb { Q } ( \tau ) ^ { - T } \pmb { p } .
+$$
+
+The Hamiltonian associated with this one-parametric family of symplectic transformations is $F _ { A } = p ^ { T } A q$ .
+
+The function $F _ { A }$ is a first integral if the given equations of motion are invariant under the symmetry group generated by $\mathcal { G }$ . Furthermore, any matrix $\pmb { A } \in \mathfrak { g }$ will lead to a first integral. But only a finite number, equal to the dimension of the matrix algebra g, of these integrals will be independent. For example, take the algebra of $3 \times 3$ skew-symmetric matrices which is the algebra associated to the group $S O ( 3 )$ of orthogonal matrices. This algebra is three dimensional and any matrix in the algebra can be expressed as a linear combination of
+
+$$
+\begin{array} { r } { \pmb { A } _ { 1 } = \left[ \begin{array} { c c c } { 0 } & { 0 } & { 0 } \\ { 0 } & { 0 } & { - 1 } \\ { 0 } & { 1 } & { 0 } \end{array} \right] , \quad \pmb { A } _ { 2 } = \left[ \begin{array} { c c c } { 0 } & { 0 } & { 1 } \\ { 0 } & { 0 } & { 0 } \\ { - 1 } & { 0 } & { 0 } \end{array} \right] , \quad \pmb { A } _ { 3 } = \left[ \begin{array} { c c c } { 0 } & { - 1 } & { 0 } \\ { 1 } & { 0 } & { 0 } \\ { 0 } & { 0 } & { 0 } \end{array} \right] . } \end{array}
+$$
+
+The associated three first integrals are
+
+$$
+F _ { A _ { 1 } } = p _ { 3 } q _ { 2 } - p _ { 2 } q _ { 3 } , \quad F _ { A _ { 2 } } = p _ { 1 } q _ { 3 } - p _ { 3 } q _ { 1 } , \quad F _ { A _ { 3 } } = p _ { 2 } q _ { 1 } - p _ { 1 } q _ { 2 } ,
+$$
+
+which are the three components of the angular momentum vector $m = \pmb { q } \times \pmb { p }$ . (We had already seen in Section 4.4 that the St¨ormer–Verlet method conserves angular momentum.) ✷
+
+$^ 7 \mathsf { A }$ set $\mathcal { G }$ of invertible $d \times d$ matrices forms a matrix group in $\mathbb { R } ^ { d \times d }$ , if the product of any two matrices A, $B \in { \mathcal { G } }$ is in $\mathcal { G }$ ; i.e., $\pmb { A } \pmb { B } \in \mathcal { G }$ [149].
+
+Let us now assume that a symplectic method $\psi _ { \Delta t }$ is invariant under a family of symplectic transformations $\pmb { \phi } _ { \tau , F }$ generated by a Hamiltonian $F$ , i.e.
+
+$$
+\pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { \tau , F } ^ { - 1 } \circ \pmb { \psi } _ { \Delta t } \circ \pmb { \phi } _ { \tau , F } ,
+$$
+
+for all $\Delta t \geq 0$ . A result by $\mathsf { G E }$ [68] states that $F$ is a first integral of $\psi _ { \Delta t }$ up to a constant $c ( \Delta t )$ . Often this constant can be shown to be equal to zero for all stepsizes $\Delta t$ . But even in the case that this is not possible one can still apply backward error analysis and Theorem 1 to obtain
+
+$$
+\pmb { \phi } _ { t , \tilde { H } } = \pmb { \phi } _ { \tau , F } ^ { - 1 } \circ \pmb { \phi } _ { t , \tilde { H } } \circ \pmb { \phi } _ { \tau , F } = \pmb { \phi } _ { - \tau , F } \circ \pmb { \phi } _ { t , \tilde { H } } \circ \pmb { \phi } _ { \tau , F } ,
+$$
+
+where we neglected terms exponentially small in $\Delta t$ . In other words, the two flow maps $\boldsymbol { \Phi } _ { t , \tilde { H } }$ and $\pmb { \phi } _ { \tau , F }$ commute and, hence, we must have $\{ \boldsymbol { F } , \tilde { H } \} = 0$ . As a consequence we can conclude that the numerical method has $F$ as a first integral (possibly up to a constant $c ( \Delta t )$ exponentially small in $\Delta t$ ).
+
+On the other hand, following the above proof of Theorem 1 for symplectic maps, it is also relatively easy to show that any numerical method that preserves a first integral $F$ exactly has a modified equation that conserves $F$ . (See the Exercises at the end of this chapter.)
+
+# 5.4 Modified equations for composition methods
+
+The flow map of a linear differential equation
+
+$$
+{ \frac { d } { d t } } z = { \pmb { A } } z
+$$
+
+can be written
+
+$$
+\Phi _ { t , A } ( z ) = \mathrm { e } ^ { t A } z .
+$$
+
+Here the matrix exponential is defined by the convergent series expansion
+
+$$
+\mathrm { e } ^ { t A } = I _ { k } + t { \pmb { A } } + \frac { t ^ { 2 } } { 2 ! } { \pmb { A } } ^ { 2 } + \frac { t ^ { 3 } } { 3 ! } { \pmb { A } } ^ { 3 } + \cdot \cdot \cdot .
+$$
+
+It is important to note that, contrary to
+
+$$
+\mathrm { e } ^ { t a } \mathrm { e } ^ { t b } = \mathrm { e } ^ { t ( a + b ) } ,
+$$
+
+we have
+
+$$
+\mathrm { e } ^ { t A } \mathrm { e } ^ { t B } \neq \mathrm { e } ^ { t ( A + B ) } ,
+$$
+
+unless the two matrices $\pmb { A }$ and $B$ commute, i.e.
+
+$$
+[ A , B ] : = A B - B A = 0 .
+$$
+
+Instead there is a matrix $D ( t )$ such that
+
+$$
+\mathrm { e } ^ { t A } \mathrm { e } ^ { t B } = \mathrm { e } ^ { t D ( t ) } ,
+$$
+
+and the matrix $D ( t )$ is defined by a convergent expansion
+
+$$
+D ( t ) : = D _ { 0 } + t D _ { 1 } + t ^ { 2 } D _ { 2 } + t ^ { 3 } D _ { 3 } + \cdots .
+$$
+
+The matrices $D _ { j }$ , $i = 0 , 1 , \ldots , \infty$ , are given by the Baker–Campbell–Hausdorff (BCH) formula [196] which can be obtained from Taylor series expansion of the matrix exponential, i.e.
+
+$$
+\begin{array} { r c l } { { } } & { { } } & { { \displaystyle \mathrm { e } ^ { t A } \mathrm { e } ^ { t B } = \left( I _ { k } + t A + \frac { t ^ { 2 } } { 2 } A ^ { 2 } + \cdots \right) \left( I _ { k } + t B + \frac { t ^ { 2 } } { 2 } B ^ { 2 } + \cdots \right) } } \\ { { } } & { { } } & { { } } \\ { { } } & { { = I _ { k } + t ( A + B ) + \displaystyle \frac { t ^ { 2 } } { 2 } \left( A ^ { 2 } + B ^ { 2 } + 2 A B \right) + \cdots } } \\ { { } } & { { } } & { { } } \\ { { } } & { { = I _ { k } + t ( A + B ) + \displaystyle \frac { t ^ { 2 } } { 2 } \left( A + B \right) ^ { 2 } + \displaystyle \frac { t ^ { 2 } } { 2 } \left( A B - B A \right) + \cdots } } \\ { { } } & { { } } & { { } } \\ { { } } & { { = I _ { k } + t ( A + B ) + \displaystyle \frac { t ^ { 2 } } { 2 } \left( A + B \right) + \displaystyle \frac { t ^ { 2 } } { 2 } [ A , B ] + \cdots } } \\ { { } } & { { } } & { { = \mathrm { e } ^ { t ( A + B ) + ( t ^ { 2 } / 2 ) \left[ A , B \right] + \cdots } . } } \end{array}
+$$
+
+Hence
+
+$$
+\begin{array} { l } { { { \cal D } _ { 0 } = A + B , } } \\ { { { \cal D } _ { 1 } = { \displaystyle \frac { 1 } { 2 } } [ A , B ] , } } \end{array}
+$$
+
+and further expansion yields the next two terms
+
+$$
+\begin{array} { l } { { \displaystyle { \cal D } _ { 2 } = \frac { 1 } { 1 2 } \left( [ { \cal A } , [ { \cal A } , { \cal B } ] ] + [ { \cal B } , [ { \cal B } , { \cal A } ] ] \right) , } } \\ { { \displaystyle { \cal D } _ { 3 } = \frac { 1 } { 2 4 } [ { \cal A } , [ { \cal B } , [ { \cal B } , { \cal A } ] ] ] . } } \end{array}
+$$
+
+The BCH formula allows for a relatively simple backward error analysis for splitting methods applied to linear differential equation. For example, consider the linear differential equation
+
+$$
+\frac { d } { d t } z = ( \pmb { A } + \pmb { B } ) z ,
+$$
+
+and assume that the matrix exponentials corresponding to the matrices $\pmb { A }$ and $B$ are easily computable. Then the composition method8 $\dot { \boldsymbol { z } } ^ { n + 1 } = \hat { \boldsymbol { R } } ( \Delta t ) \boldsymbol { z } ^ { n }$ with
+
+$$
+\hat { R } ( \Delta t ) = \mathrm { e } ^ { \Delta t A } \mathrm { e } ^ { \Delta t B }
+$$
+
+8This composition method is often called the Trotter formula [194].
+
+is a first-order method. According to the BCH formula, the matrix $\hat { R } ( \Delta t )$ is the exact exponential corresponding to the linear differential equation
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } z = D ( \Delta t ) z } \\ { \displaystyle \qquad = \left( A + B + \frac { \Delta t } { 2 } [ { \pmb A } , { \pmb B } ] + \frac { \Delta t ^ { 2 } } { 1 2 } ( [ { \pmb A } , [ { \pmb A } , { \pmb B } ] ] + [ { \pmb B } , [ { \pmb B } , { \pmb A } ] ] ) + \cdots \right) z , } \end{array}
+$$
+
+at time $t = \Delta t$ . The second-order composition method9 with
+
+$$
+\hat { R } ( \Delta t ) : = \mathrm { e } ^ { ( \Delta t / 2 ) A } \mathrm { e } ^ { \Delta t B } \mathrm { e } ^ { ( \Delta t / 2 ) A }
+$$
+
+can be analyzed by multiple application of the BCH formula. We obtain the modified equation
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } z = D ( \Delta t ) z } \\ { \displaystyle \qquad = \left( A + B + \frac { \Delta t ^ { 2 } } { 2 4 } ( 2 [ B , [ B , A ] ] - [ A , [ A , B ] ] ) + \cdots \right) z . } \end{array}
+$$
+
+The important point is that the modified differential equation is based on the matrices $\pmb { A }$ and $B$ , the commutator $[ A , B ]$ , and repeated applications thereof.
+
+We wish to extend this analysis to nonlinear differential equations
+
+$$
+{ \frac { d } { d t } } z = { \pmb f } ( z ) .
+$$
+
+Instead of the linear operator (matrix) $\pmb { A }$ , we now introduce the linear differential operator $L _ { f }$ , called the Lie derivative, which acts on smooth scalar-valued functions $g$ defined on phase space [7]. This operation, denoted by $L _ { f } g$ , is defined by
+
+$$
+L _ { f } g \left( z \right) : = \nabla _ { z } g ( z ) \cdot \pmb { f } ( z ) .
+$$
+
+It naturally extends to vector-valued functions $\pmb { g }$ by applying $L _ { f }$ to each component of $\pmb { g }$ . We denote this operation by $L _ { f } \pmb { g }$ . We can apply $L _ { f }$ repeatedly to itself, for example
+
+$$
+L _ { f } ( L _ { f } g ) = L _ { f } ^ { 2 } g ,
+$$
+
+and, as for the linear operator $\pmb { A }$ , we define the exponential of the operator $L _ { f }$ by the expansion (Lie series)
+
+$$
+\mathrm { e } ^ { t L _ { f } } : = \mathbf { i d } + t L _ { f } + \frac { t ^ { 2 } } { 2 ! } L _ { f } ^ { 2 } + \frac { t ^ { 3 } } { 3 ! } L _ { f } ^ { 3 } + \cdots .
+$$
+
+9This splitting is often called the Strang splitting [180].
+
+This series can, formally, be obtained from (5.31) by replacing $\pmb { A }$ by $L _ { f }$ and $\prime$ by the identity map id; $\mathbf { i d } ( z ) = z$ .
+
+Let us now return to the flow map $\boldsymbol { \phi } _ { t , f }$ of (5.33). Repeated differentiation of (5.33) with respect to time yields the remarkable identity
+
+$$
+\frac { d ^ { n } } { d t ^ { n } } z ( t ) _ { | t = 0 } = L _ { t } ^ { n - 1 } \pmb { f } ( z ) , \qquad z ( t ) = \pmb { \phi } _ { t , t } ( z ) .
+$$
+
+Using this result, the Taylor series expansion of $\boldsymbol { \phi } _ { t , f }$ about $t = 0$ can be written as
+
+$$
+\begin{array} { c } { { \phi _ { t , f } ( z ) = z + t \displaystyle { \frac { d } { d t } z ( 0 ) + \frac { t ^ { 2 } } { 2 ! } \frac { d ^ { 2 } } { d t ^ { 2 } } z ( 0 ) + \frac { t ^ { 3 } } { 3 ! } \frac { d ^ { 3 } } { d t ^ { 3 } } z ( 0 ) + \cdot \cdot \cdot } } } \\ { { = z + t f ( z ) + \displaystyle { \frac { t ^ { 2 } } { 2 ! } L _ { f } } f ( z ) + \frac { t ^ { 3 } } { 3 ! } L _ { f } ^ { 2 } f ( z ) + \cdot \cdot \cdot . } } \end{array}
+$$
+
+Let $L _ { f } ^ { j } \mathbf { i d } , \ j \geq 1$ , denote the operation of $L _ { f } ^ { i }$ on the identity map $\mathbf { i d } ( z ) = z$ . It is easily checked that $L _ { f } \mathbf { i d } = f$ and $L _ { f } ^ { 2 } \mathbf { i d } = L _ { f } f$ . More generally
+
+$$
+L _ { f } ^ { i } \mathbf { i d } = L _ { f } ^ { i - 1 } f ,
+$$
+
+for any $j \geq 1$ . Thus the flow map can be written as
+
+$$
+\begin{array} { l } { { \displaystyle \phi _ { t , f } = \mathbf { i d } + t { \pmb { f } } + \frac { t ^ { 2 } } { 2 ! } { \cal L } _ { f } { \pmb { f } } + \cdots } } \\ { ~ } \\ { { \displaystyle ~ = \left( \mathbf { i d } + t { \cal L } _ { f } + \frac { t ^ { 2 } } { 2 ! } { \cal L } _ { f } ^ { 2 } + \cdots \right) \mathbf { i d } } } \\ { ~ } \\ { { \displaystyle ~ = \mathrm { e } ^ { t { \cal L } _ { f } } \mathbf { i d } } . } \end{array}
+$$
+
+Furthermore, the action of the exponential on a function $h$ amounts to
+
+$$
+\mathsf { e } ^ { t L _ { f } } h = h \circ \Phi _ { t , f } .
+$$
+
+This can be seen from the expansion
+
+$$
+\mathrm { e } ^ { t L _ { f } } h = h + t L _ { f } h + \frac { t ^ { 2 } } { 2 ! } L _ { f } ^ { 2 } h + \cdots = h + t \frac { d } { d t } h + \frac { t ^ { 2 } } { 2 ! } \frac { d ^ { 2 } } { d t ^ { 2 } } h + \cdots = h \circ \Phi _ { t , f } .
+$$
+
+If we substitute $h$ by the flow map of a second vector field $\pmb { g }$ , then we obtain the composition formula
+
+$$
+\pmb { \phi } _ { t , f } \circ \pmb { \phi } _ { t , g } = \mathsf { e } ^ { t L _ { g } } \circ \pmb { \phi } _ { t , f } = \mathsf { e } ^ { t L _ { g } } \mathsf { e } ^ { t L _ { f } } \pmb { \mathrm { i } } \mathbf { d } .
+$$
+
+Note that the order of the exponentials is opposite to what one might have expected.
+
+Using exponential notation, a first-order composition method, corresponding to the differential equation
+
+$$
+\frac { d } { d t } z = \pmb { f } ( z ) + \pmb { g } ( z ) ,
+$$
+
+can now be written as
+
+$$
+\pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { \Delta t , t } \circ \pmb { \phi } _ { \Delta t , g } = \mathrm { e } ^ { \Delta t L _ { g } } \mathrm { e } ^ { \Delta t L _ { f } } \mathbf { i } \mathbf { d } .
+$$
+
+For
+
+$$
+\pmb { f } = \left[ - \pmb { 0 } ^ { \phantom { \dagger } } \right] \quad \mathrm { a n d } \quad \pmb { g } = \left[ \pmb { M } ^ { - 1 } \pmb { p } ^ { \phantom { \dagger } } \right] ,
+$$
+
+this composition method corresponds to the symplectic Euler-A method
+
+$$
+\begin{array} { l } { { { \pmb q } ^ { n + 1 } = { \pmb q } ^ { n } + \Delta t { \pmb M } ^ { - 1 } { \pmb p } ^ { n } , } } \\ { { { \pmb p } ^ { n + 1 } = { \pmb p } ^ { n } - \Delta t \nabla _ { \pmb q } V ( { \pmb q } ^ { n + 1 } ) . } } \end{array}
+$$
+
+The BCH formula can be generalized to interpret the composition method (5.34) as the “exact” solution of a modified problem. The only formal modification necessary is to replace the matrix commutator by the Lie commutator10
+
+$$
+\left[ L _ { f } , L _ { g } \right] : = L _ { g } L _ { f } - L _ { f } L _ { g } .
+$$
+
+Thus we, formally, obtain the modified differential equation
+
+$$
+\frac { d } { d t } z = \tilde { { \boldsymbol { f } } } ( { \boldsymbol { z } } ; \Delta t ) ,
+$$
+
+with
+
+$$
+\begin{array} { r } { \mathrm { e } ^ { \Delta t L _ { \tilde { r } _ { \mathbf { i } } \mathbf { i } } } \mathrm { d } = \left( \mathbf { i } \mathbf { d } + \Delta t L _ { g } + \frac { \Delta t ^ { 2 } } { 2 ! } L _ { g } ^ { 2 } + \cdots \right) \left( \mathbf { i } \mathbf { d } + \Delta t L _ { f } + \frac { \Delta t ^ { 2 } } { 2 ! } L _ { f } ^ { 2 } + \cdots \right) \mathbf { i } \mathbf { d } } \\ { = \left( \mathbf { i } \mathbf { d } + \Delta t ( L _ { f } + L _ { g } ) + \frac { \Delta t ^ { 2 } } { 2 } \left( ( L _ { f } + L _ { g } ) ^ { 2 } + [ L _ { f } , L _ { g } ] \right) + \cdots \right) \mathbf { i } \mathbf { d } } \end{array}
+$$
+
+and, consequently
+
+$$
+L _ { \tilde { f } } = L _ { f } + L _ { g } + \frac { \Delta t } { 2 } [ L _ { f } , L _ { g } ] + \mathcal { O } ( \Delta t ^ { 2 } ) .
+$$
+
+Unlike the linear case, this series does not, in general, converge. A similar statement follows for the second-order splitting
+
+$$
+\boldsymbol { \psi } _ { \Delta t } = \boldsymbol { \Phi } _ { \Delta t / 2 , f } \circ \boldsymbol { \phi } _ { \Delta t , g } \circ \boldsymbol { \phi } _ { \Delta t / 2 , f } = \mathrm { e } ^ { ( \Delta t / 2 ) L _ { f } } \circ \mathrm { e } ^ { \Delta t L _ { g } } \circ \mathrm { e } ^ { ( \Delta t / 2 ) L _ { f } } \mathrm { i } \mathbf { d } ,
+$$
+
+which is, formally, obtained from (5.32) by substituting $\pmb { A }$ by $L _ { f }$ and $B$ by $L _ { g }$ , respectively.
+
+10The definition (5.35) is sometimes replaced by
+
+$$
+\left[ L _ { f } , L _ { g } \right] : = L _ { f } L _ { g } - L _ { g } L _ { f } .
+$$
+
+We prefer (5.35) because of its natural link to the Poisson bracket. See (5.38).
+
+Let us now assume that the two vector fields $\boldsymbol { f }$ and $\pmb { g }$ are Hamiltonian. We introduce the notation
+
+$$
+L _ { H } : = L _ { \{ \mathbf { i d } , H \} }
+$$
+
+to denote the differential operator $L _ { f }$ corresponding to the Hamiltonian vector field $\pmb { f } = \{ \mathbf { i d } , H \}$ with Hamiltonian $H$ and Lie–Poisson bracket $\{ . , . \}$ . Note that $L _ { H } f = \{ f , H \}$ [7]. For example, the Euler-A method can be written as
+
+$$
+\pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { \Delta t , V } \circ \pmb { \phi } _ { \Delta t , T } = \mathrm { e } ^ { \Delta t L _ { T } } \mathrm { e } ^ { \Delta t L _ { V } } \mathbf { i } \mathbf { d } .
+$$
+
+This method is symplectic and gives rise to a modified Hamiltonian differential equation
+
+$$
+\cfrac { d } { d t } z = \tilde { \pmb { f } } ( z ; \Delta t ) = J \nabla _ { z } \tilde { H } ( z ; \Delta t ) ,
+$$
+
+with modified Hamiltonian $\tilde { H } ( \Delta t )$ . Again the BCH formula can be used. We just have to note that the commutator of two Hamiltonian vector fields $H _ { 1 }$ and $H _ { 2 }$ is related to the Poisson bracket of the two corresponding Hamiltonian functions via the formula
+
+$$
+L _ { \{ H _ { 1 } , H _ { 2 } \} } = [ L _ { H _ { 1 } } , L _ { H _ { 2 } } ] .
+$$
+
+Thus we obtain for the Euler-A method the modified Hamiltonian
+
+$$
+\tilde { H } = T + V + \frac { \Delta t } { 2 } \{ V , T \} + \frac { \Delta t } { 1 2 } \left( \{ V , \{ V , T \} \} + \{ T , \{ T , V \} \} \right) + \cdots .
+$$
+
+Note that $\{ V , T \} ( \pmb { q } , \pmb { p } ) = \pmb { p } ^ { T } \pmb { M } ^ { - 1 } \nabla _ { \pmb { q } } V ( \pmb { q } )$ and we recover the modified Hamiltonian $\tilde { H } _ { 1 } ( \Delta t )$ from Section 5.1.2. The second-order splitting (5.37) becomes
+
+$$
+\pmb { \psi } _ { \Delta t } = \mathrm { e } ^ { ( \Delta t / 2 ) L _ { H _ { 1 } } } \mathrm { e } ^ { \Delta t L _ { H _ { 2 } } } \mathrm { e } ^ { ( \Delta t / 2 ) L _ { H _ { 1 } } } \mathbf { i d } ,
+$$
+
+with modified Hamiltonian
+
+$$
+\tilde { \cal H } = { \cal H } _ { 1 } + { \cal H } _ { 2 } + { \frac { \Delta t ^ { 2 } } { 2 4 } } ( 2 \{ { \cal H } _ { 2 } , \{ { \cal H } _ { 2 } , { \cal H } _ { 1 } \} \} - \{ { \cal H } _ { 1 } , \{ { \cal H } _ { 1 } , { \cal H } _ { 2 } \} \} ) + \cdots .
+$$
+
+In particular, the St¨ormer–Verlet method corresponds to the second-order splitting (5.39) with $H _ { 1 } = V$ and $H _ { 2 } = \tau$ where $T = \pmb { p } ^ { T } \pmb { M } ^ { - 1 } \pmb { p } / 2$ and $V = V ( \pmb q )$ . In other words, using exponential notation, the St¨ormer–Verlet method can be written more compactly as
+
+$$
+\pmb { \psi } _ { \Delta t } = \mathrm { e } ^ { ( \Delta t / 2 ) L _ { V } } \mathrm { e } ^ { \Delta t L _ { T } } \mathrm { e } ^ { ( \Delta t / 2 ) L _ { V } } \mathbf { i d } ,
+$$
+
+and the first terms of the modified Hamiltonian $\tilde { H } ( \Delta t )$ can be obtained from (5.40).
+
+In summary, the Baker–Campbell–Hausdorff formula, originally derived for the composition of matrix exponentials, and a Lie algebraic treatment of composition methods are very useful for the derivation of higher-order methods and for the development of a backward error analysis. In this context, we like to mention, in particular, the work of DRAGT AND FINN [51], NERI [145], DRAGT et al. [52], SUZUKI [188, 189], and YOSHIDA [205].
+
+# 5.5 Exercises
+
+1. Modified equations. Find the exact modified equations for the symplectic scheme
+
+$$
+q ^ { n + 1 } = q ^ { n } + \Delta t p ^ { n + 1 } , \qquad p ^ { n + 1 } = p ^ { n } - \Delta t \omega ^ { 2 } q ^ { n } .
+$$
+
+Recall the discussion in Section 2.6 of Chapter 2.
+
+2. Conservation of first integrals. Show that the modified equations exactly conserve a first integral if the method does so. Hint: follow the proof of Theorem 1, denote the first integral by $G ( z )$ , and consider the behavior of the function
+
+$$
+F _ { \tau } = \frac { 1 } { \tau ^ { i + 2 } } \left[ G ( \pmb { \phi } _ { \tau } ) - G ( \pmb { \psi } _ { \tau } ) \right] ,
+$$
+
+where Φτ = Φτ,f˜(τ).
+
+3. Time-reversible methods and modified equations. Show that the modified equations are time reversible if the method is time reversible. Hint: note that time reversibility of a method is equivalent to (compare Chapter 4)
+
+$$
+\pmb { \psi } _ { \Delta t } \circ ( \pmb { S } \pmb { \psi } _ { \Delta t } \circ \pmb { S } ) - \mathbf { i d } = \pmb { 0 } .
+$$
+
+Use this fact to find an appropriate function $F _ { \tau }$ as used in the proof of Theorem 1.
+
+4. Symmetric methods and modified equations. Show that the modified vector field expansion (5.7) contains only terms of even power in $\Delta t$ if the numerical method $\psi _ { \Delta t }$ is symmetric, i.e.
+
+$$
+{ \pmb { \psi } } _ { - \Delta t } = \left[ { \pmb { \psi } } _ { \Delta t } \right] ^ { - 1 } .
+$$
+
+This result implies that the order of a symmetric method is necessarily even (see Theorem 1 in Section 4.3.3. Hint: the flow map of the modified vector
+
+field
+
+$$
+\tilde { \pmb f } ( \Delta t ) = \sum _ { i } \Delta t ^ { i } \delta \pmb f _ { i }
+$$
+
+satisfies
+
+$$
+\pmb { \phi } _ { - \Delta t , \tilde { t } ( \Delta t ) } = \left[ \pmb { \phi } _ { \Delta t , \tilde { t } ( \Delta t ) } \right] ^ { - 1 } = \pmb { \phi } _ { \Delta t , - \tilde { t } ( \Delta t ) } ,
+$$
+
+which gives the modified vector field for the map $[ { \pmb { \psi } } _ { \Delta t } ] ^ { - 1 }$ . Show also that ${ \pmb { \psi } } _ { - \Delta t }$ has the modified vector field
+
+$$
+\hat { \pmb f } ( \Delta t ) = \sum _ { i } ( - \Delta t ) ^ { i } \delta \pmb f _ { i } .
+$$
+
+Finally, use (5.41) and compare the corresponding modified vector fields.
+
+5. Canonical point transformation. Prove that the transformation (5.29)–(5.30) is the flow map of the Hamiltonian vector field with Hamiltonian $F = p ^ { T } f ( q )$ . Hint: Rewrite (5.30) as
+
+$$
+\left[ \nabla _ { q } \phi _ { \tau } ( q ) \right] \bar { p } ( \tau ) = p ,
+$$
+
+differentiate with respect to $\tau$ , and set $\tau = 0$ .
+
+6. Kepler problem and modified equations. Apply the St¨ormer–Verlet method to the planar Kepler problem
+
+$$
+H ( \pmb { q } , \pmb { p } ) = \frac { 1 } { 2 } \pmb { p } ^ { T } \pmb { p } - \frac { 1 } { | | \pmb { q } | | } , \qquad \pmb { q } , \pmb { p } \in \mathbb { R } ^ { 2 } .
+$$
+
+Use the BCH formula (5.40) to compute the second-order corrections of the modified Hamiltonian $\tilde { H }$ for this particular problem. Verify the fourth-order convergence of the St¨ormer–Verlet method with respect to the modified Hamiltonian $\tilde { H } _ { 2 }$ numerically. Take, for $\mathsf { e x }$ ample, initial conditions $\pmb { q } = ( 1 , 0 ) ^ { T }$ and $\pmb { p } = ( 0 , 1 ) ^ { T }$ .
+
+7. BCH formula. Verify the first two terms in the BCH formula (5.36) for the composition of two vector field exponentials
+
+$$
+\pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { \Delta t , t } \circ \pmb { \phi } _ { \Delta t , g } = \mathrm { e } ^ { \Delta t L _ { g } } \mathrm { e } ^ { \Delta t L _ { f } } \mathbf { i } \mathbf { d } .
+$$
+
+Also verify that the next term in the expansion is equal to
+
+$$
+\frac { \Delta t ^ { 2 } } { 1 2 } \left( [ L _ { f } , [ L _ { f } , L _ { g } ] ] + [ L _ { g } , [ L _ { g } , L _ { f } ] ] \right) .
+$$
+
+7. Lie derivatives. Verify formula (5.38), i.e. show that
+
+$$
+L _ { \{ H _ { 1 } , H _ { 2 } \} } f = L _ { H _ { 1 } } [ L _ { H _ { 2 } } f ] - L _ { H _ { 2 } } [ L _ { H _ { 1 } } f ] = \left( L _ { H _ { 1 } } L _ { H _ { 2 } } - L _ { H _ { 2 } } L _ { H _ { 1 } } \right) f ,
+$$
+
+by using $L _ { H } f = \{ f , H \}$ , $\{ f , g \} = - \{ g , f \}$ , and the Jacobi identity [7]
+
+$$
+\{ \{ f , g \} , h \} + \{ \{ g , h \} , f \} + \{ \{ h , f \} , g \} = 0 .
+$$
+
+8. Conservation of modified energy. If one is only interested in monitoring the conservation of a more accurate energy expression, then one does not necessarily have to use a modified Hamiltonian $\tilde { H } ( q , p ; \Delta t )$ as previously discussed. This has been pointed out by SKEEL AND HARDY [177] who gave a practical construction for high-order modified energies. Below we describe a somewhat similar approach which has been used by MOORE AND REICH [137] to verify numerical energy conservation laws for Hamiltonian PDEs. The idea has also been used by HAIRER AND LUBICH to prove conservation of energy for the St¨ormer–Verlet and related methods [81].
+
+We write the St¨ormer–Verlet method in its leapfrog form
+
+$$
+\frac { { \pmb q } ^ { n + 1 } - 2 { \pmb q } ^ { n } + { \pmb q } ^ { n - 1 } } { \Delta t ^ { 2 } } = - \nabla _ { \pmb q } V ( { \pmb q } ) .
+$$
+
+a. Show that
+
+$$
+\frac { q ( t _ { n } + \Delta t ) - 2 q ( t _ { n } ) + q ( t _ { n } - \Delta t ) } { \Delta t ^ { 2 } } = \ddot { q } ( t _ { n } ) + \frac { \Delta t ^ { 2 } } { 1 2 } q ^ { ( 4 ) } ( t _ { n } ) + \mathcal { O } ( \Delta t ^ { 4 } ) ,
+$$
+
+where $q ( t )$ is sufficiently smooth.
+
+b. We use the result to formulate the following modified equation
+
+$$
+\frac { d ^ { 2 } } { d t ^ { 2 } } \pmb { q } + \frac { \Delta t ^ { 2 } } { 1 2 } \frac { d ^ { 4 } } { d t ^ { 4 } } \pmb { q } = - \nabla _ { \pmb { q } } V ( \pmb { q } )
+$$
+
+for the leapfrog method. Show that
+
+$$
+E = { \frac { 1 } { 2 } } \| { \dot { \pmb q } } \| ^ { 2 } + V ( { \pmb q } ) + { \frac { \Delta t ^ { 2 } } { 1 2 } } \left[ { \dot { \pmb q } } \cdot { \pmb q } ^ { ( 3 ) } - { \frac { 1 } { 2 } } \| { \dot { \pmb q } } \| ^ { 2 } \right]
+$$
+
+is conserved along the solutions of the modified equations (5.42).
+
+c. Show that the modified equation (5.42) is the Euler–Lagrange equation for the Lagrangian functional
+
+$$
+\mathcal { L } [ \pmb { q } ] = \int _ { t _ { 0 } } ^ { t _ { 1 } } \left[ \frac { 1 } { 2 } \| \pmb { \dot { \dot { \mathbf { q } } } } \| ^ { 2 } - V ( \pmb { q } ) - \frac { \Delta t ^ { 2 } } { 2 4 } \| \pmb { \dot { \dot { \mathbf { q } } } } \| ^ { 2 } \right] d t .
+$$
+
+d. How would you verify numerically that the modified energy (5.43) is preserved to fourth-order along numerical solutions $\{ \pmb q ^ { n } \} .$ Hint: See [137].
+
+# 6
+
+# Higher-order methods
+
+In Chapter 4, we introduced several first- and second-order symplectic integration methods for Hamiltonian systems. In this chapter, we will discuss the construction of “higher-order” symplectic methods (with order greater than two), focusing in particular on those types of schemes that have been found to be most useful for practical computations. In traditional practice, higher-order integrators are employed for solving problems with relatively smooth solutions, such as gravitational simulations (solar system simulations, satellite trajectories). They are also traditionally used for many types of computations when very high accuracy (for example near the rounding error of the computer) is desired.
+
+As we have seen in Chapter 2, the appropriateness of a given numerical method for a given computational task is a complicated issue. In some cases, the principles of geometric integration are in contradiction with the demand for high accuracy. If the purpose of simulation is to reconstruct, as exactly as possible, a particular trajectory segment, it may not matter what sort of qualitative features the integrator possesses: the efficiency of the integration method in terms of solution error per unit work is instead of paramount importance. Since the development of symplectic integrators adds a number of additional constraints on the design of the method, such schemes typically sacrifice something in efficiency compared with their nonsymplectic counterparts at similar accuracy, for example requiring an extra force evaluation or two at each timestep. Thus the problem of correctly determining the precise entry point and time instant that a space probe arrives at the Martian atmosphere is a task best handled by a standard integration method, for example, a high-order multistep integrator (for example, DIVA [99]) or explicit Runge–Kutta method (for example, RKSUITE [29]). These methods are well-suited to short time integration at extreme high accuracy.
+
+On the other hand, it is often the case that integrations are carried out on terrifically long time intervals, or with respect to a large set of initial data. The goal is to accurately represent the qualitative long-term dynamics of the model, but some tolerance of individual trajectory error may be acceptable. Examples where this is the case include studies of the stability of the solar system, planet formation, and stellar cluster evolution. In some of the outer solar system simulations of SUSSMAN AND WISDOM for example, the computation was performed on a time interval of 100 million years [187], and more recent simulations have pushed the time intervals into the billions of years. On such time intervals, even the trajectories of the relatively slow-moving outer planets cannot be resolved to very high accuracy. Instead, the goal of these types of calculations is generally to obtain a useful, qualitatively correct result regarding a robust pattern in the long-term evolution of the system. The particular initial conditions are chosen arbitrarily within some set, and the questions asked concern the generic behavior for initial conditions within this set. In this setting, the most natural and efficient scheme is often some sort of geometric integrator, for example a symplectic or time-symmetric method.
+
+To clarify this discussion, consider the challenge of predicting collisions of the earth with near-earth asteroids using simulation. One might ask either of the following questions, which are answerable in part using simulation: (i) when will a given object next collide with the earth and with what impact force, or (ii) on average how often will the earth be hit by such an object and with what average impact force. If the problem at hand is similar to the first one, then the best method for simulation is likely to be a traditional, high-order integrator with optimized choice of integration parameters. If the problem is more like the second one, the use of a high-order symplectic method may be indicated. Note that each of the two types of problems also requires a suitable choice of data: very accurate initial data and parameters for questions of type (i) and perhaps a sampling from an appropriate range of suitable initial data and model parameters in the case (ii).
+
+In summary, accurate simulation of nonlinear systems generally calls for a high-order method. On the other hand, the efficient solution of nonlinear systems over very long time intervals or with many initial points typically benefits from the preservation of geometric properties such as the symplectic structure or a reversing symmetry. In this chapter, we will explain how to develop methods to provide us with some of the best aspects of both worlds: high order to improve the accuracy of the method when high accuracy is needed, as well as conservation of available geometric structure.
+
+# 6.1 Construction of higher-order methods
+
+The design of a symplectic integrator of order $p \geq 1$ involves, roughly speaking, two steps. First a stepsize dependent family of symplectic maps,
+
+$$
+\begin{array} { r } { z ^ { n + 1 } = \pmb { \psi } _ { \Delta t } ( z ^ { n } ; \gamma _ { 1 } , \gamma _ { 2 } , \dots , \gamma _ { k } ) , } \end{array}
+$$
+
+is defined in terms of $k$ arbitrary parameters. The method is then “fine tuned” by adjusting the parameters so that the local error of the method is $O ( \Delta t ^ { p + 1 } )$
+
+$$
+\begin{array} { r } { \pmb { \psi } _ { \Delta t } ( z ) - \pmb { \phi } _ { \Delta t } ( z ) = \pmb { \mathcal { O } } ( \Delta t ^ { p + 1 } ) . } \end{array}
+$$
+
+In this chapter, we will discuss higher-order methods for general canonical Hamiltonian systems
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } \pmb { q } = \nabla _ { p } H ( \pmb { q } , \pmb { p } ) , } \\ { \displaystyle \frac { d } { d t } \pmb { p } = - \nabla _ { \pmb { q } } H ( \pmb { q } , \pmb { p } ) ) , } \end{array}
+$$
+
+with an important special class of canonical systems obtained for Hamiltonian functions that are separable into kinetic and potential energy, i.e. of type
+
+$$
+H ( \pmb { q } , \pmb { p } ) = T ( \pmb { p } ) + V ( \pmb { q } ) .
+$$
+
+We cover several approaches to the derivation of higher-order methods: composition methods, classical Runge–Kutta (RK) as well as partitioned Runge–Kutta (PRK) methods, and methods based on generating functions.
+
+Composition methods offer an attractive and inexpensive way to obtain higherorder symplectic methods. They only require either (1) a splitting of the Hamiltonian into two or more explicitly solvable subproblems or, if this is not available, (2) a symmetric second-order symplectic approximation. The latter approach can, of course, be applied to any Hamiltonian problem, whether or not a splitting can be identified. Composition methods are not restricted to Hamiltonian problems and provide a general, systematic way to construct higher-order methods that preserve underlying geometric properties of the analytic problem.
+
+On the other hand, there is a very well-developed order theory for RK and PRK methods and we “only” have to identify those schemes within these classes that are symplectic. This and the mathematical elegance of RK methods have contributed to their great popularity, especially among numerical analysts. However, it appears that, for many problems, symplectic RK methods are necessarily implicit and therefore more expensive in their implementation and are outperformed by composition methods unless very high precision computations are required.
+
+# 6.2 Composition methods
+
+In this section, we introduce the composition method approach to higher-order integration of Hamiltonian systems. We begin our treatment with systems in separable Hamiltonian form. The reader is referred to the survey article by MCLACHLAN AND QUISPEL [132] for a general discussion of splitting and composition methods.
+
+We also wish to point to NERI [145], FOREST AND RUTH [62], YOSHIDA [205], and SUZUKI [188]) for early contributions to the theory of composition methods and their application to symplectic integration.
+
+# 6.2.1 Composition methods for separable Hamiltonian systems
+
+Consider a separable Hamiltonian system
+
+$$
+\begin{array} { l } { { \displaystyle { \frac { d } { d t } } { \pmb q } = \nabla _ { \pmb { p } } T ( { \pmb p } ) } , } \\ { { \displaystyle { \frac { d } { d t } } { \pmb p } = - \nabla _ { \pmb { q } } V ( { \pmb q } ) , } } \end{array}
+$$
+
+and observe that each of the two Hamiltonian subsystems
+
+$$
+\begin{array} { l } { { \displaystyle { \frac { d } { d t } } { \pmb q } = { \bf 0 } } , } \\ { { \displaystyle { \frac { d } { d t } } { \pmb p } = - \nabla _ { { \pmb q } } V ( { \pmb q } ) , } } \end{array}
+$$
+
+and
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } \pmb { q } = \nabla _ { p } T ( \pmb { p } ) , } \\ { \displaystyle \frac { d } { d t } p = \pmb { 0 } } \end{array}
+$$
+
+is exactly solvable. Let us denote the corresponding flow maps by $\psi _ { t , V }$ and $\psi _ { t , T }$ , respectively. First- and second-order methods can be obtained by simple compositions of these flow maps, as discussed in Chapters 4 and 5.
+
+Here we will generalize this approach to methods of arbitrarily high order. For this purpose, we consider a multi-composition of the form
+
+$$
+\pmb { \psi } _ { \Delta t } : = \pmb { \phi } _ { c _ { s } \Delta t , V } \circ \pmb { \phi } _ { d _ { s } \Delta t , T } \circ \cdot \cdot \cdot \circ \pmb { \phi } _ { c _ { 1 } \Delta t , V } \circ \pmb { \phi } _ { d _ { 1 } \Delta t , T } \circ \pmb { \phi } _ { c _ { 0 } \Delta t , V } ,
+$$
+
+with $\{ c _ { i } \} _ { i = 0 , \dots , s }$ and $\{ d _ { i } \} _ { i = 1 , \dots , s }$ representing appropriate weight factors. The integer $S$ is termed the number of stages of the concatenation method.
+
+A method is said to be consistent if the order is at least one, i.e., if the local error is at least $O ( \Delta t ^ { 2 } )$ . Let us determine the requirement on the method parameters in a composition method for consistency. Observe that the terms in (6.3) commute to second order, so we have, for example
+
+$$
+\begin{array} { r } { \pmb { \phi } _ { d _ { 1 } \Delta t , T } \circ \pmb { \phi } _ { c _ { 1 } \Delta t , V } = \pmb { \phi } _ { c _ { 1 } \Delta t , V } \circ \pmb { \phi } _ { d _ { 1 } \Delta t , T } + O ( \Delta t ^ { 2 } ) , } \end{array}
+$$
+
+We apply this fact recursively $s$ times and use the group property associated to the flow maps on $\tau$ and $V$ , for example
+
+$$
+\Phi _ { \alpha T } \circ \Phi _ { \beta T } = \Phi _ { ( \alpha + \beta ) T } ,
+$$
+
+for any scalar $\alpha , \beta$ . It follows that
+
+$$
+\pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { ( d _ { 1 } + d _ { 2 } + . . . + d _ { s } ) \Delta t , T } \circ \pmb { \phi } _ { ( c _ { 0 } + c _ { 1 } + c _ { 2 } + . . . + c _ { s } ) \Delta t , V } + O ( \Delta t ^ { 2 } ) .
+$$
+
+Since consistency is to be a property of the method, and hence should hold independent of $T$ and $V$ , the following consistency conditions result
+
+$$
+\sum _ { i = 0 } ^ { s } c _ { i } = \sum _ { i = 1 } ^ { s } d _ { i } = 1 .
+$$
+
+Furthermore, if a consistent composition (6.3) is symmetric, i.e.
+
+$$
+c _ { i } = c _ { s - i } \qquad { \mathrm { a n d } } \quad d _ { i } = d _ { s + 1 - i } ,
+$$
+
+$i = 1 , \dots , s$ , then the method is automatically second order.
+
+The St¨ormer–Verlet method (2.16)–(2.18) of Section 2.4 is obtained by choosing $s = 1$ , $c _ { 0 } = 1 / 2$ , $d _ { 1 } = 1$ , $c _ { 1 } = 1 / 2$ . The method is clearly consistent and symmetric; in fact, we have already pointed out in earlier chapters that this is a second-order method.
+
+The conditions on the weight factors $C _ { I }$ and $d _ { j }$ to obtain order $p > 1$ can, for example, be obtained by a recursive application of the Baker–Campbell–Hausdorff formula (see Section 5.4). Another approach to derive order conditions uses an extension of Runge–Kutta rooted trees to composition methods [142].
+
+Once the algebraic-order conditions are developed, it becomes an interesting challenge to find solutions to the resulting nonlinear system. Typically, one chooses the number of stages high enough so that, at a given order, there are too many parameters for the number of order conditions; one can then impose some additional conditions (such as minimization of some coefficient or coefficients appearing in the leading term of the error expansion) so that a (locally) unique and optimal solution is obtained.
+
+In Table 6.1, we summarize two popular methods by providing the coefficients. Both methods have an even number of stages and are symmetric and, hence, we only have to give the first $s / 2$ coefficients. References are also given in this table to the publication where the method appeared. These methods can be applied to any canonical Hamiltonian system with separable Hamiltonian $H = T ( p ) + V ( q )$ . In fact, the listed methods can also be applied to any splitting $H = H _ { 1 } + H _ { 2 }$ with explicitly solvable Hamiltonian functions $H _ { 1 }$ and $H _ { 2 }$ .
+
+Since the number of order conditions for general composition methods (6.3) rapidly grows with the desired order of the method, one may attempt to restrict the search for higher-order methods to methods based on the concatenation using a second-order symmetric method as discussed below.
+
+Table 6.1 Symmetric composition methods for separable Hamiltonian systems   
+
+<table><tr><td>stages</td><td>order</td><td>coefficients</td><td></td><td>reference</td></tr><tr><td rowspan="4">6</td><td rowspan="4">4</td><td>Co = 0.0792036964311957</td><td>dl = 0.209515106613362</td><td rowspan="4">BLANES&amp;</td></tr><tr><td>C1 = 0.353172906049774</td><td>d = -0.143851773179818</td></tr><tr><td>C = -0.0420650803577195</td><td>d=1/2-d-d</td></tr><tr><td>C=1-2(co+C+C2)</td><td></td></tr><tr><td rowspan="6">10</td><td rowspan="6">6</td><td>Co = 0.0502627644003922</td><td>di = 0.148816447901042</td><td rowspan="6">BLANES&amp;</td></tr><tr><td>Cl = 0.413514300428344</td><td>d2 = -0.132385865767784</td></tr><tr><td>C = 0.0450798897943977</td><td>d = 0.067307604692185</td></tr><tr><td>C3 = -0.188054853819569</td><td>d4 = 0.432666402578175</td></tr><tr><td>C4 = 0.541960678450780</td><td>d5=1/2- M 14 di</td></tr><tr><td>14</td><td>i=1</td></tr></table>
+
+# 6.2.2 Composition methods based on second-order symmetric methods
+
+It was observed by YOSHIDA [205] and SUZUKI [188]) that an efficient way to obtain higher-order methods for separable Hamiltonian systems is to restrict the search to methods based on the concatenation of a second-order symmetric method with stepsize $w \Delta t$ . For example, in the case of a separable Hamiltonian system, we might base this on
+
+$$
+\psi _ { w \Delta t } : = \pmb { \phi } _ { w \Delta t / 2 , T } \circ \pmb { \phi } _ { w \Delta t , V } \circ \pmb { \phi } _ { w \Delta t / 2 , T } .
+$$
+
+Here $w \neq 0$ is a free parameter. Note that ${ \pmb { \psi } } _ { w \Delta t }$ is a second-order approximation to the exact flow map $\Phi _ { t , H }$ with $t = w \Delta t$ .
+
+Higher-order methods are constructed by $S ^ { \th }$ -fold concatenating ${ \pmb { \psi } } _ { w \Delta t }$ with different values for $W$ , i.e.
+
+$$
+\widetilde { \pmb { \psi } } _ { \Delta t } = \pmb { \psi } _ { w _ { s } \Delta t } \circ \pmb { \psi } _ { w _ { s - 1 } \Delta t } \circ \cdots \circ \pmb { \psi } _ { w _ { 2 } \Delta t } \circ \pmb { \psi } _ { w _ { 1 } \Delta t } ,
+$$
+
+with $\{ w _ { i } \} _ { i = 1 , \dots , s }$ as free parameters. We also require that the concatenation method (6.5) is symmetric, i.e.
+
+$$
+w _ { s + 1 - i } = w _ { i } , \qquad i = 1 , \dots , s ,
+$$
+
+and only consider odd values of $s$ . The reason for considering symmetric methods based on the composition of symmetric methods is twofold: (i) symmetric methods are always of even order (see Theorem 1 in Section 4.3.3) and time reversible, (ii) the odd power terms in the Taylor expansion of the local error vanish and, therefore, the order conditions simplify. We present three methods of type (6.5) in Table 6.2. Because of symmetry, we again only provide the $( s + 1 ) / 2$ first coefficients $W _ { j }$ .
+
+Table 6.2 Symmetric composition methods based on a symmetric second-order method   
+
+<table><tr><td>stages</td><td>order</td><td>coefficients</td><td>reference</td></tr><tr><td rowspan="3">5</td><td rowspan="3">4</td><td>W1=0.28</td><td rowspan="3">McLACHLAN[130]</td></tr><tr><td>W2 = 0.62546642846767004501 12</td></tr><tr><td>W3=1-2 i=1 Wi</td></tr><tr><td rowspan="4">7</td><td rowspan="4">6</td><td>Wl = 0.78451361047755726382</td><td rowspan="4">YoSHIDA[205]</td></tr><tr><td>W2 = 0.23557321335935813368</td></tr><tr><td>W3 = -1.17767998417887100695</td></tr><tr><td>3 W4=1-2 Wi</td></tr><tr><td rowspan="5">9</td><td rowspan="5">6</td><td>Wi=0.39216144400731413928</td><td rowspan="5">KAHAN AND LI[97]</td></tr><tr><td>W2 = 0.33259913678935943860</td></tr><tr><td>W3 = -0.70624617255763935981</td></tr><tr><td>W4 = 0.08221359629355080023</td></tr><tr><td>W5=1-2 14 -i=1 Wi</td></tr><tr><td rowspan="8">15</td><td rowspan="8"></td><td>Wl = .74167036435061295345</td><td rowspan="8">McLACHLAN[130]</td></tr><tr><td>W2 =-.40910082580003159400</td></tr><tr><td></td></tr><tr><td>W3= .19075471029623837995</td></tr><tr><td>W4 = -.57386247111608226666</td></tr><tr><td>W5 = .29906418130365592384</td></tr><tr><td>W6 = .33462491824529818378</td></tr><tr><td>W7= .31529309239676659663</td></tr><tr><td></td><td></td><td>Wi</td></tr></table>
+
+For the concatenation methods (6.5) it is not essential that the method (6.4) is used. The necessary requirement is that the method is of one-step form, is second order and symmetric. For example, one could replace the method (6.4) by the standard St¨ormer–Verlet method (which is obtained from (6.4) by interchanging $V$ and $\tau$ ) or by the implicit midpoint rule. Thus, in contrast to (6.3), this concatenation method can also be used to obtain higher-order methods for general Hamiltonian systems (6.1)–(6.2) as long as we are able to identify a second-order and symmetric method $\psi _ { \Delta t }$ for the problem at hand.
+
+# 6.2.3 Post-processing of composition methods
+
+Composition methods of type (6.5) can be enhanced by the idea of postprocessing [117, 204, 131]. Introduce a coordinate transformation
+
+$$
+{ \widehat { z } } = \psi ( z ) ,
+$$
+
+and design a one-step method
+
+$$
+\widehat { \boldsymbol { z } } ^ { n + 1 } = \widehat { \pmb { { \psi } } } _ { \Delta t } ( \widehat { \boldsymbol { z } } ^ { n } ) ,
+$$
+
+such that the composed map
+
+$$
+\widetilde { \pmb { \psi } } _ { \Delta t } = \pmb { \psi } ^ { - 1 } \circ \widehat { \pmb { \psi } } _ { \Delta t } \circ \pmb { \psi }
+$$
+
+is a higher-order method for the given differential equation. Observe that
+
+$$
+\begin{array} { r l } & { \pmb { \widetilde { \psi } } _ { \Delta t } ^ { 2 } = \pmb { \psi } ^ { - 1 } \circ \pmb { \widehat { \psi } } _ { \Delta t } \circ \pmb { \psi } \pmb { \psi } ^ { - 1 } \circ \pmb { \widehat { \psi } } _ { \Delta t } \circ \pmb { \psi } } \\ & { \qquad = \pmb { \psi } ^ { - 1 } \circ \pmb { \widehat { \psi } } _ { \Delta t } ^ { 2 } \circ \pmb { \psi } , } \end{array}
+$$
+
+and, similarly
+
+$$
+\tilde { \pmb { { \psi } } } _ { \Delta t } ^ { m } = \pmb { { \psi } } ^ { - 1 } \circ \hat { \pmb { { \psi } } } _ { \Delta t } ^ { m } \circ \pmb { { \psi } } .
+$$
+
+Thus time integration is done in terms of the variable $\widehat { \boldsymbol { z } }$ with $\pmb { \psi }$ only applied infrequently whenever an output value is needed in terms of the original variable $z$ . Because of this, we can afford for $\pmb { \psi }$ to be relatively expensive to evaluate as long as $\widehat { \pmb { { \psi } } } _ { \Delta t }$ is “cheap.”
+
+Now assume that we are given a second-order symmetric method
+
+$$
+z ^ { n + 1 } = \pmb { \psi } _ { \Delta t } ( z ^ { n } ) .
+$$
+
+As in Section 6.2.2, define a symmetric composition method of type (6.5) by ( $S$ odd)
+
+$$
+\begin{array} { r } { \widehat { \pmb { \psi } } _ { \Delta t } = \pmb { \psi } _ { w _ { 1 } \Delta t } \circ \pmb { \psi } _ { w _ { 2 } \Delta t } \circ \cdot \cdot \cdot \circ \pmb { \psi } _ { w _ { 2 } \Delta t } \circ \pmb { \psi } _ { w _ { 1 } \Delta t } , } \end{array}
+$$
+
+with $\{ w _ { i } \} _ { i = 1 , \dots , ( s + 1 ) / 2 }$ free parameters; i.e. the transformed variable $\widehat { \boldsymbol { z } }$ is updated according to (6.6) using (6.8). We still need the transformation $\psi$ . Here we use
+
+$$
+\psi = \pmb { \psi } _ { - c _ { m } \Delta t } \circ \pmb { \psi } _ { - c _ { m - 1 } \Delta t } \circ \cdot \cdot \cdot \circ \pmb { \psi } _ { - c _ { 1 } \Delta t } \circ \pmb { \psi } _ { c _ { m } \Delta t } \circ \pmb { \psi } _ { c _ { m - 1 } \Delta t } \circ \cdot \cdot \circ \pmb { \psi } _ { c _ { 2 } \Delta t } \circ \pmb { \psi } _ { c _ { 1 } \Delta t } ,
+$$
+
+with $\{ c _ { i } \} _ { i = 1 , \dots , m }$ as free parameters. Note that the inverse of $\pmb { \psi }$ is easy to compute since the basic method $\psi _ { \Delta t }$ is symmetric, i.e.
+
+$$
+\psi ^ { - 1 } = \pmb { \psi } _ { - c _ { 1 } \Delta t } \circ \pmb { \psi } _ { - c _ { 2 } \Delta t } \circ \cdot \cdot \cdot \circ \pmb { \psi } _ { - c _ { m } \Delta t } \circ \pmb { \psi } _ { c _ { 1 } \Delta t } \circ \pmb { \psi } _ { c _ { 2 } \Delta t } \circ \cdot \cdot \cdot \circ \pmb { \psi } _ { c _ { m - 1 } \Delta t } \circ \pmb { \psi } _ { c _ { m } \Delta t } .
+$$
+
+In Table 6.3 we give the coefficients for a sixth-order method due to BLANES [22]. Numerical comparisons of these methods can be found in Section 6.5.
+
+# 6.3 Runge–Kutta methods
+
+An alternative approach to higher-order integration is provided by the class of Runge–Kutta (RK) methods. It is well-known that certain implicit RK methods of Radau type (generalizing the implicit Euler method) are useful in the context of systems with strong dissipation, such as electronic circuits or chemical reaction dynamics. For these so-called stiff systems, implicit methods are often much more efficient than explicit methods. This is due to the inherent stepsize restriction of explicit methods in the context of strong dissipation (see, for example, [82, 84]). The situation is different for Hamiltonian systems for which, in general, implicit methods are found to be less competitive compared with the best explicit methods.
+
+Table 6.3 Symmetric composition methods with post-processing   
+
+<table><tr><td>stages</td><td>order</td><td>coefficients</td><td></td><td>reference</td></tr><tr><td>7</td><td>6</td><td>Wl = 0.513910778424374 W2 = 0.364193022833858</td><td>C1 =-(C2+C3+C4+C5) C2 = -0.461165940466494</td><td>BLANES[22]</td></tr></table>
+
+The situation is slightly different for partitioned Runge–Kutta methods where explicit methods exist for separable Hamiltonian systems. However, these methods can also be discussed in the context of splitting methods [148, 172].
+
+On the other hand, implicit Runge–Kutta and partitioned Runge–Kutta methods often provide the only reasonable means for symplectic treatment of nonseparable Hamiltonian systems. Below, we give a brief summary of the relevant issues for classical and partitioned Runge–Kutta methods.
+
+# 6.3.1 Implicit Runge–Kutta methods
+
+The general formula of an $S \cdot$ -stage Runge–Kutta method applied to a Hamiltonian system (6.1)–(6.2) is
+
+$$
+\begin{array} { l } { { Q _ { i } = q ^ { n } + \Delta t \displaystyle \sum _ { j = 1 } ^ { s } a _ { i j } F _ { j } , ~ } } \\ { { { } } } \\ { { P _ { i } = p ^ { n } + \Delta t \displaystyle \sum _ { j = 1 } ^ { s } a _ { i j } G _ { j } , ~ } } \\ { { { } } } \\ { { q ^ { n + 1 } = q ^ { n } + \Delta t \displaystyle \sum _ { i = 1 } ^ { s } b _ { i } F _ { i } , } } \\ { { { } } } \\ { { p ^ { n + 1 } = p ^ { n } + \Delta t \displaystyle \sum _ { i = 1 } ^ { s } b _ { i } G _ { i } . } } \end{array}
+$$
+
+with $s \geq 1$ the number of stages, $( Q _ { i } , P _ { i } ) , ~ i ~ = ~ 1 , \ldots , s$ , the internal stage
+
+variables, and the abbreviations
+
+$$
+\begin{array} { l l } { { { \pmb F } _ { i } = + \nabla _ { p } H ( { \pmb Q } _ { i } , { \pmb P } _ { i } ) , \ } } & { { i = 1 , . . . , s , } } \\ { { { \pmb G } _ { i } = - \nabla _ { q } H ( { \pmb Q } _ { i } , { \pmb P } _ { i } ) , \ } } & { { i = 1 , . . . , s . } } \end{array}
+$$
+
+Recall that we called a Runge–Kutta method “explicit” in Section 2.4 if the coefficients $\{ a _ { i j } \}$ satisfy $a _ { i j } = 0$ for $j \geq i$ and implicit otherwise. For implicit methods, the equations (6.10)–(6.11) are, in general, a system of nonlinear equations which must be solved by some iterative method, such as Newton’s method or fixed-point iteration. Because implicit methods are based on iteration, and several force (or vector field) evaluations are needed at each timestep, they are typically more costly to implement than $\mathsf { e x }$ plicit methods. However, good starting approximations can greatly enhance the efficiency of the necessary iterative method. This has been discussed by HAIRER, LUBICH AND WANNER [80] and by CALVO AND PORTILLO [41].
+
+An example of a symplectic Runge–Kutta method is provided by the implicit midpoint rule, which can be written as a one-stage $\langle s = 1$ ) RK method:
+
+$$
+\begin{array} { r } { Q _ { 1 } = \pmb { q } ^ { n } + \frac { \Delta t } { 2 } \nabla _ { p } H ( Q _ { 1 } , P _ { 1 } ) , } \\ { P _ { 1 } = \pmb { p } ^ { n } - \frac { \Delta t } { 2 } \nabla _ { q } H ( Q _ { 1 } , P _ { 1 } ) , } \\ { \pmb { q } ^ { n + 1 } = \pmb { q } ^ { n } + \Delta t \nabla _ { p } H ( Q _ { 1 } , P _ { 1 } ) , } \\ { \pmb { p } ^ { n + 1 } = \pmb { p } ^ { n } - \Delta t \nabla _ { q } H ( Q _ { 1 } , P _ { 1 } ) . } \end{array}
+$$
+
+The corresponding coefficients in (6.10)–(6.13) are $a _ { 1 1 } = 1 / 2$ and $b _ { 1 } ~ = ~ 1$ . For a general (implicit) $S$ -stage $\mathsf { R K }$ method we have $s ^ { 2 }$ parameters $\{ a _ { i j } \}$ and $S$ parameters $\{ b _ { i } \}$ . Conditions on the parameters $\{ a _ { i j } \}$ and $\{ b _ { i } \}$ that insure a certain order of the corresponding method can be obtained by Taylor series expansion of the exact time- $\Delta t$ -flow map and its approximation generated by the RK method followed by a matching of the terms in $\Delta t$ up to the desired order of the method. Since the complexity of the resulting equations, or order conditions, increases rapidly with the desired order of the method, simplifying conditions are often introduced. This leads to special classes of $\mathsf { R K }$ methods like the Gauss-Legendre methods, the Radau methods, and the Lobatto methods which are all based on the idea of collocation. We refer the reader to the textbooks by HAIRER, NORSETT AND WANNER [82] and HAIRER AND WANNER [84] for a detailed exposition of this material.
+
+Further restrictions apply if we demand that the RK method is symplectic. As first shown by SANZ-SERNA [170], LASAGNI [106], and SURIS [185] the conditions on the parameters $\{ a _ { i j } \}$ and $\{ b _ { i } \}$ are:
+
+$$
+b _ { i } a _ { i j } + b _ { j } a _ { j i } - b _ { i } b _ { j } = 0 , \qquad i , j = 1 , \dots , s .
+$$
+
+Proof: It is convenient to first express the Runge–Kutta method in more compact form. We associate with any $S \cdot$ -stage Runge–Kutta method the $s \times s$ matrix $A = \left\{ \boldsymbol { a } _ { i j } \right\}$ and the column vector $b = \{ b _ { i } \}$ . We also introduce tensor product notation. The tensor product $\tau _ { \infty } s$ , of an arbitrary $m \times m$ matrix ${ \cal T } = \{ t _ { i j } \}$ and an arbitrary $n \times n$ matrix $S = \{ s _ { i j } \}$ , is a $k \times k$ matrix, $k = m n$ , defined by
+
+$$
+\pmb { T } \otimes \pmb { S } = \left[ \begin{array} { c c c c } { t _ { 1 1 } \pmb { S } } & { t _ { 1 2 } \pmb { S } } & { \cdot \cdot \cdot } & { t _ { 1 m } \pmb { S } } \\ { t _ { 2 1 } \pmb { S } } & { t _ { 2 2 } \pmb { S } } & { \cdot \cdot \cdot } & { t _ { 2 m } \pmb { S } } \\ { \vdots } & { \vdots } & & { \vdots } \\ { t _ { m 1 } \pmb { S } } & { t _ { m 2 } \pmb { S } } & { \ldots } & { t _ { m m } \pmb { S } } \end{array} \right] .
+$$
+
+An account of the properties of tensor products is given by LANCHESTER [103]. For our purposes it is sufficient to know that
+
+$$
+( R \otimes { \pmb S } ) ( { \pmb T } \otimes { \pmb S } ) = ( R { \pmb T } ) \otimes { \pmb S } ,
+$$
+
+whenever the products are defined.
+
+Using tensor product notation, a $\mathsf { R K }$ method (6.10)–(6.13) can be compactly rewritten as
+
+$$
+\begin{array} { c } { q ^ { n + 1 } = { \pmb q } ^ { n } + \Delta t ( { \pmb b } ^ { T } \otimes { \pmb I } ) { \pmb F } , } \\ { p ^ { n + 1 } = { \pmb p } ^ { n } + \Delta t ( { \pmb b } ^ { T } \otimes { \pmb I } ) { \pmb G } , } \\ { { \pmb Q } = { \pmb e } \otimes { \pmb q } ^ { n } + \Delta t ( { \pmb A } \otimes { \pmb I } ) { \pmb F } , } \\ { { \pmb P } = { \pmb e } \otimes { \pmb p } ^ { n } + \Delta t ( { \pmb A } \otimes { \pmb I } ) { \pmb G } , } \end{array}
+$$
+
+where $\pmb { e } = [ 1 , 1 , \dots , 1 ] ^ { T } \in \mathbb { R } ^ { s } , \pmb { I } \in \mathbb { R } ^ { d \times d }$ is the identity matrix, and
+
+$$
+\begin{array} { r } { Q = \left[ \begin{array} { c } { Q _ { 1 } } \\ { Q _ { 2 } } \\ { \vdots } \\ { Q _ { s } } \end{array} \right] \in \mathbb { R } ^ { s d } , \qquad F = \left[ \begin{array} { c } { F _ { 1 } } \\ { F _ { 2 } } \\ { \vdots } \\ { F _ { s } } \end{array} \right] \in \mathbb { R } ^ { s d } , } \end{array}
+$$
+
+etc. The linearization of a RK method (6.10)–(6.13) is now implicitly defined by the system
+
+$$
+\begin{array} { c } { d pmb { q } ^ { n + 1 } = d \pmb { q } ^ { n } + \Delta t ( \pmb { b } ^ { T } \otimes \pmb { I } ) d \pmb { F } , } \\ { d \pmb { p } ^ { n + 1 } = d \pmb { p } ^ { n } + \Delta t ( \pmb { b } ^ { T } \otimes \pmb { I } ) d \pmb { G } , } \\ { d \pmb { Q } = \pmb { e } \otimes d \pmb { q } ^ { n } + \Delta t ( \pmb { A } \otimes \pmb { I } ) d \pmb { F } , } \\ { d \pmb { P } = \pmb { e } \otimes d \pmb { p } ^ { n } + \Delta t ( \pmb { A } \otimes \pmb { I } ) d \pmb { G } . } \end{array}
+$$
+
+where $d F = F _ { Q } d Q + F _ { P } d P$ etc. It is important to keep in mind that, because we started from a Hamiltonian system
+
+$$
+F _ { Q } = - { \cal G } _ { P } ^ { T } , \quad F _ { P } = F _ { P } ^ { T } , \quad G _ { Q } = G _ { Q } ^ { T } .
+$$
+
+The first two equations (6.15)–(6.16) are combined to give
+
+$$
+\begin{array} { r } { \frac { d q ^ { n + 1 } \wedge d p ^ { n + 1 } - d q ^ { n } \wedge d p ^ { n } } { \Delta t } = d q ^ { n } \wedge ( b ^ { T } \otimes I ) d G - d p ^ { n } \wedge ( b ^ { T } \otimes I ) d F + } \\ { \qquad \Delta t ( b ^ { T } \otimes I ) d F \wedge ( b ^ { T } \otimes I ) d G \qquad } \\ { = d q ^ { n } \wedge ( b ^ { T } \otimes I ) d G - d p ^ { n } \wedge ( b ^ { T } \otimes I ) d F + } \\ { \qquad \Delta t d F \wedge ( b b ^ { T } \otimes I ) d G . \qquad } \end{array}
+$$
+
+Next we introduce the diagonal matrix $\boldsymbol { B } \in \mathbb { R } ^ { s \times s }$ via $B e = b$ . Hence we obtain from (6.17)–(6.18) the identities
+
+$$
+\begin{array} { r l } & { d Q \wedge ( B \otimes I ) d G = e \otimes d \pmb { q } ^ { n } \wedge ( B \otimes I ) d \pmb { G } + \Delta t ( \pmb { A } \otimes I ) d \pmb { F } \wedge ( \pmb { B } \otimes I ) d \pmb { G } } \\ & { \qquad = d \pmb { q } ^ { n } \wedge ( \pmb { b } ^ { T } \otimes I ) d \pmb { G } + \Delta t d \pmb { F } \wedge ( \pmb { A } ^ { T } \pmb { B } \otimes I ) d \pmb { G } , } \end{array}
+$$
+
+and
+
+$$
+\begin{array} { r l } & { d P \wedge ( B \otimes I ) d F = e \otimes d p ^ { n } \wedge ( B \otimes I ) d F + \Delta t ( A \otimes I ) d G \wedge ( B \otimes I ) d F } \\ & { \qquad = d p ^ { n } \wedge ( b ^ { T } \otimes I ) d F - \Delta t d F \wedge ( B ^ { T } A \otimes I ) d G . } \end{array}
+$$
+
+These three equations, obtained so far, can be combined into a single equation
+
+$$
+\begin{array} { r } { \frac { d \pmb { q } ^ { n + 1 } \wedge d \pmb { p } ^ { n + 1 } - d \pmb { q } ^ { n } \wedge d \pmb { p } ^ { n } } { \Delta t } = \Delta t d \pmb { F } \wedge \left( \left\{ b \pmb { b } ^ { T } - \pmb { B } \pmb { A } - \pmb { A } ^ { T } \pmb { B } \right\} \otimes \pmb { I } \right) d \pmb { G } + } \\ { + d \pmb { Q } \wedge ( \pmb { B } \otimes \pmb { I } ) d \pmb { G } - d \pmb { P } \wedge ( \pmb { B } \otimes \pmb { I } ) d \pmb { F } . } \end{array}
+$$
+
+The symplecticity condition (6.14) is equivalent to
+
+$$
+B A + A ^ { T } B - b b ^ { T } = \mathbf { 0 } .
+$$
+
+Furthermore, since (6.19)
+
+$$
+\begin{array} { r l } & { d Q \wedge ( B \otimes I ) d G - d P \wedge ( B \otimes I ) d F = d Q \wedge ( B \otimes I ) G _ { P } d P - } \\ & { ~ - d P \wedge ( B \otimes I ) F _ { Q } d Q } \\ & { ~ = - d P \wedge ( B \otimes I ) \left\{ F _ { Q } + G _ { P } ^ { T } \right\} d Q } \\ & { ~ = 0 . } \end{array}
+$$
+
+Table 6.4 Coefficients for the two-stage Gauss–Legendre method of orders 4 and 6   
+
+<table><tr><td>4th order/2 stage a=-</td><td>a11=</td><td></td><td>12=-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>21=</td><td></td><td></td><td></td><td></td><td>22=</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>=+</td><td></td><td>b1=</td><td></td><td></td><td></td><td></td><td>b2=</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>6th order/3 stage</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>1 C1=</td><td>15</td><td>a11=</td><td>A</td><td></td><td></td><td>a12=</td><td>2</td><td></td><td>√15 15</td><td></td><td>5</td><td>√15 30</td></tr><tr><td>10</td><td></td><td>a21=</td><td>3</td><td>+</td><td>V15</td><td></td><td></td><td></td><td></td><td></td><td></td><td>√15</td></tr><tr><td>=</td><td></td><td></td><td></td><td></td><td>24 会</td><td></td><td>2</td><td>+</td><td>V15</td><td></td><td>5</td><td>23=-</td></tr><tr><td>8=+</td><td></td><td>a31=</td><td>品</td><td>+</td><td></td><td>a32=</td><td></td><td>15</td><td></td><td>a33=</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td>b1=</td><td></td><td></td><td>b=</td><td></td><td></td><td></td><td>b3=</td><td></td><td></td></tr></table>
+
+Thus
+
+$$
+d { \pmb q } ^ { n + 1 } \wedge d { \pmb p } ^ { n + 1 } = d { \pmb q } ^ { n } \wedge d { \pmb p } ^ { n } ,
+$$
+
+as desired.
+
+Upon setting $j = j$ in (6.14), we obtain $2 a _ { i i } - b _ { i } = 0$ for $b _ { i } \neq 0$ , which implies that $a _ { i i } \neq 0$ . Thus we obtain the following important restriction on symplectic $\mathsf { R K }$ methods:
+
+Lemma 1 Symplectic Runge–Kutta methods are necessarily implicit, i.e., $a _ { i j } \neq$ 0 for some $i , j \in \{ 1 , \dots , s \}$ , $j \geq j$ . ✷
+
+Among implicit $\mathsf { R K }$ methods, the Gauss–Legendre methods can be shown to satisfy (6.14) [39]. For example, the two-stage Gauss–Legendre method given in Table 6.4 is fourth order and symplectic. The additional coefficients $C _ { I }$ are needed when solving time-dependent Hamiltonian problems. Specifically, each stage variable $( Q _ { i } , P _ { i } )$ is an approximation to the exact solution at time $t _ { i } =$ $t _ { n } + c _ { i } \Delta t$ .
+
+More generally, Gauss–Legrendre methods with $s \geq 1$ stages are of order $p = 2 s$ . This is the optimal order obtainable for a given number of stages among all possible symplectic collocation Runge–Kutta methods.
+
+Implicit RK methods require the solution of the nonlinear equations (6.10)– (6.11). In general, these nonlinear equations can be solved by Newton’s method, but this task requires the computation of the Jacobian and its inverse. This can be avoided provided the stepsize $\Delta t$ is small enough. In this case, the following fixed-point iteration can be used instead of Newton’s method:
+
+For $I = 1 , \ldots$ , till convergence
+
+$$
+\begin{array} { l } { { Q _ { i } ^ { I } = { \pmb q } ^ { n } + \Delta t \displaystyle \sum _ { j = 1 } ^ { s } a _ { i j } { \cal F } _ { j } ^ { I - 1 } , \quad i = 1 , \ldots , s , } } \\ { { \nonumber } } \\ { { P _ { i } ^ { I } = p ^ { n } + \Delta t \displaystyle \sum _ { j = 1 } ^ { s } a _ { i j } { \cal G } _ { j } ^ { I - 1 } , \quad i = 1 , \ldots , s , } } \end{array}
+$$
+
+with
+
+$$
+\begin{array} { r } { \pmb { F } _ { j } ^ { I - 1 } = + \nabla _ { p } H ( \pmb { Q } _ { j } ^ { I - 1 } , \pmb { P } _ { j } ^ { I - 1 } ) , } \\ { \pmb { G } _ { j } ^ { I - 1 } = - \nabla _ { q } H ( \pmb { Q } _ { j } ^ { I - 1 } , \pmb { P } _ { j } ^ { I - 1 } ) } \end{array}
+$$
+
+and initial values $\pmb { Q } _ { j } ^ { 0 } = \pmb { q } ^ { n } , P _ { j } ^ { 0 } = \pmb { p } ^ { n } .$
+
+It is worth pointing out that the condition (6.14) also implies that the corresponding Runge–Kutta method exactly preserves any quadratic first integral of the form
+
+$$
+\boldsymbol { I } = \boldsymbol { z } ^ { T } \boldsymbol { C } \boldsymbol { z } + \boldsymbol { d } ^ { T } \boldsymbol { z } , \quad \boldsymbol { z } = ( \boldsymbol { q } , \boldsymbol { p } ) ^ { T } ,
+$$
+
+$C \in \mathbb { R } ^ { 2 d \times 2 d }$ a symmetric matrix and $\pmb { d } \in \mathbb { R } ^ { 2 d }$ a vector. For example, the Gauss– Legendre methods exactly preserve total linear and angular momentum for Hamiltonian systems with pairwise distance-dependent interactions. They also conserve the Hamiltonian of linear systems since the Hamiltonian $H$ is quadratic in $\pmb q$ and $\pmb { p }$ . The proof of this result has been given by COOPER [46] and is analogous to a result given below for integrals of partitioned Runge–Kutta methods.
+
+# 6.3.2 Partitioned Runge–Kutta methods
+
+Runge–Kutta methods were designed for general differential equations without assuming that the phase space variable $z$ can be partitioned into two sets of variables $\pmb q$ and $p$ as is the case for canonical Hamiltonian systems (6.1)–(6.2). Examining (6.10)–(6.13), it seems natural to use a different set of parameters $\{ a _ { i j } \}$ and $\{ b _ { i } \}$ for each variable $\pmb q$ and $p$ . Let us denote these parameter sets by $\{ \widehat { a } _ { i j } \}$ , $\{ \widehat { b } _ { i } \}$ and $\{ \widetilde { a } _ { i j } \} , \ \{ \widetilde { b } _ { i } \}$ , respectively. This leads us to the class of partitioned Runge–Kutta (PRK) methods (already introduced in Section 2.5)
+
+$$
+\pmb { Q } _ { i } = \pmb { q } ^ { n } + \Delta t \sum _ { j = 1 } ^ { s } \widehat { \sf a } _ { i j } \pmb { F } _ { j } , \qquad i = 1 , \ldots , s ,
+$$
+
+$$
+\begin{array} { l } { { P _ { i } = p ^ { n } + \Delta t \displaystyle \sum _ { j = 1 } ^ { s } \widetilde { a } _ { i j } \pmb { G } _ { j } , \qquad i = 1 , \dots , s , } } \\ { { \mathrm { } } } \\ { { \displaystyle q ^ { n + 1 } = q ^ { n } + \Delta t \displaystyle \sum _ { i = 1 } ^ { s } \widehat { b } _ { i } F _ { i } , } } \\ { { \displaystyle p ^ { n + 1 } = p ^ { n } + \Delta t \displaystyle \sum _ { i = 1 } ^ { s } \widetilde { b } _ { i } \pmb { G } _ { i } , } } \end{array}
+$$
+
+with $S$ again the number of stages and $F _ { j }$ and $G _ { j }$ defined as before for RK methods. Thus we now have $2 s ( s + 1 )$ free parameters to obtain a certain order and to guarantee symplecticness. Order conditions for PRK methods are derived in the same way as for implicit $\mathsf { R K }$ methods and we again refer the interested reader to the textbooks by HAIRER, NORSETT, AND WANNER [82] and HAIRER AND WANNER [84].
+
+The conditions for a PRK method to be symplectic are:
+
+# CONDITION OF SYMPLECTICNESS FOR PARTITIONED RK METHODS
+
+$$
+\begin{array} { r l } { \widehat { b } _ { i } \widetilde { a } _ { i j } + \widetilde { b } _ { j } \widehat { a } _ { j j } - \widehat { b } _ { i } \widetilde { b } _ { j } = 0 , } & { \quad i , j = 1 , \ldots , s , } \\ { \widehat { b } _ { i } - \widetilde { b } _ { i } = 0 , } & { \quad i = 1 , \ldots , s . } \end{array}
+$$
+
+The proof of this condition is very similar to the proof given in the previous section for Runge–Kutta methods, and is omitted.
+
+As first shown by SUN [184], proper combination of Lobatto IIIA and Lobatto IIIB Runge–Kutta methods gives rise to symplectic PRK methods. It should be noted that neither of the two classes of RK methods are symplectic, in general, when considered individually! An example of symplectic PRK method, that is based on a Lobatto IIIA–IIIB pair, is the second-order generalized leapfrog scheme.
+
+$$
+\begin{array} { l } { { \displaystyle { \pmb { p } } ^ { n + 1 / 2 } = { \pmb { p } } ^ { n } - \frac { \Delta t } { 2 } \nabla _ { \pmb { q } } H ( { \pmb { p } } ^ { n + 1 / 2 } , { \pmb { q } } ^ { n } ) } , } \\ { { \displaystyle { \pmb { q } } ^ { n + 1 } = { \pmb { q } } ^ { n } + \frac { \Delta t } { 2 } \left[ \nabla _ { \pmb { p } } H ( { \pmb { p } } ^ { n + 1 / 2 } , { \pmb { q } } ^ { n } ) + \nabla _ { \pmb { p } } H ( { \pmb { p } } ^ { n + 1 / 2 } , { \pmb { q } } ^ { n + 1 } ) \right] } , } \\ { { \displaystyle { \pmb { p } } ^ { n + 1 } = { \pmb { p } } ^ { n + 1 / 2 } - \frac { \Delta t } { 2 } \nabla _ { \pmb { q } } H ( { \pmb { p } } ^ { n + 1 / 2 } , { \pmb { q } } ^ { n + 1 } ) } . } \end{array}
+$$
+
+Table 6.5 Coefficients for the threestage Lobatto IIIA–IIIB pair of order 4   
+
+<table><tr><td>a=0 =1/2 =1</td><td>a11=0 21= 5/24 31=1/6</td><td>12=0 22=1/3 32=2/3</td><td>a13=0 a23=-1/24 33=1/6</td></tr><tr><td></td><td>b=1/6</td><td>b=2/3</td><td>b=1/6</td></tr><tr><td>=0</td><td>a1=1/6</td><td>a12 =-1/6</td><td>a13=0</td></tr><tr><td>=1/2</td><td>a21=1/6</td><td>a22 =1/3</td><td>&gt;</td></tr><tr><td></td><td></td><td></td><td>a23=0</td></tr><tr><td></td><td></td><td></td><td></td></tr><tr><td>=1</td><td>a31= 1/6</td><td>a32=5/6</td><td>a13=0</td></tr><tr><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td></tr><tr><td></td><td>b=1/6</td><td>b=2/3</td><td>b=1/6</td></tr></table>
+
+In fact, the generalized leapfrog method is the combination of the trapezoidal rule (Lobatto IIIA) for the $\pmb q$ variable with a variant of the midpoint rule (Lobatto IIIB) for the $\pmb { p }$ variable. The generalized leapfrog method is ideal for low-order integration of non-separable Hamiltonian problems and can be used as a basic method for higher-order symmetric compositions methods as described in Sections 6.2.2 and 6.2.3.
+
+In Table 6.5, we give the coefficients for a three-stage fourth-order Lobatto IIIA–IIIB PRK method.
+
+Higher-order symplectic PRK methods are implicit when applied to general Hamiltonian systems of type (6.1)–(6.2) and can be solved by a fixed-point iteration similar to the one discussed for implicit RK methods, or by Newton iteration.
+
+The situation changes for systems with a separable Hamiltonian,
+
+$$
+H ( \pmb { q } , \pmb { p } ) = T ( \pmb { p } ) + V ( \pmb { q } ) .
+$$
+
+While symplectic $\mathsf { R K }$ methods are still necessarily implicit, explicit PRK methods can be found. However, this class of explicit PRK methods is equivalent to the class of composition methods and so we do not discuss them here in any further detail [148, 172].
+
+We close this section with a proof of the fact that the symplecticness conditions (6.26)–(6.27) also imply exact preservation of any first integral of the form
+
+$$
+I = \pmb { q } ^ { T } \pmb { W } \pmb { p } + \pmb { d } _ { 1 } ^ { T } \pmb { q } + \pmb { d } _ { 2 } ^ { T } \pmb { p } ,
+$$
+
+$W \in \mathbb { R } ^ { d \times d }$ a constant matrix, $d _ { 1 } \in \mathbb { R } ^ { d }$ and $\pmb { d } _ { 2 } \in \mathbb { R } ^ { d }$ two vectors. Recall from Section 5.3 that first integrals of this type arise from the symmetry of $H$ under a linear canonical point transformation. For example, symplectic PRK methods exactly preserve total linear and angular momentum for systems with pairwise distance-dependent interactions.
+
+Using the same tensor product notation and the abbreviations introduced in the previous section, a partitioned RK method (6.22)–(6.25) can be rewritten as
+
+$$
+\begin{array} { c } { q ^ { n + 1 } = { { \pmb q } ^ { n } } + \Delta t ( \widehat { { \pmb b } } ^ { T } \otimes { \pmb I } ) { \cal F } , } \\ { p ^ { n + 1 } = { { \pmb p } ^ { n } } + \Delta t ( \widetilde { { \pmb b } } ^ { T } \otimes { \pmb I } ) { \pmb G } , } \\ { { { \pmb Q } } = { \pmb e } \otimes { \pmb q } ^ { n } + \Delta t ( \widehat { { \pmb A } } \otimes { \pmb I } ) { \cal F } , } \\ { { { \pmb P } } = { \pmb e } \otimes { \pmb p } ^ { n } + \Delta t ( \widetilde { { \pmb A } } \otimes { \pmb I } ) { \pmb G } , } \end{array}
+$$
+
+where $\widehat { \pmb { A } } = \{ \widehat { a } _ { i j } \}$ , $\widetilde { A } = \big \{ \widetilde { a } _ { i j } \big \}$ , $\widehat { \pmb { b } } = \{ \widehat { b } _ { i } \}$ , and $\widetilde { \boldsymbol { b } } = \{ \widetilde { \boldsymbol { b } } _ { i } \}$ are the coefficient matrices, vectors respectively, of the PRK method. The conditions of symplecticness (6.26)–(6.27) are equivalent to
+
+$$
+\widehat { B } \widetilde { \pmb { A } } + \widehat { \pmb { A } } ^ { T } \widetilde { \pmb { B } } - \widehat { \pmb { b } } \widetilde { \pmb { b } } ^ { T } = \mathbf { 0 } , \qquad \widehat { \pmb { b } } = \widetilde { \pmb { b } } .
+$$
+
+In the sequel we will assume $\pmb { b } = \widehat { \pmb { b } } = \widetilde { \pmb { b } }$ and denote the associated diagonal $S \times S$ matrix by $B$ .
+
+Let us assume that the given Hamiltonian ODE has a first integral of the from (6.31) with, for simplicity, $d _ { 1 } = d _ { 2 } = \mathbf { 0 }$ . We now check conservation of such first integrals under timestepping by symplectic PRK methods.
+
+The first two equations (6.32)–(6.33) can be combined to yield
+
+$$
+\begin{array} { r l } & { \frac { ( \pmb { q } ^ { n + 1 } ) ^ { T } W p ^ { n + 1 } - ( \pmb { q } ^ { n } ) ^ { T } W p ^ { n } } { \Delta t } = ( \pmb { q } ^ { n } ) ^ { T } ( \pmb { b } ^ { T } \otimes \pmb { W } ) \pmb { G } + \pmb { F } ^ { T } ( \pmb { b } \otimes \pmb { W } ) p ^ { n } } \\ & { \qquad + \Delta t \pmb { F } ^ { T } ( \pmb { b } \pmb { b } ^ { T } \otimes \pmb { W } ) \pmb { G } . } \end{array}
+$$
+
+Similarly, equations (6.34)–(6.35) give rise to
+
+$$
+Q ^ { T } ( B \otimes W ) G = ( q ^ { n } ) ^ { T } ( b \otimes W ) G + \Delta t F ^ { T } ( \widehat { A } ^ { T } B \otimes W ) G ,
+$$
+
+and
+
+$$
+\boldsymbol { F } ^ { T } ( \boldsymbol { B } \otimes \boldsymbol { W } ) \boldsymbol { P } = \boldsymbol { F } ^ { T } ( \boldsymbol { b } \otimes \boldsymbol { W } ) \boldsymbol { p } ^ { n } + \Delta t \boldsymbol { F } ^ { T } ( \boldsymbol { B } \tilde { \boldsymbol { A } } \otimes \boldsymbol { W } ) \boldsymbol { G } .
+$$
+
+These formulas may be combined to yield
+
+$$
+\begin{array} { r l } & { \frac { ( \boldsymbol { q } ^ { n + 1 } ) ^ { T } \boldsymbol { W } p ^ { n + 1 } - ( \boldsymbol { q } ^ { n } ) ^ { T } \boldsymbol { W } p ^ { n } } { \Delta t } = \Delta t \boldsymbol { F } ^ { T } ( \left\{ b \boldsymbol { b } ^ { T } - B \boldsymbol { \tilde { A } } - \boldsymbol { \widehat { A } } ^ { T } \boldsymbol { B } \right\} \otimes \boldsymbol { W } ) \boldsymbol { G } } \\ & { \qquad + \boldsymbol { Q } ^ { T } ( \boldsymbol { B } \otimes \boldsymbol { W } ) \boldsymbol { G } + \boldsymbol { F } ^ { T } ( \boldsymbol { B } \otimes \boldsymbol { W } ) \boldsymbol { P } . } \end{array}
+$$
+
+Note that ${ d I } / { d t } = 0$ implies that
+
+$$
+\pmb { Q } ^ { T } ( \pmb { B } \otimes \pmb { W } ) \pmb { G } + \pmb { F } ^ { T } ( \pmb { B } \otimes \pmb { W } ) \pmb { P } = \pmb { 0 } .
+$$
+
+Hence symplectic PRK methods preserve first integrals arising from an invariance of the Hamiltonian $H$ under linear point transformations. The same statement is of course true for symplectic classical RK methods where $\widehat { \pmb { A } } = \widetilde { \pmb { A } }$ .
+
+# 6.4 Generating functions
+
+Composition methods offer a systematic way to the construction of symplectic maps; they rely on a splitting of the Hamiltonian into explicitly solvable Hamiltonian problems and the group property of symplectic maps under composition. In contrast, the symplectic RK methods appear more as a pure strike of good luck. However, symplectic $\mathsf { R K }$ methods and other available symplectic methods can be derived from a generating function [7, 73] that automatically guarantees the symplecticness of the associated method. We will give a brief summary of generating function methods in this section.
+
+Generating functions are scalar valued functions $S$ that can be used to derive symplectic maps from $( \pmb q , \pmb p )$ to $( { \bar { q } } , { \bar { p } } )$ in a systematic manner. There exists several types of generating funtions. We focus here on the following two: (i) $S _ { 1 } ( q , \bar { p } )$ and (ii) $S _ { 2 } ( \pmb q , \bar { \pmb q } )$ . The associated symplectic map ${ \pmb { \psi } } : ( { \pmb q } , { \pmb p } )  ( { \pmb { \bar { q } } } , { \pmb { \bar { p } } } )$ is defined implicitly by either
+
+$$
+\pmb { p } = \nabla _ { \pmb { q } } S _ { 1 } ( \pmb { q } , \bar { \pmb { p } } ) , \quad \bar { \pmb { q } } = \nabla _ { \bar { \pmb { p } } } S _ { 1 } ( \pmb { q } , \bar { \pmb { p } } ) ,
+$$
+
+or
+
+$$
+\pmb { p } = - \nabla _ { \pmb { q } } S _ { 2 } ( \pmb { q } , \bar { \pmb { q } } ) , \quad \bar { \pmb { p } } = \nabla _ { \bar { \pmb { q } } } S _ { 2 } ( \pmb { q } , \bar { \pmb { q } } ) ,
+$$
+
+respectively. The symplecticness of $\pmb { \psi }$ is easily verified (see the Exercises).
+
+Let us focus first on generating functions of type $S _ { 1 }$ . The identity map corresponds to $S _ { 1 } = \pmb { q } ^ { T } \bar { \pmb { p } }$ . One can now unfold the identity by going to a parameter dependent family of generating functions:
+
+$$
+S _ { 1 } ( \pmb q , \bar { p } ( \tau ) , \tau ) = \pmb q ^ { T } \bar { p } ( \tau ) + \tau \Delta S _ { 1 } ( \pmb q , \bar { p } ( \tau ) , \tau ) .
+$$
+
+According to (6.36), this yields an associated family of symplectic maps,
+
+$$
+\begin{array} { r } { \left[ \bar { \pmb q } ( \tau ) \right] = \pmb { \psi } _ { \tau } \left( \left[ \begin{array} { c } { \pmb q } \\ { \pmb { p } } \end{array} \right] \right) . } \end{array}
+$$
+
+A simple example of (6.38) is provided by
+
+$$
+S _ { 1 } ( \pmb q , \bar { p } ( \tau ) , \tau ) = \pmb q ^ { T } \bar { p } ( \tau ) + \tau H ( \pmb q , \bar { p } ( \tau ) ) ,
+$$
+
+and (6.36) results in
+
+$$
+p = \bar { p } ( \tau ) + \tau \nabla _ { q } H ( q , \bar { p } ( \tau ) ) , \quad \bar { q } ( \tau ) = q + \tau \nabla _ { \bar { p } } H ( q , \bar { p } ( \tau ) ) .
+$$
+
+If we set $\tau = \Delta t$ and identify $( \pmb q , \pmb p )$ with $\left( { \pmb q } ^ { n } , { \pmb p } ^ { n } \right)$ and $( { \bar { q } } , { \bar { p } } )$ with $( \pmb q ^ { n + 1 } , \pmb { p } ^ { n + 1 } )$ , respectively, the symplectic Euler-B method emerges.
+
+Perhaps more importantly, a fundamental result in classical mechanics states that there is a generating function $S _ { 1 }$ of type (6.38) such that the associated
+
+transformation $\pmb { \psi } _ { \tau }$ is equivalent to the exact flow map $\pmb { \phi } _ { \tau , H }$ of a canonical Hamiltonian system with Hamiltonian $H$ . The generating function $S _ { 1 }$ satisfies the Hamilton–Jacobi equation [7, 8]
+
+$$
+\partial _ { \tau } S _ { 1 } ( q , \bar { p } , \tau ) - H ( \nabla _ { \bar { p } } S _ { 1 } ( q , \bar { p } , \tau ) , \bar { p } ) = 0 .
+$$
+
+Hence one can try to obtain symplectic methods by approximately solving the Hamilton–Jacobi equation (6.39) near the identity transformation and to use the approximative $S _ { 1 }$ to define a symplectic integration method via (6.36). Indeed, this approach was followed by FENG [58] and CHANNEL AND SCOVEL [43, 44] and inspired early investigations of symplectic methods. Later it was shown by LASAGNI [106, 107] and SURIS [186] that symplectic (partitioned) Runge–Kutta methods can be derived from generating functions of both types $S _ { 1 }$ and $S _ { 2 }$ , respectively. These results are important since they guarantee the existence of globally defined modified Hamiltonian functions in backward error analysis [16, 80] (see the Exercises).
+
+Generating functions of type $S _ { 2 }$ are also very useful because of their close connection to Largange’s equation (recall Section 3.2) and the Lagrangian variational principle [7, 73]. We illustrate the basic idea by a simple example. Take the Lagrangian function
+
+$$
+L ( q , \dot { q } ) = \frac { 1 } { 2 } \dot { q } ^ { 2 } - V ( q )
+$$
+
+of a single degree-of-freedom particle system with mass equal to one and a potential energy function $V ( q )$ . One can replace the time derivative in $L$ by a discrete approximation and use this approximation as a generating function of type $S _ { 2 }$ , e.g.
+
+$$
+S _ { 2 } ( q , \bar { q } ; \tau ) = \tau L \left( q , \frac { \bar { q } - q } { \tau } \right) = \frac { \tau } { 2 } \left( \frac { \bar { q } - q } { \tau } \right) ^ { 2 } - \tau V ( q ) .
+$$
+
+The associated symplectic transformation is given by
+
+$$
+p = - \frac { \partial S _ { 2 } } { \partial q } = - \frac { q - \bar { q } } { \tau } + \tau V ^ { \prime } ( q ) , \qquad \bar { p } = \frac { \partial S _ { 2 } } { \partial \bar { q } } = \frac { \bar { q } - q } { \tau } .
+$$
+
+After sorting variables, we obtain the explicit expression
+
+$$
+\bar { p } = p - \tau V ^ { \prime } ( q ) , \qquad \bar { q } = q + \tau \bar { p } ,
+$$
+
+which turns again into the symplectic Euler-B method with $( q , p ) = ( q ^ { n } , p ^ { n } )$ , $( \bar { q } , \bar { p } ) = ( q ^ { n + 1 } , p ^ { n + 1 } )$ , and $\tau = \Delta t$ . See the survey article by MARSDEN AND WEST [125] for a detailed discussion of this particular generating function approach to symplectic integration and the closely related discrete variational principle. See also the Exercises.
+
+# 6.5 Numerical experiments
+
+# 6.5.1 Arenstorf orbits
+
+Let us consider the gravitational system consisting of a couple of massive bodies and one light one moving in the $\left( x , y \right)$ -plane. We assume that the orbit of the two heavy bodies is essentially circular, and that the mass of the light body is so small that we can neglect the influence of the light body (for example, asteroid) on the motion of the two heavy ones. It is convenient to pass to a moving reference frame which rotates with the angular velocity of the planetary system around the center of mass of the two heavy bodies. We also choose units of length and time and mass so that the angular velocity of rotation, the sum of the masses of the heavy bodies, and the gravitational constant are all equal to one. The equations of motion for the light body are then given by
+
+$$
+\begin{array} { r } { \ddot { x } = + 2 \dot { y } - V _ { x } ( x , y ) , } \\ { \ddot { y } = - 2 \dot { x } - V _ { y } ( x , y ) , } \end{array}
+$$
+
+where the potential $V$ is given by
+
+$$
+V ( x , y ) = - \frac { x ^ { 2 } + y ^ { 2 } } { 2 } - \frac { \mu _ { 1 } } { r _ { 1 } } - \frac { \mu _ { 2 } } { r _ { 2 } } .
+$$
+
+Here $\mu _ { 1 }$ is the mass of the first (lighter) heavy body, $\mu _ { 2 } = 1 - \mu _ { 1 }$ is the mass of the second heavy body, and
+
+$$
+r _ { 1 } = \sqrt { ( x - \mu _ { 2 } ) ^ { 2 } + y ^ { 2 } } , \quad r _ { 2 } = \sqrt { ( x + \mu _ { 1 } ) ^ { 2 } + y ^ { 2 } }
+$$
+
+are the distances from the light body to the two heavy bodies which (in the moving coordinate frame) are fixed at points $( \mu _ { 2 } , 0 )$ and $\left( - \mu _ { 1 } , 0 \right)$ . This problem is also called the restricted three-body problem. See [8] for further details.
+
+The restricted three-body problem possesses interesting periodic solutions often called Arenstorf orbits. For example, $\mu _ { 1 } = 0 . 0 1 2 2 7 7 4 7 1$ and initial data
+
+$$
+\begin{array} { l l } { { x = 0 . 9 9 4 , } } & { { \dot { x } = 0 , } } \\ { { y = 0 , } } & { { \dot { y } = - 2 . 0 0 1 5 8 5 1 0 6 3 7 9 0 8 2 } } \end{array}
+$$
+
+lead to a periodic orbit with period
+
+$$
+T = 1 7 . 0 6 5 2 1 6 5 6 0 1 5 7 9 6 2 5 5 .
+$$
+
+The numerical computation of this orbit faces difficulties because of the two singularities in $V$ at $\left( x , y \right) = \left( \mu _ { 2 } , 0 \right)$ and $( x , y ) = ( - \mu _ { 1 } , 0 )$ . Note that the periodic orbit gets very close to the first singularity at $t = k \cdot T$ , $k = 0 , \pm 1 , \pm 2 , . . .$ , which makes this a challenging problem for numerical computations. See Fig. 6.1 for a graphical presentation and [82] for the numerical computation of the Arenstorf orbit using “standard” numerical methods.
+
+![](images/ad796c0908733923340888e3bdbddebca116f2c27ef69fc9ce45ca35e0a02cc8.jpg)  
+Figure 6.1 Arenstorf orbit of the restricted three-body problem. The two (fixed) heavy bodies are marked by $^ *$ .
+
+Let us discuss the Hamiltonian structure of the restricted three-body problem. In fact, the equations (6.40)–(6.41) can be brought into the form of the equations of motion for a particle in a magnetic field. We define $\pmb { q } = ( x , y , 0 ) ^ { T }$ and $p =$ $( \dot { x } , \dot { y } , 0 ) ^ { T }$ and obtain the Hamiltonian
+
+$$
+H = \frac { 1 } { 2 } | | \pmb { p } | | ^ { 2 } + V ( \pmb { q } ) , \quad V ( \pmb { q } ) = V ( x , y ) .
+$$
+
+The restricted three-body equations of motion are then equivalent to
+
+$$
+\begin{array} { l } { \displaystyle { \frac { d } { d t } \boldsymbol { q } = \boldsymbol { p } , } } \\ { \displaystyle { \frac { d } { d t } \boldsymbol { p } = \boldsymbol { b } \times \boldsymbol { p } - \nabla _ { \boldsymbol { q } } V ( \boldsymbol { q } ) , } } \end{array}
+$$
+
+with $\pmb { b } = ( 0 , 0 , - 2 ) ^ { T }$ . Both Scovel’s method from Section 4.5.2 and the implicit midpoint method can now be used to obtain symplectic integration methods.
+
+We apply the higher-order composition methods from the previous subsections to the Arenstorf orbit of the restricted three-body problem. Scovel’s method is used as the basic second-order integrator, i.e.
+
+$$
+\psi _ { w \Delta t } = \pmb { \phi } _ { w \Delta t / 2 , V } \circ \pmb { \phi } _ { w \Delta t , T } \circ \pmb { \phi } _ { w \Delta t / 2 , V } .
+$$
+
+The equations of motion are integrated over one period $\tau$ and the error in the coordinates $( x ( t ) , y ( t ) )$ of the light body at $t = T$ , i.e.
+
+$$
+e ( T ) = \mathsf { m a x } ( x ( T ) - 0 . 9 9 4 , y ( T ) ) ,
+$$
+
+is recorded as a function of the necessary number of force evaluations per unit time interval. See Fig. 6.2 for a comparison of the various methods. We find that higher accuracy of a method pays off in terms of efficiency over a fixed time interval (here one period). In particular, both the sixth-order method of Table 6.1 and the eighth-order method of Table 6.2 work very well. We mention that this problem offers significant scope for adaptive integration. We will come back to this issue in Chapter 9.
+
+![](images/d1ad4e9960638758ffa26f269852d7e86df39e15ffbea4911dc58d5f408f9a72.jpg)  
+Figure 6.2 Accuracy versus efficiency comparison of fourth-order $( x )$ and sixth-order (o) composition methods of Table 6.1, the sixth-order 7-stages $( + )$ and 9-stages $( * )$ composition methods of Table 6.2, the sixth-order $( \boxed { \square } )$ post-processed method of Table 6.3, and the eighth-order $( \diamond )$ composition method of Table 6.2 using the Arenstorf orbit of the restricted three-body problem as a numerical test case.
+
+# 6.5.2 Solar system
+
+To compare the relative efficiencies of the different methods a model of the solar system was constructed as follows. The model used was based on ten bodies: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, and the
+
+Sun with the entire system rotating around its center of gravity, and uses an all-body potential. The integrator ignores all but gravitational forces.
+
+The Hamiltonian equation, where $m _ { j }$ is the mass of the i th planet and $G$ is the gravitational constant is
+
+$$
+H ( q , p ) = \frac { 1 } { 2 } \sum _ { i = 1 } ^ { 1 0 } \frac { | | p _ { i } | | ^ { 2 } } { m _ { i } } - \sum _ { i = 1 } ^ { 9 } \sum _ { j = i + 1 } ^ { 1 0 } \frac { G m _ { i } m _ { j } } { | | q _ { i } - q _ { j } | | } .
+$$
+
+Then the differential equations are
+
+$$
+\dot { q } _ { i } = \frac { p _ { i } } { m _ { i } } , \dot { p } _ { i } = \sum _ { j = 1 , j \neq i } ^ { 1 0 } \frac { G m _ { i } m _ { j } ( q _ { i } - q _ { j } ) } { | | q _ { i } - q _ { j } | | ^ { 3 } } , i = 1 , 2 , \ldots , N .
+$$
+
+This model treats the Sun as one of the bodies and the entire system orbits around the centre of mass of the system. Initial data were taken from the DE118 18-digit state vectors provided by the NASA Jet Propulsion Laboratory, and represents the state of the Solar System at Julian date 2440400.50 (00:00 on June 28, 1969).
+
+All of the composition and post-processing schemes were based on the secondorder St¨ormer–Verlet method. The methods compared were as follows:
+
+<table><tr><td rowspan=1 colspan=1>label</td><td rowspan=1 colspan=1>order</td><td rowspan=1 colspan=1>method type</td><td rowspan=1 colspan=1>table</td><td rowspan=1 colspan=1>entry</td></tr><tr><td rowspan=1 colspan=1>2nd4thM</td><td rowspan=1 colspan=1>24</td><td rowspan=1 colspan=1>VerletComposition</td><td rowspan=1 colspan=1>6.2</td><td rowspan=1 colspan=1>1</td></tr><tr><td rowspan=1 colspan=1>4thRK</td><td rowspan=1 colspan=1>4</td><td rowspan=1 colspan=1>Runge-Kutta</td><td rowspan=1 colspan=1>6.4</td><td rowspan=4 colspan=1>1312</td></tr><tr><td rowspan=1 colspan=1>6thM</td><td rowspan=1 colspan=1>6</td><td rowspan=1 colspan=1>Composition</td><td rowspan=1 colspan=1>6.2</td></tr><tr><td rowspan=1 colspan=1>6thPP</td><td rowspan=1 colspan=1>6</td><td rowspan=1 colspan=1>Post-processing</td><td rowspan=1 colspan=1>6.3</td></tr><tr><td rowspan=1 colspan=1>6thRK</td><td rowspan=1 colspan=1>6</td><td rowspan=1 colspan=1>Runge-Kutta</td><td rowspan=1 colspan=1>6.4</td></tr><tr><td rowspan=1 colspan=1>6thY</td><td rowspan=1 colspan=1>6</td><td rowspan=1 colspan=1>Composition</td><td rowspan=1 colspan=1>6.2</td><td rowspan=1 colspan=1>2</td></tr><tr><td rowspan=1 colspan=1>8thM</td><td rowspan=1 colspan=1>8</td><td rowspan=1 colspan=1>Composition</td><td rowspan=1 colspan=1>6.2</td><td rowspan=1 colspan=1>4</td></tr></table>
+
+The methods have been compared by plotting the maximum energy error over a ten year simulation against the number of force evaluations done, as shown in Fig. 6.3. From the graph it is clear that the high-order explicit methods dominate for small maximum errors, with the post-processing and eighth-order methods providing the greatest efficiency. The implicit Runge–Kutta methods fare less well in the comparison.
+
+In this model each step of the Runge–Kutta method was resolved to a fixed arbitrary value which was small enough so that there was no influence on the maximum energy error. This approach gives rise to the odd curves in the work– energy diagrams at large stepsize, as, at the large stepsizes corresponding to the larger maximum energy error, the simplified nonlinear solver becomes inefficient and increasing numbers of iterations are needed to resolve the solution to the specified accuracy.
+
+![](images/3ec93c707b15d92cf396b9fc0189b7f34621c4f52ad16c98bc4232983a171204.jpg)  
+Figure 6.3 Comparison of method efficiency for the solar system model.
+
+Longer simulations demonstrate the procession in Pluto’s orbit; this can be seen in Fig. 6.4 which represents the trajectories in the Solar System over one million years.
+
+# 6.6 Exercises
+
+1. Numerical comparison for Arenstorf orbit. Implement Scovel’s second-order splitting method (compare Section 4.5.2) for the restricted three-body problem of Section 6.5.1. Using Scovel’s method, also implement the higher-order composition methods as described in Sections 6.2.2–6.2.3. Reproduce the data shown in Fig. 6.2. Note that the work per unit time interval is defined as the number of timesteps taken to approximate the solution over one period
+
+![](images/8ffe76795894a83dbae2d3810ae8390a8df4d6c5ddbef0e251cc0bf75f6964e5.jpg)  
+Figure 6.4 One million year simulation of the solar system. The cloud of points illustrates the precession in the orbit of Pluto.
+
+$T$ multiplied by the number of stages of the method and divided by the period $T$ . The accuracy is defined in terms of the absolute error in the computed positions after one period, i.e.
+
+$$
+e ( T ) = \mathsf { m a x } ( x ( T ) - 0 . 9 9 4 , y ( T ) ) .
+$$
+
+2. Higher-order composition methods. Let $\psi _ { \Delta t }$ be a symmetric and symplectic method of order two (for example the St¨ormer–Verlet method). Show that the composed method
+
+$$
+\hat { \pmb { { \psi } } } _ { \Delta t } = { \pmb { { \psi } } } _ { w _ { 1 } \Delta t } \circ { \pmb { { \psi } } } _ { w _ { 2 } \Delta t } \circ { \pmb { { \psi } } } _ { w _ { 1 } \Delta t }
+$$
+
+is fourth order if
+
+$$
+2 w _ { 1 } + w _ { 2 } = 1 , \qquad 2 w _ { 1 } ^ { 3 } + w _ { 2 } ^ { 3 } = 0 .
+$$
+
+Hint: Since $\psi _ { \Delta t }$ is symplectic, there exists a modified Hamiltonian $\tilde { H } ( \Delta t )$ whose corresponding time- $\Delta t$ -flow map is “identical” to $\psi _ { \Delta t }$ (see Chapter 5). Because $\psi _ { \Delta t }$ is also symmetric, the Taylor expansion of $\tilde { H } ( \Delta t )$ contains only terms of even order in $\Delta t$ (see Exercises in Chapter 5). Use the Taylor series expansion
+
+$$
+\tilde { H } ( \Delta t ) = H + \Delta t ^ { 2 } \delta H _ { 2 } + \Delta t ^ { 4 } \delta H _ { 4 } + . . .
+$$
+
+to derive a modified Hamiltonian for the (symplectic and symmetric) maps ${ \pmb { \psi } } _ { w _ { i } \Delta t }$ . Finally, use the BCH formula of Section 5.4 to derive the modified Hamiltonian for the method $\hat { \pmb { { \psi } } } _ { \Delta t }$ . Show that $2 w _ { 1 } + w _ { 2 } = 1$ implies second order. If also $2 w _ { 1 } ^ { 3 } + w _ { 2 } ^ { 3 } = 0$ , then the method is fourth order.
+
+3. Symplectic methods from generating functions. Show that a map ${ \pmb { \psi } } : ( { \pmb { q } } , { \pmb { p } } ) $ $( { \bar { q } } , { \bar { p } } )$ defined by either (6.36) or (6.37) is symplectic. Find a generating function that yields the symplectic Euler-A method.
+
+4. Hamilton–Jacobi equation. Given a generating function (6.38) that satisfies the Hamilton–Jacobi equation (6.39), show that the associated symplectic map (6.36) is equivalent to the flow map $\pmb { \phi } _ { \tau , H }$ . Hint: Differentiate
+
+$$
+\pmb { p } = \nabla _ { \pmb { q } } S _ { 1 } ( \pmb { q } , \bar { \pmb { p } } ( \tau ) , \tau ) ,
+$$
+
+with respect to $\tau$ and compare with the gradient of (6.39) with respect to $\pmb q$ . Repeat the same calculation for
+
+$$
+\bar { \pmb q } ( \tau ) = \nabla _ { \bar { \pmb { p } } } S _ { 1 } ( \pmb q , \bar { \pmb { p } } ( \tau ) , \tau ) .
+$$
+
+Also note that
+
+$$
+\begin{array} { r } { \left[ \bar { \pmb q } ( \tau ) \right] = \pmb { \phi } _ { \tau , H } \left( \left[ \begin{array} { c } { \pmb q } \\ { \pmb { p } } \end{array} \right] \right) } \end{array}
+$$
+
+is equivalent to
+
+$$
+\frac { d } { d \tau } \bar { p } = - \nabla _ { \bar { q } } H ( \bar { q } , \bar { p } ) , \qquad \frac { d } { d \tau } \bar { q } = \nabla _ { \bar { p } } H ( \bar { q } , \bar { p } ) .
+$$
+
+5. Symplectic methods from generating functions. Given a Lagrangian functions $L ( \pmb q , \dot { \pmb q } ) = \| \dot { \pmb q } \| ^ { 2 } / 2 - V ( \pmb q )$ . What symplectic method do you obtain from the generating function
+
+$$
+S ( q , \bar { q } , \tau ) = \tau L \left( \frac { q + \bar { q } } { 2 } , \frac { \bar { q } - q } { \tau } \right) = \frac { \tau } { 2 } | | \frac { \bar { q } - q } { \tau } | | ^ { 2 } - \tau V \left( \frac { \bar { q } + q } { 2 } \right) \bar { \tau }
+$$
+
+One can clearly apply this approach to more general Lagrangian functions $L \left( \pmb { q } , \dot { \pmb { q } } \right)$ . Take, for example, the Lagrangian function (3.17) given in Section 3.2 to describe the motion of a charged particle in a magnetic field. Discuss several options to obtain a generating function and compare the associated numerical methods with the ones used in Section 4.5.2.
+
+6. Modified Hamiltonian functions via generating functions. Let $S _ { H }$ denote the generating function of type (6.38) for the exact flow map $\pmb { \phi } _ { \tau , H }$ . Show that
+
+$$
+S _ { H } ( q , \bar { p } , \tau ) = q ^ { T } \bar { p } + \tau H ( q , \bar { p } ) + \frac { \tau ^ { 2 } } { 2 } \nabla _ { q } H ( q , \bar { p } ) ^ { T } \nabla _ { \bar { p } } H ( q , \bar { p } ) + \mathcal { O } ( \tau ^ { 3 } ) ,
+$$
+
+via explicit Taylor expansion of (6.39) for $S _ { 1 } = S _ { H }$
+
+The symplectic Euler-B method $\psi _ { \Delta t }$ can be obtained from the generating function
+
+$$
+\begin{array} { r } { S ( \pmb { q } , \bar { \pmb { p } } , \Delta t ) = \pmb { q } ^ { T } \bar { \pmb { p } } + \Delta t H ( \pmb { q } , \bar { \pmb { p } } ) . } \end{array}
+$$
+
+Show that the first-order modified Hamiltonian is given by
+
+$$
+\tilde { H } _ { 1 } = H + \Delta t \delta H _ { 1 } ,
+$$
+
+with
+
+$$
+\delta \tilde { H } _ { 1 } ( q , p ) = \operatorname* { l i m } _ { \tau  0 } \frac { S ( q , p , \tau ) - S _ { H } ( q , p , \tau ) } { \tau ^ { 2 } } .
+$$
+
+Can this approach be generalized to higher-order corrections? See also [80].
+
+7. Discrete variational mechanics. Consider the Lagrangian function $L \left( q , \dot { q } \right)$ and the action integral
+
+$$
+L [ q ] = \int _ { t _ { 0 } } ^ { t _ { 1 } } L ( q ( t ) , \dot { q } ( t ) ) d t .
+$$
+
+We replace the integral by a finite sum
+
+$$
+L [ \{ q ^ { n } \} ] = \sum _ { n } L \left( q ^ { n } , \frac { q ^ { n + 1 } - q ^ { n } } { \Delta t } \right) \Delta t
+$$
+
+and find the local minimizer from the condition
+
+$$
+\frac { \partial } { \partial q ^ { n } } L [ \{ q ^ { n } \} ] = 0 .
+$$
+
+What numerical scheme do you obtain by explicitly evaluating the formula for $L ( q , \dot { q } ) = \dot { q } ^ { 2 } / 2 - V ( q ) ?$ The derivation is a simple example of the discrete variational principle [125].
+
+# 7
+
+# Constrained mechanical systems
+
+In this chapter, we discuss the problem of simulating a mechanical system subject to one or several constraints. This subject is rather broad, and there are many theoretical issues which arise in the most general settings concerning the formulation of the equations of motion and the properties of solutions. To simplify the discussion, we primarily restrict ourselves to the treatment of constraints which can be described by algebraic relations among the position variables of the system, i.e., defined by equations of the form
+
+$$
+g _ { i } ( \pmb q ) = 0 , \qquad i = 1 , \ldots , m ,
+$$
+
+for smooth functions $g _ { j }$ . A mechanical system subject to such constraints is typically termed holonomic. Derivation of equations of motion for a holonomically constrained mechanical system is not very much more complicated than for an unconstrained system.
+
+When it comes to numerical discretization, however, the constraints introduce a few challenges. For one thing, the propagation of errors in numerical algorithms for a constrained differential equation is more complicated than for ordinary differential equations. For another, the constraints are often an intrinsic component of the modeling of the system, and the configuration manifold (the set of points for which the constraints are satisfied) is an essential part of the extension of the concept of symplecticness. For these reasons, it seems important that the constraints are accurately resolved at each step. This is in contrast to the case for unconstrained systems, where a certain error growth must generally be tolerated.
+
+In this chapter, we will introduce several approaches for numerical discretization of holonomically constrained systems, focusing initially on the SHAKE method due to RYCKAERT, CICCOTTI, AND BERENDSEN [167] and RATTLE [5] variant, as these have proven very popular in molecular dynamics. We then develop more general type of methods. Recently, schemes like those discussed in this chapter have seen widespread use in computer graphics and gaming applications.
+
+# 7.1 N-body systems with holonomic constraints
+
+In the introduction of this book, we have already encountered simple examples of constrained Hamiltonian systems (the bead on a wire, the spherical pendulum). It was shown that D’Alembert’s principle enabled us to write equations of motion with respect to a single constraint $g ( \pmb q ) = 0$ by introducing a constraint force that always acts in the direction of the normal to the constraint surface.
+
+The extension of the Newtonian formulation to systems with multiple particles and multiple holonomic constraints is straightforward. Given m algebraic constraints $g _ { i } ( \pmb q ) = 0$ , $i = 1 , \dots , m$ , on a multiparticle system, it can be shown that the constraint forces due to each constraint act in the normal direction to the corresponding surface. Newton’s Second Law then suggests the following form for the equations of motion:
+
+$$
+\begin{array} { c } { { \displaystyle \overline { { \frac { d } { d t } } } q = v , } } \\ { { { \cal M } \displaystyle \frac { d } { d t } v = - \nabla _ { q } V ( q ) - \sum _ { i = 1 } ^ { m } \nabla _ { q } g _ { i } ( q ) \lambda _ { i } , } } \\ { { 0 = g _ { i } ( q ) , \qquad i = 1 , 2 , \ldots , m . } } \end{array}
+$$
+
+Here, as in previous chapters, $M$ represents a positive definite and symmetric (typically diagonal) mass matrix. We typically impose the assumption that the gradients of the constraint functions $\nabla _ { q } g _ { i } ( q )$ form a linearly independent set.
+
+We define the configuration manifold $\mathcal { M }$ as the space of all positions subject to the position constraints:
+
+$$
+\mathcal { M } = \{ \pmb q \in \mathbb { R } ^ { d } | \ g _ { i } ( \pmb q ) = 0 , i = 1 , \ldots , m \} .
+$$
+
+Let $\bar { \pmb q }$ be a point of the configuration manifold and consider the set of all smooth parameterized curves containing $\bar { \pmb q }$ and lying in ${ \mathcal { M } } .$ . Each such parameterized curve $\pmb q ( t )$ (with, say, $\pmb q ( t _ { 0 } ) = \bar { \pmb q } ,$ ) has a certain velocity vector $\bar { \pmb v }$ at $t = t _ { 0 }$ , $\bar { \pmb v } = \dot { \pmb q } ( t _ { 0 } )$ . Obviously, because of $g _ { i } ( \pmb { q } ( t ) ) = 0$ for all $t$ , we must have that
+
+$$
+\cfrac { d } { d t } g _ { i } ( \pmb { q } ( t ) ) = \nabla _ { \pmb { q } } g _ { i } ( \pmb { q } ( t ) ) \cdot \pmb { \dot { q } } ( t ) = \nabla _ { \pmb { q } } g _ { i } ( \pmb { q } ( t ) ) \cdot \pmb { v } ( t ) = 0 ,
+$$
+
+and, in particular
+
+$$
+\nabla _ { q } g _ { i } ( \bar { q } ) \cdot \bar { \pmb { v } } = 0 .
+$$
+
+The set of all possible velocity vectors at the point $\bar { \pmb q }$ is a linear vector space
+
+$$
+T _ { \bar { q } } \mathcal { M } = \{ \bar { \pmb { v } } \in \mathbb { R } ^ { d } | ( \nabla _ { \pmb { q } } g _ { i } ( \bar { \pmb { q } } ) ) \cdot \bar { \pmb { v } } = 0 , i = 1 , \ldots , m \} ,
+$$
+
+![](images/a116e79f767c4a385758915335bea876f299eeb2bb19426c001eabc4ef47d440.jpg)  
+Figure 7.1 The tangent space.
+
+called the tangent space at $\bar { \pmb q }$ (Fig. 7.1). The tangent bundle of $\mathcal { M }$ is the space of all pairs $( \pmb q , \pmb v )$ with $\pmb q$ lying in $\mathcal { M }$ and $\pmb { v }$ lying in $T _ { q } \mathcal { M } .$ . The tangent bundle is denoted $T \mathcal { M }$ .
+
+The system (7.1)–(7.3) can be written more compactly by introducing the vector function $g ( \pmb q ) = ( g _ { 1 } ( \pmb q ) , \dots , g _ { m } ( \pmb q ) ) ^ { T }$ , denoting its Jacobian matrix by
+
+$$
+\pmb { G } ( \pmb { q } ) = g _ { \pmb { q } } ( \pmb { q } ) , \quad \mathrm { o r , ~ e q u i v a l e n t l y , } \quad \pmb { G } ( \pmb { q } ) ^ { T } = \nabla _ { \pmb { q } } \pmb { g } ( \pmb { q } ) ,
+$$
+
+and letting $\pmb { \lambda }$ represent the $m$ -vector of multipliers $\pmb { \lambda } = ( \lambda _ { 1 } , \ldots , \lambda _ { m } ) ^ { T }$ . Then the equations of motion become
+
+$$
+\begin{array} { c } { \displaystyle \frac { d } { d t } \pmb { q } = \pmb { v } , } \\ { \displaystyle M \frac { d } { d t } \pmb { v } = - \nabla _ { \pmb { q } } V ( \pmb { q } ) - \pmb { G } ( \pmb { q } ) ^ { T } \pmb { \lambda } , } \\ { \displaystyle \pmb { 0 } = \pmb { g } ( \pmb { q } ) . } \end{array}
+$$
+
+![](images/1a0d6655a83fc9a004af3f5a583ae218b3a054d7e44b602b67c2e823a91c764a.jpg)
+
+Example 1 Considera simple constraint chain in the plane made up of $N .$ -point particles with masses $m _ { 1 } , m _ { 2 } , \dots , m _ { N }$ , with each successive pair of particles joined by a length constraint, say with lengths $I _ { 1 } , I _ { 2 } , \ldots , I _ { N - 1 }$ . If, moreover, the first point is linked to the origin by a similar length constraint (say with length $I _ { 0 }$ ), then we have a multiple pendulum (see diagram). These problems are important model problems used in biochemistry and biophysics (polymers exhibit such a chain structure) as well as in engineering.
+
+We might assume that the system moves in some applied uniform potential energy field $V = \textstyle \sum _ { i = 1 } ^ { N } \phi ( \pmb { q } _ { i } )$ , so that the external force acting on the i th particle is
+
+$$
+\pmb { F } _ { i } = - \nabla _ { \pmb { q } _ { i } } \phi ( \pmb { q } _ { i } ) .
+$$
+
+Let us number the multipliers in accordance with the indexing of the constraints, then following the discussion of this section, the equations of motion are, for any of the internal nodes of the chain
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } { \pmb q } _ { i } = { \pmb v } _ { i } , } \\ { \displaystyle m _ { i } \frac { d } { d t } { \pmb v } _ { i } = { \pmb F } _ { i } - \lambda _ { i - 1 } ( { \pmb q } _ { i } - { \pmb q } _ { i - 1 } ) - \lambda _ { i } ( { \pmb q } _ { i } - { \pmb q } _ { i + 1 } ) , } \end{array}
+$$
+
+whereas the first node obeys
+
+$$
+\begin{array} { c } { { \displaystyle \frac { d } { d t } { \pmb q } _ { 1 } = { \pmb v } _ { 1 } , } } \\ { { \displaystyle m _ { 1 } \frac { d } { d t } { \pmb v } _ { 1 } = { \pmb F } _ { 1 } - \lambda _ { 0 } { \pmb q } _ { 1 } - \lambda _ { 1 } ( { \pmb q } _ { 1 } - { \pmb q } _ { 2 } ) , } } \end{array}
+$$
+
+and the last node moves according to
+
+$$
+\begin{array} { c } { { \displaystyle \frac { d } { d t } { \pmb q } _ { N } = { \pmb v } _ { N } , } } \\ { { m _ { N } \displaystyle \frac { d } { d t } { \pmb v } _ { N } = { \pmb F } _ { N } - \lambda _ { N - 1 } ( { \pmb q } _ { N } - { \pmb q } _ { N - 1 } ) . } } \end{array}
+$$
+
+Here the constraints take the form
+
+$$
+g _ { i } ( { \pmb q } ) = \frac { 1 } { 2 } ( \| { \pmb q } _ { i } - { \pmb q } _ { i + 1 } \| ^ { 2 } - I _ { i } ^ { 2 } ) = 0 ,
+$$
+
+for $i = 1 , \dots , N - 1$ , while $\begin{array} { r } { g _ { 0 } ( \pmb q ) = \frac { 1 } { 2 } ( \| \pmb q _ { 1 } \| ^ { 2 } - I _ { 0 } ^ { 2 } ) = 0 } \end{array}$ . The transpose of the constraint Jacobian matrix, $G ( \pmb q ) ^ { T }$ , here is
+
+$$
+\left[ \begin{array} { c c c c c c c } { q _ { 1 } } & { q _ { 1 } - q _ { 2 } } & { { \bf 0 } } & { . . . } & { { \bf 0 } } & { { \bf 0 } } & { { \bf 0 } } \\ { { \bf 0 } } & { q _ { 2 } - q _ { 1 } } & { q _ { 2 } - q _ { 3 } } & { . . . } & { { \bf 0 } } & { { \bf 0 } } & { { \bf 0 } } \\ { { \bf 0 } } & { { \bf 0 } } & { q _ { 3 } - q _ { 2 } } & { . . . } & { { \bf 0 } } & { { \bf 0 } } & { { \bf 0 } } \\ { \vdots } & { \vdots } & { \vdots } & { \vdots } & { \vdots } & { \vdots } & { \vdots } \\ { { \bf 0 } } & { { \bf 0 } } & { { \bf 0 } } & { . . . } & { { \bf 0 } } & { q _ { N - 1 } - q _ { N - 2 } } & { q _ { N - 1 } - q _ { N } } \\ { { \bf 0 } } & { { \bf 0 } } & { { \bf 0 } } & { . . . } & { { \bf 0 } } & { { \bf 0 } } & { q _ { N } - q _ { N - 1 } } \end{array} \right] .
+$$
+
+Just as for the one-particle, one-constraint case, the multipliers $\lambda _ { j }$ in the constrained Newton equations (7.6)–(7.8) could be eliminated by differentiating the velocity constraints (7.4) one more time with respect to $t$ , resulting, after an exercise in calculus, in a system of unconstrained differential equations
+
+$$
+\begin{array} { c } { \displaystyle \frac { d } { d t } \pmb { q } = \pmb { v } , } \\ { \displaystyle M \frac { d } { d t } \pmb { v } = - \nabla _ { \pmb { q } } V \big ( \pmb { q } ) - G ( \pmb { q } ) ^ { T } \pmb { \Lambda } ( \pmb { q } , \pmb { v } ) , } \end{array}
+$$
+
+with $\pmb { \Lambda } ( \pmb q , \pmb { v } )$ given by
+
+$$
+\begin{array} { r } { \Lambda ( \boldsymbol { q } , \boldsymbol { v } ) = - ( G M ^ { - 1 } G ^ { T } ) ^ { - 1 } [ G M ^ { - 1 } \nabla _ { \boldsymbol { q } } V ( \boldsymbol { q } ) + g _ { \boldsymbol { q } \boldsymbol { q } } < \boldsymbol { v } , \boldsymbol { v } > ] . } \end{array}
+$$
+
+Here we have used the shorthand $G = G ( q )$ and the symbol $g _ { q q } < v$ , $v >$ is to be understood to represent a vector of $m$ components with the ith component given by
+
+$$
+( g _ { i } ) _ { q q } < v , v > = \sum _ { k , I = 1 } ^ { d } \frac { \partial ^ { 2 } g _ { i } } { \partial q _ { k } \partial q _ { I } } v _ { k } v _ { I } .
+$$
+
+These equations are well defined provided the square $m \times m$ matrix $G M ^ { - 1 } G ^ { T }$ is nonsingular along the configuration manifold ${ \mathcal { M } } ,$ i.e., when $\pmb { g } ( \pmb { q } ) = \pmb { 0 }$ . Note that this is always the case if the matrix $G ( q )$ has full rank for $\pmb q \in \mathcal { M }$ (has linearly independent rows) and $M$ is positive definite (see Exercises). For prescribed initial conditions $( \pmb q _ { 0 } , \pmb v _ { 0 } ) \in \top \mathcal { M } ,$ , the associated solution $( \pmb q ( t ) , \pmb v ( t ) )$ of (7.9)–(7.11) stays in $T \mathcal { M }$ and, hence, such a solution $( \pmb q ( t ) , \pmb v ( t ) )$ also satisfies (7.6)–(7.8). For that reason, one often refers to the system of differential and algebraic equations (7.6)–(7.8) as a description of an ordinary differential equation (ODE) on a manifold (here $\tau { \mathcal { M } } )$ and (7.9)–(7.11) is called the underlying ODE.
+
+# 7.2 Numerical methods for constraints
+
+We now consider the development of numerical integration methods suitable for integrating a constrained mechanical system. The obvious geometric property that we would like to preserve is the constraint $\pmb { g } ( \pmb { q } ) = \pmb { 0 }$ . However, any such trajectory will also need to satisfy the tangency condition (7.5), thus we seek methods for solving (7.1)–(7.3) which preserve the tangent bundle $T \mathcal { M }$
+
+There are many approaches to this problem. We have already seen in previous chapters that the use of different formulations of the equations can have a profound impact on the numerical integration process. Roughly speaking, methods for constrained integration can be divided into two classes: (i) methods based on integration of some related (unconstrained) ordinary differential equation, e.g., the underlying ODE (7.9)–(7.11), and (ii) methods based on direct discretization of the constrained equations of motion (7.1)–(7.3). In this section, we consider methods of the second class. Schemes of the other type are mentioned at the end of this chapter.
+
+# 7.2.1 Direct discretization: SHAKE and RATTLE
+
+Experience indicates that the best results can generally be obtained using a direct discretization of the equations of motion. The idea in direct discretization is to apply the ideas used to in constructing approximation methods for unconstrained differential equations to the constrained equations of motion. This requires some generalization of the standard types of methods. In this section, we will introduce popular methods which generalize the St¨ormer–Verlet method introduced in Chapter 2, and we comment on issues such as accuracy and stability. The results of this subsection will be generalized to more general constrained Hamiltonian systems in the next section.
+
+SHAKE discretization was proposed in 1976 by RYCKAERT, CICCOTTI, AND BERENDSEN [167]. A paper of ANDERSEN [5] later introduced a related formulation, which he called RATTLE. LEIMKUHLER AND SKEEL [113] analyzed and compared the two methods, discovering, apparently for the first time, that they were (i) equivalent to each other and (ii) symplectic. Our treatment is based on the exposition of [113].
+
+Upon rewriting (7.6)–(7.7) as a single second-order equation in $\pmb q$ and applying the standard leapfrog discretization (2.19) of Section 2.5, one quite naturally arrives at the SHAKE discretization
+
+$$
+\begin{array} { c } { M \frac { { \pmb q } ^ { n + 1 } - 2 { \pmb q } ^ { n } + { \pmb q } ^ { n - 1 } } { \Delta t ^ { 2 } } = - \nabla _ { \pmb { q } } V ( { \pmb q } ^ { n } ) - { \pmb G } ( { \pmb q } ^ { n } ) ^ { T } { \pmb \lambda } ^ { n } , } \\ { { \pmb 0 } = { \pmb g } ( { \pmb q } ^ { n + 1 } ) . } \end{array}
+$$
+
+The method can be implemented as follows. We solve (7.12) for $\pmb q ^ { n + 1 }$ and insert in (7.13), resulting in a system of $m$ equations in the $m$ unknown Lagrange multipliers $\pmb { \lambda } ^ { n } = \{ \lambda _ { i } ^ { n } \}$
+
+$$
+{ \bf 0 } = \tilde { { \pmb g } } ( { \pmb \lambda } ^ { n } ) : = { \pmb g } ( \bar { { \pmb q } } ^ { n + 1 } - \Delta t ^ { 2 } { \pmb M } ^ { - 1 } { \pmb G } ( { \pmb q } ^ { n } ) ^ { T } { \pmb \lambda } ^ { n } ) ,
+$$
+
+where
+
+$$
+\bar { \pmb q } ^ { n + 1 } : = 2 \pmb q ^ { n } - \pmb q ^ { n - 1 } - \Delta t ^ { 2 } \pmb M ^ { - 1 } \nabla _ { \pmb q } V ( \pmb q ^ { n } )
+$$
+
+represents an unconstrained step with the leapfrog method. Some possibilities for the treatment of these nonlinear equations will be discussed later in this section.
+
+The equations (7.12)–(7.13) can be recast in a position-velocity formulation by setting ${ \pmb v } ^ { n + 1 / 2 } = ( { \pmb q } ^ { n + 1 } - { \pmb q } ^ { n } ) / \Delta t$ and defining $\pmb { v } ^ { n } = \frac { 1 } { 2 } \big ( \pmb { v } ^ { n - 1 / 2 } + \pmb { v } ^ { n + 1 / 2 } \big )$ , resulting in:
+
+# SHAKE IN POSITION-VELOCITY FORM
+
+$$
+\begin{array} { c } { q ^ { n + 1 } = q ^ { n } + \Delta t { \boldsymbol v } ^ { n + 1 / 2 } , } \\ { { \displaystyle M { \boldsymbol v } ^ { n + 1 / 2 } = M { \boldsymbol v } ^ { n - 1 / 2 } - \Delta t \nabla _ { q } V ( q ^ { n } ) - \Delta t \boldsymbol G ( q ^ { n } ) ^ { T } } \boldsymbol \lambda ^ { n } , } \\ { { \displaystyle \mathbf 0 = g ( { \bf q } ^ { n + 1 } ) } , } \\ { { \displaystyle v ^ { n } = \frac 1 2 \left( { \boldsymbol v } ^ { n + 1 / 2 } + { \boldsymbol v } ^ { n - 1 / 2 } \right) . } } \end{array}
+$$
+
+SHAKE can be viewed as a mapping of ${ \mathcal { M } } ,$ , but it does not define a mapping of the tangent bundle $T \mathcal { M } .$ Yet, SHAKE is algebraically equivalent to another method, RATTLE, which is a mapping of the tangent bundle $T \mathcal { M } .$ The idea behind RATTLE is to correct the SHAKE solution so that it lies on $\tau { \mathcal { M } }$ through appropriate projection of the velocity $\pmb { v } ^ { n + 1 }$ on to the tangency constraint (7.5), the result being the scheme:
+
+# RATTLE DISCRETIZATION
+
+$$
+\begin{array} { c } { { q ^ { n + 1 } = q ^ { n } + \Delta t v ^ { n + 1 / 2 } , } } \\ { { { \displaystyle M v ^ { n + 1 / 2 } = M v ^ { n } - \frac { \Delta t } { 2 } \nabla _ { q } V ( q ^ { n } ) - \frac { \Delta t } { 2 } G ( q ^ { n } ) ^ { T } \lambda _ { ( \mathrm { r } ) } ^ { n } , } } } \\ { { 0 = g ( q ^ { n + 1 } ) , } } \\ { { { \displaystyle M v ^ { n + 1 } = M v ^ { n + 1 / 2 } - \frac { \Delta t } { 2 } \nabla _ { q } V ( q ^ { n + 1 } ) - \frac { \Delta t } { 2 } G ( q ^ { n + 1 } ) ^ { T } \lambda _ { ( \mathrm { v } ) } ^ { n + 1 } , } } } \\ { { 0 = G ( q ^ { n + 1 } ) v ^ { n + 1 } . } } \end{array}
+$$
+
+The multipliers $\lambda _ { ( \mathsf { r } ) } ^ { n }$ are chosen in order to enforce the position constraints (7.20), while λn+1 relates to the velocity constraints (7.22) and is determined at time level $t _ { n }$ by the linear system
+
+$$
+\left[ G ( q ^ { n } ) M ^ { - 1 } G ( q ^ { n } ) ^ { T } \right] \lambda _ { ( \mathrm { v } ) } ^ { n } = G ( q ^ { n } ) \left( \frac { 2 } { \Delta t } { v } ^ { n - 1 / 2 } - M ^ { - 1 } \nabla _ { q } V ( q ^ { n } ) \right) .
+$$
+
+Combining equations (7.19) and
+
+$$
+M v ^ { n } = M v ^ { n - 1 / 2 } - \frac { \Delta t } { 2 } \nabla _ { q } V ( q ^ { n } ) - \frac { \Delta t } { 2 } G ( q ^ { n } ) ^ { T } \lambda _ { \mathrm { ( v ) } } ^ { n }
+$$
+
+results in
+
+$$
+M \pmb { v } ^ { n + 1 / 2 } = \pmb { M } \pmb { v } ^ { n - 1 / 2 } - \Delta t \nabla _ { \pmb { q } } V ( \pmb { q } ^ { n } ) - \frac { \Delta t } { 2 } \pmb { G } ( \pmb { q } ^ { n } ) ^ { T } ( \pmb { \lambda } _ { ( r ) } ^ { n } + \pmb { \lambda } _ { ( \vee ) } ^ { n } ) ,
+$$
+
+where $\lambda _ { ( \vee ) } ^ { n }$ is determined by (7.23) and is assumed to be computed at this stage. On the other hand, $\lambda _ { ( \mathsf { r } ) } ^ { n }$ is chosen so that
+
+$$
+g ( q ^ { n + 1 } ) = { \pmb g } ( { \pmb q } ^ { n } + \Delta t { \pmb v } ^ { n + 1 / 2 } ) = { \pmb 0 }
+$$
+
+at the next time level.
+
+We recognize that (7.24) is equivalent to the SHAKE update (7.15) with $\pmb { \lambda } ^ { n }$ replaced by $\textstyle { \frac { 1 } { 2 } } ( \lambda _ { ( \mathfrak { r } ) } ^ { \eta } + \lambda _ { ( \mathfrak { v } ) } ^ { \eta } )$ . Thus RATTLE and SHAKE are formally equivalent when viewed as iterations from $\left( q ^ { n } , v ^ { n - \frac { 1 } { 2 } } \right)$ to $( q ^ { n + 1 } , v ^ { n + \frac { 1 } { 2 } } )$ . In other words, a proper initialization of RATTLE would produce a sequence of approximations identical to that produced by SHAKE, except that the two solutions would differ in the velocity approximation $\pmb { v } ^ { n }$ at the end of each timestep.
+
+Example 2 Let us ilustrate the use of SHAKE with the familiar example of the planar pendulum. For the pendulum, applying SHAKE results in the discrete equations
+
+$$
+\begin{array} { r l } & { \qquad x _ { n + 1 } = x _ { n } + \Delta t u _ { n + 1 / 2 } , } \\ & { \qquad y _ { n + 1 } = y _ { n } + \Delta t v _ { n + 1 / 2 } , } \\ & { m u _ { n + 1 / 2 } = m u _ { n - 1 / 2 } - \Delta t x _ { n } \lambda _ { n } , } \\ & { m v _ { n + 1 / 2 } = m v _ { n - 1 / 2 } - \Delta t m g - \Delta t y _ { n } \lambda _ { n } , } \\ & { \qquad L ^ { 2 } = ( x _ { n + 1 } ) ^ { 2 } + ( y _ { n + 1 } ) ^ { 2 } , } \end{array}
+$$
+
+where we have violated our usual convention of writing time step index as a superscript rather than a subscript in order to avoid ambiguity with the multiplicative power.
+
+The SHAKE method can be interpreted as follows: we first ignore the constraints and take a step of the St¨ormer–Verlet method, resulting for the pendulum in
+
+$$
+\begin{array} { l } { { \bar { x } _ { n + 1 } = x _ { n } + \Delta t u _ { n - 1 / 2 } , } } \\ { { \bar { y } _ { n + 1 } = y _ { n } + \Delta t v _ { n - 1 / 2 } - \Delta t ^ { 2 } g . } } \end{array}
+$$
+
+(This is always a point of a quadratic arc through the previous step.)
+
+Next, we compute the oblique projection of the unconstrained step on to the configuration manifold along the direction of the normal to the constraint at the previous timestep $t _ { n }$ . For the pendulum, this means finding the intersection of a certain straight line with the circle by solving the following quadratic equation for $\lambda _ { n }$
+
+$$
+( \bar { x } _ { n + 1 } - \frac { 1 } { m } \Delta t ^ { 2 } x _ { n } \lambda _ { n } ) ^ { 2 } + ( \bar { y } _ { n + 1 } - \frac { 1 } { m } \Delta t ^ { 2 } y _ { n } \lambda _ { n } ) ^ { 2 } = L ^ { 2 } .
+$$
+
+The situation is diagrammed in Fig. 2. Note that there are, in general, two real solutions to this equation, corresponding to the two points of intersection with the circle. For small timesteps, the correct choice of multiplier will be obvious (the appropriate solution will be small in magnitude). As a simple rule, we might always choose the solution corresponding to the smaller value of the multiplier, but if the stepsize is sufficiently large, this approach could lead to an incorrect choice. In general, we should consider the smooth continuation of the solution in the parameter $\Delta t$ from $\Delta t = 0$ and $\lambda ^ { n } ( 0 ) = 0$ to the final value $\lambda ( \Delta t )$ .
+
+![](images/9c87353f890015bb23c01bb208d12ebb09f956e565a4efdec7d051ac4ba91730.jpg)  
+Figure 7.2 SHAKE discretization applied to the planar pendulum. Starting from a point on the circle $( \pmb { q } _ { n } = \left( x _ { n } , y _ { n } \right) ) ,$ ), an unconstrained step is taken (following a parabolic arc in the parameter $\Delta t$ ) to $\bar { \pmb q } _ { n + 1 } = ( \bar { x } _ { n + 1 } , \bar { y } _ { n + 1 } )$ . Next, we find the projection on to the circle of radius $L$ along the direction $\pmb { q } _ { n }$ . ✷
+
+These same considerations enter into the discussion of the general case (7.14)– (7.17). The correct choice of the multiplier can be identified by smoothly continuing the solution as a function of the parameter $\Delta t$ starting from $\Delta t = 0$ and $\pmb { \lambda } ^ { n } ( 0 ) = \pmb { 0 }$ . For small timesteps, the correct choice of multiplier $\pmb { \lambda } ^ { n }$ will thus be small in magnitude, so that a Newton iteration started from the zero initial guess will tend to find the correct solution. For larger timesteps, though, caution must be exercised to make certain that the solution obtained is the correct one.
+
+We next briefly comment on the error growth in these methods. Since SHAKE and RATTLE are formally equivalent, the propagation of errors is identical for the two methods. The modification of the end of timestep velocity in the RATTLE step does not effect the stability or global convergence of the method in any way.
+
+It is relatively straightforward to derive a formula for the local error introduced in a single timestep using SHAKE or RATTLE based on comparison of the Taylor expansions of the solution and numerical solution in a step of size $\Delta t$ , starting from some given point $( \pmb { q } ^ { n } , \pmb { v } ^ { n } ) \in \tau _ { \mathcal { M } }$ . For both methods, this calculation shows that the local error is of order $\Delta t ^ { 3 }$ . Thus these methods are second-order accurate. (Higher-order schemes are discussed below, in the context of Hamiltonian systems.)
+
+# 7.2.2 Implementation
+
+At every step of the SHAKE (or RATTLE) discretization, we must solve a system of nonlinear equations of dimension equal to the number of constraints. In some cases, these constraints can be dealt with very easily. For example, if the constraints are linear, the work involved is usually a step of Gaussian elimination or the use of some other linear solver, and unless the dimension of the system is exceptionally large, or the equations poorly conditioned, this computation will be easy to implement. In other cases, the constraints may admit a decoupling that enables their simplified solution.
+
+Example3Consider a system of $N$ particles，each of mass $m$ ，attachedto the surface of the unit sphere and interacting in some homogeneous two-body potential $\phi$ . The energy takes the form
+
+$$
+E = \frac 1 2 \sum _ { i = 1 } ^ { N } m _ { i } \| \pmb { v } _ { i } \| ^ { 2 } + V ( \pmb { q } _ { 1 } , \dots , \pmb { q } _ { N } ) ,
+$$
+
+where $\begin{array} { r } { V ( \pmb q ) = V ( \pmb q _ { 1 } , \dots , \pmb q _ { N } ) = \sum _ { i = 1 } ^ { N - 1 } \sum _ { j = i + 1 } ^ { N } \phi ( \| \pmb q _ { i } - \pmb q _ { j } \| ) } \end{array}$ . The equations of motion for the i th particle, $i = 1 , \dots , N$ , are
+
+$$
+\begin{array} { c } { \dot { \pmb q } _ { i } = { \pmb v } _ { i } , } \\ { m \dot { \pmb v } _ { i } = - \nabla _ { \pmb q _ { i } } V ( \pmb q ) - \pmb q _ { i } \lambda _ { i } , } \\ { \lVert { \pmb q } _ { i } \rVert ^ { 2 } = 1 , } \end{array}
+$$
+
+and the equations of the ith and jth particles are coupled only through the potential energy. Applying SHAKE discretization results in
+
+$$
+\begin{array} { r l } & { \pmb { q } _ { i } ^ { n + 1 } = \pmb { q } _ { i } ^ { n } + \Delta t \pmb { v } _ { i } ^ { n + 1 / 2 } , } \\ & { m \pmb { v } _ { i } ^ { n + 1 / 2 } = m \pmb { v } _ { i } ^ { n - \frac { 1 } { 2 } } - \Delta t \nabla _ { \pmb { q } _ { i } } V ( \pmb { q } ^ { n } ) - \Delta t \pmb { q } _ { i } ^ { n } \lambda _ { i } ^ { n } , } \\ & { \| \pmb { q } _ { i } ^ { n + 1 } \| ^ { 2 } = 1 , } \end{array}
+$$
+
+Introducing equation (7.26) into (7.25), then combining the resulting formula with the constraint (7.27) results in $N$ independent quadratic equations to be solved for the $N$ multipliers $\lambda _ { j } ^ { n }$ , $i = 1 , \dots , N$ . ✷
+
+On the other hand, in most cases, such as for example the constraint chain, one has to solve a system of nonlinear equations for the multipliers $\pmb { \lambda } ^ { n } = \{ \lambda _ { i } ^ { n } \} _ { i = 1 , \dots , m }$ of the form
+
+$$
+g \left( \bar { q } ^ { n + 1 } - { \Delta t } ^ { 2 } M ^ { - 1 } \sum _ { i = 1 } ^ { m } G ( q ^ { n } ) ^ { T } \lambda ^ { n } \right) = 0 ,
+$$
+
+where $\bar { \pmb q } ^ { n + 1 }$ represents an unconstrained step using St¨ormer–Verlet/leapfrog. The paper [167] describing the SHAKE discretization also provided an iterative solver for the nonlinear equations (7.28); the term SHAKE is used typically to refer to the combined procedure of time discretization together with the iterative (coordinate resetting) algorithm for constraints. We divide these here into two procedures, namely SHAKE iteration for coordinate resetting and SHAKE discretization (7.14)–(7.16) .
+
+In SHAKE iteration, we cycle through the constraints, adjusting one multiplier at each iteration. If $g _ { j }$ is the ith component of $g$ , we denote by $G _ { i } = \nabla _ { \pmb { q } } g _ { i } ( \pmb { q } )$ the i th row of the constraint Jacobian matrix (i.e. the gradient of the i th constraint function), then the iteration is as follows: First, we initialize
+
+$$
+\pmb { Q } : = \bar { \pmb { q } } ^ { n + 1 } = \pmb { q } ^ { n } + \Delta t \pmb { v } ^ { n - 1 / 2 } - \Delta t ^ { 2 } \pmb { M } ^ { - 1 } \nabla _ { \ b { q } } V ( \pmb { q } ^ { n } ) ,
+$$
+
+which is equivalent to taking $\pmb { \lambda } ^ { n }$ to be zero in (7.28).
+
+Next, we cycle through the list of constraints and correct each constraint one after another by using the following procedure. For $i = 1 , \dots , m$ , compute an offset $\Delta \Lambda _ { j }$ in order to satisfy the i th linearized constraint equation
+
+$$
+\Delta \Lambda _ { i } : = \frac { g _ { i } ( Q ) } { G _ { i } ( Q ) M ^ { - 1 } G _ { i } ( { \pmb q } ^ { n } ) } ,
+$$
+
+and update $Q$ by
+
+$$
+\begin{array} { r } { Q : = Q - M ^ { - 1 } G _ { i } ( \pmb { q } ^ { n } ) ^ { T } \Delta \Lambda _ { i } . } \end{array}
+$$
+
+This cycle is repeated until all constraint residuals $g _ { i } ( Q )$ are smaller than some prescribed tolerance (usually a multiple of the unit rounding error). At this point we set $\pmb q ^ { n + 1 } = \pmb Q$ and continue with the next timestep.
+
+As was shown in [13], SHAKE iteration is really a variant of nonlinear Gauss– Seidel–Newton iteration and its convergence can be justified and analyzed in the framework of Ortega and Rheinboldt [150]. In particular, it can be shown that, given a good enough initial guess for the multiplier, or a small enough step size $\Delta t$ , this iterative method eventually converges.
+
+One can consider a variety of improvements to SHAKE iteration. Noting that SHAKE is essentially a nonlinear Gauss–Seidel iteration, it seems natural to consider the use of an SOR-type technique. For this purpose, we could introduce a parameter $\omega$ , changing the offset $\Delta \Lambda _ { j }$ at each step of iteration to $\omega \Delta \Lambda _ { j }$ .
+
+The parameter ω can be a fixed value obtained through some preliminary experiment, or it can be obtained automatically during integration by a simple adaptive algorithm. We stress that this is a cost-free enhancement of SHAKE and it can lead to substantial speedups in the constraint-solving portion of a timestepping algorithm. Because the method is just an alternative nonlinear equation solver to SHAKE iteration, the converged numerical solution will not differ from that obtained by SHAKE iteration.
+
+A second alternative to SHAKE iteration was also considered in [13]: we could use a Newton iteration, or variant thereof, to compute successive updates to the vector $\pmb { \lambda } ^ { n }$ . In particular, we could apply a true Newton iteration to the original nonlinear equations and use sparse matrix techniques to solve the resulting linear equations. This turns out to be somewhat expensive for most problems because the factorization of a matrix – even a sparse matrix – is relatively costly. A better alternative is to use a quasi-Newton iteration described below.
+
+All these methods iteratively improve the whole vector of offsets $\pmb { \Delta } \pmb { \Lambda } =$ $\{ \Delta \Lambda _ { i } \}$
+
+$$
+\pmb { \cal A } : = \pmb { { \cal R } } ^ { - 1 } \pmb { g } ( \pmb { Q } ) ,
+$$
+
+where for the true Newton iteration (NIP) we have $\pmb { R } = \pmb { G } ( \pmb { Q } ) \pmb { M } ^ { - 1 } \pmb { G } ( \pmb { q } ^ { n } ) ^ { T }$ with $Q$ the latest approximation obtained from
+
+$$
+\pmb { Q } : = \pmb { Q } - \pmb { M } ^ { - 1 } \pmb { G } ( \pmb { q } ^ { n } ) ^ { T } \pmb { \Delta } \pmb { \Lambda } .
+$$
+
+For the quasi-Newton iteration we have $\pmb { R } = \pmb { G } \pmb { M } ^ { - 1 } \pmb { G } ^ { T }$ , with $\pmb { G } = \pmb { G } ( \pmb { q } ^ { k } )$ for some $\pmb q ^ { k }$ computed at a previous timestep $t _ { k }$ ( $\pmb { G }$ is updated as needed for convergence). Note that the quasi-Newton iteration matrix $R$ is symmetric and positive-definite and, hence, can be factorized in a very efficient manner [13].
+
+SHAKE and RATTLE are particularly useful in the context of molecular dynamics. Further details will be provided in Chapter 11. We only mention here that the iterative techniques described in this section have been integrated into the CHARMM molecular dynamics software package [34] and successfully applied to several examples: $C _ { 6 0 }$ , a box of water, Myoglobin, BPTI; detailed results are reported in [13]. Roughly speaking, we can summarize the results as follows: (1) the use of an SOR parameter can improve SHAKE iteration convergence by a factor of two to three in protein dynamics simulations for no additional cost or loss of robustness, (2) the adaptive scheme for determining optimal $\omega$ in [13], although not robust, does demonstrate the feasibility of computing the SOR parameter adaptively, and (3) the symmetric adaptive Newton method may show improvement over SHAKE iteration at large step size $\Delta t$ for problems with high bond connectivity, e.g. the buckminsterfullerene $C _ { 6 0 }$ .
+
+# 7.2.3 Numerical experiment
+
+To conclude this section, we apply the RATTLE method to simulate a small model system consisting of six unit-mass particles linked by six rigid unit length constraints. The hexagonal starting configuration is shown in Fig. 7.3.
+
+Note there are six multipliers and constraint equations, and, in the planar case that we consider here, a total of $2 \times 6 - 6 = 6$ degrees of freedom. The next nearest neighbors are linked by springs with rest length $\sqrt { 3 }$ . Pairs numbered (1,4), (2,5), and (3,6) are linked by springs with rest length 2 (see Fig. 7.3). In this way the system tends to retain the shape of a hexagon during simulation.
+
+![](images/bafe2893b7c5119f8c8177bce8d474c3600ea5f8f13091483866f1c0f675120e.jpg)  
+Figure 7.3 Diagram of a planar constraint loop consisting of six particles of unit mass.
+
+We placed the system in a square box with sides at $x = \pm 2$ , $y = \pm 2$ . The interaction with the boundary of the box was introduced with the following soft wall potential
+
+$$
+V _ { \mathrm { w a l l } } = { \frac { \epsilon } { 6 } } \sum _ { i = 1 } ^ { 6 } \left[ ( x _ { i } + 2 ) ^ { - 6 } + ( x _ { i } - 2 ) ^ { - 6 } + ( y _ { i } + 2 ) ^ { - 6 } + ( y _ { i } - 2 ) ^ { - 6 } \right] .
+$$
+
+We chose $\epsilon = 0 . 0 1$ , strongly localizing collisions at nearly the point of contact with the boundary of the region.
+
+It is important to make sure that the initial velocities are consistent with the constraint (7.5). This can always be achieved by a simple projection step. In our case, we simply initialized the positions at the global minimum of potential energy (regular hexagon configuration) and gave each atom of the system the same initial velocity, propelling the entire object rigidly toward the boundary. Following the first impact, the system begins chaotic tumbling and oscillatory vibration.
+
+![](images/59d311a7f8f4d9524f77880a449048eac77824561f3943d3694ecba5c5fab577.jpg)  
+Figure 7.4 Snapshots of the motion of the six particle chain.
+
+We applied RATTLE to simulate the constraint chain over a time interval [0, 100]. Some frames of the motion are shown in Fig. 7.4.
+
+We compare energy errors for various simulations. In the first run, the stepsize was set to $\Delta t = 0 . 0 8$ . The result, shown in the upper panel of Fig. 7.5, is not very encouraging. The energy seems to hop about in an almost random pattern. The jumps in energy coincide with close approaches of a particle of the chain to the walls of the box, i.e. “collisions.” Here the $r ^ { - 6 }$ potential gives rise to a strong restraining force, propelling the particle away at relatively high velocity. At these points, the stability of the method breaks down for this stepsize: in essence, the “perturbed Hamiltonian” expansion discussed in Chapter 5 does not really exist at these stepsizes; the exponentially small error term mentioned in Chapter 5 is not really small at all. When the stepsize is reduced, say to $\Delta t = 0 . 0 4$ , the energy is stabilized at nearly the correct value (see lower panel of Fig. 7.5).1
+
+The second-order convergence of the RATTLE method can be verified numerically by computing trajectories with several different stepsizes, then graphing the error v. stepsize in logarithmic scale (see Fig. 7.6).
+
+![](images/52f6e864278d3efa6d8966d3e78e6f67c6ca1ee762ca64aa448041f9995e8b5f.jpg)  
+Figure 7.5 Energies against time for two runs of RATTLE on the six-particle chain, upper panel $\Delta t = 0 . 0 8$ , lower panel $\Delta t = 0 . 0 4$ .
+
+![](images/fbbfd572803b73784fc7492cfcfd471c96077c7062c540b98345548795151e0b.jpg)  
+Figure 7.6 Verification of second-order convergence of RATTLE.
+
+# 7.3 Transition to Hamiltonian mechanics
+
+We now turn to the Hamiltonian formalism with constraints. As done before in Chapter 3, we formally introduce conjugate momenta $p = M { \dot { q } }$ and rewrite (7.1)–(7.3) as
+
+$$
+\begin{array} { c } { { \displaystyle \frac { d } { d t } \pmb { q } = \pmb { M } ^ { - 1 } \pmb { p } , } } \\ { { \displaystyle \frac { d } { d t } \pmb { p } = - \nabla _ { \pmb { q } } V ( \pmb { q } ) - \pmb { G } ( \pmb { q } ) ^ { T } \pmb { \lambda } , } } \\ { { \displaystyle \ \mathbf { 0 } = \pmb { g } ( \pmb { q } ) . } } \end{array}
+$$
+
+The first equation is the gradient of the augmented Hamiltonian
+
+$$
+\tilde { H } = \frac { 1 } { 2 } \pmb { p } ^ { T } \pmb { M } ^ { - 1 } \pmb { p } + \pmb { V } ( \pmb { q } ) + \pmb { g } ( \pmb { q } ) ^ { T } \pmb { \lambda } ,
+$$
+
+with respect to $p$ , while the second equation is equal to the negative gradient of $\tilde { H }$ with respect to $\pmb q$ with $\pmb { \lambda }$ treated as a constant.
+
+The form of the Hamiltonian $\tilde { H }$ suggests a correspondence between Hamiltonian formulations with and without constraints. Let $H$ be the energy of a certain unconstrained mechanical system, so the equations of motion are just
+
+$$
+\begin{array} { c } { { \displaystyle { \frac { d } { d t } } \pmb { q } = + \nabla _ { p } H ( \pmb { q } , \pmb { p } ) , } } \\ { { \displaystyle { \frac { d } { d t } } \pmb { p } = - \nabla _ { \pmb { q } } H ( \pmb { q } , \pmb { p } ) . } } \end{array}
+$$
+
+Similar to the situation above, introduce the augmented Hamiltonian
+
+$$
+\tilde { H } ( \pmb { q } , \pmb { p } ) = H ( \pmb { q } , \pmb { p } ) + \pmb { g } ( \pmb { q } ) ^ { T } \pmb { \lambda } ,
+$$
+
+and write the equations of motion (the formulation of a constrained Hamiltonian system in natural coordinates):
+
+$$
+\begin{array} { c } { \displaystyle \frac { d } { d t } \pmb { q } = \nabla _ { p } H ( \pmb { q } , \pmb { p } ) , } \\ { \displaystyle \frac { d } { d t } \pmb { p } = - \nabla _ { \pmb { q } } H ( \pmb { q } , \pmb { p } ) - G ( \pmb { q } ) ^ { T } \pmb { \lambda } , } \\ { \displaystyle \ \mathbf { 0 } = \pmb { g } ( \pmb { q } ) . } \end{array}
+$$
+
+Example 4The constrained Hamiltonian formulation (7.29)-(7.31) can be derived from a constrained Lagrangian formulation. Recall from Chapter 3 that Lagrange’s equations for a mechanical system with Lagrangian function $L \left( \pmb { q } , \dot { \pmb { q } } \right)$ are given by
+
+$$
+\frac { d } { d t } \nabla _ { \dot { q } } L ( \pmb { q } , \dot { \pmb { q } } ) - \nabla _ { q } L ( \pmb { q } , \dot { \pmb { q } } ) = \mathbf { 0 } .
+$$
+
+These are the Euler–Lagrange equations minimizing the action integral
+
+$$
+\mathcal { L } [ \pmb { q } ] = \int _ { t _ { 0 } } ^ { t _ { 1 } } L ( \pmb { q } ( t ) , \dot { \pmb { q } } ( t ) ) d t .
+$$
+
+To obtain the constrained Lagrange’s equation we consider the augmented action integral
+
+$$
+{ \mathcal { L } } [ { \pmb q } , \lambda ] = \int _ { t _ { 0 } } ^ { t _ { 1 } } \left[ L ( { \pmb q } ( t ) , { \dot { \pmb q } } ( t ) ) - \lambda ( t ) ^ { T } { \pmb g } ( { \pmb q } ( t ) ) \right] d t ,
+$$
+
+and, upon taking variations in $\pmb q$ and $\pmb { \lambda }$ , derive the associated Euler–Lagrange equations
+
+$$
+\begin{array} { c } { \displaystyle \frac { d } { d t } \nabla _ { \dot { q } } L ( \dot { \pmb q } , \dot { \pmb q } ) = \nabla _ { q } L ( \pmb q , \dot { \pmb q } ) + \pmb { G } ( \pmb q ) ^ { T } \pmb \lambda , } \\ { \displaystyle \ \mathbf 0 = \pmb { g } ( \pmb q ) . } \end{array}
+$$
+
+The transition to the Hamiltonian formulation can be achieved by introducing the canonical momenta
+
+$$
+\pmb { p } = \nabla _ { \dot { \pmb { q } } } L ( \pmb { q } , \dot { \pmb { q } } ) ,
+$$
+
+and by employing the standard Legendre transformation
+
+$$
+\tilde { H } ( q , p , \lambda ) = p \cdot \dot { q } - \left[ L ( q , \dot { q } ) - \lambda ^ { T } g ( q ) \right] = H ( q , p ) + \lambda ^ { T } g ( q ) .
+$$
+
+For example, the $N .$ -body Lagrangian
+
+$$
+L ( { \pmb q } , { \dot { \pmb q } } ) = \frac { 1 } { 2 } { \dot { \pmb q } } ^ { T } { \pmb M } { \dot { \pmb q } } - { \cal V } ( { \pmb q } )
+$$
+
+gives rise to the Hamiltonian
+
+$$
+\tilde { H } = \frac { 1 } { 2 } \pmb { p } ^ { T } \pmb { M } ^ { - 1 } \pmb { p } + \pmb { V } ( \pmb { q } ) + \pmb { g } ( \pmb { q } ) ^ { T } \pmb { \lambda } .
+$$
+
+It is easily verified that the constrained equations (7.29)–(7.31) can be reduced to the Lagrangian equations (7.32)–(7.33) and that both formulations lead to identical solutions curves $\pmb q ( t )$ . However, while $( \pmb q ( t ) , \dot { \pmb q } ( t ) ) \in T \mathcal { M } ,$ the
+
+natural coordinates $( \pmb q , \pmb p )$ must satisfy the equation (7.31) and the corresponding momentum-level constraint
+
+$$
+\frac { d } { d t } g ( q ) = G ( q ) \nabla _ { p } H ( q , p ) = \bf { 0 } .
+$$
+
+The subset of $\mathbb { R } ^ { 2 d }$ defined by (7.31) and (7.34) we term the phase space and denote by $\mathcal { P }$ .
+
+Observe that the energy $H$ of the unconstrained system remains a first integral of (7.29)–(7.31). To see this, first observe that, along solutions
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } H ( { \boldsymbol { q } } , { \boldsymbol { p } } ) = H _ { { \boldsymbol { q } } } ( { \boldsymbol { q } } , { \boldsymbol { p } } ) { \dot { \boldsymbol { q } } } + H _ { \boldsymbol { p } } ( { \boldsymbol { q } } , { \boldsymbol { p } } ) { \dot { \boldsymbol { p } } } } \\ { = H _ { \boldsymbol { q } } ( { \boldsymbol { q } } , { \boldsymbol { p } } ) \nabla _ { \boldsymbol { p } } H ( { \boldsymbol { q } } , { \boldsymbol { p } } ) - H _ { \boldsymbol { p } } ( { \boldsymbol { q } } , { \boldsymbol { p } } ) \left[ \nabla _ { \boldsymbol { q } } H ( { \boldsymbol { q } } , { \boldsymbol { p } } ) + G ( { \boldsymbol { q } } ) ^ { T } \boldsymbol { \lambda } \right] } \\ { = - { \boldsymbol { \lambda } } ^ { T } \left[ G ( { \boldsymbol { q } } ) \nabla _ { \boldsymbol { p } } H ( { \boldsymbol { q } } , { \boldsymbol { p } } ) \right] , } \end{array}
+$$
+
+then note that the latter expression vanishes along the hidden constraint (7.34).
+
+# 7.4 The symplectic structure with constraints
+
+In this section, we show that (7.29)–(7.31) is indeed a generalization of unconstrained canonical Hamiltonian systems as discussed in Chapter 3. According to a perspective due to DIRAC [50], the flow of a Hamiltonian system on a manifold can be embedded in the flow of an unconstrained Hamiltonian system. Following this idea, the solutions of (7.29)–(7.31) can simply be viewed as evolving in the phase space of a standard canonical Hamiltonian system with extended Hamiltonian
+
+$$
+\hat { H } = H ( \pmb { q } , \pmb { p } ) + \pmb { g } ( \pmb { q } ) ^ { T } \pmb { \Lambda } ( \pmb { q } ^ { - 1 } , \pmb { p } ) ,
+$$
+
+and $\pmb { \Lambda } ( \pmb q , \pmb v )$ given by (7.11) if $H = { \pmb p } ^ { T } { \pmb M } ^ { - 1 } { \pmb p } / 2 + V ( { \pmb q } )$ or by a proper generalization for more general unconstrained Hamiltonian functions $H$ . The manifold $\mathcal { P }$ is an invariant manifold for the solution operator $\boldsymbol { \Phi } _ { t , \hat { H } }$ . For a discussion of Dirac’s method, see MARSDEN AND RATIU [124]; for a discussion of numerical methods based on this, see LEIMKUHLER AND REICH [111].
+
+Dirac’s approach allows us to consider the symplectic structure on the phase space $\mathcal { P }$ as the restriction of the canonical symplectic structure $d \pmb { q } \wedge d \pmb { p }$ on $\mathbb { R } ^ { 2 d }$ to the phase space (submanifold) $\mathcal { P }$ . We outline the derivation of this restricted symplectic structure and its invariance under the flow operator of (7.29)–(7.31) in more detail in the remainder of this section. Contrary to this global approach, one can also introduce a symplectic structure on phase space by considering local parametrizations of $\mathcal { P }$ . This is the more traditional approach and a short outline will be provided later in this chapter.
+
+In keeping with the notation introduced earlier in Chapters 3 and 4, we start with differential one-forms $d \pmb q$ and $d p$ defined over the unconstrained space $\mathbb { R } ^ { 2 d }$ . We now restrict these one-forms to the solution space by requiring that
+
+$$
+G ( q ) d q = \mathbf { 0 } { \mathrm { a n d } } f _ { q } ( q , p ) d q + f _ { p } ( q , p ) d p = \mathbf { 0 } ,
+$$
+
+for all $( \pmb { q } , \pmb { p } ) \in \mathcal { P }$ , where
+
+$$
+f ( \pmb { q } , \pmb { p } ) = \pmb { G } ( \pmb { q } ) \nabla _ { p } H ( \pmb { q } , \pmb { p } )
+$$
+
+is the hidden constraint function. In more abstract terms, the differential oneforms $( d \pmb { q } , d \pmb { p } )$ are now elements of the cotangent space $\tau ^ { * } { \mathcal { P } }$ of $\mathcal { P }$ (imbedded into $\mathbb { R } ^ { 2 d }$ ) [124].
+
+The variational equations corresponding to (7.29)–(7.31) can be obtained by straightforward linearization and the resulting equations for the differential one-forms are
+
+$$
+\begin{array} { l } { { \displaystyle { \frac { d } { d t } d { \pmb q } = H _ { p q } ( { \pmb q } , { \pmb p } ) d { \pmb q } + H _ { p p } ( { \pmb q } , { \pmb p } ) d { \pmb p } } , } } \\ { { \displaystyle { \frac { d } { d t } d { \pmb p } = - H _ { q q } ( { \pmb q } , { \pmb p } ) d { \pmb q } - H _ { q p } ( { \pmb q } , { \pmb p } ) d { \pmb p } - d \left( G ( { \pmb q } ) { \pmb \lambda } \right) , } } } \\ { { \displaystyle { \bf 0 } = G ( { \pmb q } ) d { \pmb q } . } } \end{array}
+$$
+
+It is easily verified by differentiation of (7.38) with respect to time that the solutions of (7.36)–(7.38) indeed satisfy (7.35). Hence we are left with the task to show that the canonical wedge product $d \pmb { q } \wedge d \pmb { p }$ , restricted to (7.35), is an invariant of (7.36)–(7.38). We need the following:
+
+Lemma 1 Assume that the differential one-form dq satisfies (7.38), then
+
+$$
+d \pmb { q } \wedge d ( \pmb { G } ( \pmb { q } ) ^ { T } \pmb { \lambda } ) = \mathbf { 0 } .
+$$
+
+Proof:
+
+$$
+d \pmb { q } \wedge d \big ( \pmb { G } ( \pmb { q } ) ^ { T } \pmb { \lambda } \big ) = d \pmb { q } \wedge \pmb { G } ( \pmb { q } ) ^ { T } d \pmb { \lambda } + \sum _ { i = 0 } ^ { m } \lambda _ { i } d \pmb { q } \wedge \pmb { r } _ { i } d \pmb { q } ,
+$$
+
+where the components of $\pmb { \lambda }$ have been indexed by a subscript and
+
+$$
+\boldsymbol { \Gamma } _ { i } = \left\{ \frac { \partial ^ { 2 } g _ { i } } { \partial q _ { k } \partial q _ { I } } ( \pmb { q } ) \right\}
+$$
+
+is the (symmetric!) Hessian matrix of the i th constraint function. Now
+
+$$
+d \pmb { q } \wedge \pmb { G } ( \pmb { q } ) ^ { T } d \pmb { \lambda } = \pmb { G } ( \pmb { q } ) d \pmb { q } \wedge d \pmb { \lambda } = \pmb { 0 } ,
+$$
+
+for any values of $d \pmb { \lambda }$ because of (7.38). Finally, each of the terms of the summation can be eliminated since $d \pmb { q } \wedge \pmb { r } _ { i } d \pmb { q } = \pmb { 0 }$ . ✷
+
+We now easily verify (dropping arguments to simplify notations) that
+
+$$
+\begin{array} { l } { { \displaystyle { \frac { d } { d t } d { \pmb q } \wedge d { \pmb p } = d \dot { q } \wedge d { \pmb p } + d { \pmb q } \wedge d \dot { \pmb p } } } } \\ { { \displaystyle \qquad = ( H _ { p q } d { \pmb q } + H _ { p p } d { \pmb p } ) \wedge d p - d { \pmb q } \wedge \left[ H _ { q q } d { \pmb q } + H _ { q p } d { \pmb p } + d \left( { \pmb G } ^ { T } \pmb \lambda \right) \right] } } \\ { { \displaystyle \qquad = H _ { p q } d { \pmb q } \wedge d { \pmb p } - d { \pmb q } \wedge H _ { q p } d { \pmb p } + H _ { p p } d { \pmb p } \wedge d { \pmb p } - d { \pmb q } \wedge H _ { q q } d { \pmb q } } . } \end{array}
+$$
+
+These terms all vanish using the properties of the wedge product given in Chapter 3. Thus the canonical wedge product is preserved along solutions of (7.36)– (7.38).
+
+In most textbooks on classical mechanics, mechanical systems subject to a holonomic constraint manifold $\mathcal { M }$ are formulated as Hamiltonian systems on the cotangent space $\tau ^ { * } { \mathcal { M } }$ (see ARNOLD [7] and MARSDEN AND RATIU [124]). Here we have defined constrained Hamiltonian systems over a different phase space $\mathcal { P }$ . However, it turns out, not entirely unexpectedly, that the cotangent space $\tau ^ { * } { \mathcal { M } }$ and the phase space $\mathcal { P }$ are diffeomorphic under the symplectic transformation
+
+$$
+( \pmb { q } , \pmb { p } ) \in \mathcal { P }  ( \pmb { q } , \pmb { \bar { p } } ) \in T ^ { * } \mathcal { M }
+$$
+
+defined by
+
+$$
+\bar { p } = p + G ( q ) ^ { T } \pmb { \mu } , \qquad G ( q ) \bar { p } = { \bf 0 } .
+$$
+
+Here we have identified $\tau ^ { * } { \mathcal { M } }$ with the tangent space $T \mathcal { M }$ as defined earlier in Section 7.1. Indeed, upon applying Lemma 1, it is easy to show that
+
+$$
+d \pmb { q } \wedge d \pmb { p } = d \pmb { q } \wedge d \pmb { \bar { p } } .
+$$
+
+Hence the symplectic structure on $\tau ^ { * } { \mathcal { M } }$ is again given by the restriction of the standard canonical structure to ${ \mathcal { T } } ^ { * } { \mathcal { M } }$ See also MCLACHLAN AND SCOVEL [133].
+
+# 7.5 Direct symplectic discretization
+
+We come to the direct symplectic integration of general Hamiltonian systems (7.29)–(7.30) subject to holonomic constraints (7.31). We first discuss general second-order methods and then briefly outline the derivation of higher-order methods by composition.
+
+# 7.5.1 Second-order methods
+
+In LEIMKUHLER AND SKEEL [113], the symplecticness of the SHAKE and RATTLE methods was first explained. Here we will introduce a generalization of this framework, following the ideas of REICH [155]. Let us consider a Hamiltonian system
+
+$$
+\tilde { H } = H ( \pmb { q } , \pmb { p } ) + \pmb { g } ( \pmb { q } ) ^ { T } \pmb { \lambda } ,
+$$
+
+subject to the constraint $g ( \pmb q ) = \pmb 0$ . Let us also assume that a second-order, symplectic, and symmetric integration method is known for the unconstrained system
+
+$$
+\frac { d } { d t } \pmb { q } = \nabla _ { p } H ( \pmb { q } , \pmb { p } ) , \quad \frac { d } { d t } \pmb { p } = - \nabla _ { q } H ( \pmb { q } , \pmb { p } ) .
+$$
+
+For $H = T ( p ) { + } V ( q )$ , this could, for example, be the St¨ormer–Verlet method. For a general, non-separable, Hamiltonian, one could apply the implicit midpoint rule or the generalized St¨ormer–Verlet/leapfrog method. In any case, let us denote the chosen method by $\psi _ { \Delta t }$ . Then the following method is a constraint-preserving, symplectic, symmetric, and second-order method for the constrained Hamiltonian system with Hamiltonian $\tilde { H }$ :
+
+$$
+\begin{array} { c } { { \displaystyle \bar { p } ^ { n } = p ^ { n } - \frac { \Delta t } { 2 } G ( q ^ { n } ) ^ { T } \lambda _ { ( r ) } ^ { n } , } } \\ { { \displaystyle ( q ^ { n + 1 } , \bar { p } ^ { n + 1 } ) = \psi _ { \Delta t } ( q ^ { n } , \bar { p } ^ { n } ) , } } \\ { { \displaystyle 0 = g ( q ^ { n + 1 } ) , } } \\ { { \displaystyle p ^ { n + 1 } = \bar { p } ^ { n + 1 } - \frac { \Delta t } { 2 } G ( q ^ { n + 1 } ) ^ { T } \lambda _ { ( v ) } ^ { n + 1 } , } } \\ { { \displaystyle 0 = G ( q ^ { n + 1 } ) \nabla _ { p } H ( q ^ { n + 1 } , p ^ { n + 1 } ) . } } \end{array}
+$$
+
+Note that this method reduces to RATTLE for $H = p ^ { T } M ^ { - 1 } p / 2 + V ( \pmb q )$ and taking the St¨ormer–Verlet method as $\psi _ { \Delta t }$ . This correspondence should guide us to the implementation of the method for a more general $\psi _ { \Delta t }$ .
+
+Let us now briefly verify the various geometric properties of (7.39)–(7.43). (i) The method obviously conserves phase space $\mathcal { P }$ . However, without changing the propagation in the $\pmb q$ -variables, one can also enforce the cotangent space
+
+$\tau ^ { * } { \mathcal { M } }$ by replacing the momentum-constraint equation (7.43) by
+
+$$
+\mathbf { 0 } = { \cal G } ( q ^ { n + 1 } ) p ^ { n + 1 } .
+$$
+
+See also MCLACHLAN AND SCOVEL [133]. (ii) The method is symplectic. Indeed, by the symplecticness of $\psi _ { \Delta t }$ we know that
+
+$$
+d { \pmb q } ^ { n } \wedge d \bar { \pmb p } ^ { n } = d { \pmb q } ^ { n + 1 } \wedge d \bar { \pmb p } ^ { n + 1 } .
+$$
+
+On the other hand, both momentum maps (7.39) and (7.42) are also symplectic. This is a consequence of Lemma 1 of Section 7.4. (iii) The method is also symmetric as easily shown by replacing $\Delta t$ by $- \Delta t$ and $( { \pmb q } ^ { n } , { \pmb p } ^ { n } , \pmb \lambda _ { ( \mathsf { r } ) } ^ { n } )$ by $( { \pmb q } ^ { n + 1 } , { \pmb p } ^ { n + 1 } , \pmb { \lambda } _ { ( \vee ) } ^ { n + 1 } )$ . (iv) The method is certainly consistent. Since it is also symmetric, second-order convergence follows.
+
+Let us give an explicit example. We take the generalized St¨ormer–Verlet/ leapfrog method as $\psi _ { \Delta t }$ . This yields the method
+
+$$
+\begin{array} { c } { { p ^ { n + 1 / 2 } = p ^ { n } - \displaystyle \frac { \Delta t } { 2 } \nabla _ { q } H ( p ^ { n + 1 / 2 } , q ^ { n } ) - \displaystyle \frac { \Delta t } { 2 } G ( q ^ { n } ) \lambda _ { ( r ) } ^ { n } ~ , } } \\ { { q ^ { n + 1 } = q ^ { n } + \displaystyle \frac { \Delta t } { 2 } \left[ \nabla _ { p } H ( p ^ { n + 1 / 2 } , q ^ { n } ) + \nabla _ { p } H ( p ^ { n + 1 / 2 } , q ^ { n + 1 } ) \right] ~ , } } \\ { { \displaystyle \quad \quad \mathbf { 0 } = g ( q ^ { n + 1 } ) , } } \\ { { p ^ { n + 1 } = p ^ { n + 1 / 2 } - \displaystyle \frac { \Delta t } { 2 } \nabla _ { q } H ( p ^ { n + 1 / 2 } , q ^ { n + 1 } ) - \displaystyle \frac { \Delta t } { 2 } G ( q ^ { n + 1 } ) \lambda _ { ( v ) } ^ { n + 1 } , } } \\ { { \displaystyle \quad \quad \mathbf { 0 } = G ( q ^ { n + 1 } ) \nabla _ { p } H ( q ^ { n + 1 } , p ^ { n + 1 } ) . } } \end{array}
+$$
+
+This method has first been proposed by JAY [95].
+
+Let us briefly comment on the conservation of first integrals. Assume we are given a function $F$ such that $\{ F , \tilde { H } \} = 0$ and, furthermore, both the unconstrained Hamiltonian $H$ as well as the constraints ${ \pmb g } ( { \pmb q } )$ are invariant under the Hamiltonian flow map of $F$ . Then (7.39)–(7.43) will preserve $F$ if and only if the unconstrained method $\psi _ { \Delta t }$ conserves $F$ .
+
+# 7.5.2 Higher-order methods
+
+Higher-order methods can now be obtained in two ways. One option is to generalize partitioned Runge–Kutta methods based on Lobbatto IIIA–IIIB quadrature rules to constrained Hamiltonian systems. For details see JAY [95]. However, the methods suffer from the same drawbacks as mentioned in Chapter 6 for general symplectic (partitioned) Runge–Kutta methods. The second option is to apply the idea of composition. Denote the second-order symmetric method (7.39)–(7.43) by $\hat { \pmb { { \psi } } } _ { \Delta t }$ . Then we consider the concatenation method
+
+$$
+\begin{array} { r } { \widetilde { \pmb { \psi } } _ { \Delta t } = \hat { \pmb { \psi } } _ { w _ { s } \Delta t } \circ \hat { \pmb { \psi } } _ { w _ { s - 1 } \Delta t } \circ \cdots \circ \hat { \pmb { \psi } } _ { w _ { 2 } \Delta t } \circ \hat { \pmb { \psi } } _ { w _ { 1 } \Delta t } , } \end{array}
+$$
+
+with $\{ w _ { i } \} _ { i = 1 , \dots , s }$ free parameters that can be chosen exactly as described in Chapter 6. For example, the coefficients for a sixth-order method, as given in Chapter 6, can be applied to (7.44) and, again, yield a sixth-order (constrained) method. The crucial point is that the error analysis for such composition methods is the same independent of the fact that $( \pmb { q } ^ { n } , \pmb { p } ^ { n } ) \in \mathcal { P }$ instead of $( \pmb { q } ^ { n } , \pmb { p } ^ { n } ) \in \mathbb { R } ^ { 2 d }$ . See REICH [155, 157] for further details.
+
+# 7.6 Alternative approaches to constrained integration
+
+In this section, we summarize some alternative approaches to integration of the constrained problem. Generally speaking, approaches can be divided into two classes of methods according to how they maintain the constraints: one class of schemes relies on a local parametrization of the constraint manifold, while the other uses projections.
+
+The traditional treatment of constrained systems is based on a reduction to an unconstrained system in some minimal set of variables. The phase space of the problem then becomes a (flat) Euclidean space, but the parameters are defined as complicated nonlinear functions of the natural coordinates. The appeal of this approach is that the ordinary differential equations can then be treated directly by a standard numerical method. If the original constrained system is a holonomic Hamiltonian system, we show here that the reduced problem can also be taken to be Hamiltonian, hence a symplectic method can be used for discretization. However, we also point out some pitfalls with this approach and we do not recommend it for general integrations.
+
+# 7.6.1 Parametrization of manifolds – local charts
+
+Consider a constrained Hamiltonian system (7.1)–(7.3). The full rank assumption on $G ( q )$ assumed in the formulation of the Euler–Lagrange equations implies, via the implicit function theorem, that the components of the phase space variable $\pmb { z } = ( \pmb { q } , \pmb { p } ) \in \mathbb { R } ^ { 2 d }$ can at any point be separated into two subvectors $z _ { 1 }$ and $z _ { 2 }$ , of dimensions $2 m$ and $2 ( d - m )$ , respectively, and the constraints locally solved for $z _ { 1 }$ smoothly in terms of $z _ { 2 }$ . We say that the dimension of the manifold $T \mathcal { M }$ is $2 ( d - m )$ because of this fact. The local partitioning of the variables into $z _ { 1 }$ and $z _ { 2 }$ is one example of a parameterization of the constraint. More generally, we can introduce any set of independent variables (parameters) together with appropriate functions which allow us to describe, at least locally, the constraint surface in terms of those parameters.
+
+Example 5Consider the plane pendulum which has the position constraint $x ^ { 2 } + y ^ { 2 } =$ $L ^ { 2 }$ and the tangency constraint $x { \dot { x } } + y { \dot { y } } = 0$ . As long as $y > 0$ , we can solve the position constraint for $y$ in terms of $X$
+
+$$
+y = \sqrt { L ^ { 2 } - x ^ { 2 } } ,
+$$
+
+and solve the tangency condition $x { \dot { x } } + y { \dot { y } } = 0$ for $v = { \dot { y } }$ in terms of $X$ , and $u = \dot { x }$
+
+$$
+v = - x u / \sqrt { L ^ { 2 } - x ^ { 2 } } .
+$$
+
+After differentiating with respect to time, it is formally possible to rewrite the pendulum equations of motion in terms of $X$ and $u$ only. A similar formulation could be used to described the case $y < 0$ , and we could as well rewrite the equations in terms of $y , v$ (with appropriate domain restrictions). ✷
+
+Parameterizations are, at first glance, appealing mechanisms for describing constrained mechanical motion, however they may introduce a number of complications in practice. For instance, the set of parameters is usually only valid locally, i.e. within a finite region of space; for realistic mechanical problems we often need a set of parameterizations, defined in overlapping regions of space, which together include the entire phase space of the problem (the tangent bundle of $\mathcal { M }$ . The parameterizations are then typically taken to map parameters from an open subspace of Euclidean space (of dimension $2 ( d - m ) )$ on to the tangent bundle. Such a family of parameterizations is called an atlas of the manifold, and the individual parameterizations are referred to as local charts.
+
+# 7.6.2 The Hamiltonian case
+
+The concept of local chart carries over to the Hamiltonian setting. If we introduce a parameterization of the position constraint in terms of a parameter $\pmb { \xi }$ , then the corresponding canonical momenta $\pmb { \nu }$ are defined by a proper generalization of the canonical lift transformation introduced in Chapter 3. We summarize the important result in the following theorem.
+
+Theorem 2 Consider the general mechanical system (7.29)–(7.31) subject to $m \ < \ d$ smooth constraint $g ( \pmb q ) = \pmb 0$ . Assume that $G ( q )$ is of full rank (has linearly independent rows) along the configuration manifold ${ \mathcal { M } } .$ . Suppose that $\phi : \mathbb { R } ^ { d - m }  \mathbb { R } ^ { d }$ defines a local coordinatization of the configuration space in terms of a new variable $\pmb { \xi } \in \mathbb { R } ^ { d - m }$ by
+
+$$
+\pmb { q } = \pmb { \phi } ( \pmb { \xi } ) .
+$$
+
+Then the canonical momenta $\pmb { \nu }$ are defined by the equations
+
+$$
+\begin{array} { r } { \pmb { \phi } _ { \pmb { \xi } } ( \pmb { \xi } ) ^ { T } \pmb { p } = \pmb { \nu } , } \end{array}
+$$
+
+and the Hamiltonian corresponding to the new variables is
+
+$$
+\tilde { H } ( \pmb { \xi } , \pmb { \nu } ) = H ( \pmb { \phi } ( \pmb { \xi } ) , \left( \pmb { \phi } _ { \pmb { \xi } } ( \pmb { \xi } ) ^ { T } \right) ^ { + } \pmb { \nu } ) ,
+$$
+
+where $\pmb { A } ^ { + } = \pmb { A } ^ { T } ( \pmb { A } \pmb { A } ^ { T } ) ^ { - 1 }$ represents a right pseudo-inverse of the matrix A.
+
+Because the differential equations (7.29)–(7.31) can be expressed as an unconstrained Hamiltonian system in the parameters, we know that the two-form $d \pmb \xi \wedge d \pmb \nu$ will be preserved by the phase flow. This could be taken as a definition of the canonical two-form for the constrained system.
+
+We have already seen that, along the constraint, the canonical two-form $d \pmb { q } \wedge d \pmb { p }$ is conserved. These two expressions are in fact equivalent, as the following theorem shows.
+
+Theorem 3 If dq and dp represent a solution of the constrained variational equations (7.36)–(7.37), and $\pmb { \xi }$ and $\pmb { \nu }$ are defined as in Theorem 2, then
+
+$$
+d \pmb { q } \wedge d \pmb { p } = d \pmb { \xi } \wedge d \pmb { \nu } .
+$$
+
+Proof. The proof of this theorem is straightforward: first, note that
+
+$$
+\begin{array} { c } { d \pmb { q } \wedge d \pmb { p } = ( \pmb { \phi } _ { \pmb { \xi } } ( \pmb { \xi } ) d \pmb { \xi } ) \wedge d \pmb { p } } \\ { = d \pmb { \xi } \wedge ( \pmb { \phi } _ { \pmb { \xi } } ( \pmb { \xi } ) ) ^ { T } d \pmb { p } . } \end{array}
+$$
+
+Now
+
+$$
+d \pmb { \nu } = ( \pmb { \phi } _ { \pmb { \xi } } ( \pmb { \xi } ) ) ^ { T } d \pmb { p } + \sum _ { i = 1 } ^ { d } p _ { i } \phi _ { i , \pmb { \xi } \pmb { \xi } } d \pmb { \xi } ,
+$$
+
+where $\phi _ { j }$ is the ith component of the vector function $\phi$ and $\phi _ { i , \xi \xi }$ its Hessian. Therefore
+
+$$
+\begin{array} { l } { d \pmb { \xi } \wedge d \pmb { \nu } = d \pmb { \xi } \wedge ( \pmb { \phi } _ { \pmb { \xi } } ( \pmb { \xi } ) ) ^ { T } d \pmb { p } + \displaystyle \sum _ { i = 1 } ^ { d } p _ { i } d \pmb { \xi } \wedge \phi _ { i , \pmb { \xi } \pmb { \xi } } ( \pmb { \xi } ) d \pmb { \xi } } \\ { = d \pmb { \xi } \wedge ( \pmb { \phi } _ { \pmb { \xi } } ( \pmb { \xi } ) ) ^ { T } d \pmb { p } , } \end{array}
+$$
+
+which concludes the proof.
+
+Although the above discussion is local in the sense that it assumes that the parameters are defined by a single coordinate chart, there is nothing to prevent extending the idea to a family of charts defining a “symplectic atlas.”
+
+
+<!-- chunk 0004: pages 211-280 -->
+# 7.6.3 Numerical methods based on local charts
+
+A straightforward approach to discretization can be based on a symplectic atlas: simply parameterize the phase space $\mathcal { P }$ in local charts, and then solve the resulting (unconstrained) Hamiltonian systems in the parameters using a symplectic integrator.
+
+Several problems with this approach surface rapidly when one attempts to use it to perform a simulation. These include the difficulty of identifying the boundaries of the local charts for the manifold in a general purpose numerical integration framework and the potential additional computational complexity that may be introduced in the parametric vector fields.
+
+In the Hamiltonian setting, there is an additional difficulty introduced by parameterization. According to the results of the last section, the Hamiltonian that arises via a canonical parameterization is typically nonseparable. This generally occurs in the presence of a nonlinear constraint regardless of whether the original Hamiltonian was separable. Nonseparable Hamiltonian functions are, typically much more difficult to integrate than separable Hamiltonian functions because they require the use of an implicit scheme (whereas separable Hamiltonian functions can be treated with explicit integrators).
+
+However, as explained by LEIMKUHLER AND REICH [111], there is still one more serious drawback to using parameterizations to integrate a Hamiltonian system, having to do with the “nearby Hamiltonian” introduced in Chapter 5. Recall that a key feature of a symplectic integrator is that it generates the exact flow, up to an exponentially small error term, of a nearby Hamiltonian system. Thus taking many steps with the same symplectic integrator is the same as taking many steps along the flow of the perturbed Hamiltonian system. This implies the existence of a conserved quantity, not much different from the exact energy, and confers a certain long-term stability on the numerical simulation and, consequently, a certain structural stability of the system under the process of discretization.
+
+When the numerical solution is obtained by integrating the differential equations in local minimal coordinates (local charts), we find that the symplectic map associated to the numerical simulation changes whenever we switch to a new chart: the realization as the flow of a single Hamiltonian system therefore does not apply. Thus the perturbed conserved quantity is lost, and the result observed in practice is typically a loss of long-term stability. The only exception to this rule is provided if one can find local coordinates in which one can integrate the equations of motion exactly. Then the modified Hamiltonian is the same as the original energy function and a change of charts does not affect conservation of energy. This obvious statement has some importance for the implementation of splitting methods in local coordinates (see BENETTIN, CHERUBINI, AND FASSO\` [17]).
+
+In summary, as a general proposition, use of local coordinate charts as a basis for numerical integration is unwise for the following reasons:
+
+Identifying the boundaries of local charts and switching between separate coordinate charts in the course of a simulation can introduce a costly computational overhead. Missed chart changes may lead to singularities in the solutions of the differential equations. The use of a parametrization often adds significant computational complexity, e.g. by introducing transcendental functions into a vector field where only simple polynomials may otherwise be needed.   
+. Finally, the use of parameterized equations may greatly limit the possibilities for obtaining efficient geometric numerical integrators respecting other invariants of the flow.
+
+Despite these pessimistic comments, parameterizations may sometimes be used effectively in special applications for which the constraint geometry is well understood, or for which the choice of appropriate parameters greatly simplifies the description of the vector field.
+
+# 7.6.4 Methods based on projection
+
+Because the flow of the underlying ordinary differential equations (7.9)–(7.10) has the tangent bundle $\tau { \mathcal { M } }$ as an invariant submanifold, this formulation is sometimes proposed as the basis for numerical simulation. However, it is important to note that $T \mathcal { M }$ will typically not be an invariant submanifold for the discretization method applied to those equations. This means that the numerical solution, started from initial conditions in $T \mathcal { M }$ may drift gradually off the manifold and into the larger Euclidean space in which the flow is embedded. One way around this problem is to project the numerical solution back on to $\tau { \mathcal { M } }$ at the end of each timestep [84] or to stabilize the manifold [10].
+
+# 7.7 Exercises
+
+1. Local charts. It is also possible to describe the pendulum in terms of just two Euclidean charts as follows (refer to Fig. 7.7). In the first chart, we identify a point $Q ( x , y )$ of the unit circle with a point on the real line $\xi$ by passing a line through $Q$ and the point at the top of the unit circle $N$ and letting $R$ denote the point of intersection with the $x$ -axis. This works for all points $Q$ on the unit circle except $N$ itself. In the other chart, we identify points of the unit circle to points of the $x - \mathsf { a x i s }$ in the same way, except that we use the “south pole” $S$ instead of $N$ as a point of the straight line.
+
+![](images/c2ee208b98a31710704cd709ca32810294d32175a46a37271a671f5acf273ba9.jpg)  
+Figure 7.7 Parametrization of the circle in two charts on the real line.
+
+a. Write out formulas for these two parameterizations and determine the canonical equations for the pendulum problem in each chart.   
+b. Discretize the equations using the implicit midpoint rule and device a proper criterion to switch from one chart to the other. Perform a numerical experiment with $g = 0$ and $( q _ { 1 } ( 0 ) , q _ { 2 } ( 0 ) , p _ { 1 } ( 0 ) , p _ { 2 } ( 0 ) ) = ( 1 , 0 , 0 , - 2 )$ . Monitor the total energy.   
+c. Repeat the experiment under (b) with a SHAKE/RATTLE discretization of the constrained formulation for the pendulum.
+
+2. Regularity of constraints. Let $M$ be a symmetric positive definite matrix. Show that the matrix $G M ^ { - 1 } G ^ { T }$ is nonsingular provided the matrix $\pmb { G }$ has full rank (i.e. has linearly independent rows).
+
+3. Time-reversibility. Show that SHAKE and RATTLE are time-reversible.
+
+4. Linear stability analysis. Consider the linearly constrained system with equations of motion
+
+$$
+\begin{array} { r } { \dot { x } = u , } \\ { \dot { y } = v , } \\ { \dot { u } = - \omega _ { 1 } ^ { 2 } x - \alpha \lambda , } \\ { \dot { v } = - \omega _ { 2 } ^ { 2 } y - \beta \lambda , } \\ { \alpha x + \beta y = 0 , } \end{array}
+$$
+
+where $\alpha , \beta , \omega _ { 1 }$ and $\omega _ { 2 }$ are real numbers, and we will assume the normalization $\alpha ^ { 2 } + \beta ^ { 2 } = 1$ .
+
+a. Eliminate the multiplier (by twice differentiating the constraint relationship with respect to time) to obtain
+
+$$
+\lambda = \alpha \omega _ { 1 } ^ { 2 } x + \beta \omega _ { 2 } ^ { 2 } y .
+$$
+
+b. Next, assume $\beta \neq 0$ , and solve the constraint for $y$ in terms of $x$ (this is a global parameterization). Show that the equations of motion reduce to
+
+$$
+\begin{array} { l } { \dot { x } = u , } \\ { \dot { u } = - \left( ( 1 - \alpha ^ { 2 } ) \omega _ { 1 } ^ { 2 } + \alpha ^ { 2 } \omega _ { 2 } ^ { 2 } \right) ) x , } \end{array}
+$$
+
+which describes a new harmonic oscillator with frequency
+
+$$
+\bar { \omega } = \sqrt { ( 1 - \alpha ^ { 2 } ) \omega _ { 1 } ^ { 2 } + \alpha ^ { 2 } \omega _ { 2 } ^ { 2 } } .
+$$
+
+c. Apply the RATTLE discretization to the constrained system, resulting in
+
+$$
+\begin{array} { c } { { x ^ { n + 1 } = x ^ { n } + \Delta t u ^ { n + 1 / 2 } , } } \\ { { y ^ { n + 1 } = y ^ { n } + \Delta t v ^ { n + 1 / 2 } , } } \\ { { u ^ { n + 1 / 2 } = u ^ { n } - \displaystyle \frac { 1 } { 2 } \Delta t \omega _ { 1 } ^ { 2 } x ^ { n } - \displaystyle \frac { 1 } { 2 } \Delta t \alpha \lambda _ { ( r ) } ^ { n } , } } \\ { { v ^ { n + 1 / 2 } = v ^ { n } - \displaystyle \frac { 1 } { 2 } \Delta t \omega _ { 2 } ^ { 2 } y ^ { n } - \displaystyle \frac { 1 } { 2 } \Delta t \beta \lambda _ { ( r ) } ^ { n } , } } \\ { { \alpha x ^ { n + 1 } + \beta y ^ { n + 1 } = 0 , } } \end{array}
+$$
+
+and
+
+$$
+\begin{array} { c } { { u ^ { n + 1 } = u ^ { n + 1 / 2 } - \displaystyle \frac { 1 } { 2 } \Delta t \omega _ { 1 } ^ { 2 } x ^ { n + 1 } - \displaystyle \frac { 1 } { 2 } \Delta t \alpha \lambda _ { ( \mathrm { v } ) } ^ { n + 1 } , } } \\ { { v ^ { n + 1 } = v ^ { n + 1 / 2 } - \displaystyle \frac { 1 } { 2 } \Delta t \omega _ { 2 } ^ { 2 } y ^ { n + 1 } - \displaystyle \frac { 1 } { 2 } \Delta t \beta \lambda _ { ( \mathrm { v } ) } ^ { n + 1 } , } } \\ { { \alpha u ^ { n + 1 } + \beta v ^ { n + 1 } = 0 . } } \end{array}
+$$
+
+Assume $\alpha x ^ { n } + \beta y ^ { n } = 0$ and also $\alpha u ^ { n } + \beta v ^ { n } = 0$ , so that
+
+$$
+\lambda _ { ( \mathfrak { r } ) } ^ { n } = \alpha \omega _ { 1 } ^ { 2 } x ^ { n } + \beta \omega _ { 2 } ^ { 2 } y ^ { n } .
+$$
+
+Find a similar expression for $\lambda _ { ( \vee ) } ^ { n + 1 }$
+
+Show that RATTLE reduces in the coordinates $x ^ { n } , \ u ^ { n }$ , to a St¨ormer– Verlet discretization of the harmonic oscillator with frequency $\bar { \omega }$ . What can you conclude about possible stepsize restrictions?
+
+e. Repeat the discussion for RATTLE replaced by the implicit midpoint method as the basic integration method in (7.39)–(7.43).
+
+5. Constraint chains. The iteration matrix
+
+$$
+\pmb { R } = \pmb { G } ( \pmb { q } ^ { n } ) \pmb { M } ^ { - 1 } \pmb { G } ( \pmb { q } ^ { n } ) ^ { T }
+$$
+
+appearing in a quasi-Newton method for SHAKE takes a particularly simple form for problems only involving length constraints. We can write these constraints in the following compact form
+
+$$
+g _ { i } = \frac { 1 } { 2 } ( \pmb { q } ^ { T } S _ { i } \pmb { q } - L _ { i } ^ { 2 } ) ,
+$$
+
+where $L _ { j }$ is the length of the constraint, and $S _ { j }$ is a $d \times d$ stamp matrix with $3 \times 3$ blocks. This matrix is zero in all but the following components: if the i th constraint links particles $k$ and $I$ , then the $k k$ and $I I$ blocks of $S _ { j }$ are $\boldsymbol { I } _ { 3 }$ ( $3 \times 3$ identity matrix) and the $k I$ and $I k$ blocks are $- I _ { 3 }$ . With this notation it is easy to show that the $i j$ element $R _ { i j }$ of $R$ has the form
+
+$$
+\begin{array} { r } { R _ { i j } = \pmb q ^ { T } S _ { i } \pmb { M } ^ { - 1 } S _ { j } \pmb q . } \end{array}
+$$
+
+This implies in turn that
+
+$$
+R _ { i i } = ( \frac { 1 } { m _ { \mathsf { \tiny { l e f t } } ( i ) } } + \frac { 1 } { m _ { \mathsf { \tiny { r i g h t } } ( i ) } } ) L _ { i } ^ { 2 } ,
+$$
+
+where left $( i )$ and right $( i )$ represent the two particle indices associated to constraint $j$ . Now $R _ { i j }$ is zero unless constraints $j$ and $j$ share a common particle. If right $\displaystyle ( i ) = \mathsf { l e f t } ( j )$ , then we can write
+
+$$
+\begin{array} { l } { { R _ { i j } = \displaystyle \frac { 1 } { m _ { \mathrm { l e f t } ( j ) } } ( \pmb { q } _ { \mathrm { l e f t } ( i ) } - \pmb { q } _ { \mathrm { r i g h t } ( i ) } ) ^ { T } ( \pmb { q } _ { \mathrm { l e f t } ( j ) } - \pmb { q } _ { \mathrm { r i g h t } ( j ) } ) } } \\ { { \displaystyle \ = \frac { 1 } { m _ { \mathrm { l e f t } ( j ) } } r _ { i } r _ { j } \cos \theta _ { i j } } } \end{array}
+$$
+
+with $r _ { i } = \lVert \pmb { q } _ { \mathrm { l e f t } ( i ) } - \pmb { q } _ { \mathrm { r i g h t } ( i ) } \rVert$ , $r _ { j } = \lVert \pmb { q } _ { \mathrm { l e f t } ( j ) } - \pmb { q } _ { \mathrm { r i g h t } ( j ) } \rVert$ and $\theta _ { j j }$ is the angle between the two constraints $j$ and $j$ . Now along solutions of the constrained equations, we know that $r _ { i } \equiv L _ { j }$ , etc.
+
+a. Consider a system of three particles of equal mass connected by two rigid length constraints of equal length. Find an explicit expression for the associated $2 \times 2$ matrix $R$ .   
+b. Implement the SHAKE time discretization and apply (i) a quasi-Newton method and (ii) SHAKE iteration to solve the nonlinear constraint equations. Compare the two approaches in terms of efficiency.   
+c. Consider a system of three particles of equal mass connected by three rigid length constraints of equal length. Repeat exercises (a) and (b).
+
+# 8
+
+Rigid body dynamics
+
+In this chapter, we discuss formulation issues and symplectic integration methods for simulating the motion of a rigid body. Rigid bodies arise frequently in engineering, chemistry, and physics. For example, they occur in molecular simulation when the flexibility of small polyatomic units such as the water molecule, or $\mathsf { C H } _ { 4 }$ is ignored. Cogwheels, space vehicles, and the planets are some other objects that are commonly modeled by rigid bodies.
+
+Even in the absence of external applied forces, any rigid body more complicated than a uniform sphere will exhibit complicated motion, as defined by the moments of inertia of the body. A hint of the potential complexity of the motion is provided by the classic illustration using a hardbound book, which typically has three unequal moments of inertia $I _ { 1 } < I _ { 2 } < I _ { 3 }$ with $I _ { 1 }$ corresponding to an axis drawn along the binding, $I _ { 2 }$ to an axis across the cover, and $I _ { 3 }$ to an axis through the pages of the book (see Fig. 8.1). As the book is tossed up and spinning around each of the axes, the following dynamics are observed: around the first and third axes, the motion combines a stable periodic rotation with the rising and falling motion due to gravity, whereas the rotation with respect to the middle axis is much more complicated. (See, for example, [124] for more explanation.) (It helps to place a rubber band around the book’s cover to keep it closed while conducting experiments.)
+
+Developing a method to simulate general rigid body motions, especially for long-term integration, proves an interesting and challenging task. The first issue we must confront is the selection of a set of coordinates that describe body orientation and spatial position. Since a rigid body has six degrees of freedom, the positional description must include at least this many configuration variables. For example, a rigid body can be formulated in terms of three Euler angles describing the orientation in space relative to a reference configuration defined in terms of a certain sequence of axial rotations together with the three coordinates of the center of mass. However, if these variables, together with the corresponding momenta, are selected as the basis for a canonical description of the motion of the body, the resulting equations of motion are found to have singularities which impede their numerical solution.
+
+![](images/0104234118f2a0543a8146406cec7cba6e3a901a30b9c1d1729995379f93d04a.jpg)  
+Figure 8.1 A hardbound book tossed up and spinning about one of its axes of inertia provides a simple illustration of rigid body motion.
+
+To overcome this defect of the Euler angles, it is possible – and often desirable – to introduce additional redundant variables together with constraints. We will develop various approaches by relating them to a natural canonical formulation of the rigid body dynamics in terms of rotation matrices: the Lie group $S O ( 3 )$ consisting of $3 \times 3$ orthogonal matrices with unit determinant.1 This is a global coordinatization in the language of the last chapter. The rotational kinetic energy term of the Lagrangian can be written in these variables simply as
+
+$$
+\mathcal { L } _ { \mathrm { { r o t } } } = \frac { 1 } { 2 } \mathrm { t r a c e } ( \dot { Q } R \dot { Q } ^ { T } ) ,
+$$
+
+where $Q$ is subject to an orthogonality constraint $Q ^ { T } Q = I _ { 3 }$ , $\boldsymbol { I } _ { 3 }$ the $3 \times 3$ identity matrix, and $R$ is a constant $3 \times 3$ matrix closely related to the “inertia tensor” of the body.
+
+In addition to the rotation matrix formulation, other popular choices of parameterization of rigid body motion include Hamilton’s quaternions (Cayley– Klein parameters) and cartesian (particle) models. Another formulation is based on the Euler equations, which can be obtained by a formal reduction procedure. In principle, any of these formulations can be used with a variety of timestepping methods. However, the choice of parameterization and the design of a discretization method are not independent. We will see that some sets of parameters facilitate efficient symplectic/reversible discretization while others may make this task difficult or render the resulting schemes useless because of the computational expense involved.
+
+# 8.1 Rigid bodies as constrained systems
+
+We now consider the formulation of the equations of motion for a single rigid body acted on by a (possibly nonlinear) potential field. The basic ideas naturally extend to systems of interacting rigid bodies.
+
+The definition of a rigid body (see [104, 7, 2]) is simply a set of particles of prescribed mass whose positions are relatively fixed in space. Assume for the moment that the number of particles is finite, and that their instantaneous positions are $\pmb { q } _ { i }$ , $i = 1 , \dots , k$ . The kinetic energy of this collection is given by $\textstyle T = \sum _ { i = 1 } ^ { k } m _ { i } \| { \dot { \pmb q } } _ { i } \| ^ { 2 }$ , and the potential by $V = V ( \pmb q _ { 1 } , \pmb q _ { 2 } , \dots , \pmb q _ { k } )$ .
+
+Define by $\pmb q _ { \mathrm { c m } }$ the center of mass of the set of particles:
+
+$$
+\pmb { q } _ { \mathrm { c m } } = \frac { \sum _ { i = 1 } ^ { k } m _ { i } \pmb { q } _ { i } } { \sum _ { i = 1 } ^ { k } m _ { i } } .
+$$
+
+In a fixed reference configuration $( r _ { 1 } ^ { 0 } , r _ { 2 } ^ { 0 } , \ldots , r _ { k } ^ { 0 } )$ the center of mass is located at the origin. Any possible configuration of the particles of the rigid body can be expressed in terms of two types of elementary motions applied to some reference configuration: a common rotation of each of the particles of the body about the center of mass followed by a common translation in space of each particle. Let $Q$ denote an orthogonal $3 \times 3$ matrix with unit determinant, i.e. a rotation matrix with respect to vectors in $\mathbb { R } ^ { 3 }$ , and let $\pmb { d } \in \mathbb { R } ^ { 3 }$ be a displacement, then we may write
+
+$$
+\pmb { q } _ { i } = \pmb { Q } r _ { i } ^ { 0 } + \pmb { d } .
+$$
+
+If we view the points of the body as moving in space along some smooth trajectory, we can imagine a corresponding trajectory in the orientation $Q$ and spatial position $\pmb { d }$ , i.e.
+
+$$
+\pmb { q } _ { i } ( t ) = \pmb { Q } ( t ) \pmb { r } _ { i } ^ { 0 } + \pmb { d } ( t ) .
+$$
+
+Since $\pmb { q } _ { i } ( t ) = \pmb { q } _ { \mathsf { c m } } ( t )$ for $r _ { i } ^ { 0 } = \mathbf { 0 }$ , we have $\pmb { d } ( t ) = \pmb { q } _ { \mathsf { c m } } ( t )$ and the velocities therefore satisfy
+
+$$
+\frac { d } { d t } { \pmb q } _ { i } ( t ) = \dot { { \pmb q } } _ { \mathtt { c m } } ( t ) + \dot { { \pmb Q } } ( t ) { \pmb r } _ { i } ^ { 0 } ,
+$$
+
+so the kinetic energy can be written as
+
+$$
+T = \frac { 1 } { 2 } \sum _ { i = 1 } ^ { k } m _ { i } \| \dot { \pmb q } _ { \mathrm { c m } } ( t ) + \dot { \pmb Q } ( t ) { \pmb r } _ { i } ^ { 0 } \| ^ { 2 } .
+$$
+
+Expanding the squared two-norm using the properties of the inner product, we find
+
+$$
+T = \frac { 1 } { 2 } \sum _ { i = 1 } ^ { k } m _ { i } ( \| \dot { \pmb q } _ { \mathrm { c m } } ( t ) \| ^ { 2 } + 2 \dot { \pmb q } _ { \mathrm { c m } } ( t ) \cdot [ \dot { \pmb Q } ( t ) \pmb r _ { i } ^ { 0 } ] + \| \dot { \pmb Q } ( t ) \pmb r _ { i } ^ { 0 } \| ^ { 2 } ) .
+$$
+
+Now the middle term in this expression vanishes, since
+
+$$
+\sum _ { i = 1 } ^ { k } m _ { i } \dot { \pmb q } _ { \mathrm { c m } } ( t ) \cdot [ \dot { \pmb Q } ( t ) \pmb r _ { i } ^ { 0 } ] = \dot { \pmb q } _ { \mathrm { c m } } ( t ) \cdot [ \dot { \pmb Q } ( t ) \sum _ { i = 1 } ^ { k } m _ { i } \pmb r _ { i } ^ { 0 } ] = 0 ,
+$$
+
+as $( r _ { 1 } ^ { 0 } , \ldots , r _ { k } ^ { 0 } )$ is a reference configuration, i.e. $\textstyle \sum _ { i } m _ { i } r _ { i } ^ { 0 } = \mathbf { 0 }$ .
+
+We can now define translation and rotational parts of the kinetic energy b
+
+$$
+T _ { \mathrm { t r a n s } } = \frac { 1 } { 2 } \sum _ { i = 1 } ^ { k } m _ { i } \lVert \dot { \pmb q } _ { \mathrm { c m } } \rVert ^ { 2 } ,
+$$
+
+and
+
+$$
+T _ { \mathrm { r o t } } = \frac { 1 } { 2 } \sum _ { i = 1 } ^ { k } m _ { i } \lVert \dot { \pmb { Q } } r _ { i } ^ { 0 } \rVert ^ { 2 } .
+$$
+
+To express the rotational kinetic energy more compactly, observe the following identity of linear algebra: for any pair of vectors $\pmb { u }$ , $\pmb { v } \in \mathbb { R } ^ { k }$
+
+$$
+\pmb { u } ^ { T } \pmb { v } = \mathrm { t r } \left( \pmb { u } \pmb { v } ^ { T } \right) ,
+$$
+
+where $\operatorname { t r } ( A )$ represents the trace (sum of diagonal elements) of a matrix A. Using this fact, we have
+
+$$
+\begin{array} { l } { { \displaystyle { T _ { \mathrm { r o t } } = \frac { 1 } { 2 } \sum _ { j = 1 } ^ { K } m _ { i } \| Q { \bf r } _ { i } ^ { 0 } \| ^ { 2 } } } \ ~ } \\ { { \displaystyle ~ = \frac { 1 } { 2 } \sum _ { j = 1 } ^ { K } m _ { i } \left[ Q { \bf r } _ { i } ^ { 0 } \right] ^ { T } \left[ \hat { Q } { \bf r } _ { i } ^ { 0 } \right] } \ ~ } \\ { { \displaystyle ~ = \frac { 1 } { 2 } \sum _ { j = 1 } ^ { K } m _ { i } \mathrm { t r } \left( \left[ \hat { Q } { \bf r } _ { j } ^ { 0 } \right] \left[ \hat { Q } { \bf r } _ { i } ^ { 0 } \right] ^ { T } \right) } \ ~ } \\ { { \displaystyle ~ = \frac { 1 } { 2 } \sum _ { j = 1 } ^ { K } m _ { i } \mathrm { t r } \left( Q { \bf r } _ { j } ^ { 0 } [ { \bf r } _ { i } ^ { 0 } ] ^ { T } { \hat { Q } } ^ { T } \right) } \ ~ } \\ { { \displaystyle ~ = \frac { 1 } { 2 } \sum _ { j = 1 } ^ { K } \left( R { \cal Q } { \bf R } { \cal Q } ^ { T } \right) } \ ~ , } \\ { { \displaystyle ~ = \frac { 1 } { 2 } \mathrm { t r } \left( Q R { \cal Q } ^ { T } \right) } \ ~ . } \  \end{array}
+$$
+
+where we have defined the symmetric matrix $R$ by
+
+$$
+R = \sum _ { i = 1 } ^ { k } m _ { i } r _ { i } ^ { 0 } [ r _ { i } ^ { 0 } ] ^ { T } .
+$$
+
+The matrix $R$ can be viewed as a mass-weighted sum of projections along the displacements of points in the reference configuration. We will refer to $R$ as the mass tensor of the body.2
+
+Since $R$ is symmetric one can always find a reference coordinate system $\bar { e } _ { i }$ , $i = 1 , 2 , 3$ , so that $R$ is diagonal with diagonal entries $r _ { i j }$ , $j = 1 , 2 , 3$ . Note that the coordinate system is held fixed on the rigid body contrary to a laboratory coordinate system which is fixed in space. The mass tensor $R$ can now be written as
+
+$$
+R = \sum _ { i = 1 } ^ { 3 } r _ { i i } \bar { e } _ { i } \bar { e } _ { i } ^ { T } = \left[ \begin{array} { c c c } { { r _ { 1 1 } } } & { { 0 } } & { { 0 } } \\ { { 0 } } & { { r _ { 2 2 } } } & { { 0 } } \\ { { 0 } } & { { 0 } } & { { r _ { 3 3 } } } \end{array} \right] .
+$$
+
+We will see later in this chapter that this particular choice of the reference system is equivalent to the statement that the inertia tensor of the rigid body is also diagonal with the principal moments of inertia equal to $I _ { 1 } ~ = ~ r _ { 2 2 } +$ $r _ { 3 3 }$ , $\begin{array} { r } { I _ { 2 } ~ = ~ r _ { 1 1 } + r _ { 3 3 } } \end{array}$ , and $\begin{array} { r } { I _ { 3 } ~ = ~ r _ { 1 1 } + r _ { 2 2 } } \end{array}$ . From now on we will assume that all matrices are expressed with respect to the reference coordinate system $\bar { e } _ { i }$ , $i = 1 , 2 , 3$ .
+
+In the given variables, the Lagrangian becomes
+
+$$
+L = T _ { \mathrm { r o t } } ( \dot { \bf Q } ) + T _ { \mathrm { t r a n s } } ( \dot { \bf q } _ { \mathrm { c m } } ) - V _ { \mathrm { e x t } } ( \pmb { Q } , \pmb { q } _ { \mathrm { c m } } ) ,
+$$
+
+where $V _ { \mathrm { e x t } }$ is the potential energy function expressed in terms of the center of mass of the collection of particles and the rotation matrix. We must bear in mind, however, that this Lagrangian is subject to a holonomic constraint: the condition that $Q$ must be an orthogonal matrix!
+
+In order to formulate the constraint and augmented Lagrangian, we note that the orthogonality condition on $Q$
+
+$$
+Q ^ { T } Q = I _ { 3 } ,
+$$
+
+gives rise to six independent constraints on the matrix $Q$ , so six multipliers are needed. These can be introduced in the form of the six independent elements of a symmetric matrix $\pmb { \Lambda }$ , with the augmented Lagrangian having the simple
+
+expression
+
+$$
+\tilde { L } = T _ { \mathrm { r o t } } ( \dot { Q } ) + T _ { \mathrm { t r a n s } } ( \dot { q } _ { \mathrm { c m } } ) - V _ { \mathrm { e x t } } ( Q , q _ { \mathrm { c m } } ) - \mathrm { t r } ( ( Q ^ { T } Q - I _ { 3 } ) \varLambda ) .
+$$
+
+# 8.1.1 Hamiltonian formulation
+
+Recall that the gradient $\nabla _ { q } V ( q )$ of a scalar-valued function $V ( q )$ is defined by
+
+$$
+\langle \nabla _ { \pmb { q } } V ( \pmb { q } ) , \delta \pmb { q } \rangle = \operatorname* { l i m } _ { \varepsilon  0 } \frac { V ( \pmb { q } + \varepsilon \delta \pmb { q } ) - V ( \pmb { q } ) } { \varepsilon } .
+$$
+
+Since we will now work with matrices, we have to introduce an appropriate inner product. Throughout this chapter we will use
+
+$$
+\langle \pmb { A } , \pmb { B } \rangle = \mathrm { t r } ( \pmb { A } \pmb { B } ^ { T } )
+$$
+
+for any two $3 \times 3$ matrices $\pmb { A }$ and $B$
+
+Once the (unconstrained) Lagrangian (8.4) has been found, we may introduce the canonical momentum in the usual way by a matrix
+
+$$
+P = \nabla _ { \dot { Q } } L ( Q , \dot { Q } ) .
+$$
+
+One finds that this matrix can be expressed compactly as $P = { \dot { Q } } R$ . It is important to keep in mind that the two matrices $Q$ and $R$ do not commute. Hence the ordering of the two variables in the definition of $P$ is crucial.
+
+It must be pointed out that there are certain rigid bodies for which the matrix $R$ is singular; specifically linear and planar bodies have this feature. For the moment we will simply assume that $R$ is nonsingular; we will correct the equations for the case of planar bodies in Section 8.1.2.
+
+The momentum corresponding to the center of mass has the expression
+
+$$
+\begin{array} { r } { \pmb { p } _ { \mathtt { c m } } = M \dot { \pmb q } _ { \mathtt { c m } } , } \end{array}
+$$
+
+with $\textstyle M = \sum _ { i = 1 } ^ { k } m _ { i }$ the total mass of the rigid body.
+
+The constrained Hamiltonian formulation is now found exactly in the same manner as outlined in the previous chapter and we obtain:
+
+$$
+\tilde { H } = \frac { 1 } { 2 } \mathrm { t r } ( P R ^ { - 1 } P ^ { T } ) + \frac { 1 } { 2 M } \| p _ { \mathrm { c m } } \| ^ { 2 } + V _ { \mathrm { e x t } } ( Q , q _ { \mathrm { c m } } ) + \mathrm { t r } ( ( Q ^ { T } Q - I _ { 3 } ) \varLambda ) ,
+$$
+
+$$
+\begin{array} { r l } & { \frac { d } { d t } q _ { \mathrm { c m } } = M ^ { - 1 } p _ { \mathrm { c m } } , } \\ & { \frac { d } { d t } p _ { \mathrm { c m } } = - \nabla q _ { \mathrm { c m } } V _ { \mathrm { e x t } } ( Q , q _ { \mathrm { c m } } ) , } \\ & { \phantom { \frac { d } { d t } } \frac { d } { d t } Q = P R ^ { - 1 } , } \\ & { \frac { d } { d t } P = - \nabla _ { Q } V _ { \mathrm { e x t } } ( Q , q _ { \mathrm { c m } } ) - 2 Q \Lambda , } \\ & { \phantom { \frac { d } { d t } } I _ { 3 } = Q ^ { T } Q . } \end{array}
+$$
+
+The holonomic constraint (8.12) implies that $Q$ is a rotation matrix provided the initial $Q ( 0 ) = Q _ { 0 }$ is a rotation matrix; i.e. $Q _ { 0 } ^ { T } Q _ { 0 } = I _ { 3 }$ and det $Q _ { 0 } = 1$ . The set of all rotation matrices $Q \in \mathbb { R } ^ { 3 }$ forms the group $S O ( 3 )$ .
+
+Differentiate the constraint $Q ^ { T } Q = I _ { 3 }$
+
+$$
+Q ^ { T } \dot { \pmb { Q } } + \dot { \pmb { Q } } ^ { T } \pmb { Q } = { \pmb { 0 } } ,
+$$
+
+hence, from (8.10) and using the symmetry of $R$
+
+$$
+\begin{array} { r } { Q ^ { T } P R ^ { - 1 } + R ^ { - 1 } P ^ { T } Q = \mathbf { 0 } . } \end{array}
+$$
+
+Thus, when viewed as a constrained system, the equations (8.10)–(8.12) constitute a Hamiltonian system on the manifold
+
+$$
+{ \mathcal { P } } = \{ ( Q , P ) \in \mathbb { R } ^ { 3 \times 3 } \times \mathbb { R } ^ { 3 \times 3 } : Q ^ { T } Q = I _ { 3 } , Q ^ { T } P R ^ { - 1 } + R ^ { - 1 } P ^ { T } Q = \bf { 0 } \} .
+$$
+
+The symplectic structure on $\mathcal { P }$ is given by the restriction of the canonical symplectic structure on $\mathbb { R } ^ { 3 \times 3 } \times \mathbb { R } ^ { 3 \times 3 }$ to $\mathcal { P }$ . The canonical structure on $\mathbb { R } ^ { 3 \times 3 } \times \mathbb { R } ^ { 3 \times 3 }$ , in turn is obtained by viewing $3 \times 3$ matrices as vectors in $\mathbb { R } ^ { 9 }$ .
+
+Note that the manifold $\mathcal { P }$ is not the cotangent bundle $T ^ { * } S O ( 3 )$ , which can be identified with the manifold
+
+$$
+T ^ { \ast } S O ( 3 ) = \{ ( Q , \bar { P } ) \in \mathbb { R } ^ { 3 \times 3 } \times \mathbb { R } ^ { 3 \times 3 } : Q ^ { T } Q = I _ { 3 } , Q ^ { T } \bar { P } + \bar { P } ^ { T } Q = \bf { 0 } \} .
+$$
+
+However, we can relate any element $( Q , P ) \in { \mathcal { P } }$ to an element $( Q , \bar { P } ) \in T ^ { * } S O ( 3 )$ via the transformation
+
+$$
+\bar { \pmb { P } } = \pmb { P } - \pmb { Q } \pmb { \Gamma } ,
+$$
+
+where the symmetric matrix $\boldsymbol { \mathsf { \Pi } } ^ { r } \in \mathbb { R } ^ { 3 \times 3 }$ is defined by
+
+$$
+\pmb { \cal { r } } = \frac { 1 } { 2 } \left( \pmb { Q } ^ { T } \pmb { P } + \pmb { P } ^ { T } \pmb { Q } \right) .
+$$
+
+This is equivalent to
+
+$$
+\bar { P } = \frac 1 2 \left( P - Q P ^ { T } Q \right) .
+$$
+
+It can be shown that this map is symplectic (this is equivalent to showing that a map from $( \pmb q , \pmb p )$ to $( q , \bar { p } )$ defined by
+
+$$
+\bar { \pmb { p } } = \pmb { p } - \pmb { G } ( \pmb { q } ) ^ { T } \pmb { \lambda }
+$$
+
+is symplectic provided $g ( \pmb q ) = \pmb 0$ , as pointed out in Lemma 1 of Chapter 7). We conclude that the equations (8.10)–(8.12) combined with (8.14) define a Hamiltonian system on $T ^ { * } S O ( 3 )$ .
+
+Let us also briefly discuss the evaluation of $\nabla _ { Q } V _ { \mathrm { e x t } } ( Q , q _ { \mathrm { c m } } )$ . In many applications, for example a force action on a fixed reference location $r ^ { 0 }$ on the rigid body, we are led to a potential energy term of the form
+
+$$
+V ( \pmb q ) = V ( \pmb q _ { \mathrm { c m } } + \pmb Q r ^ { 0 } ) = V _ { \mathrm { e x t } } ( \pmb Q , \pmb q _ { \mathrm { c m } } ) .
+$$
+
+Then the definition
+
+$$
+\mathrm { t r } ( \nabla _ { Q } V _ { \mathrm { e x t } } ( Q , q _ { \mathrm { c m } } ) \delta Q ^ { T } ) = \operatorname* { l i m } _ { \varepsilon \to 0 } \frac { V _ { \mathrm { e x t } } ( Q + \varepsilon \delta Q , q _ { \mathrm { c m } } ) - V _ { \mathrm { e x t } } ( Q , q _ { \mathrm { c m } } ) } { \varepsilon }
+$$
+
+leads to the expression
+
+$$
+\nabla _ { Q } V _ { \mathrm { e x t } } ( Q , q _ { \mathrm { c m } } ) = \nabla _ { q } V ( q ) [ r ^ { 0 } ] ^ { T } .
+$$
+
+See the Exercises.
+
+# 8.1.2 Linear and planar bodies
+
+In the case of linear and planar bodies, the above discussion must be amended. For a linear body (a pendulum), in which all the points of the body lie along a straight line, the orientation in space is defined by a single unit vector $\pmb { u }$ , so there is just one multiplier. The mass tensor $R$ will have only its (1, 1) element nonzero.
+
+For a planar body, the orientation is defined by two vectors, say $\pmb { u } _ { 1 }$ and $\pmb { u } _ { 2 }$ . There are three constraints (unit length for each of the two vectors and orthogonality of $\pmb { u } _ { 1 }$ and $\pmb { u } _ { 2 }$ ) and therefore three multipliers which can be cast in the form of a $2 \times 2$ symmetric matrix.
+
+A unified treatment of the equations for linear, planar, and three-dimensional bodies is possible in the formulation (8.7) and (8.8)–(8.12) if we view $Q$ and $P$ as lying in $\mathbb { R } ^ { 3 \times k }$ , with $k$ the dimension of the body, and suppose $R$ and $\pmb { \Lambda }$ to be $k \times k$ (rather than $3 \times 3$ ) symmetric matrices. (See the Exercises.)
+
+# 8.1.3 Symplectic discretization using SHAKE
+
+Let us now consider the symplectic integration of the rigid body. For simplicity, we will initially restrict our treatment to the case where the center of mass of the body is fixed in space, so that only rotational motions, governed by equations (8.10)–(8.12), need be considered.
+
+As first pointed out by MCLACHLAN AND SCOVEL [133] and REICH [154, 156], the obvious approach is to apply the SHAKE/RATTLE method to the constrained equations. This yields a symplectic method that propagates the variable $( Q , P )$ on $\mathcal { P }$ . The discrete equations for the RATTLE discretization can be written as follows:
+
+$$
+\begin{array} { c } { { \displaystyle Q ^ { n + 1 } = Q ^ { n } + \Delta t P ^ { n + 1 / 2 } R ^ { - 1 } , } } \\ { { { \cal P } ^ { n + 1 / 2 } = P ^ { n } - \displaystyle \frac { \Delta t } { 2 } \nabla _ { Q } V _ { \mathrm { e x t } } ( Q ^ { n } ) - \Delta t Q ^ { n } \Lambda _ { ( r ) } ^ { n } , } } \\ { { { \cal I } _ { 3 } = [ Q ^ { n + 1 } ] ^ { T } Q ^ { n + 1 } , } } \\ { { { \cal P } ^ { n + 1 } = P ^ { n + 1 / 2 } - \displaystyle \frac { \Delta t } { 2 } \nabla _ { Q } V _ { \mathrm { e x t } } ( Q ^ { n + 1 } ) - \Delta t Q ^ { n + 1 } \Lambda _ { ( v ) } ^ { n + 1 } , } } \\ { { 0 = [ Q ^ { n + 1 } ] ^ { T } P ^ { n + 1 } R ^ { - 1 } + R ^ { - 1 } [ P ^ { n + 1 } ] ^ { T } Q ^ { n + 1 } . } } \end{array}
+$$
+
+The implementation of the RATTLE method requires that we solve a nonlinear system at each timestep. Setting
+
+$$
+\bar { Q } ^ { n + 1 } : = Q ^ { n } + \Delta t P ^ { n } R ^ { - 1 } - \frac { \Delta t ^ { 2 } } { 2 } \nabla _ { Q } V _ { \mathrm { e x t } } ( Q ^ { n } ) R ^ { - 1 } ,
+$$
+
+and writing $Q$ for $Q ^ { n + 1 }$ as well as $\wedge$ for $\pmb { \Lambda } _ { ( r ) } ^ { n }$ , the equations become
+
+$$
+\begin{array} { l } { Q = \bar { Q } ^ { n + 1 } - \Delta t ^ { 2 } Q ^ { n } \Lambda R ^ { - 1 } , } \\ { I _ { 3 } = Q ^ { T } Q . } \end{array}
+$$
+
+Substituting the first equation into the second, we obtain
+
+$$
+\begin{array} { r l } & { I _ { 3 } = [ \bar { Q } ^ { n + 1 } ] ^ { T } \bar { Q } ^ { n + 1 } - \Delta t ^ { 2 } \left\{ R ^ { - 1 } \Lambda [ Q ^ { n } ] ^ { T } \bar { Q } ^ { n + 1 } + [ \bar { Q } ^ { n + 1 } ] ^ { T } Q ^ { n } \Lambda R ^ { - 1 } \right\} + } \\ & { \qquad + \Delta t ^ { 4 } R ^ { - 1 } \Lambda \Lambda R ^ { - 1 } , } \end{array}
+$$
+
+where we have made use of the symmetry of $R$ and $\wedge$ . To work out a simple iterative solution scheme, we first neglect terms of order $\Delta t ^ { 3 }$ and higher. Taking note of $[ \bar { Q } ^ { n + 1 } ] ^ { T } Q ^ { n } = I _ { 3 } + { \mathcal { O } } ( \Delta t )$ , we obtain the linear relation
+
+$$
+{ \bf 0 } \approx ( [ \bar { Q } ^ { n + 1 } ] ^ { T } \bar { Q } ^ { n + 1 } - I _ { 3 } ) - \Delta t ^ { 2 } ( \Lambda R ^ { - 1 } + R ^ { - 1 } \Lambda ) ,
+$$
+
+which we have to solve for $\bar { \Lambda } = \Delta t ^ { 2 } \Lambda$ .
+
+We now recall the special form (8.3) of the mass tensor $R$ which allows us to easily solve any system of type
+
+$$
+{ \bf 0 } = { \cal M } - ( \bar { \Lambda } R ^ { - 1 } + R ^ { - 1 } \bar { \Lambda } )
+$$
+
+for $\bar { \Lambda }$ . Specifically, multiplication of (8.22) by $\bar { e } _ { i } ^ { T }$ from the right and by $\bar { e } _ { j }$ from the left yields $0 = m _ { i j } - \bar { \lambda } _ { i j } / r _ { j j } - \bar { \lambda } _ { i j } / r _ { i i }$ . This relation is easily inverted to express the solution $\bar { \pmb { \Lambda } } = \{ \bar { \lambda } _ { i j } \}$ explicitly as
+
+$$
+\bar { \lambda } _ { i j } = { \frac { r _ { i i } r _ { j j } } { r _ { i i } + r _ { j j } } } m _ { i j } \qquad ( i , j = 1 , 2 , 3 ) .
+$$
+
+In our case, we set
+
+$$
+\pmb { M } = [ \bar { \pmb { Q } } ^ { n + 1 } ] ^ { T } \bar { \pmb { Q } } ^ { n + 1 } - \pmb { I } _ { 3 }
+$$
+
+and obtain, in first approximation
+
+$$
+Q _ { ( 1 ) } = \bar { Q } ^ { n + 1 } - Q ^ { n } \bar { \Lambda } _ { ( 1 ) } R ^ { - 1 } ,
+$$
+
+with $\bar { \cal A } _ { ( 1 ) } = \{ \bar { \lambda } _ { i j } \}$ determined by (8.23). This guides us to the simple quasi-Newton iteration
+
+$$
+\begin{array} { r l r } {  { \pmb { Q } _ { ( k ) } = \pmb { Q } _ { ( k - 1 ) } - \pmb { Q } ^ { n } \bar { \pmb { \Lambda } } _ { ( k ) } \pmb { R } ^ { - 1 } , } } \\ & { } & { \pmb { 0 } = ( \pmb { Q } _ { ( k - 1 ) } ^ { T } \pmb { Q } _ { ( k - 1 ) } - \pmb { I } _ { 3 } ) - ( \bar { \pmb { \Lambda } } _ { ( k ) } \pmb { R } ^ { - 1 } + \pmb { R } ^ { - 1 } \bar { \pmb { \Lambda } } _ { ( k ) } ) , } \end{array}
+$$
+
+for $k > 1$ till convergence at which point we set $Q ^ { n + 1 } = Q _ { ( k + 1 ) }$ . During the iteration we also use the computed $\bar { \Lambda } _ { ( k ) }$ to update the momentum matrix $P ^ { n + 1 / 2 }$ . Compare the discussion in Section 7.2.2. A description of other Newton-type iteration schemes can be found in [98].
+
+The momentum constraint (8.21) leads to a linear equation in $\pmb { \Lambda } _ { ( v ) } ^ { n + 1 }$ of type (8.22) and, hence, is easy to enforce.
+
+# 8.1.4 Numerical experiment: a symmetric top
+
+We perform a numerical experiment involving an axially symmetric rigid body with its center of mass held fixed ( $\begin{array} { r } { \pmb { q } _ { \mathtt { C m } } = \mathbf { 0 } , } \end{array}$ ). We further suppose that a conservative force is applied to a fixed reference point $r ^ { 0 }$ on the axis of symmetry.
+
+The rigid body is given moments of inertia $I _ { 1 } = 4$ , $I _ { 2 } = 4$ and $I _ { 3 } = 1$ , making it a long, thin object, symmetric around the third axis of inertia with mass tensor
+
+$$
+\begin{array} { r } { R = \left[ \begin{array} { c c c } { 0 . 5 } & { 0 } & { 0 } \\ { 0 } & { 0 . 5 } & { 0 } \\ { 0 } & { 0 } & { 3 . 5 } \end{array} \right] . } \end{array}
+$$
+
+The body is attached by a spring (coefficient $K = 5$ ) from the fixed reference point $\boldsymbol { r } ^ { 0 } = ( 0 , 0 , 1 ) ^ { T }$ on the rigid body to a point $\pmb q ^ { 0 } = ( 0 , 0 , - 1 ) ^ { T }$ fixed in the laboratory frame. The associated potential energy expression is given by
+
+$$
+V _ { \mathrm { e x t } } ( Q ) = \frac { K } { 2 } \| Q r ^ { 0 } - \pmb { q } ^ { 0 } \| ^ { 2 } .
+$$
+
+The object is initially oriented so that the third axis of inertia coincides with the $Z \cdot$ -axis in the laboratory frame implying $Q ( 0 ) = I _ { 3 }$ . 3 Initial body angular momenta applied are $\pi _ { 1 } = 0$ , $\pi _ { 2 } = 0 . 1$ and $\pi _ { 3 } = 2$ . This means that the body is initially set spinning around its axis of symmetry and is provided a small downward impetus. The associated initial momentum matrix $P$ is given as the solution of
+
+$$
+\begin{array} { r l } & { \hat { \boldsymbol { \pi } } = \left[ \begin{array} { c c c } { 0 } & { - 2 } & { 0 . 1 } \\ { 2 } & { 0 } & { 0 } \\ { - 0 . 1 } & { 0 } & { 0 } \end{array} \right] = \boldsymbol { P } - \boldsymbol { P } ^ { T } , } \\ & { \mathbf { 0 } = \boldsymbol { P } \boldsymbol { R } ^ { - 1 } + \boldsymbol { R } ^ { - 1 } \boldsymbol { P } ^ { T } , } \end{array}
+$$
+
+which is equivalent to
+
+$$
+\begin{array} { r } { P R ^ { - 1 } + R ^ { - 1 } P = R ^ { - 1 } \widehat { \pmb { \pi } } . } \end{array}
+$$
+
+The origin of these equations is explained in the following section. The explicit solution is
+
+$$
+\begin{array} { r } { \pmb { P } ( 0 ) = \left[ \begin{array} { c c c } { 0 } & { - 1 } & { 0 . 0 8 7 5 } \\ { 1 } & { 0 } & { 0 } \\ { - 0 . 0 1 2 5 } & { 0 } & { 0 } \end{array} \right] . } \end{array}
+$$
+
+Under these circumstances, the body spirals gradually away from the upright position, eventually swinging down (this phase is quite rapid) before returning again to the upright position. Although it is a slight misuse of terminology, let us refer to such a motion as a “quasi-period.”
+
+The variation in speed of oscillation over one quasi-period makes this a somewhat challenging integration problem. The results of a numerical experiment using a RATTLE integrator and $\Delta t = 0 . 1$ are shown in Fig. 8.2. The motion $\pmb { q } ( t ) = \pmb { Q } ( t ) r ^ { 0 }$ of the symmetry axis of the body, as seen in the laboratory frame, is plotted on the left. On the right are shown the fluctuations in the $Z \cdot$ -component of $\pmb q ( t )$ v. time, above the plot of energy error v. time. The rapid changes in the energy error are associated with the times of rapid motion as the top briefly swings down.
+
+![](images/6de97e63e213751e1bce7f6243136eb2c0d94946f6c6d9316af8cfd135516df6.jpg)  
+Figure 8.2 Motion of the symmetric top, as computed using RATTLE.
+
+# 8.2 Angular momentum and the inertia tensor
+
+A common alternative description for the rotational kinetic energy is based on the body angular momentum vector $\pmb { \pi } \in \mathbb { R } ^ { 3 }$ . Introduction of this concept will pave the way for another very useful approach to symplectic integration based on the rigid body Euler equations. We start the derivation by introducing the spatial angular velocity vector $\pmb { \omega }$ via the classical definition
+
+$$
+\dot { \pmb { r } } _ { i } = \pmb { \omega } \times \pmb { r } _ { i } ,
+$$
+
+where $r _ { i } = q _ { i } - q _ { \mathrm { c m } }$ is a displacement vector. Using the setting from Section 8.1, the standard (spatial) angular momentum vector $\pmb { m }$ can then be expressed as
+
+$$
+\begin{array} { l } { \displaystyle { m = \sum _ { i = 1 } ^ { k } m _ { i } \boldsymbol { r } _ { i } \times \dot { \boldsymbol { r } } _ { i } } } \\ { \displaystyle { \quad = \sum _ { i = 1 } ^ { k } m _ { i } \boldsymbol { r } _ { i } \times ( \boldsymbol { \omega } \times \boldsymbol { r } _ { i } ) } } \\ { \displaystyle { \quad = \sum _ { i = 1 } ^ { k } m _ { i } \left[ \lVert \boldsymbol { r } _ { i } \rVert ^ { 2 } - { r } _ { i } { r } _ { i } ^ { T } \right] \boldsymbol { \omega } } . } \end{array}
+$$
+
+Since
+
+$$
+r _ { i } = Q r _ { i } ^ { 0 } ,
+$$
+
+we obtain
+
+$$
+{ \pmb m } = { \pmb Q } \left( \sum _ { i = 1 } ^ { k } m _ { i } \left[ \| r _ { i } ^ { 0 } \| ^ { 2 } - r _ { i } ^ { 0 } \left[ r _ { i } ^ { 0 } \right] ^ { T } \right] \right) { \pmb Q } ^ { T } { \pmb \omega } ,
+$$
+
+in terms of a fixed reference configuration. The body angular momentum vector $\pmb { \pi }$ is now defined by ${ \pmb { \pi } } = { \pmb Q } ^ { T } { \pmb m }$ . Similarly the body angular velocity vector is $\pmb { \omega } ^ { \mathrm { b o d y } } = \pmb { Q } ^ { T } \pmb { \omega }$ and we obtain the relation
+
+with the inertial tensor given by
+
+$$
+{ \pmb T } = \sum _ { i = 1 } ^ { k } m _ { i } \left[ \| r _ { i } ^ { 0 } \| ^ { 2 } - r _ { i } ^ { 0 } \left[ r _ { i } ^ { 0 } \right] ^ { T } \right] = \sum _ { i = 1 } ^ { k } m _ { i } \| r _ { i } ^ { 0 } \| ^ { 2 } { \pmb I } _ { 3 } - R .
+$$
+
+If the mass tensor $R$ is diagonalized and represented in the form (8.3), then
+
+$$
+\sum _ { i = 1 } ^ { k } m _ { i } \| r _ { i } ^ { 0 } \| ^ { 2 } = \sum _ { i = 1 } ^ { 3 } r _ { i i } \| \bar { \pmb { e } } _ { i } \| ^ { 2 } = r _ { 1 1 } + r _ { 2 2 } + r _ { 3 3 } ,
+$$
+
+and
+
+$$
+{ \pmb T } = \left[ \begin{array} { c c c } { r _ { 2 2 } + r _ { 3 3 } } & { 0 } & { 0 } \\ { 0 } & { r _ { 1 1 } + r _ { 3 3 } } & { 0 } \\ { 0 } & { 0 } & { r _ { 1 1 } + r _ { 2 2 } } \end{array} \right] ,
+$$
+
+with the principal moments of inertia $\begin{array} { r } { I _ { i } = \sum _ { j \neq i } r _ { j j } } \end{array}$
+
+Let us link the angular momentum and angular velocity vectors to the canonical variables in the constrained formulation (8.8)–(8.12). Since $r _ { i } = Q r _ { i } ^ { 0 }$ , we obtain
+
+$$
+\dot { \bf Q } r _ { i } ^ { 0 } = { \bf \nabla } \omega \times { \bf Q } r _ { i } ^ { 0 } .
+$$
+
+Next we make use of the fact that for any vector $\pmb { u } \in \mathbb { R } ^ { 3 }$ , we can write
+
+$$
+{ \widehat { \pmb { \omega } } } { \pmb { u } } = { \pmb { \omega } } \times { \pmb { u } } ,
+$$
+
+where $\widehat { \pmb { \omega } }$ is the $3 \times 3$ skew-symmetric matrix
+
+$$
+\pmb { \hat { \omega } } = \left[ \begin{array} { c c c } { 0 } & { - \omega _ { 3 } } & { \omega _ { 2 } } \\ { \omega _ { 3 } } & { 0 } & { - \omega _ { 1 } } \\ { - \omega _ { 2 } } & { \omega _ { 1 } } & { 0 } \end{array} \right] ,
+$$
+
+${ \pmb { \omega } } = ( \omega _ { 1 } , \omega _ { 2 } , \omega _ { 3 } ) ^ { T }$ . 4 Hence (8.24) implies the relation
+
+$$
+\begin{array} { r } { \pmb { \hat { \omega } } = \pmb { \dot { Q } } \pmb { Q } ^ { T } = \pmb { P } \pmb { R } ^ { - 1 } \pmb { Q } ^ { T } . } \end{array}
+$$
+
+4Similar expression will be frequently used in the rest of this chapter. We remind the reader of the following convention. If $^ { b }$ is a 3-vector, then the associated skew-symmetric $3 \times 3$ matrix is denoted by $\widehat { b }$ . We use capital letters for the skew matrix forms of body angular momentum and angular velocity since these are standard notation often found in the literature.
+
+It is also easy to verify from (8.24) and
+
+$$
+Q ^ { T } \dot { Q } r _ { i } ^ { 0 } = Q ^ { T } \left[ \pmb { \omega } \times \pmb { Q } r _ { i } ^ { 0 } \right] = ( Q ^ { T } \pmb { \omega } ) \times r _ { i } ^ { 0 }
+$$
+
+that
+
+$$
+\begin{array} { r } { \widehat { \pmb { \omega } } ^ { \mathrm { b o d y } } = \pmb { Q } ^ { T } \dot { \pmb { Q } } = \pmb { Q } ^ { T } \pmb { P } \pmb { R } ^ { - 1 } . } \end{array}
+$$
+
+Furthermore, we have the important identity:
+
+$$
+\widehat { \pmb { \pi } } = \widehat { \pmb { \omega } } ^ { \mathrm { b o d y } } \pmb { R } - \pmb { R } \left[ \widehat { \pmb { \omega } } ^ { \mathrm { b o d y } } \right] ^ { T } = \pmb { Q } ^ { T } \pmb { P } - \pmb { P } ^ { T } \pmb { Q } ,
+$$
+
+for the skew matrix form of the body angular momentum vector $\pmb { \pi }$ , which can be verified by explicit computation using (8.3). Specifically, multiplication from the left by $\bar { \pmb { e } } _ { i } ^ { T }$ and by $\bar { e } _ { j }$ from the right yields
+
+$$
+\widehat { \pi } _ { i j } = ( r _ { i i } + r _ { j j } ) \widehat { \omega } _ { i j } ^ { \mathrm { b o d y } } ,
+$$
+
+which is equivalent to $\pi _ { k } = I _ { k } \omega _ { k } ^ { \mathsf { b o d y } }$ , $k = 1 , 2 , 3$ . (See also the exercises.)
+
+From $\widehat { \pmb { \omega } } = \dot { Q } Q ^ { T }$ and $\widehat { \pmb { \omega } } ^ { \mathrm { b o d } \ddot { \bf y } } = Q ^ { T } \dot { \pmb { Q } }$ , we see that $\widehat { \pmb { \omega } } = Q \widehat { \pmb { \omega } } ^ { \mathrm { b o d y } } Q ^ { T }$ . The same transformation applies to the angular momentum vectors and we obtain the expression
+
+$$
+\begin{array} { r } { \widehat { \pmb { m } } = \pmb { Q } \widehat { \pmb { \pi } } \pmb { Q } ^ { T } = { \pmb { P } } \pmb { Q } ^ { T } - \pmb { Q } { \pmb { P } } ^ { T } . } \end{array}
+$$
+
+This expression is useful when setting up the initial conditions for a constrained rigid body formulation. In particular, given an initial angular momentum vector $\pmb { m }$ (or an initial $\pmb { \pi }$ ) and an initial orientation matrix $Q$ the unique initial momentum matrix $P$ is determined by (8.25) subject to $( Q , P ) \in { \mathcal { P } }$ .
+
+With this we have completed our brief discussion on how the classical definitions of angular velocity and angular momentum relate to the canonical variables used in the constrained rigid body formulation (8.8)–(8.12).
+
+# 8.3 The Euler equations of rigid body motion
+
+We next show that the equations of a rigid body with its center of mass held fixed at $\pmb q _ { \mathrm { c m } } = { \bf 0 }$ can be reduced to a system of three differential equations for the angular momenta and associated equations for the orientation of the rigid body. These differential equations have a special generalized (noncanonical) Hamiltonian structure which can be treated using an explicit Hamiltonian splitting method.
+
+We start our discussion from the angular momentum identity $m = Q \pi =$ $\textstyle \sum _ { i } m _ { i } r _ { i } \times { \dot { r } } _ { i }$ . Differentiation with respect to time yields
+
+$$
+\dot { m } = \dot { Q } \pi + Q \dot { \pi } = \sum _ { i } m _ { i } r _ { i } \times \ddot { r } _ { i } ,
+$$
+
+which, multiplied by $Q ^ { T }$ , is equivalent to
+
+$$
+\dot { \pmb { \pi } } = - \pmb { Q } ^ { T } \dot { \pmb { Q } } \pmb { \pi } + \sum _ { i } m _ { i } \pmb { q } _ { i } ^ { 0 } \times \pmb { Q } ^ { T } \ddot { \pmb { r } } _ { i } .
+$$
+
+We now take note of
+
+$$
+Q ^ { T } { \dot { Q } } \pi = { \widehat { \omega } } ^ { \mathrm { b o d y } } \pi = \left( { \widehat { T ^ { - 1 } } } \pi \right) \pi = T ^ { - 1 } \pi \times \pi = - \pi \times T ^ { - 1 } \pi = - { \widehat { \pi } } T ^ { - 1 } \pi ,
+$$
+
+and assume an external force $m _ { i } { \ddot { r } } _ { i } = F _ { i }$ acting on the rigid body at a point $r _ { i } = Q r _ { i } ^ { 0 }$ , then we obtain the Euler equation
+
+$$
+\pmb { \dot { \pi } } = \widehat { \pmb { \pi } } \pmb { T } ^ { - 1 } \pmb { \pi } + \sum _ { i } \pmb { r } _ { i } ^ { 0 } \times \pmb { Q } ^ { T } \pmb { F } _ { i }
+$$
+
+for forced rigid body motion. We call
+
+$$
+{ \pmb { N } } = \sum _ { i } r _ { i } ^ { 0 } \times { \pmb { Q } } ^ { T } { \pmb { F } } _ { i } = { \pmb { Q } } ^ { T } \left( \sum _ { i } r _ { i } \times { \pmb { F } } _ { i } \right)
+$$
+
+the applied torque in body coordinates.
+
+The differential equation for the rotation matrix $Q$ had already been derived previously as
+
+$$
+\dot { \pmb { Q } } = \pmb { Q } \widehat { \pmb { \omega } } ^ { \mathrm { b o d y } } = \pmb { Q } ( \widehat { \pmb { T } ^ { - 1 } \pmb { \pi } } ) .
+$$
+
+Let us concentrate for a moment on the free rigid body, i.e. $\pmb { F } _ { j } = \pmb { 0 }$ . Then the equation (8.26) can be solved independently of (8.27). The free rigid body Euler equation
+
+$$
+\dot { \pmb { \pi } } = \widehat { \pmb { \pi } } \pmb { T } ^ { - 1 } \pmb { \pi }
+$$
+
+is an example of a noncanonical Hamiltonian system (actually a Lie–Poisson system) with Hamiltonian function (kinetic energy)
+
+$$
+\mathcal { T } ( \pmb { \pi } ) = \frac { 1 } { 2 } \pmb { \pi } ^ { T } T ^ { - 1 } \pmb { \pi } = \frac { 1 } { 2 } \left( \frac { \pi _ { 1 } ^ { 2 } } { I _ { 1 } } + \frac { \pi _ { 2 } ^ { 2 } } { I _ { 2 } } + \frac { \pi _ { 3 } ^ { 2 } } { I _ { 3 } } \right)
+$$
+
+and Lie–Poisson structure matrix
+
+$$
+\begin{array} { r } { J ( { \pmb \pi } ) = \widehat { \pmb \pi } = \left( \begin{array} { c c c } { 0 } & { - \pi _ { 3 } } & { \pi _ { 2 } } \\ { \pi _ { 3 } } & { 0 } & { - \pi _ { 1 } } \\ { - \pi _ { 2 } } & { \pi _ { 1 } } & { 0 } \end{array} \right) . } \end{array}
+$$
+
+In other words, the Euler equation (8.26) is equivalent to the more abstract formulation
+
+$$
+\frac { d } { d t } \pmb { \pi } = \pmb { J } ( \pmb { \pi } ) \nabla _ { \pmb { \pi } } \mathcal { T } ( \pmb { \pi } ) .
+$$
+
+The Lie–Poisson bracket $\{ F , G \}$ of two functions $F ( \pmb { \pi } )$ and $G ( { \pmb \pi } )$ is defined by
+
+$$
+\left\{ F , G \right\} ( \pmb { \pi } ) = \left[ \nabla _ { \pmb { \pi } } F ( \pmb { \pi } ) \right] ^ { T } J ( \pmb { \pi } ) \nabla _ { \pmb { \pi } } G ( \pmb { \pi } ) .
+$$
+
+The Lie–Poisson bracket is anti-symmetric and satisfies the Jacobi identity [149, 124, 7]. In this sense the Euler equation (8.29) is a generalization of the Hamiltonian formulations we have encountered so far. Note, however, that the matrix $J$ is not invertible hence we cannot define a symplectic form $J ^ { - 1 } d { \pmb { \pi } } \wedge d { \pmb { \pi } }$ . On the other hand, it is easily verified that the Euclidean norm of the momentum vector $\pmb { \pi }$ is a first integral of (8.29) for any choice of the Hamiltonian $\tau$ . This is due to the fact that the structure matrix $\jmath$ is singular and of rank two. Functions that are first integrals of a system for any choice of the Hamiltonian are also called Casimir functions. They are always linked to the fact that the structure matrix $J$ is singular. We also point out that the rigid body structure matrix $J = \widehat { \pmb { \pi } }$ is invertible on the level sets of $| | { \pmb { \pi } } | | =$ constant. This allows us to define a (canonical) symplectic structure on each of these two-dimensional level sets. See OLVER [149], MARSDEN AND RATIU [124], or ARNOLD [7] for more details.
+
+Let us next have a closer look at the equation (8.27). We can view the rotation matrix $Q \in S O ( 3 )$ as the collection of three column vectors $\pmb { S } _ { j } \in \mathbb { R } ^ { 3 }$ that are orthogonal to each other and that have unit length; i.e.
+
+$$
+Q ^ { T } = \left[ s _ { 1 } , s _ { 2 } , s _ { 3 } \right] .
+$$
+
+Then equation (8.27) is rewritten as
+
+$$
+\frac { d } { d t } { \pmb Q } ^ { T } = - ( \widehat { { \pmb T } ^ { - 1 } } { \pmb \pi } ) { \pmb Q } ^ { T } ,
+$$
+
+which is equivalent to
+
+$$
+\frac { d } { d t } s _ { j } = - ( \pmb { T } ^ { - 1 } \pmb { \pi } ) \times \pmb { s } _ { j } = s _ { j } \times ( \pmb { T } ^ { - 1 } \pmb { \pi } ) = \widehat { s } _ { j } \nabla _ { \pmb { \pi } } \mathcal { T } ( \pmb { \pi } ) , \qquad ( j = 1 , 2 , 3 ) .
+$$
+
+The system (8.29)–(8.30) constitutes a Hamiltonian system in the variable
+
+$$
+z = ( s _ { 1 } , s _ { 2 } , s _ { 3 } , \pmb { \pi } ) ^ { T } \in \mathbb { R } ^ { 1 2 }
+$$
+
+and with the skew-symmetric Lie–Poisson structure matrix5
+
+$$
+J ( z ) = \left( \begin{array} { c c c c } { 0 } & { 0 } & { 0 } & { \widehat { s } _ { 1 } } \\ { 0 } & { 0 } & { 0 } & { \widehat { s } _ { 2 } } \\ { 0 } & { 0 } & { 0 } & { \widehat { s } _ { 3 } } \\ { \widehat { s } _ { 1 } } & { \widehat { s } _ { 2 } } & { \widehat { s } _ { 3 } } & { \widehat { \pi } } \end{array} \right) \in \mathbb { R } ^ { 1 2 \times 1 2 } .
+$$
+
+The equations of motion of a free rigid body take now the abstract form
+
+$$
+\frac { d } { d t } z = J ( z ) \nabla _ { z } \mathcal { H } ( z ) ,
+$$
+
+where
+
+$$
+\mathcal { H } = \mathcal { T } = \frac { 1 } { 2 } \pmb { \pi } ^ { T } \pmb { T } ^ { - 1 } \pmb { \pi } .
+$$
+
+Using this general Hamiltonian framework, one can consider systems where the Hamiltonian $\mathcal { H }$ depends on the state variable $z$ in an arbitrary way. Typically, the Hamiltonian $\mathcal { H }$ is however of the form
+
+$$
+\mathscr { H } = \frac { 1 } { 2 } \pmb { \pi } ^ { T } T ^ { - 1 } \pmb { \pi } + \mathscr { V } ( s _ { 1 } , s _ { 2 } , s _ { 3 } ) .
+$$
+
+Example 1 Consider a rigid body with fixed center of mass $\pmb { q } _ { \mathrm { c m } } = \mathbf { 0 }$ andan external force $F$ acting on a (fixed) point $r ^ { 0 }$ in the body reference configuration. In other words, the force is assumed to be given by
+
+$$
+\boldsymbol { F } ( \boldsymbol { r } ) = - \boldsymbol { \nabla } _ { \boldsymbol { r } } \boldsymbol { V } ( \boldsymbol { r } ) , \quad \boldsymbol { r } = \boldsymbol { Q } \boldsymbol { r } ^ { 0 } .
+$$
+
+We call this force the spatial force. The rigid body potential energy is
+
+$$
+\mathcal { V } ( s _ { 1 } , s _ { 2 } , s _ { 3 } ) = V ( Q r ^ { 0 } ) ,
+$$
+
+and the corresponding equations of motion are given by
+
+$$
+\frac { d } { d t } \pi = \pmb { \pi } \times ( \pmb { T } ^ { - 1 } \pmb { \pi } ) + \sum _ { j = 1 } ^ { 3 } \pmb { s } _ { j } \times \nabla _ { s _ { j } } \mathcal { V } ( \pmb { s } _ { 1 } , \pmb { s } _ { 2 } , \pmb { s } _ { 3 } )
+$$
+
+and
+
+$$
+\frac { d } { d t } \pmb { s } _ { j } = \pmb { s } _ { j } \times ( \pmb { T } ^ { - 1 } \pmb { \pi } ) ,
+$$
+
+$j = 1 , 2 , 3$ . Let us write $r$ in terms of the unit coordinate vectors $e _ { j }$ (fixed laboratory frame with $e _ { j } ^ { T } Q = s _ { j } ^ { T }$ ), i.e.
+
+$$
+r = \sum _ { j = 1 } ^ { 3 } ( s _ { j } ^ { T } r ^ { 0 } ) \pmb { e } _ { j } ,
+$$
+
+since $\pmb { e } _ { j } ^ { T } \pmb { r } = \pmb { e } _ { j } ^ { T } \pmb { Q } \pmb { r } ^ { 0 } = \pmb { s } _ { j } ^ { T } \pmb { r } ^ { 0 }$ . Then
+
+$$
+\begin{array} { r l } & { \displaystyle \sum _ { j = 1 } ^ { 3 } s _ { j } \times \nabla _ { s _ { j } } \mathcal { V } ( s _ { 1 } , s _ { 2 } , s _ { 3 } ) = - \sum _ { j = 1 } ^ { 3 } s _ { j } \times \big ( ( \boldsymbol { F } ( \boldsymbol { r } ) ^ { T } \boldsymbol { e } _ { j } ) \boldsymbol { r } ^ { 0 } \big ) } \\ & { \quad \quad \quad \quad = - \sum _ { j = 1 } ^ { 3 } \big ( ( \boldsymbol { F } ( \boldsymbol { r } ) ^ { T } \boldsymbol { e } _ { j } ) s _ { j } \big ) \times \boldsymbol { r } ^ { 0 } } \\ & { \quad \quad \quad = \boldsymbol { r } ^ { 0 } \times ( \boldsymbol { Q } ^ { T } \boldsymbol { F } ( \boldsymbol { r } ) ) } \end{array}
+$$
+
+is the standard formula for the applied torque in body coordinates (compare (8.26)). This procedure generalizes to any number of particle locations
+
+$$
+r _ { i } = \sum _ { j = 1 } ^ { 3 } ( s _ { j } ^ { T } r _ { i } ^ { 0 } ) \pmb { e } _ { j } , \qquad i = 1 , \dots , k ,
+$$
+
+and potential energies $V = V ( \boldsymbol { r } _ { 1 } , \dots , \boldsymbol { r } _ { k } )$
+
+# 8.3.1 Symplectic discretization of the Euler equations
+
+We have already seen that SHAKE/RATTLE discretization can be used to treat the constrained formulation (8.17)–(8.21). This leads to a system of nonlinear equations that needs to be solved at each timestep.
+
+An attractive alternative for simulating free rigid body motion is based on Euler equations (8.29)–(8.30) and the idea of splitting the Hamiltonian into explicitly solvable components. This was proposed by MCLACHLAN [128], REICH [153, 154], and TOUMA AND WISDOM [193]. The Hamiltonian of a free rigid body is given by (8.28), which we write as
+
+$$
+T ( \pmb { \pi } ) = T _ { 1 } ( \pi _ { 1 } ) + T _ { 2 } ( \pi _ { 2 } ) + T _ { 3 } ( \pi _ { 3 } ) ,
+$$
+
+where $\mathcal { T } _ { j } ( \pi _ { j } ) = \pi _ { j } ^ { 2 } / ( 2 I _ { j } ) , j = 1 , 2 , 3 .$ . The crucial observation is that each entry $\mathcal { T } _ { j }$ gives rise to equations of motion which can be solved exactly. Let us demonstrate this for $\mathcal { T } _ { 1 }$ . The corresponding equations of motion can be written as a system of linear differential equations
+
+$$
+\frac { d } { d t } \pi = { \cal A } _ { 1 } \pi , \qquad \frac { d } { d t } s _ { j } = { \cal A } _ { 1 } s _ { j } , \quad ( j = 1 , 2 , 3 ) ,
+$$
+
+where
+
+$$
+A _ { 1 } = \frac { 1 } { { \cal I } _ { 1 } } \left( \begin{array} { c c c } { { 0 } } & { { 0 } } & { { 0 } } \\ { { 0 } } & { { 0 } } & { { \pi _ { 1 } } } \\ { { 0 } } & { { - \pi _ { 1 } } } & { { 0 } } \end{array} \right) .
+$$
+
+Note that
+
+$$
+\frac { d } { d t } \pi _ { 1 } = 0 ,
+$$
+
+which implies that the solutions are simply given by
+
+$$
+{ \pmb \pi } ( t ) = e ^ { t A _ { 1 } } { \pmb \pi } ( 0 ) , \qquad { \pmb s } _ { j } ( t ) = e ^ { t A _ { 1 } } { \pmb s } _ { j } ( t ) , \quad ( j = 1 , 2 , 3 ) ,
+$$
+
+with
+
+$$
+e ^ { t A _ { 1 } } = \left( \begin{array} { c c c } { 1 } & { 0 } & { 0 } \\ { 0 } & { \cos \omega _ { 1 } t } & { \sin \omega _ { 1 } t } \\ { 0 } & { - \sin \omega _ { 1 } t } & { \cos \omega _ { 1 } t } \end{array} \right) , \quad \omega _ { 1 } = \frac { \pi _ { 1 } } { I _ { 1 } } .
+$$
+
+The equations (8.33) provide an explicit expression for the exact flow map $\pmb { \phi } _ { t , \mathcal { T } _ { 1 } }$ corresponding to the system
+
+$$
+\frac { d } { d t } z = J ( z ) \nabla _ { z } \mathcal { T } _ { 1 } ( \pi _ { 1 } ) ,
+$$
+
+$z = ( s _ { 1 } , s _ { 2 } , s _ { 3 } , \pmb { \pi } ) ^ { T }$ . Similar expressions can be found for the flow maps corresponding to the entries $\mathcal { T } _ { 2 }$ and $\mathcal { T } _ { 3 }$ in (8.32).
+
+A second-order symplectic method is now obtained by subsequent concatenation of the exact solutions corresponding to the five terms in
+
+$$
+\mathcal { T } = \frac { 1 } { 2 } \mathcal { T } _ { 1 } + \frac { 1 } { 2 } \mathcal { T } _ { 2 } + \mathcal { T } _ { 3 } + \frac { 1 } { 2 } \mathcal { T } _ { 2 } + \frac { 1 } { 2 } \mathcal { T } _ { 1 } ,
+$$
+
+over a time interval $t = \Delta t$ . To be more precise. We define a numerical method
+
+$$
+z ^ { n + 1 } = \pmb { \psi } _ { \Delta t , T } ( z ^ { n } )
+$$
+
+by the composition of flow maps
+
+$$
+\pmb { \psi } _ { \Delta t , \mathscr { T } } = \pmb { \phi } _ { \Delta t / 2 , \mathscr { T } _ { 1 } } \circ \pmb { \phi } _ { \Delta t / 2 , \mathscr { T } _ { 2 } } \circ \pmb { \phi } _ { \Delta t , \mathscr { T } _ { 3 } } \circ \pmb { \phi } _ { \Delta t / 2 , \mathscr { T } _ { 2 } } \circ \pmb { \phi } _ { \Delta t / 2 , \mathscr { T } _ { 1 } } .
+$$
+
+This method is obviously symplectic since each flow map preserves $\| { \pmb { \pi } } \|$ and is symplectic on the level sets of constant $\| \pmb { \pi } \|$ . The method also conserves the spatial angular momentum vector $I$ exactly. This follows again from the exact conservation under each flow map. This splitting and its implementation can be improved. For example, one could replace exact matrix exponentials by the Cayley transform, i.e., for any of three skew-symmetric matrices $\pmb { A } _ { i }$ we can use
+
+$$
+e ^ { t A _ { i } } \approx ( I - t A _ { i } ) ^ { - 1 } ( I + t A _ { i } ) \in S O ( 3 ) .
+$$
+
+There are also other splitting of $\tau$ possible. See the discussion in the following subsection and TOUMA AND WISDOM [193], DULLWEBER, LEIMKUHLER, AND MCLACHLAN. [54] as well as BUSS [38] and FASSO [56].
+
+This method can now also be used to integrate more general rigid body systems with Hamiltonian
+
+$$
+\mathscr { H } = \frac { 1 } { 2 } \pmb { \pi } ^ { T } T ^ { - 1 } \pmb { \pi } + \mathscr { V } ( s _ { 1 } , s _ { 2 } , s _ { 3 } ) .
+$$
+
+Similar to the St¨ormer–Verlet method, we split the total Hamiltonian into the kinetic energy $\mathcal { T } = 1 / 2 \pmb { \pi } ^ { T } \pmb { T } ^ { - 1 } \pmb { \pi }$ and the potential energy $\nu$ . A second-order method can then be derived based on
+
+$$
+\mathcal { H } = \frac { 1 } { 2 } \mathcal { V } + \mathcal { T } + \frac { 1 } { 2 } \mathcal { V } ,
+$$
+
+The equations of motion corresponding to the potential energy $\nu$ are given by
+
+$$
+\frac { d } { d t } \pmb { \pi } = \sum _ { j = 1 } ^ { 3 } \pmb { s } _ { j } \times \nabla _ { \pmb { s } _ { j } } \mathcal { V } ( \pmb { s } _ { 1 } , \pmb { s } _ { 2 } , \pmb { s } _ { 3 } ) , \qquad \frac { d } { d t } \pmb { s } _ { j } = 0 , \quad ( j = 1 , 2 , 3 ) ,
+$$
+
+and can be solved exactly. In particular, since
+
+$$
+N = \sum _ { j = 1 } ^ { 3 } \pmb { s } _ { j } \times \nabla _ { \pmb { s } _ { j } } \mathcal { V } ( \pmb { s } _ { 1 } , \pmb { s } _ { 2 } , \pmb { s } _ { 3 } ) = \mathrm { c o n s t . } ,
+$$
+
+we obtain ${ \pmb \pi } ( t ^ { \prime } ) = { \pmb \pi } ( t ) + ( t ^ { \prime } - t ) { \pmb N }$ and ${ \pmb s } _ { j } ( t ^ { \prime } ) = { \pmb s } _ { j } ( t )$ . Denote the corresponding flow map by $\phi _ { t , \mathcal { V } }$ . Then, based on the splitting (8.36) and upon using (8.34) to propagate the kinetic energy part, we obtain the second-order symplectic method
+
+$$
+\pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { \Delta t / 2 , \mathscr { V } } \circ \pmb { \psi } _ { \Delta t , \mathscr { T } } \circ \pmb { \phi } _ { \Delta t / 2 , \mathscr { V } } ,
+$$
+
+for the generalized Euler system
+
+$$
+\frac { d } { d t } z = J ( z ) \nabla _ { z } \mathcal { H } ( z ) ,
+$$
+
+with Hamiltonian (8.35).
+
+# 8.3.2 Numerical experiment: the Lagrangian top
+
+Below we show that the Hamiltonian for a Lagrangian top is of the form (8.35) and conduct a numerical experiment to test the symplectic splitting method. See [7, 73] for a detailed analysis of the Lagrangian top.
+
+The matrix $\tau$ is defined by the three principal moments of inertia of the (axially symmetric) top. Symmetry of the top implies that $I _ { 1 } = I _ { 2 }$ . The potential energy function $\nu$ is obtained by introducing the fixed reference vector $r ^ { 0 }$ to point from the stationary point of contact to the center of mass, i.e. $\boldsymbol { r } ^ { 0 } = ( 0 , 0 , L ) ^ { T }$ . We set the distance from the fixed point to the center of mass equal to one, i.e., $L = 1$ . Then the potential energy becomes
+
+$$
+\mathcal { V } ( Q ) = - c k ^ { T } Q r ^ { 0 } ,
+$$
+
+where $\pmb { k } = ( 0 , 0 , - 1 ) ^ { T }$ gives the direction of gravity and $c = m g$ is the product of the mass $m$ of the top and the gravitational constant $g$ . The orthogonal matrix $Q ( t )$ describes the rotation of the rigid body about its stationary point of contact and $Q ^ { T } = [ s _ { 1 } , s _ { 2 } , s _ { 3 } ]$ as before. Note that the potential energy can be written as a function of $s _ { 3 }$ alon
+
+$$
+{ \mathcal { V } } ( s _ { 3 } ) = - c \left[ r ^ { 0 } \right] ^ { T } Q ^ { T } k = c \left[ r ^ { 0 } \right] ^ { T } s _ { 3 } .
+$$
+
+Employing the above outlined abstract Hamiltonian framework, we obtain the equations of motion
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } \pmb { \pi } = \pmb { \pi } \times \pmb { T } ^ { - 1 } \pmb { \pi } + c \pmb { s } _ { 3 } \times \pmb { r } ^ { 0 } , } \\ { \displaystyle \frac { d } { d t } \pmb { s } _ { i } = \pmb { s } _ { i } \times \pmb { T } ^ { - 1 } \pmb { \pi } , \qquad ( i = 1 , 2 , 3 ) . } \end{array}
+$$
+
+These equations can be integrated using the composition method (8.37) with the kinetic energy part integrated by the standard splitting (8.34). However, one can solve the free Euler equation for a symmetric rigid body exactly. To do so, we split the kinetic energy into two contributions [193, 54]
+
+$$
+\mathcal { T } = \frac { 1 } { 2 I } \pmb { \pi } ^ { T } \pmb { \pi } + \frac { 1 } { 2 } \left( \frac { 1 } { I _ { 3 } } - \frac { 1 } { I } \right) \pi _ { 3 } ^ { 2 } ,
+$$
+
+$I = I _ { 1 } = I _ { 2 }$ , instead of three which yields the modified composition method
+
+$$
+\pmb { \psi } _ { \Delta t , \mathcal { T } } = \pmb { \phi } _ { \Delta t , \tilde { \mathcal { T } } _ { 2 } } \circ \pmb { \phi } _ { \Delta t , \tilde { \mathcal { T } } _ { 1 } } ,
+$$
+
+where
+
+$$
+\tilde { \mathcal { T } } _ { 1 } = \frac { 1 } { 2 I } \pmb { \pi } ^ { T } \pmb { \pi } ,
+$$
+
+and
+
+$$
+\tilde { \mathcal { T } } _ { 2 } = \frac { 1 } { 2 } \left( \frac { 1 } { I _ { 3 } } - \frac { 1 } { I } \right) \pi _ { 3 } ^ { 2 } .
+$$
+
+Note that ${ \pmb { \pi } } ( t ) = c o n s t$ . for the Hamiltonian $\tilde { \tau } _ { 1 }$ which allows for the exact integration of the equation of motion for $\pmb { S } _ { j }$ , $j = 1 , 2 , 3$ ; i.e.,
+
+$$
+\frac { d } { d t } \pmb { \pi } = \pmb { 0 } , \qquad \frac { d } { d t } \pmb { s } _ { i } = - \frac { 1 } { I } \pmb { \hat { \pi } } \pmb { s } _ { i } .
+$$
+
+Even more importantly, the two Hamiltonian functions $\mathcal { T } _ { 1 } , ~ \mathcal { T } _ { 2 }$ commute and, hence, the composition method $\pmb { \psi } _ { \Delta t , \mathcal { T } }$ is equal to the exact flow map:
+
+$$
+\pmb { \phi } _ { \Delta t , \mathscr { T } } = \pmb { \phi } _ { \Delta t , \tilde { \mathscr { T } } _ { 1 } } \circ \pmb { \phi } _ { \Delta t , \tilde { \mathscr { T } } _ { 2 } } .
+$$
+
+The exact propagator $\pmb { \phi } _ { \Delta t , \mathcal { T } }$ for the kinetic energy part of the Lagrangian top’s Hamiltonian is now used in (8.37) to obtain a second-order symplectic method for the spinning top.
+
+We conduct a numerical experiments with $c = 1$ and
+
+$$
+\pmb { Q } ( 0 ) = \left[ \begin{array} { c c c } { \cos { 0 . 6 } } & { 0 } & { - \sin { 0 . 6 } } \\ { 0 } & { 1 } & { 0 } \\ { \sin { 0 . 6 } } & { 0 } & { \cos { 0 . 6 } } \end{array} \right] .
+$$
+
+This corresponds to an initial $\pmb { \mathscr { s } } _ { 3 } = ( \sin 0 . 6 , 0 , \cos 0 . 6 ) ^ { T }$ . The equations of motion are integrated with the above splitting methods using a stepsize of $\Delta t = 0 . 1$ . The motion of the center of mass $\pmb q _ { \mathsf { c m } } ( t ) = \pmb Q r ^ { 0 }$ is given in Fig. 8.3 for $I _ { 1 } = I _ { 2 } = 5$ , $I _ { 3 } = 1$ , and the initial body angular momentum ${ \pmb { \pi } } = ( 0 , 0 , 5 ) ^ { T }$ . The error in energy and the motion of the $Z$ -component of $\pmb { q } _ { \mathsf { c m } } ( t )$ are shown on the right of Fig. 8.3. Note that this experiment corresponds to a Lagrangian top initially spinning only about its axis of symmetry and which is released from that position without applying any additional torque. See also [7, 73] and problem 4 in the Exercises.
+
+![](images/3119009912860178d9b99273e09d3167ec270794c509fb6bb8407aad4b63372c.jpg)  
+Figure 8.3 Motion of the Lagrangian top, as computed with an explicit splitting method.
+
+As a second test we implemented the splitting algorithm (8.37) for the symmetric top example of Section 8.1.4 with the purpose of comparing with our previously computed RATTLE solution. For a stepsize of $\Delta t = 0 . 1$ and with the exact propagator (8.40) used in (8.37), the numerical trajectories are essentially indistinguishable from those obtained using RATTLE. However, the splitting scheme preserves the energy better by a factor of about 40. Furthermore, the splitting method is much easier to implement and more efficient than the RAT-TLE approach and emerges here as the clear winner.
+
+The situation changes when the exact propagator (8.40) is replaced by the standard kinetic energy splitting (8.34). The results, using an identical timestep of $\Delta t = 0 . 1$ are shown in Fig. 8.4. There are some significant differences with the results using RATTLE (compare with Fig. 8.2). First, the new trajectory appears to be somewhat less regular, related to the appearance for the first time of sharp peaks in the evolution of the energy error. In Fig. 8.5 a projection of a very long time numerical solution in the neighborhood of the upright body position is shown for each method, dramatizing the improved regularity of the RATTLE orbit. Even more striking, perhaps, is the fact that the new computation finds too many quasi-periods (22 instead of 19) in the integration on [0, 200]. In fact 19 is very nearly the correct figure for this time interval, and this is only achieved by an eight-fold reduction in the integration timestep. On the other hand, the standard reduction/splitting method exhibits better energy conservation, even at the large timestep, than the RATTLE approach. (A careful comparison of methods must include attention to the efficient implementation of the RATTLE nonlinear solver, which can add to the work.)
+
+![](images/e1ac24df038df6bc00d2ed54fd35c6517eabbc920d074a382e18dc7cf94a9632.jpg)  
+Figure 8.4 Motion of the symmetric sprung top, as computed using the standard reduction/splitting scheme.
+
+The experiment highlights the necessity for a careful choice of the splitting. It is often advisable to use a splitting of the rigid body kinetic energy into an entirely symmetric contribution $\begin{array} { r } { \mathcal { T } _ { \mathsf { s } } = \frac { 1 } { 2 I } \pmb { \pi } ^ { T } \pmb { \pi } } \end{array}$ and a “perturbation,” i.e.
+
+$$
+\mathcal { T } = \frac { 1 } { 2 I } \pmb { \pi } ^ { T } \pmb { \pi } + \frac { 1 } { 2 } \left( \frac { 1 } { I _ { 1 } } - \frac { 1 } { I } \right) \pi _ { 1 } ^ { 2 } + \frac { 1 } { 2 } \left( \frac { 1 } { I _ { 2 } } - \frac { 1 } { I } \right) \pi _ { 2 } ^ { 2 } + \frac { 1 } { 2 } \left( \frac { 1 } { I _ { 3 } } - \frac { 1 } { I } \right) \pi _ { 3 } ^ { 2 } .
+$$
+
+A natural choice is to set $I = I _ { j }$ for some appropriate index $i \in \{ 1 , 2 , 3 \}$ (see [56] for a detailed comparison).
+
+# 8.3.3 Integrable discretization: RATTLE and the scheme of MOSER AND VESELOV
+
+The free rigid body is completely integrable. It was first pointed out that a completely integrable discretization for the free rigid body is possible in an article of
+
+$\Delta t ( Y ^ { n + 1 } - [ { Y ^ { n + 1 } } ] ^ { T } )$ coincides with the second step of the Moser–Veselov algorithm.
+
+# 8.4 Order 4 and order 6 variants of RATTLE for the free rigid body
+
+The observation mentioned above due to MCLACHLAN AND ZANNA [127] of the exact integrability of the RATTLE method has ramifications for the design of higher-order schemes. When applied with constant step size, it follows from the integrability result that the RATTLE scheme solves exactly the modified equation
+
+$$
+\frac { d } { d t } \pmb { \pi } = ( 1 + \Delta t ^ { 2 } \tau _ { 3 } + \Delta t ^ { 4 } \tau _ { 5 } + \cdot \cdot \cdot ) \pmb { \pi } \times \pmb { T } ^ { - 1 } \pmb { \pi } ,
+$$
+
+where the $\tau _ { 2 i + 1 }$ are constants depending on the Hamiltonian, the inertial tensor $\tau$ , the mass tensor $R$ and the Casimir $\| \pmb { \pi } \|$ . This modified equation is a time reparametization of the original free rigid body equation. Hence, by rescaling the initial condition $\pmb { \pi } _ { 0 }$ it is possible to improve the order of RATTLE.
+
+Introduce the family of constants
+
+$$
+C _ { R , i , j } = r _ { 1 1 } ^ { i } r _ { 2 2 } ^ { j } + r _ { 1 1 } ^ { i } r _ { 3 3 } ^ { j } + r _ { 2 2 } ^ { i } r _ { 3 3 } ^ { j } , \qquad i , j = 1 , 2 , \ldots ,
+$$
+
+associated to the mass tensor $R$ and set
+
+$$
+C _ { R , i } = C _ { R , i , i } , \qquad C _ { R } = C _ { R , 1 } .
+$$
+
+Denote as
+
+$$
+{ \mathcal H } _ { 2 } = r _ { 1 1 } ^ { 2 } \pi _ { 1 } ^ { 2 } + r _ { 2 2 } ^ { 2 } \pi _ { 2 } ^ { 2 } + r _ { 3 3 } ^ { 2 } \pi _ { 3 } ^ { 2 } ,
+$$
+
+the constant which is a linear combination of the Hamiltonian $\mathcal { H }$ and the Casimir $\| { \pmb { \pi } } \|$ of the free rigid body. Consider the constants
+
+$$
+\tau _ { 3 } = \frac { 1 } { 6 \operatorname * { d e t } ( { \cal T } ) ^ { 2 } } \left( ( 3 \operatorname * { d e t } ( { \cal R } ) \mathrm { t r } ( { \cal R } ) + C _ { { \cal R } , 2 } ) \| \pi \| ^ { 2 } + ( 3 C _ { { \cal R } } + \mathrm { t r } ( { \cal R } ^ { 2 } ) ) \mathcal { H } _ { 2 } \right) ,
+$$
+
+and
+
+$$
+\begin{array} { l } { \displaystyle \tau _ { 5 } = \frac { 1 } { 4 0 \mathrm { d e t } ( T ) ^ { 4 } } \Big ( \big ( 3 \mathrm { t r } ( R ^ { 4 } ) + 2 7 C _ { R , 2 } + 1 5 \mathrm { t r } ( R ^ { 2 } ) C _ { R } + 4 5 \mathrm { d e t } ( R ) \mathrm { t r } ( R ) \big ) \mathcal { H } _ { 2 } ^ { 2 } } \\ { \displaystyle \quad + \big ( 1 0 C _ { R , 3 } + 5 0 \mathrm { d e t } ( R ) \mathrm { t r } ( R ) C _ { R } } \\ { \displaystyle \quad + 1 0 \mathrm { d e t } ( R ) \mathrm { t r } ( R ^ { 2 } ) + 2 C _ { R , 2 } \mathrm { t r } ( R ^ { 2 } ) } \\ { \displaystyle \quad - 2 8 \mathrm { d e t } ( R ^ { 2 } ) ) \| \pi \| ^ { 2 } \mathcal { H } _ { 2 } } \\ { \displaystyle \quad + \big ( 6 0 \mathrm { d e t } ( R ^ { 2 } ) C _ { R } + 3 C _ { R , 4 } + 2 7 \mathrm { d e t } ( R ^ { 2 } ) \mathrm { t r } ( R ^ { 2 } ) } \\ { \displaystyle \quad + 1 5 \mathrm { d e t } ( R ) \big ( C _ { R , 2 , 3 } + C _ { R , 3 , 2 } ) \big ) \| \pi \| _ { 2 } ^ { 4 } \Big ) . } \end{array}
+$$
+
+![](images/bfbd92a941f3ad9ce5bbc1624718d9d472017a0fbef032650f9219dc835e3075.jpg)  
+Figure 8.5 Motion of the symmetric sprung top, as computed using the standard reduction/splitting scheme (left) and using the RATTLE approach (right).
+
+MOSER AND VESELOV [141] (see also LEWIS AND SIMO [114]). Perhaps as remarkable in our context is the fact, noted by MCLACHLAN AND ZANNA [127], that the RATTLE method when applied to the free rigid body is actually equivalent to the Moser–Veselov algorithm.
+
+To see this, introduce into the RATTLE method (8.17)–(8.21) the auxiliary variables ${ \pmb Y } ^ { n } = { \pmb P } ^ { n } [ { \pmb Q } ^ { n } ] ^ { T } , { \pmb Y } ^ { n + 1 / 2 } = { \pmb P } ^ { n + 1 / 2 } [ { \pmb Q } ^ { n } ] ^ { T }$ and $\pmb { Y } ^ { n + 1 } = \pmb { P } ^ { n + 1 } [ \pmb { Q } ^ { n + 1 } ] ^ { T }$ . By construction, one has $Y ^ { n } = R \hat { \pmb { \omega } } ^ { n }$ and hence ${ \widehat { \pmb { \pi } } } ^ { n } = { \pmb { Y } } ^ { n } - [ { \pmb { Y } } ^ { n } ] ^ { T }$ . Moreover, $\begin{array} { r } { { \pmb Y } ^ { n + 1 / 2 } = { \pmb Y } ^ { n } - \frac { 1 } { 2 } \Delta t { \pmb Q } ^ { n } [ { \pmb P } ^ { n + 1 / 2 } ] ^ { T } { \pmb R } ^ { - 1 } { \pmb P } ^ { n + 1 / 2 } [ { \pmb Q } ^ { n } ] ^ { T } = { \pmb Y } ^ { n } + \Delta t { \pmb S } , } \end{array}$ , where $s$ is a symmetric matrix. Introducing $Q = Q ^ { n + 1 } [ Q ^ { n } ] ^ { T } = I _ { 3 } + \Delta t R ^ { - 1 } P ^ { n + 1 / 2 } [ Q ^ { n } ] ^ { T } =$ $I _ { 3 } + \Delta t { \cal R } ^ { - 1 } \mathsf { Y } ^ { n + 1 / 2 }$ , it is immediately verified that $Q ^ { n + 1 }$ is orthogonal if and only if $Q$ is orthogonal.
+
+Now, we rewrite $\Delta t \widehat { \pmb { \pi } } ^ { n } = \Delta t ( \pmb { Y } ^ { n } - [ \pmb { Y } ^ { n } ] ^ { T } )$ in terms of $Q$ . We have $\Delta t \widehat { \pmb { \pi } } ^ { n } =$ $R ( Q - I _ { 3 } ) - \Delta t ^ { 2 } S - ( Q ^ { T } - I _ { 3 } ) R + \Delta t ^ { 2 } S ^ { T } = R Q - Q ^ { T } R$ , since $s$ is symmetric. The equation $\Delta t \widehat { \pmb { \pi } } ^ { n } = { \pmb R } \pmb { Q } - { \pmb Q } ^ { T } { \pmb R }$ is precisely the Moser–Veselov equation that one has to solve for an orthogonal matrix $Q$ . Similarly, $\Delta t \widehat { \pmb { \pi } } ^ { n + 1 } = { Q } { R } - { R } { Q } ^ { T } =$
+
+Scaling the initial condition $\pmb { \pi } _ { 0 }$ to ${ \pmb { \pi } } _ { 0 } / ( 1 { + } \Delta t ^ { 2 } \tau _ { 3 } )$ , applying the RATTLE scheme, and then multiplying back by $\left( 1 + \Delta t ^ { 2 } \tau _ { 3 } \right)$ , raises the order of the RATTLE scheme from 2 to 4, and preserves integrability and symplecticity.
+
+Similarly, scaling the initial condition $\pmb { \pi } _ { 0 }$ to ${ \pmb { \pi } } _ { 0 } / ( 1 + \Delta t ^ { 2 } \tau _ { 3 } + \Delta t ^ { 4 } ( \tau _ { 5 } - 2 \tau _ { 3 } ^ { 2 } ) )$ , applying RATTLE and multiplying back by the same scaling factor, improves the order of RATTLE to 6. For more details on these methods and accompanying numerical experiments, see [127].
+
+# 8.5 Freely moving rigid bodies
+
+So far, we have considered a single rigid body with its center of mass held fixed. We now relax this condition and consider a freely moving rigid body. Let us assume that a spatial coordinate system is given and that the represention of a vector in spatial coordinates is denoted by $q \in \mathbb { R } ^ { 3 }$ . The particular spatial vector that points from the origin of the laboratory frame to the center of mass of the rigid body is denoted by $\pmb q _ { c m }$ . We consider also a fixed reference vector $r ^ { 0 }$ that points from the center of mass to a given (fixed) point on the rigid body. Then the position of this point is given by the spatial vector
+
+$$
+\pmb { q } ( t ) = \pmb { q } _ { c m } ( t ) + \pmb { Q } ( t ) \pmb { r } ^ { 0 } = \pmb { q } _ { c m } ( t ) + \sum _ { j = 1 } ^ { 3 } \left( \pmb { s } _ { j } ( t ) ^ { T } \pmb { r } ^ { 0 } \right) \pmb { e } _ { j } ,
+$$
+
+where $e _ { j }$ $_ { \cdot j } , j = 1 , 2 , 3$ , are (fixed) coordinate vectors in the laboratory frame.6 Thus the motion of any fixed point on the rigid body is completely characterized by the evolution of the center of mass $\pmb q _ { c m }$ and the three vectors $s _ { j }$ . Let us assume for a moment that no external forces act on the rigid body. Then the equations of motion for the center of mass and the rotation matrix decouple and are simply given by
+
+$$
+\frac { d } { d t } \pmb { \pi } = \pmb { \pi } \times \pmb { T } ^ { - 1 } \pmb { \pi } , \qquad \frac { d } { d t } s _ { j } = s _ { j } \times \pmb { T } ^ { - 1 } \pmb { \pi } , \quad ( j = 1 , 2 , 3 ) ,
+$$
+
+and
+
+$$
+\frac { d } { d t } \pmb { q } _ { c m } = \frac { 1 } { M } \pmb { p } _ { c m } , \qquad \frac { d } { d t } \pmb { p } _ { c m } = \mathbf { 0 } .
+$$
+
+$M$ is the total mass of the rigid body and $\pmb { p _ { c m } } \in \mathbb { R } ^ { 3 }$ the momentum of the center of mass. The combined system can be propagated in time by solving the center of mass equations of motion exactly and by applying the second-order symplectic
+
+integration method for the Euler equations as suggested in the previous section. Let us denote the resulting time- $\Delta t .$ -propagator by $\pmb { \psi } _ { \Delta t , \mathcal { T } }$ , where $\tau$ stands for the kinetic energy
+
+$$
+\mathcal { T } = \frac { 1 } { 2 M } \| \pmb { p } _ { c m } \| ^ { 2 } + \frac { 1 } { 2 } \pmb { \pi } ^ { T } \pmb { T } ^ { - 1 } \pmb { \pi } ,
+$$
+
+of the unforced rigid body.
+
+Consider now a rigid body with an $\mathsf { e x }$ ternal force $F$ acting at a (fixed) reference point $r ^ { 0 }$ on the rigid body. In other words, the force is assumed to be given in spatial coordinates by
+
+$$
+\pmb { F } ( \pmb { q } ) = - \nabla _ { \pmb { q } } V ( \pmb { q } ) , \quad \pmb { q } = \pmb { Q } r ^ { 0 } + \pmb { q } _ { c m } .
+$$
+
+Then, upon applying (8.41), we formally obtain
+
+$$
+\mathcal { V } ( \pmb { q } _ { c m } , s _ { 1 } , s _ { 2 } , s _ { 3 } ) = V ( \pmb { q } ) = V \left( \pmb { q } _ { c m } + \sum _ { j = 1 } ^ { 3 } \left( s _ { j } ^ { T } r ^ { 0 } \right) \pmb { e } _ { j } \right) .
+$$
+
+It is easily verified (see Example 1) that the equations of motion corresponding to the potential energy $\nu$ are given by
+
+$$
+\frac { d } { d t } \pmb { \pi } = \pmb { r } ^ { 0 } \times \sum _ { j = 1 } ^ { 3 } \left( \pmb { e } _ { j } ^ { T } \pmb { F } ( \pmb { q } ) \right) \pmb { \mathfrak { s } } _ { j } , \qquad \frac { d } { d t } \pmb { s } _ { j } = \pmb { 0 } , \quad ( j = 1 , 2 , 3 ) ,
+$$
+
+and
+
+$$
+\frac { d } { d t } \pmb { q } _ { c m } = \mathbf { 0 } , \qquad \frac { d } { d t } \pmb { p } _ { c m } = \pmb { F } ( \pmb { q } ) .
+$$
+
+A symplectic splitting method can be based on
+
+$$
+\mathcal { H } = \frac { 1 } { 2 } \mathcal { V } + \mathcal { T } + \frac { 1 } { 2 } \mathcal { V } .
+$$
+
+We have already derived several second-order symplectic methods $\pmb { \psi } _ { \Delta t , \mathcal { T } }$ for the integration of the Hamiltonian $\mathcal { H } = \mathcal { T }$ (free rigid body). The equations of motion corresponding to $\varkappa = \nu$ can be integrated exactly since $d \pmb { q } _ { C m } / d t = d \pmb { s } _ { i } / d t =$ $d \pmb q / d t = \pmb 0$ . Let us denote the corresponding flow map by $\phi _ { t , \gamma }$ . Then a secondorder symplectic method for the integration of (8.42) is provided by the composition method
+
+$$
+\pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { \Delta t / 2 , \mathscr { V } } \circ \pmb { \psi } _ { \Delta t , \mathscr { T } } \circ \pmb { \phi } _ { \Delta t / 2 , \mathscr { V } } .
+$$
+
+This splitting approach to the integration of rigid bodies was proposed by TOUMA AND WISDOM in [193] and by REICH in [156].
+
+Example 2Consider a completely symmetric rigid body; i.e. $I = I _ { 1 } = I _ { 2 } = I _ { 3 }$ ，with a spring attached to it at a point $r ^ { 0 }$ on the rigid body. The spring is assumed to have a rest length $L$ , a spring constant $\boldsymbol { K }$ , and its second end being attached to the origin of the coordinate system. The potential energy of the spring is
+
+$$
+V ( \pmb q ) = \frac { K } { 2 } ( r - L ) ^ { 2 } ,
+$$
+
+where $r = \| \pmb { q } \|$ , $\pmb q = \pmb q _ { c m } + \pmb Q r ^ { 0 }$ , and the spatial force is
+
+$$
+\boldsymbol { F } ( \boldsymbol { q } ) = - K \frac { r - L } { r } \boldsymbol { q } .
+$$
+
+The force $F _ { c m }$ acting on the center of mass is
+
+$$
+\pmb { F } _ { c m } = \pmb { F } ( \pmb { q } ) = - K \frac { r - L } { r } \left( \pmb { q } _ { c m } + \sum _ { j = 1 } ^ { 3 } ( \pmb { s } _ { j } ^ { T } \pmb { r } ^ { 0 } ) \pmb { e } _ { j } \right) ,
+$$
+
+and the applied torque $N$ in body coordinates is
+
+$$
+\pmb { N } = K \frac { r - I } { r } \sum _ { j = 1 } ^ { 3 } ( \pmb { q } ^ { T } \pmb { e } _ { j } ) \pmb { s } _ { j } \times \pmb { r } ^ { 0 } .
+$$
+
+The kinetic energy of the rigid body is
+
+$$
+\mathcal { T } = \frac { 1 } { 2 \cal { I } } \pmb { \pi } ^ { T } \pmb { \pi } + \frac { 1 } { 2 \cal { M } } \pmb { p } _ { c m } ^ { T } \pmb { p } _ { c m } ,
+$$
+
+with associated free rigid body equations of motion
+
+$$
+\frac { d } { d t } \pmb { \pi } = \mathbf { 0 } , \qquad \frac { d } { d t } \pmb { s } _ { j } = - I ^ { - 1 } \pmb { \widehat { \pi } } \pmb { s } _ { j } , \quad ( j = 1 , 2 , 3 ) ,
+$$
+
+and
+
+$$
+\frac { d } { d t } { \pmb { p } } _ { c m } = { \bf 0 } , \qquad \frac { d } { d t } { \pmb { q } } _ { c m } = M ^ { - 1 } { \pmb { p } } _ { c m } ,
+$$
+
+which can be solved exactly. Thus a symplectic integrator can be based on the splitting
+
+$$
+\mathcal { H } = \frac { 1 } { 2 } \mathcal { V } + \mathcal { T } + \frac { 1 } { 2 } \mathcal { V } ,
+$$
+
+with each of the three entries being explicitly integrable.
+
+We conduct a numerical experiment for the set of parameters $I = K = M = L = 1$ and $r ^ { 0 } = ( 0 , 0 , 1 )$ . The initial conditions are $\pmb q _ { c } = \pmb q$ , $Q = \pmb { I }$ , ${ \pmb { \pi } } = ( 1 , 1 , 2 ) ^ { T }$ , and $\pmb { p } _ { c } = ( 1 , 0 , 0 ) ^ { T }$ . See Fig. 8.6 for the numerical results obtained for $\Delta t = 0 . 0 1$ . ✷
+
+![](images/1c03a7986e8d2b9a30817e94ced329575ed128ec295bc9de4fc08d4316151236.jpg)  
+Figure 8.6 Rigid body motion under an external force field.
+
+The approach described so far easily generalizes to systems of interacting rigid bodies. The associated algorithm has been successfully applied to rigid body molecular dynamics by DULLWEBER, LEIMKUHLER, AND MCLACHLAN [54].
+
+We mention that one can also treat rigid bodies that are linked by constraints. Take, for example, two rigid bodies that are connected by a rigid rod linking a material point $r _ { 1 } ^ { 0 }$ on the first rigid body and a material point $r _ { 2 } ^ { 0 }$ on the second body. The associated (holonomic) constraint can be formulated as
+
+$$
+0 = r _ { 1 2 } - L ,
+$$
+
+where $L$ is the length of the rod and $r _ { 1 2 } = \| r _ { 1 2 } \|$
+
+$$
+\pmb { r } _ { 1 2 } = \pmb { q } _ { c m , 1 } + \pmb { Q } _ { 1 } \pmb { r } _ { 1 } ^ { 0 } - \pmb { q } _ { c m , 2 } - \pmb { Q } _ { 2 } \pmb { r } _ { 2 } ^ { 0 } .
+$$
+
+The Hamiltonian of the systems is
+
+$$
+\mathcal { H } = \mathcal { T } _ { 1 } + \mathcal { T } _ { 2 } + \lambda ( r _ { 1 2 } - L ) .
+$$
+
+Although such systems can be treated numerically by a natural extension of the splitting methods considered in this chapter, it is probably conceptually easier to apply an approach based on a RATTLE discretization in terms of rotation matrices.
+
+# 8.6 Other formulations for rigid body motion
+
+We next briefly outline other popular choices for formulating rigid body dynamics. The following two approaches can be viewed as defining a set of generalized coordinates $\pmb { \xi }$ in some appropriate configuration space, together with a map from the parameter space to the $3 \times 3$ orthogonal matrices.
+
+While each of these choices of parameters can be used as the basis for numerical simulation, they have certain disadvantages compared with the methods outlined in the previous sections.
+
+# 8.6.1 Euler angles
+
+It was observed by EULER (ca. 1776) that the orientation of a body in space can be specified in terms of three successive rotations with respect to some set of coordinate axes fixed in the body. The specific sequence of rotations used by Euler is as follows:
+
+1. A counterclockwise rotation about the z-axis through an angle $\alpha$
+
+2. A counterclockwise rotation about the $x - \mathsf { a x i s }$ through an angle $\beta$ .
+
+3. A counterclockwise rotation about the z-axis through an angle $\gamma$
+
+The rotation matrix $Q$ can be expressed as a product of these three planar rotations according to
+
+$$
+\pmb { Q } = \left[ \begin{array} { c c c } { \cos \gamma } & { \sin \gamma } & { 0 } \\ { - \sin \gamma } & { \cos \gamma } & { 0 } \\ { 0 } & { 0 } & { 1 } \end{array} \right] \left[ \begin{array} { c c c } { 1 } & { 0 } & { 0 } \\ { 0 } & { \cos \beta } & { \sin \beta } \\ { 0 } & { - \sin \beta } & { \cos \beta } \end{array} \right] \left[ \begin{array} { c c c } { \cos \alpha } & { \sin \alpha } & { 0 } \\ { - \sin \alpha } & { \cos \alpha } & { 0 } \\ { 0 } & { 0 } & { 1 } \end{array} \right] .
+$$
+
+There is nothing particularly special about the choice of axes for rotations ( $Z$ , then $x$ , then $Z$ ) used by Euler: the only restriction is that no two successive $\mathtt { a x e s }$ of the sequence may be the same. The Euler angles provide a parameterized description of the space of rotation matrices, and associated equations of motion can be derived. However these equations do not cover all possible orientations of a rigid body, and singularities in the equations defining the parameters complicate numerical integration of the resulting equations of motion, not just at the point of singularity, but also in the vicinity of it. One way of resolving the problem is to switch to a new set of angle variables (defined by a different sequence of axes) whenever integration proceeds into the vicinity of a singular point, but this approach is algorithmically cumbersome and suffers from the several other problems mentioned for local charts in Chapter 7. In particular, it is very difficult to obtain a satisfactory geometric method based on this approach.
+
+# 8.6.2 Quaternions
+
+Because of problems with the Euler angles, an alternative set of parameters is more frequently used in simulations, based on Hamilton’s quaternions. This approach is essentially equivalent to the use of “Euler parameters” or “Cayley– Klein variables,” although implementations may vary slightly.
+
+Hamilton’s quaternions are a quadruple of parameters ${ \pmb \sigma } = ( \sigma _ { 0 } , \sigma _ { 1 } , \sigma _ { 2 } , \sigma _ { 3 } )$ subject to the constraint $\sigma _ { 0 } ^ { 2 } + \sigma _ { 1 } ^ { 2 } + \sigma _ { 2 } ^ { 2 } + \sigma _ { 3 } ^ { 2 } = 1$ . The rotation matrix is defined in terms of the parameters by
+
+$$
+\pmb { Q } = \pmb { I _ { 3 } } + 2 \sigma _ { 0 } \hat { \pmb { e } } + 2 \hat { \pmb { e } } ^ { 2 } , \qquad \hat { \pmb { e } } = \left[ \begin{array} { c c c } { 0 } & { - \sigma _ { 3 } } & { \sigma _ { 2 } } \\ { \sigma _ { 3 } } & { 0 } & { - \sigma _ { 1 } } \\ { - \sigma _ { 2 } } & { \sigma _ { 1 } } & { 0 } \end{array} \right] .
+$$
+
+The quaternions obey coupled differential equations involving the body angular momenta $\pmb { \pi }$ . These differential equations take the form
+
+$$
+\frac { d } { d t } \pmb { \sigma } = \pmb { B } ( \pmb { \sigma } ) \pmb { T } ^ { - 1 } \pmb { \pi } ; \qquad \frac { d } { d t } \pmb { \pi } = \hat { \pmb { \pi } } \pmb { T } ^ { - 1 } \pmb { \pi } + \pmb { N } ,
+$$
+
+where $\pmb { T } = \mathrm { d i a g } ( I _ { 1 } , I _ { 2 } , I _ { 3 } )$ is the (diagonalized) inertial tensor,
+
+$$
+B ( \pmb { \sigma } ) = \left[ \begin{array} { c c c } { - \sigma _ { 1 } } & { - \sigma _ { 2 } } & { - \sigma _ { 3 } } \\ { \sigma _ { 0 } } & { - \sigma _ { 3 } } & { \sigma _ { 2 } } \\ { \sigma _ { 3 } } & { \sigma _ { 0 } } & { - \sigma _ { 1 } } \\ { - \sigma _ { 2 } } & { \sigma _ { 1 } } & { \sigma _ { 0 } } \end{array} \right] ,
+$$
+
+and $N$ is the applied torque in body coordinates.
+
+The equations of motion can be shown to be Hamiltonian with a noncanonical Lie–Poisson structure similar to that of the Euler equation. In fact, the same splitting ideas as developed in Section 8.3.1 can be applied and lead essentially to identical propagation schemes. The only difference is that one either works directly with the rotation matrix $Q \in \mathbb { R } ^ { 3 \times 3 }$ or with $\pmb { \sigma } \in \mathbb { R } ^ { 4 }$ and employs the relation (8.44).
+
+A constrained Hamiltonian version of the quaternionic description is also possible by viewing the quaternions as a set of generalized coordinates subject to the holonomic constraint $\| \pmb { \sigma } \| ^ { 2 } = 1$ . Using (8.44), we introduce $\pmb { \sigma }$ and $\dot { \pmb { \sigma } }$ into the rigid body Lagrangian (8.5) and determine the canonical momenta through the formula
+
+$$
+p _ { \sigma } = \frac { \partial L } { \partial \dot { \sigma } } .
+$$
+
+Although symplectic integration methods based on such an approach can be formulated, the RATTLE approach based on the rotation matrix $Q$ is found to be more efficient and conceptional easier to implement.
+
+# 8.7 Exercises
+
+1. Lagrange and Hamiltonian equations for rigid bodies. Verify the gradient expression (8.16) using the definition (8.15). Also show that
+
+$$
+P R ^ { - 1 } = \frac { 1 } { 2 } \nabla _ { P } \mathrm { t r } ( P R ^ { - 1 } P ^ { T } ) .
+$$
+
+Essentially the same result can be used to derive the constrained Lagrange equation from the Lagrangian function (8.5). (Hint: You may find the identities
+
+$$
+\mathrm { t r } ( \pmb { A } ) = \mathrm { t r } ( \pmb { A } ^ { T } ) , \quad \mathrm { t r } ( \pmb { A } \pmb { B } ) = \mathrm { t r } ( \pmb { B } \pmb { A } ) , \quad \pmb { u } ^ { T } \pmb { v } = \mathrm { t r } ( \pmb { u } \pmb { v } ^ { T } )
+$$
+
+useful.)
+
+2. Planar rigid bodies. Let us introduce a set of orthogonal unit vectors $t _ { i } \in \mathbb { R } ^ { 3 }$ $j = 1 , 2 , 3$ , such that
+
+$$
+Q = [ t _ { 1 } , t _ { 2 } , t _ { 3 } ] \in \mathbb { R } ^ { 3 \times 3 } .
+$$
+
+We also write
+
+$$
+\dot { Q } = [ \dot { t } _ { 1 } , \dot { t } _ { 2 } , \dot { t } _ { 3 } ]
+$$
+
+for the time derivative. The rotational kinetic energy of a rigid body can then be expressed as
+
+$$
+T _ { \mathrm { r o t } } = \frac 1 2 \mathrm { t r } ( \dot { Q } R \dot { Q } ^ { T } ) = \frac 1 2 \sum _ { i = 1 } ^ { 3 } r _ { i i } \lVert \dot { \pmb { t } } _ { i } \rVert ^ { 2 } .
+$$
+
+We have $r _ { 3 3 } = 0$ for a planar rigid body and the rotational kinetic energy reduces to
+
+$$
+T _ { \mathrm { r o t } } = \frac { 1 } { 2 } \sum _ { i = 1 } ^ { 2 } { r _ { i i } \| \dot { \bf t } _ { i } \| ^ { 2 } } .
+$$
+
+Since the third unit vector $t _ { 3 }$ is no longer part of the equations, we also redefine the matrix $Q$ by
+
+$$
+Q = [ t _ { 1 } , t _ { 2 } ] \in \mathbb { R } ^ { 3 \times 2 } .
+$$
+
+This matrix still satisfies $Q ^ { T } Q = I _ { 2 }$ but $I _ { 2 }$ is now the $2 \times 2$ identity matrix.
+
+a. Verify that
+
+$$
+T _ { \mathrm { r o t } } = \frac { 1 } { 2 } \sum _ { i = 1 } ^ { 2 } r _ { i i } \lVert \dot { \pmb { t } } _ { i } \rVert ^ { 2 } = \frac { 1 } { 2 } \mathrm { t r } ( \dot { \pmb { Q } } \pmb { R } \dot { \pmb { Q } } ^ { T } ) ,
+$$
+
+with $\dot { \pmb Q } = [ \dot { \pmb t } _ { 1 } , \dot { \pmb t } _ { 2 } ] \in \mathbb { R } ^ { 3 \times 2 }$ and
+
+$$
+\begin{array} { r } { R = \left[ { \begin{array} { c c } { r _ { 1 1 } } & { 0 } \\ { 0 } & { r _ { 2 2 } } \end{array} } \right] . } \end{array}
+$$
+
+b. The augmented Lagrangian takes the expression
+
+$$
+\tilde { L } = T _ { \mathrm { r o t } } ( \dot { Q } ) + T _ { \mathrm { t r a n s } } ( \dot { q } _ { \mathrm { c m } } ) - V _ { \mathrm { e x t } } ( Q , q _ { \mathrm { c m } } ) - \mathrm { t r } ( ( Q ^ { T } Q - I _ { 2 } ) \varLambda ) .
+$$
+
+Derive the associated Hamiltonian equations of motion and suggest a numerical implementation.
+
+3. Mass tensor and inertia tensor. Let $R$ be the diagonal mass tensor of a free rigid body and $\tau$ the corresponding diagonal inertia tensor. We have the following relation between the diagonal elements of these two matrices
+
+$$
+t _ { i i } = \sum _ { j \neq i } r _ { j j } .
+$$
+
+Show that this relation implies that
+
+$$
+\widehat { b } R + R \widehat { b } = \widehat { T b }
+$$
+
+holds for any vector $b$ and associated skew-symmetric matrix $\widehat { b }$ .
+
+4. Lagrangian top. Show that the third component $m _ { 3 } = s _ { 3 } ^ { T } \pmb { \pi }$ of the spatial angular momentum vector $m = Q \pi$ is preserved under the equations (8.38)– (8.39) for the symmetric top. Show that the third component $\pi _ { 3 }$ of the body angular momentum is also preserved. Denote the energy of the Lagrangian top by $E$ and introduce the four constants (compare [7, 73])
+
+$$
+\begin{array} { l } { \alpha = \displaystyle \frac { 2 E - \pi _ { 3 } ^ { 2 } / m _ { 3 } } { I _ { 1 } } , } \\ { \beta = \displaystyle \frac { c } { I _ { 1 } } , } \\ { a = \displaystyle \frac { \pi _ { 3 } } { I _ { 1 } } , } \\ { b = \displaystyle \frac { m _ { 3 } } { I _ { 1 } } . } \end{array}
+$$
+
+Provided that the distance between the stationary point of contact and the center of mass is equal to one, it can be shown that the third component $u ( t ) = q _ { 3 } ( t )$ of the center of mass motion $\pmb q _ { \mathrm { c m } } ( t ) = \pmb Q ( t ) \pmb r ^ { 0 }$ satisfies the differential equation
+
+$$
+\dot { u } ^ { 2 } = ( 1 - u ^ { 2 } ) ( \alpha - \beta u ) - ( b - a u ) ^ { 2 } .
+$$
+
+Of particular importance are the two roots of
+
+$$
+0 = ( 1 - u _ { i } ^ { 2 } ) ( \alpha - \beta u _ { i } ) - ( b - a u _ { i } ) ^ { 2 } ,
+$$
+
+$j = 1 , 2$ , in the interval $u \in [ - 1 , 1 ]$ . With $u _ { 1 } < u _ { 2 }$ the motion in $u ( t )$ satisfies $u _ { 1 } \leq u ( t ) \leq u _ { 2 }$ . Compute the two roots for the data given in Section 8.3.2 and compare with the computed motion in $u ( t ) ~ = ~ q _ { 3 } ( t )$ as displayed in Fig. 8.3. Note also that the initial body angular momentum vector implies that $u _ { 2 } = b / a$ .
+
+5. Structure matrix and Casimir functions. Find the structure matrix $J$ corresponding to the Hamiltonian equations of motion for a single rigid body with kinetic energy
+
+$$
+\mathcal { T } ( \pmb { p } _ { c m } , \pmb { \pi } ) = \frac { 1 } { 2 m } \pmb { p } _ { c m } ^ { T } \pmb { p } _ { c m } + \frac { 1 } { 2 } \pmb { \pi } ^ { T } \pmb { T } ^ { - 1 } \pmb { \pi } ,
+$$
+
+moving in $\mathbb { R } ^ { 3 }$ under a potential energy $\mathcal { V } ( q _ { c m } , s _ { 1 } , s _ { 2 } , s _ { 3 } )$ . What is the rank of $J ?$ Find the associated Casimir functions.
+
+6. Angular momentum conservation. Show that total angular momentum
+
+$$
+\pmb { m } _ { \mathrm { t o t } } = \pmb { q } _ { c m } \times \pmb { p } _ { c m } + \pmb { Q } \pmb { \pi } ,
+$$
+
+is conserved for any single rigid body with a potential energy of the form
+
+$$
+\mathcal { V } = \psi ( \| \pmb q \| ) , \qquad \pmb q = \pmb q _ { c m } + \pmb { Q } r ^ { 0 } .
+$$
+
+7. Numerical conservation of angular momentum. Consider the RATTLE algorithm (8.17)–(8.21) for a free rigid body; i.e. $V _ { \mathrm { e x t } } = 0$ . Show that the spatial angular momentum matrix ${ \widehat { \pmb { m } } } ^ { n } = P ^ { n } [ { \pmb { Q } } ^ { n } ] ^ { T } - { \pmb { Q } } ^ { n } [ { \pmb { P } } ^ { n } ] ^ { T }$ is exactly conserved along numerical solutions. Hint: use the fact that $\widehat { \pmb { m } } ^ { n }$ is skew symmetric.
+
+8. Coupled rigid bodies. Write the equations of motion for two identical rigid bodies with total mass $m$ and tensor of inertia $\tau$ interacting through a harmonic spring with rest length $L$ and force constant $\boldsymbol { K }$ . The spring is attached to the rigid bodies at the material points $r _ { i } ^ { 0 }$ , $i = 1 , 2$ . Give a second-order composition method for the case $I = I _ { 1 } = I _ { 2 } \ne I _ { 3 }$ (symmetric rigid body).
+
+9. Quaternions. Given a unit vector $\textbf { \textit { n } } \in \ \mathbb { R } ^ { 3 }$ and a real number $\omega$ , verify RODRIGUES’ formula
+
+$$
+Q = \mathrm { e } ^ { \omega \hat { n } } ,
+$$
+
+where the rotation matrix $Q$ is given by (8.44) with $\sigma _ { 0 } = \cos ( \omega / 2 )$ and
+
+$$
+\left[ \sigma _ { 1 } , \sigma _ { 2 } , \sigma _ { 3 } \right] = \sin ( \omega / 2 ) \left[ n _ { 1 } , n _ { 2 } , n _ { 2 } \right] .
+$$
+
+RODRIGUES’ formula is useful for implementing a splitting method for symmetric or nearly symmetric rigid bodies. Note that $\sigma _ { 0 }$ can be replaced by $\sigma _ { 0 } = ( 1 - \omega ^ { 2 } / 4 ) / ( 1 + \omega ^ { 2 } / 4 )$ and
+
+$$
+\left[ \sigma _ { 1 } , \sigma _ { 2 } , \sigma _ { 3 } \right] = \frac { \omega } { 1 + \omega ^ { 2 } / 4 } \left[ n _ { 1 } , n _ { 2 } , n _ { 2 } \right] ,
+$$
+
+which provides an inexpensive approximation to the exact matrix exponential for $\omega \ll 1$ .
+
+# 9
+
+# Adaptive geometric integrators
+
+It is well known that during the integration of nonlinear systems of ordinary differential equations changes in the character of the solutions may demand corresponding changes in the integration timestep. In the context of Hamiltonian systems this need develops from fluctuations in the forces along a solution curve. For motivation we need look no further than the historic Kepler problem which was introduced in Chapter 3. Kepler’s first two laws tell us (i) that a body in bound gravitational motion moves along an ellipse with the fixed point at one focus and that (ii) the orbit sweeps out equal sections of the ellipse in equal times. This is diagrammed in the illustration below (Fig. 9.1), which shows a Keplerian orbit and several points equally spaced in time along the orbit.
+
+![](images/366f47650fb9c197553ec557c95fcb80859c32fd0c57b1ed2d623cdfea233204.jpg)  
+Figure 9.1 An orbit of the Kepler problem. The moving body sweeps out equal areas in equal times, moving most rapidly in the vicinity of the fixed body. The points shown along the Kepler ellipse are encountered at uniform intervals in time.
+
+Recall that the force acting on the moving body in the Kepler system is inversely proportional to the square of the separation from the fixed body. When the orbits in the Kepler problem (or, more generally, in a gravitational $N .$ -body problem) are highly eccentric (as they are for example for Comets in our Solar System) the magnitude of the force along orbits can vary considerably. It is clear that the dynamics in the vicinity of close approach will be challenging to resolve accurately. For this reason, some sort of adaptivity in time is essential.1
+
+The traditional approach to varying stepsize in ordinary differential equation solvers is based on selecting a stepsize so that an error estimate is kept below a prescribed tolerance. Because computing the global error is essentially impossible in general purpose integration, the standard approaches use a local error estimate. For example, it is common when integrating with a Runge–Kutta method to add an additional stage to the method so that a higher-order approximation is provided; the difference between the two approximations is then used as an error estimate. Schemes like this can be designed to work with symplectic methods, but the results obtained in numerical experiments are wholly unsatisfying. The observation has been made that, for long term stability, fixed stepsize symplectic methods actually outperform their variable stepsize counterparts when compared on an efficiency basis. This raised a quandary when it first was discovered by GLADMAN, DUNCAN, AND CANDY [72], CALVO AND SANZ-SERNA [42], SKEEL AND GEAR [176] and others in the early 1990s. After all, the symplectic maps form a group, hence the composition of symplectic integrators with various stepsizes
+
+$$
+\pmb { \psi } = \pmb { \psi } _ { \Delta t _ { 1 } } \pmb { \psi } _ { \Delta t _ { 2 } } \ldots \pmb { \psi } _ { \Delta t _ { N } } ,
+$$
+
+remains a symplectic map. Why should the performance be so poor? The same poor behaviour was observed whether or not the stepsize sequence was obtained from a series of computations based on the solution or was provided a priori.
+
+The best explanation emerged with the development of the backward error analysis. In order to construct the so-called perturbed Hamiltonian expansion for a symplectic method, it is necessary to assume that the symplectic maps used in each timestep are identical. If the stepsize varies, we have the problem that we generate approximations to one, then another perturbed Hamiltonian as the stepsize changes; there is no reason to expect that this sort of process would produce a stable long-term propagation. It seems from this that the prospects for getting good results from symplectic methods with traditional variable stepsize techniques are dim.
+
+# 9.1 Sundman and Poincar´e transformations
+
+The key to effective geometric integration with variable stepsize lies in the use of a time transformation
+
+$$
+\frac { d t } { d \tau } = g ( \pmb q , \pmb p ) ,
+$$
+
+nearly Keplerian character of many of the trajectories. However, in this instance we are merely using the unmodified Kepler problem as a device to illustrate a general approach to variable stepsize.
+
+where $g$ is a smooth, positive scalar-valued function of positions and momenta. We refer to this as a Sundman transformation. If this transformation is applied to an autonomous system of differential equations, there results a new system of differential equations whose solutions evolve in the rescaled, or “fictive,” time. In fact, the actual orbits of the system do not change; they are just traversed at a different speed. If the original Hamiltonian is $H ( \pmb { q } , \pmb { p } )$ , the system that results from application of (9.1) is
+
+$$
+\begin{array} { r l } & { \displaystyle \frac { d } { d \tau } \pmb { q } = \frac { d \pmb { q } } { d t } \frac { d t } { d \tau } = g ( \pmb { q } , \pmb { p } ) \nabla _ { \pmb { p } } H ( \pmb { q } , \pmb { p } ) , } \\ & { \displaystyle \frac { d } { d \tau } \pmb { p } = \frac { d \pmb { p } } { d t } \frac { d t } { d \tau } = - g ( \pmb { q } , \pmb { p } ) \nabla _ { \pmb { q } } H ( \pmb { q } , \pmb { p } ) . } \end{array}
+$$
+
+This system is, in general, no longer Hamiltonian. (It is Hamiltonian in very special cases, such as when the function $g$ is a function of a first integral of the problem – for example the energy – but this choice appears to be of little practical interest.) On the other hand, if $g ( q , - p ) = g ( q , p )$ and $g ( \pmb { q } , \pmb { p } ) > 0$ , then time-reversibility can be maintained by the Sundman transformation. Sundman transformations had actually been in frequent use in computational astronomy from the mid 1960s for varying the timestep (albeit without maintaining the preservation of time-reversal symmetry under subsequent discretization).
+
+Now consider the fixed-stepsize integration of (9.2)–(9.3) with a stepsize $\Delta \tau$ in fictive time, generating a discrete trajectory $\left\{ \left( { \pmb q } ^ { n } , { \pmb p } ^ { n } \right) \right\}$ . Because of the timetransformation, each fixed step in $\tau$ corresponds to a time-step in $t$ of length $\Delta t _ { n } \approx g ( { \pmb q } ^ { n } , { \pmb p } ^ { n } ) \Delta \tau$ . This relation is not exact; in fact, to resolve the time variable we need to numerically solve the differential equation (9.1) in tandem with the system in order to determine the evolution of time. STOFFER [178, 179] pointed out that the system (9.2)–(9.3),(9.1) could be solved by a reversible integrator, yielding a reversible variable stepsize method. A related scheme, also based on reversible Sundman transformation, was suggested in 1995 by the astronomers HUT, MAKINO AND MCMILLAN as a modification of the St¨ormer–Verlet method [90]. The methods mentioned so far are all implicit, a consequence of the coupling the various components of the vector field via the Sundman transformation. This implicitness is undesirable in many of the applications where variable stepsize methods are most likely to be needed, such as gravitational dynamics. A semiexplicit approach (“Adaptive Verlet”) was eventually developed by HUANG AND LEIMKUHLER [89].
+
+Before turning our attention to this scheme, let us consider the symplectic alternative. Along with Sundman transformations, there is another class of time transformations which can be used as the foundation for geometric integration. From a given Hamiltonian $H ( { \pmb q } , { \pmb p } )$ construct a new Hamiltonian by first subtracting the energy $E$ of a trajectory, then multiplying this difference by a positive, smooth scaling function $g ( \pmb { q } , \pmb { p } )$
+
+$$
+\tilde { H } ( \pmb { q } , \pmb { p } ) = g ( \pmb { q } , \pmb { p } ) ( H ( \pmb { q } , \pmb { p } ) - E ) .
+$$
+
+Noting that the energy is constant along trajectories, we can infer that if at some initial point on the trajectory $H ( q ^ { 0 } , p ^ { 0 } ) = E$ , then this same relation is satisfied at all points of the trajectory, thus, as well, $\tilde { \cal H } \equiv 0$ along this trajectory. The equations of motion for the modified Hamiltonian (9.4) take the form
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d \tau } q = g ( { q } , { p } ) \nabla _ { p } H ( { q } , { p } ) + ( H ( { q } , { p } ) - E ) \nabla _ { p } g ( { q } , { p } ) , } \\ { \displaystyle \frac { d } { d \tau } p = - g ( { q } , { p } ) \nabla _ { q } H ( { q } , { p } ) - ( H ( { q } , { p } ) - E ) \nabla _ { q } g ( { q } , { p } ) . } \end{array}
+$$
+
+These equations can be seen to reduce to (9.2)–(9.3) along the energy surface, thus the Poincar´e and Sundman transformations are formally equivalent, in the absence of perturbation. The transformation (9.4) has the same effect as (9.1) with respect to the exact solutions. This suggests that we could implement a variable stepsize integration strategy by first applying the Poincar´e transformation and then discretizing the resulting system using a fixed stepsize symplectic integrator, an idea independently suggested by HAIRER [78] and REICH [158]. In this case, our numerical method would consist of the iteration of a single symplectic map, so standard backward error analysis (see Chapter 5) could be used to justify the resulting method.
+
+In the context of numerical integrations, however, it should be emphasized that this approach raises some new issues. First, the energy is unlikely to be exactly conserved, and this destroys the direct correspondence between time and fictive time when the Poincar´e transformation is used. From (9.4) we can see that if an error $\Delta \tilde { H }$ is introduced in the Hamiltonian $\tilde { H }$ at some stage of numerical integration, then the true energy will satisfy
+
+$$
+\Delta H = \frac { \Delta \tilde { H } } { g } ,
+$$
+
+thus in situations where $g$ becomes very small (where the timesteps needed for integration are small), the true energy error can be large, and the equations (9.5)–(9.6) will differ significantly from the Sundman-transformed equations (9.2)–(9.3); hence the correspondence between time and fictive time will be destroyed at points where the computation is most difficult.
+
+A second problem raised by the Poincar´e transformation has to do with the numerical implementation of the method. We know from earlier chapters that the available methods for integrating Hamiltonian systems with a nonseparable Hamiltonian are all implicit. Since (9.4) couples the positions and momenta, even when the original Hamiltonian $H$ is separable, the methods may not be practical for many applications. On the other hand, there are settings where such a symplectic approach may be reasonable: for example, if the original Hamiltonian is of low dimension or is given in a nonseparable form, or if certain combinations of numerical method and time transformation are employed. We will briefly return to discuss the symplectic approach later in this chapter.
+
+# 9.2 Reversible variable stepsize integration
+
+We now consider the application of reversible adaptive methods. Eventually, we will see that this approach allows for construction of efficient higher-order variable stepsize methods, and we will see how this reversible adaptive framework can be combined with more sophisticated methods such as those used to regularize fewbody close approaches in N-body gravitation.
+
+Recall that a differential equation system
+
+$$
+\frac { d } { d t } z = { \pmb f } ( z ) , \qquad z \in \mathbb { R } ^ { d }
+$$
+
+is reversible with respect to a linear involution $s$ (a mapping of $\mathbb { R } ^ { d }$ with $S ^ { 2 } = I ^ { \cdot }$ ) if
+
+$$
+- S f ( S z ) = f ( z ) .
+$$
+
+In particular, a canonical Hamiltonian system is reversible with respect to $p  - p$ if $H ( \pmb { q } , - \pmb { p } ) = H ( \pmb { q } , \pmb { p } )$ . A system of differential equations
+
+$$
+\begin{array} { c } { { \displaystyle { \frac { d } { d t } } { \pmb q } = { \pmb F } ( { \pmb q } , { \pmb p } ) , } } \\ { { \displaystyle { \frac { d } { d t } } { \pmb p } = { \pmb G } ( { \pmb q } , { \pmb p } ) } } \end{array}
+$$
+
+is reversible under the same involution if $F ( q , - p ) = - F ( q , p )$ , and $G ( q , - p ) =$ $G ( \pmb { q } , \pmb { p } )$ .
+
+From the definition, it is easy to see that applying a Sundman transformation (9.1) with positive scaling $g$ and $g ( S z ) = g ( z )$ to a reversible system $\begin{array} { r } { \frac { d } { d t } z = \pmb { f } ( z ) } \end{array}$ will yield another reversible system. If we discretize the rescaled system
+
+$$
+\frac { d z } { d \tau } = g ( z ) f ( z )
+$$
+
+by some numerical method we obtain a discrete trajectory $\{ z ^ { n } \}$ , and each point on this trajectory will correspond to a point $\tau _ { n }$ in the rescaled time. Evidently, we must solve (9.1) along with the differential equations for the phase variables in order to resolve the temporal variable.
+
+It remains to find a suitable discretization of the system (9.2)–(9.3). One approach, which is usually acceptable for low-dimensional problems, is just to apply the implicit midpoint method (or some other reversible integrator) to the rescaled equations. This has the advantage of simplicity and generality. We will illustrate this general approach to adaptive integration with a simple example: the soft impact oscillator with one degree-of-freedom Hamiltonian
+
+$$
+H ( q , p ) = \frac { p ^ { 2 } } { 2 } + \frac { 1 } { q ^ { 2 } } + \frac { k } { 2 } q ^ { 2 } .
+$$
+
+The orbits of this problem are periodic. A phase plane orbit (for $k = 0 . 1$ ) is shown below (Fig. 9.2), along with graphs of each coordinate against time. Note that the momenta must change very rapidly on a short time interval as the material point approaches the origin, and then gradually on the remainder of the period; this problem can benefit from some sort of adaptivity in the timestep.
+
+![](images/d53d633fcdf4b392929cf674040e1775892c98d097306121ec8f547c274e4469.jpg)  
+Figure 9.2 An orbit of the “impact-oscillator” for $k = 0 . 1$ . The figure to the left shows the motion in the phase plane; in the right, the positions and momenta are graphed against time. Note the sharp change in the momenta as $q$ approaches the origin.
+
+We solve this system numerically for the following initial condition $q ( 0 ) = 2$ , $p ( 0 ) = - 4$ for $t \in [ 0 , 1 0 0 ]$ using the following three related second-order methods: (1) the trapezoidal rule (abbreviated “TR”), (2) an implementation of the trapezoidal rule with a third-order error estimate (TR23),2 and (3) Trapezoidal Rule applied to the rescaled equations
+
+$$
+\begin{array} { l } { { { \displaystyle \frac { d } { d t } q = g ( q ) p } , } } \\ { { { \displaystyle \frac { d } { d t } p = g ( q ) ( 2 q ^ { - 3 } - k q ) , } } } \end{array}
+$$
+
+2This solver is implemented in MATLAB 6 as ode23t and is specifically recommended for problems with little or no damping.
+
+with the rescaling function
+
+$$
+g ( q ) = \frac { 1 } { 1 + q ^ { - 2 } }
+$$
+
+(abbreviated TRS).
+
+![](images/eaeec3d92b4d793ce83ce95fe6839c533beb847e473f4e9e770e8f8763954c7c.jpg)  
+Figure 9.3 Energy errors in simulations of the impact oscillator using the three variants of trapezoidal rule. In the upper figure the simulation timestep, tolerance, and fictive timestep were all tuned so that a total of 1000 timesteps were taken to cover the time interval [0, 100]. In the lower figure, 4000 timesteps were used.
+
+The energy errors for representative simulations are shown in Fig. 9.3. In order to perform comparable experiments, we tuned the integration parameters (timestep, tolerance, or fictive timestep) so that all methods required the same number of trapezoidal rule steps to integrate to time 100. Observe that the energy of both the trapezoidal rule and the traditional variable stepsize methods fluctuate substantially, in the vicinity of the “collision.” On the other hand, the reversible variable stepsize method shows a stable, relatively mild energy variation with no secular drift. Comparing the upper and lower panels of Fig. 9.3, we see that the results are qualitatively similar regardless of the number of timesteps used in the simulation.
+
+The mechanism which leads to the energy drift in TR23 becomes clearer when we look at the close-up of the energy in the vicinity of collision (Fig. 9.4).
+
+![](images/b390cbe28986db15d9a55340b9b6aed5f9e6ece11d10c2ecd4f97cf35ba493b0.jpg)  
+Figure 9.4 Close-up of the energy evolution in the vicinity of a collision. The TR and TRS schemes return to the pre-collisional value. By contrast, the TR23 method loses a substantial amount of energy during the collision.
+
+For the TR and TRS methods, which are time reversible, the energy error graph can be seen to be geometrically symmetric around a vertical line through the time of collision. Because the energy is nearly exactly maintained far from the collision, the symmetry in energy implies that it must go back to the correct value as we leave the point of collision. By contrast, the TR23 method, which actually controls the local error in energy at the point of collision somewhat better than TRS, does not possess the symmetric energy behavior of the other methods. As a consequence, even on the relatively modest interval considered, the reversible variable stepsize method easily wins this competition, when compared on an efficiency basis (with efficiency measured by energy error per timestep); on longer time intervals or in larger problems, one can expect the results to be even more dramatic. The important symmetry property for the evolution of the energy error is not guaranteed to be present in all simulations. It can be shown to hold for two-body problems with central forces [109]. The benefits of the reversible adaptive framework are less apparent in the presence of interactions between three or more bodies. We will return to this issue in the section on Coulombic problems, below.
+
+The choice of the time-rescaling function is critical to the success of the symmetric adaptive methods. We discuss this problem in the following and subsequent sections of this chapter.
+
+# 9.2.1 Local error control as a time transformation
+
+Given a symmetric one-step method $\psi _ { \Delta t }$ , an adaptive method can be generated by solving the equations
+
+$$
+\begin{array} { r l } & { z ^ { n + 1 } = \pmb { \psi } _ { \Delta t _ { n } } ( z ^ { n } ) , } \\ & { \quad \quad 0 = P ( \Delta t _ { n } , z ^ { n } , z ^ { n + 1 } ) . } \end{array}
+$$
+
+If the scalar function $P$ is symmetric with respect to transposition of its last two arguments, then the resulting method will be symmetric.
+
+As suggested by STOFFER [179] (see also [83]) we can base $P$ on an estimate for the local error using various schemes, such as finite differences. In the case where the underlying method $\psi _ { \Delta t }$ is a symmetric Runge–Kutta or Partitioned Runge–Kutta method, a traditional embedded error estimate can be developed using the stages of the method; the only restriction is that the formula for the error estimate we use should be symmetric.
+
+To illustrate, suppose we start with the trapezoidal rule,
+
+$$
+z ^ { n + 1 } = z ^ { n } + \frac { \Delta t } { 2 } \left[ \pmb { f } ( z ^ { n } ) + \pmb { f } ( z ^ { n + 1 } ) \right] .
+$$
+
+The local error in one step of Trapezoidal Rule is
+
+$$
+\mathbf { l e } = { \frac { \Delta t ^ { 3 } } { 1 2 } } { \frac { d ^ { 3 } } { d t ^ { 3 } } } z ( \xi ) .
+$$
+
+This error can be estimated in a variety of ways. We can also use the differential equation itself to define $\frac { d ^ { 3 } } { d t ^ { 3 } } z$ along the solution. In a one-dimensional case we would have
+
+$$
+{ \frac { d } { d t } } z = f \Rightarrow { \frac { d ^ { 2 } } { d t ^ { 2 } } } z = f ^ { \prime } f \Rightarrow { \frac { d ^ { 3 } } { d t ^ { 3 } } } z = f ^ { \prime \prime } f ^ { 2 } + f ^ { \prime 2 } f
+$$
+
+(or in higher dimensions, a more complicated version of this formula). The local error in the nth step of trapezoidal rule can then be approximated by
+
+$$
+I e \approx \frac { \Delta t ^ { 3 } } { 1 2 } ( f ^ { \prime \prime } f ^ { 2 } + f ^ { \prime 2 } f ) .
+$$
+
+Setting the magnitude of this estimate to a prescribed tolerance tol yields
+
+$$
+\Delta t = \left[ \frac { 1 2 \mathrm { t o l } } { | f ^ { \prime \prime } f ^ { 2 } + f ^ { \prime 2 } f | } \right] ^ { 1 / 3 } .
+$$
+
+Note that the stepsize has been written as a function of tol and the solution itself. We could, for example, evaluate the estimate at $z ^ { n + 1 / 2 } = ( z ^ { n } + z ^ { n + 1 } ) / 2$ , then introduce the expression for $\Delta t$ directly into (9.7), the result being a secondorder implicit adaptive integrator. The parameter tol acts in the usual way to allow a refinement of the approximate solution. In practice we would need to modify the stepsize formula to avoid singularities and to ensure the smoothness of the timestep map.
+
+Alternatively, if we define $\Delta \tau = \ t \circ 1 ^ { 1 / 3 }$ , we see that we are simply solving a certain Sundman rescaling of the original problem, so that any of the schemes mentioned in this chapter could be used. This example is a special case of a more general observation that symmetric methods based on error estimates can be viewed as reversible discretizations of a Sundman-transformed problem (see [179]).
+
+Controlling local error makes sense if the goal of computation is a numerical solution with a small trajectory error, but this is not necessarily the situation we confront when using a geometric integrator. On the other hand, there are likely to be situations where some combination of various types of stepsize controls, including one based on local error, should be used in simulation.
+
+In the following subsections, we consider the construction of efficient methods for implementing reversible variable stepsize based on time reparameterization. The schemes described above are implicit. In the sequel we show how semi-explicit and even fully explicit methods can be developed.
+
+# 9.2.2 Semi-explicit methods based on generalized leapfrog
+
+We consider a reparameterization of a separable Hamiltonian system
+
+$$
+\begin{array} { l } { { \displaystyle { \frac { d { \pmb q } } { d \tau } } = g ( { \pmb q } , { \pmb p } ) { \pmb M } ^ { - 1 } { \pmb p } } , } \\ { { \displaystyle { \frac { d { \pmb p } } { d \tau } } = - g ( { \pmb q } , { \pmb p } ) \nabla _ { { \pmb q } } V ( { \pmb q } ) . } } \end{array}
+$$
+
+The system is not solvable by the standard Verlet method.
+
+On the other hand, if we apply the generalized leapfrog method, we obtain the following system
+
+$$
+\begin{array} { l } { { \displaystyle { \pmb q } ^ { n + 1 } = { \pmb q } ^ { n } + \frac { \Delta \tau } { 2 } ( g ( { \pmb q } ^ { n } , { \pmb p } ^ { n + \frac { 1 } { 2 } } ) + g ( { \pmb q } ^ { n + 1 } , { \pmb p } ^ { n + \frac { 1 } { 2 } } ) ) { \pmb M } ^ { - 1 } { \pmb p } ^ { n + \frac { 1 } { 2 } } , } } \\ { { \displaystyle { \pmb p } ^ { n + \frac { 1 } { 2 } } = { \pmb p } ^ { n } - \frac { \Delta \tau } { 2 } g ( { \pmb q } ^ { n } , { \pmb p } ^ { n + \frac { 1 } { 2 } } ) \nabla _ { \pmb q } V ( { \pmb q } ^ { n } ) } , } \\ { { \displaystyle { \pmb p } ^ { n + 1 } = { \pmb p } ^ { n + \frac { 1 } { 2 } } - \frac { \Delta \tau } { 2 } g ( { \pmb q } ^ { n + 1 } , { \pmb p } ^ { n + \frac { 1 } { 2 } } ) \nabla _ { \pmb q } V ( { \pmb q } ^ { n + 1 } ) } . } \end{array}
+$$
+
+The equations (9.10)–(9.12) are implicit, requiring the solution of a nonlinear system at each step, but the fact that $g$ is scalar means that a relatively efficient Newton solver based on rank-one updates is possible, as pointed out in [89]. Moreover, in case $g$ is a function only of $\pmb q$ (or $p$ ) the scheme actually becomes semi-explicit, in the sense that the timestepping can be performed with only one force evaluation per timestep. Specifically, if $g = g ( \pmb q )$ , then (9.11) gives $p ^ { n + \frac { 1 } { 2 } }$ explicitly. If we evaluate $g$ on both sides of (9.10) and set $\gamma ^ { n + 1 } = g ( { \pmb q } ^ { n + 1 } )$ , then we arrive at
+
+$$
+\gamma ^ { n + 1 } = g ( \pmb { q } ^ { n } + \frac { \Delta \tau } { 2 } ( \gamma ^ { n } + \gamma ^ { n + 1 } ) M ^ { - 1 } \pmb { p } _ { n + \frac { 1 } { 2 } } ) ,
+$$
+
+but since $p ^ { n + 1 / 2 }$ is now known, this is just a scalar nonlinear equation for $\gamma ^ { n + 1 }$ , readily solvable by Newton iteration. This scheme will be efficient provided the evaluation of $g$ and its gradient are inexpensive. For example if the system involves long-ranged forces, but the time reparameterization is short-ranged – a typical case – then the per timestep cost of incorporating adaptivity in this way will be neglible.
+
+# 9.2.3 Differentiating the control
+
+We next describe an approach based on introducing the stepsize control as a new variable along with its own differential equation. After discretization, this results in an algorithm requiring evaluation of the Hessian of the potential energy function, or rather its products with certain vectors. Differentiating $\gamma = g ( \pmb { q } , \pmb { p } )$ with respect to the reparameterized time $\tau$ yields
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d \tau } \gamma = ( \nabla _ { q } g ( q , p ) ) ^ { T } \frac { d } { d \tau } q + ( \nabla _ { p } g ( q , p ) ) ^ { T } \frac { d } { d \tau } p } \\ { \displaystyle \quad = g ( q , p ) \left[ ( \nabla _ { q } g ( q , p ) ) ^ { T } M ^ { - 1 } p - ( \nabla _ { p } g ( q , p ) ) ^ { T } \nabla _ { q } V ( q ) \right] . } \end{array}
+$$
+
+We then look for a discretization for the coupled system in $\left( \pmb q , \pmb { p } , \gamma \right)$ . We will illustrate for the choice
+
+$$
+\begin{array} { r } { g ( \pmb { q } , \pmb { p } ) = ( \pmb { p } ^ { T } \pmb { M } ^ { - 2 } \pmb { p } + \| \nabla _ { \pmb { q } } V ( \pmb { q } ) \| ^ { 2 } ) ^ { - \frac { 1 } { 2 } } . } \end{array}
+$$
+
+Since $\nabla _ { p } g ( q , p ) = - g ( q , p ) ^ { - 3 } M ^ { - 2 } p$ and $\nabla _ { q } g ( q , p ) = - g ( q , p ) ^ { - 3 } V _ { q q } ( q )$ $\nabla _ { q } V ( q )$ ,
+
+$$
+\frac { d } { d \tau } \gamma = \frac { p ^ { T } M ^ { - 1 } V _ { q q } ( q ) \nabla _ { q } V ( q ) - p ^ { T } M ^ { - 2 } \nabla _ { q } V ( q ) } { g ( q , p ) ^ { 2 } } = : G ( q , p ) .
+$$
+
+Next, we partition the variables as $\pmb q$ and $( p , \gamma )$ and discretize using the generalized leapfrog
+
+$$
+\begin{array} { l } { { \pmb q ^ { n + 1 } = { \pmb q } ^ { n } + \Delta \tau g ^ { n + \frac { 1 } { 2 } } { \pmb M } ^ { - 1 } { \pmb p } ^ { n + \frac { 1 } { 2 } } , } } \\ { { \gamma ^ { n + \frac { 1 } { 2 } } = \gamma ^ { n } + \displaystyle \frac { \Delta \tau } { 2 } G ( { \pmb q } ^ { n } , { \pmb p } ^ { n + \frac { 1 } { 2 } } ) , } } \\ { { \pmb p ^ { n + \frac { 1 } { 2 } } = { \pmb p } ^ { n } - \displaystyle \frac { \Delta \tau } { 2 } g ^ { n + \frac { 1 } { 2 } } \nabla _ { \pmb q } V ( { \pmb q } ^ { n } ) , } } \end{array}
+$$
+
+$$
+\begin{array} { l } { { \displaystyle \gamma ^ { n + 1 } = \gamma ^ { n + 1 / 2 } + \frac { \Delta \tau } { 2 } G ( q ^ { n + 1 } , p ^ { n + \frac { 1 } { 2 } } ) , } } \\ { { \displaystyle p ^ { n + 1 } = p ^ { n + 1 / 2 } - \frac { \Delta \tau } { 2 } g ^ { n + \frac { 1 } { 2 } } \nabla _ { q } V ( q ^ { n + 1 } ) , } } \\ { { \displaystyle t _ { n + 1 } = t _ { n } + \Delta \tau \gamma ^ { n + \frac { 1 } { 2 } } . } } \end{array}
+$$
+
+It can be shown that these equations reduce to solving a cubic polynomial for $\gamma ^ { n + 1 / 2 }$ , after which all steps are explicit. For details see [89], which also includes numerical experiments with the method. This scheme works well in practice. For the application of this idea in the context of gravitational dynamics, see [134].
+
+Note that, for $N -$ -body systems, efficient schemes are typically available which allow the rapid computation of matrix–vector products involving the Hessian matrix in tandem with the force evaluation [118].
+
+# 9.2.4 The Adaptive Verlet method
+
+We now describe a reversible adaptive timestepping scheme which admits both semi-explicit and fully explicit variants. The idea is to write the Sundmantransformed equations of motion for a Newtonian mechanical system as a constrained differential equation system, in the form
+
+$$
+\begin{array} { c } { { \displaystyle \frac { d } { d \tau } \pmb { q } = \gamma \pmb { M } ^ { - 1 } \pmb { p } , } } \\ { { \displaystyle \frac { d } { d \tau } \pmb { p } = \gamma \nabla _ { q } V ( \pmb { q } ) , } } \\ { { \gamma = g ( \pmb { q } , \pmb { p } ) . } } \end{array}
+$$
+
+This approach broadens the possibilities for methods, since we may now evaluate $g$ at different points than the vector field. A broad class of second-order symmetric methods can be written in the form
+
+$$
+\begin{array} { l } { { q ^ { n + 1 / 2 } = q ^ { n } + \displaystyle \frac { 1 } { 2 } \Delta t \gamma ^ { n } M ^ { - 1 } p ^ { n + 1 / 2 } , } } \\ { { \displaystyle p ^ { n + 1 / 2 } = p ^ { n } + \displaystyle \frac { 1 } { 2 } \Delta t \gamma ^ { n } \nabla q V ( q ^ { n } ) , } } \\ { { \displaystyle \quad 0 = R ( q ^ { n } , q ^ { n + 1 } , q ^ { n + 1 / 2 } , p ^ { n } , p ^ { n + 1 } , p ^ { n + 1 / 2 } , \gamma ^ { n } , \gamma ^ { n + 1 } ) , } } \\ { { \displaystyle q ^ { n + 1 } = q ^ { n + 1 / 2 } + \displaystyle \frac { 1 } { 2 } \Delta t \gamma ^ { n + 1 } M ^ { - 1 } p ^ { n + 1 / 2 } , } } \\ { { \displaystyle p ^ { n + 1 } = p ^ { n + 1 / 2 } + \displaystyle \frac { 1 } { 2 } \Delta t \gamma ^ { n + 1 } \nabla q V ( q ^ { n + 1 } ) . } } \end{array}
+$$
+
+Here $R$ is a smooth function depending on $g ( \pmb { q } , \pmb { p } )$ , invariant under $q ^ { n } \to { \pmb q } ^ { n + 1 }$ , $p ^ { n } \to p ^ { n + 1 }$ , $\gamma ^ { n } \to \gamma ^ { n + 1 }$ , and approximating to second-order accuracy the equation $\gamma = g ( \pmb { q } , \pmb { p } )$ . Note that the method has the form of two separate Verlet half steps with a stepsize adjustment in between, but in some cases the stepsize adjustment could make the whole calculation fully implicit. These schemes are referred to collectively as the Adaptive Verlet method. The simplest explicit scheme of this type is defined by
+
+$$
+\gamma ^ { n } + \gamma ^ { n + 1 } = 2 g ( { \pmb q } ^ { n + 1 / 2 } , { \pmb p } ^ { n + 1 / 2 } ) .
+$$
+
+An alternative method, originally suggested by HUANG $\&$ LEIMKUHLER in [89], is defined by
+
+$$
+\frac { 1 } { \gamma ^ { n + 1 } } + \frac { 1 } { \gamma ^ { n } } = \frac { 1 } { g ( \pmb { q } ^ { n + 1 / 2 } , \pmb { p } ^ { n } ) } + \frac { 1 } { g ( \pmb { q } ^ { n + 1 / 2 } , \pmb { p } ^ { n + 1 } ) } .
+$$
+
+When cost is measured in terms of function evaluations, the Adaptive Verlet method is usually much more efficient than the implicit schemes mentioned earlier. For example, when compared against the symmetric adaptive trapezoidal rule discretization (TRS in the previous section), applied to the same impact oscillator problem and with the same rescaling function, the Adaptive Verlet method requires about a quarter of the work required for the implicit scheme to compute solutions with the same accuracy. These considerations are likely to be ampified for larger systems.
+
+# 9.3 Sundman transformations
+
+Reversible variable stepsize methods require the specification of an auxiliary timereparameterization function $g ( \pmb { q } , \pmb { p } )$ . It is possible to choose this rescaling function based on a functional of the vector field; in this case the method becomes more or less problem independent, since the computations performed for varying stepsizes can be fully automated.
+
+# 9.3.1 Arclength parameterization
+
+In some sense the most natural rescaling is one which is provided by the vector field itself. Recall that the arclength $s$ of a parameterized solution curve in the interval $\left[ { { t _ { 0 } } , { t _ { 0 } } + \Delta { t } } \right]$ is
+
+$$
+s ( \Delta t ) = \int _ { t _ { 0 } } ^ { t _ { 0 } + \Delta t } \lVert \frac { d } { d t } z ( t ) \rVert d t .
+$$
+
+If we introduce a Sundman transformation of the form
+
+$$
+\frac { d t } { d \tau } = \frac { 1 } { \lVert \frac { d } { d t } z \rVert } ,
+$$
+
+the arclength along solution curves is normalized to the fictive timestep. We term this method “arclength reparameterization.” Note that the Sundman transformation can be expressed as a function of the phase variables only by using the differential equations
+
+$$
+{ \frac { d t } { d \tau } } = { \frac { 1 } { \| f ( z ) \| } } .
+$$
+
+It is entirely possible that the vector field will vanish at a point on a solution curve, in which case the arclength reparameterization becomes singular. This can be corrected by introducing a regularizing parameter as discussed below in Section 9.3.3. Arclength reparameterization has the virtue of simplicity, but it is not usually the optimal choice on an efficiency basis.
+
+# 9.3.2 Rescaling for the N-body problem
+
+A particularly important application for variable stepsize methods arises in the simulation of Coulombic systems, including both gravitational dynamics and classical atomic models [19, 108]. In N-body systems, it is natural to choose the rescaling function as a homogeneous function of the distances. Here we show how a time transformation for two-body gravitational interactions can be naturally constructed as a consequence of a scaling symmetry, based on the treatment in [36]. This transformation is useful in Coulombic N-body applications.
+
+Recall that the Kepler Hamiltonian is
+
+$$
+H ( \pmb { q } , \pmb { p } ) = \frac { 1 } { 2 } \| \pmb { p } \| ^ { 2 } - \frac { 1 } { \| \pmb { q } \| } ,
+$$
+
+with equations of motion
+
+$$
+\begin{array} { l } { { \displaystyle { \frac { d } { d t } } q = p , } } \\ { { \displaystyle { \frac { d } { d t } } p = - { \frac { q } { \| q \| ^ { 3 } } } . } } \end{array}
+$$
+
+The system possesses angular momentum and energy as first integrals. (The existence of an additional first integral, the so-called Runge–Lenz vector, places the Kepler problem in the class of “super-integrable systems,” a consequence of which is the existence of closed periodic orbits for a wide range of initial data.) Indeed, the Kepler problem admits three types of orbits expressed in terms of the projection of the phase variables on to the position plane, based on the value of the energy: (i) a closed ellipse for $H < 0$ , (ii) a parabola for $H = 0$ , (iii) a hyperbola for $H > 0$ .
+
+The Kepler problem possesses an important scaling symmetry. If we rescale the variables $t , \pmb { q }$ , and $\pmb { p }$ as follows
+
+$$
+t = \alpha \tilde { t } , \qquad q = \alpha ^ { 2 / 3 } \tilde { q } , \qquad p = \alpha ^ { - 1 / 3 } \tilde { p } ,
+$$
+
+then we find that the form of the system of equations (9.23)–(9.24) expressed in these new variables is the same as the original. This scaling symmetry reflects a natural invariance of physical systems with respect to changes of units.
+
+Now consider a Sundman transformation of the form
+
+$$
+\frac { d t } { d \tau } = \| \pmb { q } \| ^ { 3 / 2 } ,
+$$
+
+which changes the Kepler equations to
+
+$$
+\begin{array} { l } { { \displaystyle { \frac { d } { d \tau } } \pmb { q } = \| \pmb { q } \| ^ { 3 / 2 } \pmb { p } } , } \\ { { \displaystyle { \frac { d } { d \tau } } \pmb { p } = - \| \pmb { q } \| ^ { - 3 / 2 } \pmb { q } } . } \end{array}
+$$
+
+Observe that the scaling symmetry for this new system becomes
+
+$$
+\tau = \tilde { \tau } , \qquad E = \tilde { E } , \qquad q = \alpha ^ { 2 / 3 } \tilde { q } , \qquad p = \alpha ^ { - 1 / 3 } \tilde { p } .
+$$
+
+The time variable has been made invariant under the action of the scaling symmetry. This choice of Sundman transformation has additional consequences. For example, it can be shown that with this choice, the collision event occurs in approximately the same fictive time regardless of the energy of the colliding particle [24, 109]. This choice is also found to be approximately optimal in numerical experiments.
+
+# 9.3.3 Stepsize bounds
+
+Regardless of which stepsize controls are used, it is usually necessary to modify the control to limit the stepsize to some range of values. Let us define $\Delta t _ { \mathrm { m i n } }$ and $\Delta t _ { \mathrm { m a x } }$ as minimum and maximum stepsizes, respectively. Let $g$ be a given a stepsize control, such as one of those discussed above. Since the effective stepsize is $g \Delta \tau$ , and $\Delta \tau$ is known and fixed at the start of simulation, the problem is just to define a monotonic function $g  \hat { g } = \phi ( g )$ , so that the interval $\lbrack 0 , \infty )$ is remapped to $[ a , b ]$ , where $a = \Delta t _ { \operatorname* { m i n } } / \Delta \tau$ , and $b = \Delta t _ { \mathrm { m a x } } / \Delta \tau$ . This is easily accomplished. For example, let
+
+$$
+\hat { g } = b \frac { g + a } { g + b } .
+$$
+
+Alternative remappings are possible, but this simple heuristic works in most cases. Note that in Adaptive Verlet, stepsizes are allowed to oscillate slightly around the target value, so these are only approximate bounds on the actual stepsize that would be observed in simulation.
+
+# 9.4 Backward error analysis
+
+A criticism that may be made of time-reversible adaptive methods such as Adaptive Verlet is this: since the method does not define a symplectic map, we lose the powerful Hamiltonian backward error analysis (as considered in Chapter 5). However, it turns out that a meaningful backward error analysis is possible for time-reversible systems. Indeed, a theory of backward error analysis and preservation of approximate first integrals for reversible integrable systems has been developed without any recourse to the Hamiltonian structure (see the text [80] for a summary of the main results).
+
+The idea first followed by HAIRER AND STOFFER [83] is to start with a perturbation series for the numerical flow, defining a sequence of interpolating vector fields $\tilde { { f } } _ { k } ( z ; \Delta t ) , k = 0 , 1 , . . . ,$ which constitute approximate modified equations of a given order, and then to show that if the numerical method is reversible under involution $s$ , then the perturbed vector fields $\tilde { f } _ { k } \big ( \boldsymbol { z } ; \Delta t \big )$ satisfy the reversibility condition
+
+$$
+- S \tilde { f } _ { k } ( S z ) = \tilde { f } _ { k } ( z ) .
+$$
+
+In this way we can view the numerical solution obtained from time-reversible discretization as approximately determined from the evolution of a reversible continuous dynamical system as already mentioned in Chapter 5.
+
+As for symplectic methods, there are some limitations to this type of backward error analysis. First, one finds that the theory only guarantees in general that the best truncation of the modified equations accurately determines the numerical solution on an interval of length $\mathcal { O } ( \Delta t ^ { - 1 } )$ . Work is in progress to try to determine estimates that would hold on much longer intervals (for example, $\mathcal { O } ( e ^ { c / \Delta t } ) )$ ), but the current efforts require that the system be close to integrable. At the time of this writing, it is not clear how this theory will develop. In many applications, particularly in large scale systems with chaotic solutions, the idea is often to use very large timesteps (just small enough to guarantee stability of the method) so that the accessible timescale is as large as possible, but in these cases there are serious questions concerning the practical relevance of backward error analysis. Nonetheless, backward error analysis is certainly valid for some types of simulations and its usefulness is likely only to increase as theoretical work continues on this topic.
+
+We will restrict this discussion to the case of the Adaptive Verlet method, which is the most commonly used scheme. A backward error analysis of the Adaptive Verlet method is given in [45]. The method can be formally written as
+
+$$
+\begin{array} { r } { \pmb q ^ { n } = \tilde { \pmb q } ( \tau _ { n } ) + ( - 1 ) ^ { n } \hat { \pmb q } ( \tau _ { n } ) , } \\ { \pmb p ^ { n } = \tilde { \pmb p } ( \tau _ { n } ) + ( - 1 ) ^ { n } \hat { \pmb p } ( \tau _ { n } ) , } \end{array}
+$$
+
+$$
+\gamma ^ { n } = \tilde { \gamma } ( \tau _ { n } ) + ( - 1 ) ^ { n } \hat { \gamma } ( \tau _ { n } ) ,
+$$
+
+where $\tau _ { n } = n \Delta \tau$ and the modified equations are
+
+$$
+\begin{array} { r l } & { \tilde { \pmb q } ^ { \prime } = \tilde { g } \pmb { M } ^ { - 1 } \tilde { \pmb p } + \Delta \tau ^ { 2 } \tilde { \pmb Q } _ { 2 } ( . ) + \cdot \cdot \cdot , \qquad \hat { \pmb q } = \Delta \tau ^ { 2 } \hat { \pmb Q } _ { 2 } ( . ) + \cdot \cdot \cdot , } \\ & { \tilde { \pmb p } ^ { \prime } = \tilde { g } \pmb { F } ( \tilde { \pmb q } ) + \Delta \tau ^ { 2 } \tilde { \pmb P } _ { 2 } ( . ) + \cdot \cdot \cdot , \qquad \hat { \pmb p } = \Delta \tau ^ { 2 } \hat { \pmb P } _ { 2 } ( . ) + \cdot \cdot \cdot , } \\ & { \tilde { \gamma } = \pmb { G } ( \tilde { \pmb q } , \tilde { \pmb p } ) + \Delta \tau ^ { 2 } \tilde { G } _ { 2 } ( . ) + \cdot \cdot \cdot , \qquad \hat { \gamma } ^ { \prime } = \hat { G } ( . ) + \Delta \tau ^ { 2 } \hat { G } _ { 2 } ( . ) + \cdot \cdot \cdot , } \end{array}
+$$
+
+with uniquely determined initial values satisfying
+
+$$
+\begin{array} { r } { q _ { 0 } = \tilde { q } ( 0 ) + \hat { q } ( 0 ) , \quad p _ { 0 } = \tilde { p } ( 0 ) + \hat { p } ( 0 ) , \quad \gamma _ { 0 } = \tilde { \gamma } ( 0 ) + \hat { \gamma } ( 0 ) . } \end{array}
+$$
+
+All of the expansions are formal and in even powers of $\Delta \tau$ . The functions in the above equations depend only on $\tilde { \pmb q } , \tilde { \pmb p }$ and $\hat { \boldsymbol { \gamma } }$ ; importantly the formulas for $\hat { G } , \hat { G } _ { 2 }$ , $Q _ { 2 } , P _ { 2 }$ all contain $\hat { \boldsymbol { \gamma } }$ as a factor. In addition it can be shown that $\hat { \gamma } = O ( \Delta \tau ^ { 2 } )$ and this, with the above equations, gives $\hat { \pmb q } = O ( \Delta \tau ^ { 4 } ) , \hat { \pmb p } = O ( \Delta \tau ^ { 4 } )$ .
+
+An instability can arise when the oscillating terms in the expansion for $\gamma _ { n }$ grow with time. The leading oscillatory term is of the form
+
+$$
+\hat { \gamma } _ { 2 } = \hat { g } _ { 2 } ( \tau _ { n } ) \Delta \tau ^ { 2 } .
+$$
+
+The presence of this artificial dynamic is the price we pay for a fully explicit scheme. In many applications, these wobbles are essentially invisible, but in certain applications, for example Coulombic problems, the oscillation may grow quite large at the most difficult points along the trajectory (points of close approach of two bodies). (In extreme cases, the oscillations can make the stepsize become negative, leading to a complete breakdown of the integrator.)
+
+In general, the behaviour of $\hat { g } _ { 2 }$ depends on the stepsize update formula and the differential equations, in a complicated way. For the important special case where $\hat { g } _ { 2 }$ is a function of $\pmb q$ only, it can be shown that for the stepsize update (9.19), we have, as we approach the collision,
+
+$$
+\hat { g } _ { 2 } ( \tau ) \sim K _ { 1 } / \gamma ,
+$$
+
+while for the choice (9.20), the operative formula is
+
+$$
+\hat { g } _ { 2 } ( \tau ) \sim K _ { 2 } \gamma .
+$$
+
+Neither of these will present a significant problem in the case where the stepsize variation is moderate, but in applications such as gravitation, for which $\gamma \to 0$ i n the vicinity of close approach, the stepsize formula (9.20) gives far better results than the other choice.
+
+In practice, (9.20) is generally the safer choice, for the magnitude of $\gamma$ would typically be inhibited in the design of the scaling function (see below), whereas its reciprocal would generally be allowed to grow substantially at difficult points on the trajectory. A scheme for eliminating wobble in Adaptive Verlet to leading order was also given in [45].
+
+# 9.5 Generalized reversible adaptive methods
+
+As discussed in [86] it is possible to generalize the variable stepsize apparatus to allow reversible adaptive integration of systems admitting a general linear reversing symmetry. Such methods can be constructed starting from the assumption of a certain base discretization method (not necessarily symmetric) $\psi _ { \Delta t }$ , together with its adjoint method $\psi _ { \Delta { t } } ^ { * }$ . Recall from Chapter 4 that we can construct a symmetric method by concatenation
+
+$$
+\tilde { \pmb { { \psi } } } _ { \Delta t } = \pmb { { \psi } } _ { \frac { 1 } { 2 } \Delta t } ^ { * } \pmb { { \psi } } _ { \frac { 1 } { 2 } \Delta t } .
+$$
+
+A reversible variable stepsize method can also be constructed based on $\psi _ { \Delta t }$
+
+$$
+\begin{array} { r l } & { \qquad z ^ { n + 1 / 2 } = \pmb { \psi } _ { \frac { 1 } { 2 } \gamma ^ { n } \Delta \tau } ( z ^ { n } ) , } \\ & { \qquad \gamma ^ { n } + \gamma ^ { n + 1 } = 2 g ( z ^ { n + 1 / 2 } ) , } \\ & { \qquad z ^ { n + 1 } = \pmb { \psi } _ { \frac { 1 } { 2 } \gamma ^ { n + 1 } \Delta \tau } ^ { * } ( z ^ { n + 1 / 2 } ) . } \end{array}
+$$
+
+Clearly this method maps $\left( z ^ { n } , \gamma ^ { n } \right) )$ to $( z ^ { n + 1 } , \gamma ^ { n + 1 } )$ . It is easy to compute the inverse of the associated map and to check the reversibility condition (with respect to the involution $\tau \to - \tau , z \to S z , \gamma \to \gamma$ . Because of symmetry, the method is of even order. The scheme is evidently convergent (since it is based on two applications of a convergent method), so it must be second order.
+
+If we identify $\Delta t ^ { n }$ with $\gamma ^ { n } \Delta \tau$ , we could eliminate the variable $\gamma ^ { n }$ and write the method in a more compact form. As we will shortly see, it turns out that it is also necessary in many cases to consider a different choice of the symmetric update for the time-rescaling parameter. In general we term this class of methods symmetric adaptive composition schemes:
+
+# SYMMETRIC ADAPTIVE COMPOSITION
+
+Given $\psi _ { \Delta t }$ , a convergent integrator for $\begin{array} { r l r } { \frac { d } { d t } z } & { { } = } & { { \bf f } ( z ) } \end{array}$ , and $R ( t _ { 0 } , t _ { 1 } , z _ { 0 } , \bar { z } , z _ { 1 } , \tau )$ a function satisfying $R ( t _ { 0 } , t _ { 1 } , z _ { 0 } , \bar { z } , z _ { 1 } , \tau ) \equiv$ $R \big ( t _ { 1 } , t _ { 0 } , z _ { 1 } , \bar { z } , z _ { 0 } , \tau \big )$ , $\begin{array} { l l l } { \frac { \partial R } { \partial t _ { 1 } } } & { \neq } & { 0 } \end{array}$ , The following equations define a reversible method
+
+$$
+\begin{array} { r l } & { z ^ { n + 1 / 2 } = \pmb { \psi } _ { \frac { 1 } { 2 } \Delta t _ { n } } \big ( z ^ { n } \big ) , } \\ & { \qquad 0 = R ( \Delta t _ { n } , \Delta t _ { n + 1 } , z ^ { n } , z ^ { n + 1 / 2 } , z ^ { n + 1 } , \Delta \tau ) , } \\ & { z ^ { n + 1 } = \pmb { \psi } _ { \frac { 1 } { 2 } \Delta t _ { n + 1 } } ^ { * } \big ( z ^ { n + 1 / 2 } \big ) . } \end{array}
+$$
+
+This method reduces to Adaptive Verlet in case the base method is a symplectic Euler.
+
+# 9.5.1 Switching
+
+The idea of the variable stepsize method can be generalized to provide a tool for developing reversible methods with more complicated algorithmic features, such as variable order of accuracy or even adaptive replacement of one integrator by another. The idea of the Adaptive Verlet scheme is roughly this: we apply a given standard integrator with a particular stepsize, modify the stepsize in a symmetric way, then apply the adjoint of the integrator using the new stepsize. A similar idea can be used to modify the features of the method that is used or to allow additional forms of adaptivity in the numerical solution.
+
+Consider the following problem. We have a vector field $\pmb { f }$ , and two integrators $\hat { \pmb { { \psi } } } _ { \Delta t } ^ { ( 1 ) }$ and $\hat { \pmb { { \psi } } } _ { \Delta t } ^ { ( 2 ) }$ preserving some given geometric structure associated to $\boldsymbol { f }$ . Suppose further that we have an indicator (monitor) function $M ( z )$ which quantifies some aspect of the solution, say the difficulty of computing it, or simply the usefulness of one of the two techniques compared with the other. We wish to develop a new integrator with the following properties:
+
+1. It should automatically switch between $\hat { \pmb { \psi } } _ { \Delta t } ^ { ( 1 ) }$ an d Ψˆ(2) so that when $M ( z ) <$ $\beta$ , say, we integrate with the first method, while when $M ( z ) > \beta$ we use the second method, and   
+2. It should be smooth and preserve the same geometric structures as each of the two maps.
+
+The idea is to introduce a smooth switching function, $\sigma ( m )$ (sometimes called a sigmoidal function) on an interval containing $\beta$ , smoothly passing from 1 to 0. Shifted scaled arctangent functions can be used for this purpose, but it is generally better for efficiency purposes to use a piecewise polynomial switch defined on a compact interval $[ m _ { - } , m _ { + } ]$ containing $\beta$ . It is easy to construct a polynomial $\sigma$ , with zero derivatives at $m _ { - }$ and $m _ { + }$ of any desired degree, with the properties: $\sigma ( m _ { - } ) = 1$ , $\sigma ( m _ { + } ) = 0$ , $\sigma$ monotone decreasing on $[ m _ { - } , m _ { + } ]$ .
+
+Now we construct a splitting of $\boldsymbol { f }$
+
+$$
+\begin{array} { r } { f = f _ { 1 } + f _ { 2 } , \qquad f _ { 1 } ( z ) = \sigma ( M ( z ) ) f ( z ) , \qquad f _ { 2 } ( z ) = ( 1 - \sigma ( M ( z ) ) ) f ( z ) , } \end{array}
+$$
+
+and recover the solution by iterating for example the following concatenation of maps: Ψˆ∆t = Ψˆ(1) $\hat { \pmb { { \psi } } } _ { \Delta t } = \hat { \pmb { { \psi } } } _ { \sigma ( M ( z ) ) \Delta t } ^ { ( 1 ) } \circ \hat { \pmb { { \psi } } } _ { ( 1 - \sigma ( M ( z ) ) ) \Delta t } ^ { ( 2 ) }$ Ψˆ(2)(1 σ(M(z)))∆t . When M(z) < m−, the switch σ will be fully “on” (value 1), so that the effect will be to apply method $\hat { \pmb { \psi } } _ { \Delta t } ^ { ( 1 ) }$ to $\pmb { f }$ . When $M ( z ) > m _ { + }$ , the switch $\sigma$ will be fully “off” (value 0), so that the the numerical solution will be propagated by applying method Ψˆ(2)∆t to $\boldsymbol { f }$ . Between $m _ { - }$ and $m _ { + }$ , both methods contribute to the numerical solution, by solving in each case some polynomially rescaled version of the original vector field. In other words, what we have done is to construct a homotopy of the two numerical integration maps Ψˆ(1) and Ψˆ(2) .
+
+The challenge is to implement, in an efficient manner, schemes based on this idea. In general, we cannot expect the structure $\sigma ( M ( z ) ) f$ to match the structure of $\pmb { f }$ , for example.
+
+One symmetric method that could be used in the general case is as follows
+
+$$
+\begin{array} { r l } & { z ^ { n + 1 / 2 } = \hat { \pmb { \psi } } _ { ( 1 - \sigma ( M ( z ^ { n + 1 / 2 } ) ) ) \Delta t / 2 } ^ { ( 2 ) } \circ \hat { \pmb { \psi } } _ { \sigma ( M ( z ^ { n } ) ) \Delta t / 2 } ^ { ( 1 ) } ( z ^ { n } ) , } \\ & { \quad z ^ { n + 1 } = \hat { \pmb { \psi } } _ { \sigma ( M ( z ^ { n + 1 } ) ) \Delta t / 2 } ^ { ( 1 ) * } \circ \hat { \pmb { \psi } } _ { ( 1 - \sigma ( M ( z ^ { n + 1 / 2 } ) ) ) \Delta t / 2 } ^ { ( 2 ) * } ( z ^ { n + 1 / 2 } ) . } \end{array}
+$$
+
+The notation $\hat { \pmb { { \psi } } } _ { \Delta t } ^ { * }$ indicates the adjoint map of $\hat { \pmb { { \psi } } } _ { \Delta t }$ , defined by $\hat { \pmb { { \psi } } } _ { \Delta t } ^ { * } = \hat { \pmb { { \psi } } } _ { - \Delta t } ^ { - 1 }$ . The reversible switching integrator is symmetric. It is also second order. It switches the integrators completely. Its major drawback is that it is implicit, even if the two methods on which it is based are explicit.
+
+Based on our experience with adaptive timestepping, the most natural approach to explicit schemes is to introduce a discrete variable $\sigma _ { n }$ which can be udpated according to a symmetric formula. However, such methods tend to introduce a small oscillatory component in the error in $\sigma$ ; since $\sigma$ is zero in a substantial part of the domain, the numerical errors will tend to introduce an instability in the method. An explicit alternative is likely to be more successful if we change our perspective so that we switch based on the value of $M ( z )$ rather than based on $\sigma$ . Specifically, we could introduce a discrete monitor variable $\mu _ { n }$ and employ an explicit scheme of the following sort
+
+$$
+\begin{array} { r l } & { \qquad z ^ { n + 1 / 2 } = \hat { \pmb { \psi } } _ { ( 1 - \sigma ( \mu _ { n } ) ) \Delta t / 2 } ^ { ( 2 ) } \circ \hat { \pmb { \psi } } _ { \sigma ( \mu _ { n } ) ) \Delta t / 2 } ^ { ( 1 ) } ( z ^ { n } ) , } \\ & { \qquad \mu _ { n + 1 } + \mu _ { n } = M ( z ^ { n + 1 / 2 } ) , } \\ & { \qquad z ^ { n + 1 } = \hat { \pmb { \psi } } _ { \sigma ( \mu _ { n + 1 } ) ) \Delta t / 2 } ^ { ( 1 ) * } \circ \hat { \pmb { \psi } } _ { ( 1 - \sigma ( \mu _ { n + 1 } ) ) \Delta t / 2 } ^ { ( 2 ) * } ( z ^ { n + 1 / 2 } ) . } \end{array}
+$$
+
+If each of the two schemes involved is explicit with explicit adjoint, then the overall method is also explicit. The indicator function $M$ should be designed so that $M ( z )$ is bounded well away from zero, to avoid the possibility of $\mu$ becoming negative during the integration.
+
+In practice, we expect that adaptivity must be introduced in a problem-specific way. For a detailed discussion of switching in the context of few body Coulombic systems, see [101].
+
+# 9.6 Poincar´e transformations
+
+In this section, we briefly discuss the implementation of Poincar´e transformations for symplectic variable stepsize integration. Recall that there are many explicit symplectic integrators for Hamiltonian systems in separated form, $H ( { \pmb q } , { \pmb p } ) =$ $T ( p ) + V ( q )$ , but all known symplectic integrators which work for general $H$ are implicit. In general, the Poincar´e-transformed equations will require treatment with an implicit method, since the transformation couples the position and momenta variables.
+
+Experience with reversible and symplectic methods in a variety of applications suggest that symplectic schemes often exhibit improved stability compared with their reversible counterparts. Comparisons of symplectic and reversible methods for small model problems also suggest that a symplectic scheme may be more reliable. On the other hand, efficiency considerations typically demand, even for moderate-sized applications, an explicit integrator.
+
+It turns out that it is often the case that the time-reparameterization function $g$ can be chosen to be a function of positions only, $g = g ( \pmb q )$ . In this case, a semiexplicit first-order method is possible.
+
+The equations of motion after Poincar´e transformation become
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d \tau } \boldsymbol { q } = \boldsymbol { g } ( \boldsymbol { q } ) \nabla _ { p } T ( p ) , } \\ { \displaystyle \frac { d } { d \tau } p = - \boldsymbol { g } ( \boldsymbol { q } ) \nabla _ { \boldsymbol { q } } V ( \boldsymbol { q } ) - ( H ( \boldsymbol { q } , p ) - E ) \nabla _ { \boldsymbol { q } } \boldsymbol { g } ( \boldsymbol { q } ) . } \end{array}
+$$
+
+If we discretize this system with the symplectic Euler method, there results
+
+$$
+\begin{array} { r l } & { \pmb { q } ^ { n + 1 } = \pmb { q } ^ { n } + \Delta \tau g ( \pmb { q } ^ { n } ) \nabla _ { p } T ( \pmb { p } ^ { n + 1 } ) , } \\ & { \pmb { p } ^ { n + 1 } = \pmb { p } ^ { n } - \Delta \tau g ( \pmb { q } ^ { n } ) \nabla _ { \pmb { q } } V ( \pmb { q } ^ { n } ) } \\ & { \qquad - \Delta \tau ( T ( \pmb { p } ^ { n + 1 } ) + V ( \pmb { q } ^ { n } ) - E ) \nabla _ { \pmb { q } } g ( \pmb { q } ^ { n } ) . } \end{array}
+$$
+
+Define vectors
+
+$$
+\begin{array} { r } { \pmb { a } = \pmb { p } ^ { n } - \Delta \tau g ( \pmb { q } ^ { n } ) \nabla _ { \pmb { q } } V ( \pmb { q } ^ { n } ) - \Delta \tau ( V ( \pmb { q } ^ { n } ) - E ) \nabla _ { \pmb { q } } g ( \pmb { q } ^ { n } ) , } \end{array}
+$$
+
+and
+
+$$
+\pmb { b } = \nabla _ { \pmb { q } } g ( \pmb { q } ^ { n } ) .
+$$
+
+Then we can write an implicit formula for the kinetic energy
+
+$$
+\hat { T } : = T ( \pmb { p } ^ { n + 1 } ) = T ( \pmb { a } - \hat { T } \pmb { b } ) .
+$$
+
+Under normal circumstances, this is an inexpensive problem to solve for $\hat { T }$ . For example, if ${ \cal T } ( p ) = { \textstyle \frac { 1 } { 2 } } p ^ { T } { \cal M } ^ { - 1 } p$ , it becomes a scalar quadratic equation in $\hat { T }$ . Once $\hat { T }$ is known, this can be inserted in (9.34) to yield $p ^ { n + 1 }$ , and then $\pmb q ^ { n + 1 }$ can be computed from (9.33).
+
+It would be desirable to find higher-order semi-explicit symplectic methods under these assumptions. A natural candidate for a second-order method would be based on the concatenation of (9.33)–(9.34) with its adjoint. The problem is therefore to find an efficient way to solve
+
+$$
+\begin{array} { r l } & { \pmb { q } ^ { n + 1 } = \pmb { q } ^ { n } + \Delta \tau g ( \pmb { q } ^ { n + 1 } ) \nabla _ { p } T ( \pmb { p } ^ { n } ) , } \\ & { \pmb { p } ^ { n + 1 } = \pmb { p } ^ { n } - \Delta \tau g ( \pmb { q } ^ { n + 1 } ) \nabla _ { q } V ( \pmb { q } ^ { n + 1 } ) } \\ & { \qquad - \Delta \tau ( T ( \pmb { p } ^ { n } ) + V ( \pmb { q } ^ { n + 1 } ) - E ) \nabla _ { q } g ( \pmb { q } ^ { n + 1 } ) . } \end{array}
+$$
+
+The calculation is all explicit after $\pmb q ^ { n + 1 }$ is obtained from (9.35), hence the challenge is to solve equations of the form
+
+$$
+\hat { g } : = g ( \pmb q ^ { n + 1 } ) = g ( \pmb a ^ { \prime } + \hat { g } \pmb b ^ { \prime } ) ,
+$$
+
+where $\pmb { a } ^ { \prime }$ and ${ \pmb b } ^ { \prime }$ are fixed vectors. If this calculation can be performed efficiently, the entire method may be viable. In some cases, as when arclength reparameterization is used, the work required is similar to that of an implicit scheme for the full problem. However, in other cases, the work may be much less to solve (9.37) than it would be to apply an implicit method to the whole system. An example is where we know that the timestep is strongly dependent on only one or a few of the variables of a large system.
+
+Another difficulty for the symplectic approach arises when the underlying fixed stepsize method which is most suited to the structure of the problem is a complicated construction, perhaps resulting from composition of a number of building blocks and coordinate transformations. In this case, the time-reversible approach is to be preferred, since its implementation is essentially independent of the details of how the fixed stepsize method is constructed; it is much easier to retain the explicit (or partially explicit) structure of the underlying fixed-stepsize scheme.
+
+# 9.7 Exercises
+
+1. Sundman transformation. Show that if a Sundman transformation is a function of the energy of a Hamiltonian system, the rescaled system is also Hamiltonian. Is this likely to give good results? Why or why not?
+
+2. Scaling invariance. Show that (9.25) expresses a scaling invariance for the Kepler problem. How is the energy changed under this scaling of the variables?
+
+3. Poincar´e transformation. Show that the symplectic Euler method can be made explicit for the Poincar´e transformation $g ( \pmb q )$ .
+
+4. Constrained dynamics and adaptivity. Develop an adaptive method for simulating a constrained Hamiltonian system such as the spherical pendulum (unit
+
+length, unit mass, and unit gravitational constant) subject to soft collisions (inverse power repulsion) with a fixed body at position $\pmb q _ { 0 }$ . The equations of motion can be written as
+
+$$
+\begin{array} { c } { { \dot { \pmb q } = \pmb M ^ { - 1 } \pmb p , } } \\ { { \dot { \pmb p } = - \nabla _ { \pmb q } V ( \pmb q ) - \pmb q \lambda , } } \\ { { \| \pmb q \| ^ { 2 } = 1 , } } \end{array}
+$$
+
+where the potential
+
+$$
+V ( { \pmb q } ) = z + \phi ( | { \pmb q } - { \pmb q } _ { 0 } | ) , \qquad \phi ( r ) = r ^ { - \alpha } ,
+$$
+
+is the sum of gravitational potential and the distance-dependent interaction potential between the pendulum bob and fixed body. The Sundman transformation should be chosen to reduce the stepsize in the vicinity of collisions between the bob and the fixed body. Test your method and report on its relative efficiency as a function of the power $\alpha$ in the repulsive wall and the choice of Sundman transformation function.
+
+5. Switching. Discuss the construction of a time-reversible integrator to switch order of accuracy. As an example, consider the pair of methods consisting of the St¨ormer–Verlet method and the fourth order Yoshida method given in Chapter 6. Design a method which automatically changes the effective order of from 2 to 4 in a certain given region $R$ of phase space.
+
+# 10
+
+# Highly oscillatory problems
+
+Hamiltonian systems often exhibit dynamical phenomena covering a vast range of different time scales. In this chapter, we will discuss systems with two well separated time scales. More specifically, we consider systems for which the fast motion is essentially oscillatory. Such systems can arise from very different applications such as celestial or molecular dynamics and they might manifest themselves in very different types of Hamiltonian equations. Hence, the discussion in this chapter is necessarily limited to special cases. However, the basic principles and ideas have a much wider range of applicability.
+
+A standard integrator, whether symplectic or not, will, in general, have to use a stepsize that resolves the oscillations in the fast system and, hence, one might be forced to use very small timesteps in comparison to the slow dynamics which is of primary interest. However, in special cases, one might be able to individually exactly solve the fast oscillatory and the slow system. Following the idea of splitting methods, this suggests to compose these two exact propagators and to apply a stepsize that is large with respect to the period of the fast oscillations. Such a method is then called a large timestep (LTS) method. Often the fast oscillations cannot be integrated analytically. A natural idea for the construction of an LTS method is then to assign different timesteps to different parts of the system. This approach is called multiple timestepping (MTS) and can often even be implemented such that the overall timestepping procedure still generates a symplectic map.1 We will explain the basic idea of symplectic LTS/MTS methods in Section 10.1.
+
+While the idea of LTS/MTS methods is very appealing, they have severe limitations which are linked to numerically induced resonances [20, 67] and a break-down of backward error analysis. The instability problem can be partially overcome by combining LTS/MTS methods with the idea of averaging. Averaging over a highly oscillatory degree of freedom is a very powerful tool in classical mechanics and a short introduction to the idea of averaging and the concept of an adiabatic invariant will be provided in Section 10.2. In Sections 10.3 and 10.4, we will describe two numerical methods that utilize averaging to eliminate or weaken resonance-induced instabilities in MTS methods. More specifically, the mollified impulse (MOLLY) method of GARC´ıA-ARCHILLA, SANZ-SERNA, AND SKEEL [67] was the first method to improve the stability properties of a symplectic MTS method by replacing the slow potential energy terms by an averaged (mollified) contribution. We will explain the basic idea of mollified MTS (MOLLY) in Section 10.4. MOLLY was subsequently extended to a wider class of averaging procedures by HAIRER, HOCHBRUCK, AND LUBICH (see the monograph [80]). A somewhat different approach, called reversible averaging (RA), was suggested by LEIMKUHLER AND REICH [112]. Reversible averaging will be discussed in Section 10.3.
+
+# 10.1 Large timestep methods
+
+In this section we will investigate large timestep (LTS) methods for Hamiltonian systems with slow and highly oscillatory degrees of freedom. We will in particular develop the idea of multiple timestepping (MTS) methods and investigate their numerical behavior for simple model problems. We will observe that MTS methods work well except for instabilities near certain choices of the stepsize $\Delta t$ . These instabilities are caused by numerical resonances which can already be observed for LTS methods applied to a single oscillatory degree of freedom and which are caused by a break-down of backward error analysis as discussed in Section 10.5.
+
+# 10.1.1 A single oscillatory degree of freedom
+
+Let us start with a numerical example.
+
+Example 1 Consider a fast harmonic oscillator subject to a perturbation,for example
+
+$$
+\dot { q } = \omega p , \qquad \dot { p } = - \omega q - q .
+$$
+
+For $\omega \gg 1$ , the solutions are highly oscillatory and the eigenvalues of the solution operator
+
+$$
+{ \cal W } ( t ) = { \bf e } ^ { t A } , \qquad A = \left[ \begin{array} { c c } { { 0 } } & { { \omega } } \\ { { - \omega - 1 } } & { { 0 } } \end{array} \right] ,
+$$
+
+are on the unit circle for all $\omega \ge 0$ , i.e. the eigenvalues have modulus equal to one.
+
+From a numerical point of view, one could be tempted to split the equations of motion into its highly oscillatory contribution
+
+$$
+\dot { q } = \omega p , \qquad \dot { p } = - \omega q ,
+$$
+
+and the perturbation
+
+$$
+\dot { q } = 0 , \qquad \dot { p } = - q .
+$$
+
+If we denote the associated matrix-valued solution operators by $W _ { 1 } ( t )$ and $W _ { 2 } ( t )$ , respectively, a second-order numerical propagator is obtained, for example via the matrix product
+
+$$
+\begin{array} { r } { \pmb { M } _ { \Delta t } = \pmb { W } _ { 2 } ( \Delta t / 2 ) \pmb { W } _ { 1 } ( \Delta t ) \pmb { W } _ { 2 } ( \Delta t / 2 ) . } \end{array}
+$$
+
+![](images/8eecc2540bac6d7d4907c4f77896314476b2769f7095b32603a6a37c6c17558e.jpg)  
+Figure 10.1 Modulus of eigenvalues of numerical propagator ${ M } _ { \Delta t }$ as a function of $\omega \Delta t$ .
+
+We compute the modulus of the eigenvalues of ${ M } _ { \Delta t }$ for $\omega = 1 0$ as a function of the stepsize $\Delta t \leq 0 . 2$ . Regions of instabilities can be clearly seen in Fig. 10.1 for $\omega \Delta t \approx k \pi$ , $k = 1 , 2 , 3$ .
+
+A similar behavior would be observed for the LTS splitting method (10.3) applied to a nonlinearly perturbed harmonic oscillator
+
+$$
+\dot { q } = \omega p , \qquad \dot { p } = - \omega q - g ^ { \prime } ( q ) .
+$$
+
+We now give a heuristic reasoning for these numerically observed instabilities. We first introduce action-angle variables $( J , \phi )$ via $q ~ = ~ \sqrt { 2 J } \cos \phi$ and $p =$
+
+$- \sqrt { 2 J } \sin \phi$ . Next we rewrite the given Hamiltonian $H = \omega ( p ^ { 2 } + q ^ { 2 } ) / 2 + g ( q )$ i n the form
+
+$$
+H ( \phi , J ) = \omega J + H _ { \mathsf { s } } ( \phi , J ) ,
+$$
+
+where $H _ { s } = g ( \sqrt { 2 J } \cos \phi )$ and, hence, $H ( \phi , J )$ is $2 \pi$ -periodic in the angle $\phi$ . Both $H _ { \mathrm { f } } = \omega J$ and $H _ { s }$ can be solved exactly and we define the LTS method $\psi _ { \Delta t }$ as a simple second-order composition of the associated flow maps, for example
+
+$$
+\pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { \Delta t / 2 , H _ { \mathrm { s } } } \circ \pmb { \phi } _ { \Delta t , H _ { \mathrm { f } } } \circ \pmb { \phi } _ { \Delta t / 2 , H _ { \mathrm { s } } } .
+$$
+
+According to a result by KUKSIN AND POSCHEL ¨ [100] (see also MOAN [135]), the symplectic method $\psi _ { \Delta t }$ can be written as the exact time-one-flow map of an extended Hamiltonian system $\tilde { H } _ { \Delta t } ( \phi , J , s , E )$ , where $\tilde { H } _ { \Delta t }$ is $2 \pi$ -periodic in the parameter $S$ . We may assume (see the Exercises) that the variable $S$ evolves according to the differential equation $\dot { s } = - \pi$ . The variable $E$ is the “action” variable conjugate to $s$ . The embedding of $\psi _ { \Delta t }$ into such an exact time-one-flow map can be chosen such that $\tilde { H }$ is a real-analytic function of the general form
+
+$$
+\tilde { H } _ { \Delta t } ( \phi , J , s , E ) = \Omega _ { \Delta t } J - \pi E + \Delta t f _ { \Delta t } ( \phi , J , s ) ,
+$$
+
+where $f _ { \Delta t }$ is an appropriate function and $\Omega _ { \Delta t } \in [ - \pi , \pi )$ is defined by
+
+$$
+\Omega _ { \Delta t } = [ \omega \Delta t + \pi ] _ { \sf m o d } 2 \pi - \pi .
+$$
+
+The definition of $\Omega _ { \Delta t }$ is motivated by the fact that
+
+$$
+\pmb { \phi } _ { \Delta t , H _ { \mathrm { f } } } = \pmb { \phi } _ { \Delta t , \hat { H } _ { \mathrm { f } } } ,
+$$
+
+with $\hat { H } _ { \mathrm { f } } = \Omega _ { \Delta t } J / \Delta t = \hat { \omega } J$ . Hence the numerical method (10.5) cannot distinguish between $\omega$ and $\hat { \omega } = \Omega _ { \Delta t } / \Delta t$ .
+
+For $\Delta t \omega  0$ , we obtain $\Omega _ { \Delta t } = \Delta t \omega$ and one can average over the (fast) variable $S$ in $\tilde { H } _ { \Delta t }$ and that leads to the modified Hamiltonian of standard backward error analysis [143, 16]. However, for the LTS methods considered in this chapter, $\omega \Delta t$ and hence $\Omega _ { \Delta t }$ are not necessarily small. In fact, $| \Omega _ { \Delta t } |$ is only bounded by $\pi$ . To understand the possible implications let us investigate the canonical equations of motion
+
+$$
+\begin{array} { l l } { \dot { \phi } = \Omega _ { \Delta t } + \Delta t \nabla _ { J } f _ { \Delta t } ( J , \phi , s ) , \qquad } & { \boldsymbol { j } = - \Delta t \nabla _ { \phi } f _ { \Delta t } ( J , \phi , s ) , } \\ { \dot { s } = - \pi , \qquad } & { \dot { E } = - \Delta t \nabla _ { s } f _ { \Delta t } ( \phi , J , s ) . } \end{array}
+$$
+
+The associated flow map $\boldsymbol { \Phi } _ { \tau , \tilde { H } }$ completely characterizes the behavior of the numerical method $\psi _ { \Delta t }$ . In particular, the numerical method is called effectively stable2 if $J ( \tau )$ and $E ( \tau )$ remain bounded over long time-intervals $| { \boldsymbol { \tau } } | \leq n \cdot \Delta t$ ,
+
+$n \gg 1$ . We only state at this point that the averaging principle (see, for example, [8]) implies that $J ( \tau )$ and $E ( \tau )$ are approximately constant provided
+
+(i) the two natural frequencies $\Omega _ { 1 } = - \pi$ and $\Omega _ { 2 } = \Omega _ { \Delta t }$ of the system are non-resonant3 and
+
+(ii) there is separation of time scales, i.e. the two frequencies $\Omega _ { 1 }$ and $\Omega _ { 2 }$ are much larger than $| \dot { J } |$ and $| \dot { E } |$ .
+
+Condition (ii) is clearly not satisfied for
+
+$$
+\omega \Delta t = 2 k \pi , \qquad k = 1 , 2 , 3 , \ldots ,
+$$
+
+since this implies
+
+$$
+\Omega _ { 2 } = \Omega _ { \Delta t } = 0 .
+$$
+
+On the other hand, for
+
+$$
+\omega \Delta t = k \pi , \qquad k = 1 , 3 , 5 , \ldots ,
+$$
+
+we obtain
+
+$$
+\Omega _ { 2 } = \Omega _ { \Delta t } = - \pi = \Omega _ { 1 } ,
+$$
+
+and Condition (i) is violated. These heuristic arguments provide some indication why numerical instabilities are observed for $\omega \Delta t$ equal to integer multiples of $\pi$ . See the Exercises for more background material.
+
+# 10.1.2 Slow-fast systems
+
+We now extend the idea of LTS methods to a more general class of slow–fast Hamiltonian systems. This will lead us to the concept of multiple timestepping (MTS). Let us assume that we are given a Hamiltonian function $H$ that can be split into two parts $H _ { \mathsf { f } }$ and $H _ { s }$ ; i.e. $H = H _ { \uparrow } + H _ { \uparrow }$ . The assumption is that the equations of motion associated with $H _ { s }$ can be solved with a stepsize $\Delta t _ { s }$ , while the dynamics of $H _ { \mathsf { f } }$ requires a stepsize $\Delta t _ { \mathsf { f } } \ll \Delta t _ { \mathsf { s } }$ . A standard symplectic integrator will then require that a stepsize of $\Delta t \approx \Delta t _ { \mathsf { f } }$ is used for the overall system with Hamiltonian $H$ . Of course, one would like to make use of the fact that part of the system evolves on a slower time scale and to develop an LTS method.
+
+To illustrate the basic idea we consider a standard Newtonian system with Hamiltonian
+
+$$
+H _ { 5 } = \frac 1 2 p ^ { T } M ^ { - 1 } p + V ( \pmb q )
+$$
+
+and assume that it is coupled to a rapidly oscillating degree of freedom with position $x$ , momentum $p _ { x }$ and Hamiltonian
+
+$$
+H _ { \mathsf { f } } = \frac { 1 } { 2 \varepsilon } \left[ p _ { x } ^ { 2 } + V _ { \mathsf { f } } ( x , \pmb { q } ) \right] ,
+$$
+
+where $\varepsilon > 0$ is a small parameter and $V _ { \mathsf { f } }$ is an appropriate potential energy function. An example of such a fast system is provided by a stiff harmonic oscillator whose position $x$ vibrates about an equilibrium position $L > 0$ that depends on the slow coordinates $\pmb q$ ; i.e. $L = L ( q )$ . The associated Hamiltonian is
+
+$$
+H _ { \mathrm { f } } = \frac { 1 } { 2 \varepsilon } \left[ p _ { x } ^ { 2 } + ( x - L ( \pmb { q } ) ) ^ { 2 } \right] .
+$$
+
+Another $\mathsf { e x }$ ample is provided by a stiff harmonic oscillator whose “spring” constant $K > 0$ depends on $\pmb q$ ; i.e.
+
+$$
+H _ { \mathsf { f } } = \frac { 1 } { 2 \varepsilon } \left[ p _ { x } ^ { 2 } + K ( \pmb { q } ) x ^ { 2 } \right] .
+$$
+
+In either case, we can write the total Hamiltonian $H$ as
+
+$$
+H = H _ { \mathrm { f } } + H _ { \mathrm { s } }
+$$
+
+and obtain the equations of motion
+
+$$
+\begin{array} { r l r l } & { \dot { \pmb { p } } = - \nabla _ { \pmb { q } } V ( \pmb { q } ) - \varepsilon ^ { - 1 } \nabla _ { \pmb { q } } V _ { \dagger } ( x , \pmb { q } ) , } & & { \dot { \pmb { q } } = \pmb { M } ^ { - 1 } \pmb { p } , } \\ & { \dot { p } _ { x } = - \varepsilon ^ { - 1 } \nabla _ { x } V _ { \dagger } ( x , \pmb { q } ) , } & & { \dot { x } = \varepsilon ^ { - 1 } p _ { x } , } \end{array}
+$$
+
+which can be integrated by the St¨ormer–Verlet method. However, for stability reasons, the stepsize $\Delta t$ has to be proportional to $\varepsilon$ .
+
+A simple idea to improve this situation is to integrate the equations of motion associated to the Hamiltonian $H _ { \mathsf { f } }$ ; i.e.
+
+$$
+\begin{array} { r l } { \dot { p } = - \varepsilon ^ { - 1 } \nabla _ { q } V _ { \mathsf { f } } ( x , q ) , \quad } & { \dot { q } = \mathbf { 0 } , } \\ { \dot { p } _ { x } = - \varepsilon ^ { - 1 } \nabla _ { x } V _ { \mathsf { f } } ( x , q ) , \quad } & { \dot { x } = \varepsilon ^ { - 1 } p _ { x } , } \end{array}
+$$
+
+either exactly or to apply the St¨ormer–Verlet method with a small stepsize $\delta t \sim \varepsilon$ . We denote the associated propagator by $\pmb { \psi } _ { \delta t , H _ { \mathrm { f } } }$ . Then we apply $\pmb { \psi } _ { \delta t , H _ { f } }$ over $N$ steps, where the integer $N$ is chosen such that the slow system
+
+$$
+\begin{array} { c c } { { \dot { p } = - \nabla _ { q } V ( q ) , ~ } } & { { \dot { q } = M ^ { - 1 } p , } } \\ { { \dot { p } _ { x } = 0 , ~ } } & { { \dot { x } = 0 , } } \end{array}
+$$
+
+can be integrated by the St¨ormer–Verlet method with stepsize $\Delta t = \delta t \cdot N$ . Let us denote this propagator by $\psi _ { \Delta t , H _ { \mathrm { s } } }$ . A symmetric one step method is now given by the composition
+
+$$
+\psi _ { \Delta t } = \psi _ { \Delta t / 2 , H _ { \mathrm { s } } \mathrm { ~ o ~ } \big [ } \psi _ { \delta t , H _ { \mathrm { f } } } { \big ] } ^ { N } \circ \psi _ { \Delta t / 2 , H _ { \mathrm { s } } } .
+$$
+
+This is an example of a multiple timestepping (MTS) method. To summarize, the general idea of MTS is to split the given Hamiltonian into a slow and fast part, to integrate the fast and slow systems using a symplectic method with different timesteps, and to obtain an overall timestepping method by proper composition as in (10.9). The resulting one-step method is symplectic. However, the map $\psi _ { \Delta t }$ is not necessarily close to the identity and standard backward error analysis does not apply. Hence it is not clear whether such a method will be stable and conserve energy.
+
+# 10.1.3 Adiabatic invariants
+
+To gain insight into the solution behavior of the slow–fast systems introduced in the previous subsection, let us discuss the limiting case $\varepsilon  0$ for bounded Hamiltonian $H$ . We view $H _ { \mathsf { f } }$ as a time-dependent Hamiltonian
+
+$$
+H _ { \mathrm { f } } ( x , p _ { x } , t ) = \frac { 1 } { 2 \varepsilon } p _ { x } ^ { 2 } + \frac { 1 } { \varepsilon } V _ { \mathrm { f } } ( x , \pmb { q } ( t ) )
+$$
+
+in the fast degree of motion $( x , p _ { x } )$ , where $\pmb q ( t )$ is a given slowly varying function. Because of the bounded energy assumption, we necessarily have $p _ { x } ( t ) = \mathcal { O } ( \varepsilon ^ { 1 / 2 } )$ and $x ( t ) = \mathcal { O } ( \varepsilon ^ { 1 / 2 } )$ . Note also that, because of the $\mathsf { e x }$ plicit time dependence, the equations
+
+$$
+\dot { p } _ { x } = - \varepsilon ^ { - 1 } \nabla _ { x } V _ { \mathsf { f } } ( x , t ) , \qquad \dot { x } = \varepsilon ^ { - 1 } p _ { x }
+$$
+
+do not preserve the Hamiltonian $H _ { \mathrm { f } }$ . However, for $\varepsilon$ small enough, the solutions of (10.10) form nearly closed curves, with approximate period $\tau = \mathcal { O } ( \varepsilon )$ , due to the time dependence of $V _ { \sf f } ( x , t )$ . Hence, over one period, we can formally “shadow” the $\mathsf { e x a c t }$ trajectory by the curve obtained for the same initial data and the same equations but with $t$ temporarily frozen to its initial value $t = \bar { t }$ . Let us denote the region enclosed by this periodic curve by $\mathcal { A } ( \bar { t } ) \subset \mathbb { R } ^ { 2 }$ . We can compute the area $A$ of the region $\mathcal { A }$ for any value of $\bar { t } = t$ ; i.e.
+
+$$
+A ( t ) = \int _ { A ( t ) } d p \wedge d q .
+$$
+
+Note that the area necessarily satisfies $A ( t ) = { \mathcal { O } } ( \varepsilon )$ for bounded energy $H _ { f } =$ $\mathcal { O } ( \varepsilon ^ { 0 } )$ .
+
+
+<!-- chunk 0005: pages 281-350 -->
+The flow map of (10.10) is symplectic and hence area preserving. It can be shown using normal form theory [7, 8] that this implies that the ratio $A ( t ) / A ( 0 )$ remains equal to one along the flow of (10.10) up to order $\mathcal { O } ( \varepsilon )$ terms. These small perturbation terms are due to the fact that the rapidly rotating solutions do not exactly form closed loops.
+
+The scaled quantity
+
+$$
+J : = \frac { A } { 2 \pi }
+$$
+
+is equivalent to the action variable in the standard transformation from $( x , p _ { x } )$ to action-angle variables $( J , \phi )$ . Hence the action $J$ is a “near-invariant” of (10.10) for $\varepsilon$ sufficiently small and is called an adiabatic invariant [7, 8]. See also Section 5.2.3 in Chapter 5.
+
+Let us discuss the precise form of $J$ for (10.7) and (10.8). Assuming a fixed length $L$ , the Hamiltonian (10.7) describes harmonic oscillations of frequency $\omega = \varepsilon ^ { - 1 }$ and the solutions are given by
+
+$$
+x ( t ) = R \sin ( \phi ( t ) ) + L , \qquad p _ { x } ( t ) = R \cos ( \phi ( t ) ) ,
+$$
+
+where $\phi ^ { \prime } ( t ) = \varepsilon ^ { - 1 }$ and $R$ is a constant of integration determined by the initial conditions. The area of the circle described by $( x ( t ) , p _ { x } ( t ) )$ is given by $A = \pi R ^ { 2 }$ . On the other hand, we have $H _ { \mathsf { f } } = R ^ { 2 } / ( 2 \varepsilon )$ and, hence, the associated adiabatic invariant is given by
+
+$$
+J = \varepsilon H _ { \mathrm { f } } = \frac { 1 } { 2 } \left[ p _ { x } ^ { 2 } + ( x - L ( \pmb q ) ^ { 2 } ) \right] .
+$$
+
+In a similar manner, we obtain
+
+$$
+J = \frac { \varepsilon } { \sqrt { K ( \pmb q ) } } H _ { \mathrm { f } } = \frac { 1 } { 2 \sqrt { K ( \pmb q ) } } \left[ p _ { x } ^ { 2 } + K ( \pmb q ) x ^ { 2 } \right]
+$$
+
+as the adiabatic invariant for the Hamiltonian (10.8). Indeed, for fixed $K = K ( \pmb q )$ , solutions of (10.8) are of the form
+
+$$
+x ( t ) = \frac { R } { K ^ { 1 / 4 } } \sin ( \phi ( t ) ) , \qquad p _ { x } ( t ) = R K ^ { 1 / 4 } \cos ( \phi ( t ) ) ,
+$$
+
+where $\phi ^ { \prime } ( t ) = \omega = \varepsilon ^ { - 1 } \sqrt { K }$ and $R$ is again arbitrary. The area of the ellipse followed by $( x ( t ) , p _ { x } ( t ) )$ is given by $A = \pi R ^ { 2 }$ and the energy by $H _ { \mathrm { f } } = K ^ { 1 / 2 } R ^ { 2 } / ( 2 \varepsilon )$ . Hence, we obtain $\mathcal { I }$ as given above. In both cases, the equality
+
+$$
+H _ { \mathrm { f } } = \omega J
+$$
+
+holds, where $\omega$ is the frequency of the rapidly rotating motion.
+
+# 10.1.4 The effect of numerical resonances
+
+Let us now return to the LTS methods. Composition methods have been considered before in this book. However, the method (10.5) is different from those composition methods since the map $\psi _ { \Delta t }$ is not close to the identity. Hence, although (10.5) generates a symplectic map, long time energy conservation cannot be concluded from backward error analysis. Sharp increases in energy are indeed observed for particular values of $\Delta t$ and these are associated with numerically induced resonances as briefly discussed in Section 10.1.1 for single frequency systems. To explore this issue in more detail in the context of slow–fast systems, we discuss two simple model problems.
+
+# A linear model problem
+
+Consider a linear system with Hamiltonian
+
+$$
+H = \frac { 1 } { 2 } \left[ p ^ { 2 } + q ^ { 2 } \right] + \frac { 1 } { 2 \varepsilon } \left[ p _ { x } ^ { 2 } + ( x - q ) ^ { 2 } \right] .
+$$
+
+The associated equations of motion are
+
+$$
+\begin{array} { r } { \left[ \begin{array} { c } { \dot { q } } \\ { \dot { p } } \\ { \dot { x } } \\ { \dot { p } _ { x } } \end{array} \right] = \left[ \begin{array} { c c c c } { 0 } & { 1 } & { 0 } & { 0 } \\ { - 1 - \varepsilon ^ { - 1 } } & { 0 } & { \varepsilon ^ { - 1 } } & { 0 } \\ { 0 } & { 0 } & { 0 } & { \varepsilon ^ { - 1 } } \\ { \varepsilon ^ { - 1 } } & { 0 } & { - \varepsilon ^ { - 1 } } & { 0 } \end{array} \right] \left[ \begin{array} { c } { q } \\ { p } \\ { x } \\ { p _ { x } } \end{array} \right] . } \end{array}
+$$
+
+These equations can, of course, be solved analytically. This is also true for the fast and slow subsystems and we can implement an LTS method in the form
+
+$$
+\boldsymbol { M } _ { \Delta t } = e ^ { \Delta t / 2 B } \cdot e ^ { \Delta t \boldsymbol { A } } \cdot e ^ { \Delta t / 2 B } ,
+$$
+
+where
+
+$$
+\pmb { A } = \left[ \begin{array} { c c c c } { 0 } & { 0 } & { 0 } & { 0 } \\ { - \varepsilon ^ { - 1 } } & { 0 } & { \varepsilon ^ { - 1 } } & { 0 } \\ { 0 } & { 0 } & { 0 } & { \varepsilon ^ { - 1 } } \\ { \varepsilon ^ { - 1 } } & { 0 } & { - \varepsilon ^ { - 1 } } & { 0 } \end{array} \right] , \qquad \pmb { B } = \left[ \begin{array} { c c c c } { 0 } & { 1 } & { 0 } & { 0 } \\ { - 1 } & { 0 } & { 0 } & { 0 } \\ { 0 } & { 0 } & { 0 } & { 0 } \\ { 0 } & { 0 } & { 0 } & { 0 } \end{array} \right] .
+$$
+
+The eigenvalues of the exact solution operator
+
+$$
+W _ { \Delta t } = e ^ { \Delta t ( A + B ) }
+$$
+
+are all on the unit circle. For the numerical approximation ${ M } _ { \Delta t }$ to be stable, we have to require that all its eigenvalues be on the unit circle as well. To check this property, we define
+
+$$
+\Lambda ( \Delta t ) = \operatorname* { m a x } _ { i = 1 , \ldots , 4 } | \lambda _ { i } ( \Delta t ) | ,
+$$
+
+![](images/4381771235529c906aacde64cf0b95fd1444cef029fef7e4a0a487cdcae18343.jpg)  
+Figure 10.2 Stability of LTS method as a function of $\Delta t / \varepsilon$ .
+
+where $\lambda _ { j } ( \Delta t )$ , $i = 1 , \dots , 4$ , are the eigenvalues of ${ M } _ { \Delta t }$ . The linear stability boundary for the St¨ormer–Verlet method is $\omega \Delta t \leq 2$ , where $\omega$ is the highest frequency in the system. Here we have $\omega \approx \varepsilon ^ { - 1 }$ and it can be seen from Fig. 10.2 that the LTS method becomes unstable for the first time at about $\Delta t { } \omega _ { } \approx { } \pi$ . Of course, if one excludes the domains of instability by a proper choice of $\Delta t$ , then a much larger timestep could be used in principle. One can also see from Fig. 10.2 that the domains of instability shrink for smaller values of $\varepsilon$ . The precise motion of all four eigenvalues $\lambda _ { j }$ as a function of $\Delta t / \varepsilon$ , $\varepsilon = 1 / 4 0$ , can be found in Fig. 10.3. Note that the eigenvalues leave the unit circle near fast–fast or fast– slow eigenvalue crossings (resonances) which implies an exponential instability of the method.
+
+# A nonlinear model problem
+
+We take a Hamiltonian of type (10.8) with $K ( q ) = 1 + \alpha q ^ { 2 }$ , $\alpha = 0 . 1$ ; i.e.
+
+$$
+H = \frac { 1 } { 2 } \left[ p ^ { 2 } + q ^ { 2 } \right] + \frac { 1 } { 2 \varepsilon } \left[ p _ { x } ^ { 2 } + ( 1 + \alpha q ^ { 2 } ) x ^ { 2 } \right] .
+$$
+
+![](images/d23e05afdd3f428b016bf8e024cf2494658c6205b691c78a58cd1982cfd66ebe.jpg)  
+Figure 10.3 Eigenvalues of LTS propagator as a function of $\Delta t / \varepsilon$ , $\varepsilon = 1 / 4 0$ .
+
+The equations of motion for the fast subsystem
+
+$$
+\dot { x } = \varepsilon ^ { - 1 } p _ { x } , \quad \dot { p } _ { x } = - \varepsilon ^ { - 1 } ( 1 + \alpha q ^ { 2 } ) x , \quad \dot { q } = 0 , \quad \dot { p } = - \frac { \alpha } { \varepsilon } x ^ { 2 } q
+$$
+
+can be solved analytically. The frequency of the fast motion is
+
+$$
+\omega = \varepsilon ^ { - 1 } \sqrt { 1 + \alpha q ^ { 2 } } ,
+$$
+
+and the solution in $( x , p _ { x } )$ (for frozen $q$ ) is given by
+
+$$
+\begin{array} { l } { { \displaystyle x ( t ) = x ( 0 ) \cos ( \omega t ) + \frac { p _ { x } ( 0 ) } { \sqrt { 1 + \alpha q ^ { 2 } } } \sin ( \omega t ) } , } \\ { { \displaystyle p _ { x } ( t ) = p _ { x } ( 0 ) \cos ( \omega t ) - x ( 0 ) \sqrt { 1 + \alpha q ^ { 2 } } \sin ( \omega t ) } . } \end{array}
+$$
+
+The update for the momentum $p$ becomes
+
+$$
+\begin{array} { l } { { \displaystyle p ( t ) = p ( 0 ) - \frac { \alpha q ( 0 ) } { \sqrt { 1 + \alpha q ( 0 ) ^ { 2 } } } \left[ \frac { x ( 0 ) ^ { 2 } } { 2 } \left( \omega t + \cos ( \omega t ) \sin ( \omega t ) \right) + \right. } } \\ { { \displaystyle \left. + \frac { p _ { x } ( 0 ) ^ { 2 } } { 2 ( 1 + \alpha q ( 0 ) ^ { 2 } ) } \left( \omega t - \cos ( \omega t ) \sin ( \omega t ) \right) + \frac { x ( 0 ) p _ { x } ( 0 ) } { \sqrt { 1 + \alpha q ( 0 ) ^ { 2 } } } \sin ^ { 2 } ( \omega t ) \right] } } \end{array}
+$$
+
+We denote the associated flow map by $\pmb { \phi } _ { \Delta t , H _ { f } }$ . The timestepping method is given by
+
+$$
+\pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { \Delta t / 2 , H _ { \mathrm { s } } } \circ \pmb { \phi } _ { \Delta t , H _ { \mathrm { f } } } \circ \pmb { \phi } _ { \Delta t / 2 , H _ { \mathrm { s } } } ,
+$$
+
+where $\pmb { \phi } _ { t , H _ { \mathrm { s } } }$ is the solution operator for the (slow) harmonic oscillator
+
+$$
+\dot { q } = p , \qquad \dot { p } = - q .
+$$
+
+We set $\varepsilon = 0 . 0 2 5$ , $q ( 0 ) = x ( 0 ) = 0$ , $p ( 0 ) = 1$ , $p _ { x } ( 0 ) = 2 \varepsilon ^ { 1 / 2 }$ , and integrated the equations of motion over a time interval of $t \in [ 0 , 2 0 0 ]$ for stepsizes $\Delta t$ in the range of $\varepsilon ^ { - 1 } \Delta t \in [ 1 , 1 0 ]$ . In Fig. 10.4, we plot
+
+$$
+\Delta E _ { \mathrm { m a x } } = \operatorname* { m a x } _ { t \in [ 0 , 2 0 0 ] } \frac { | H ( t ) - H ( 0 ) | } { H ( 0 ) } , \quad \Delta J _ { \mathrm { m a x } } = \operatorname* { m a x } _ { t \in [ 0 , 2 0 0 ] } \frac { | J ( t ) - J ( 0 ) | } { J ( 0 ) }
+$$
+
+as a function of the scaled stepsize $\Delta t / \varepsilon$ . Significantly increased errors in energy and adiabatic invariant are clearly visible in the vicinity of $\Delta t / \varepsilon = k \pi$ , $k = 1 , 2 , 3$ . However, since we observe exactly the same energy behavior for a simulation over the longer time interval $t \in [ 0 , 8 0 0 ]$ , the increased errors are not linked to an instability of the method. This is in contrast to the linear test problem (10.12), where exponential instabilities occurred near $\Delta t / \varepsilon = k \pi$ , $k = 1 , 2 , \ldots .$ . The somewhat favorable behavior of nonlinear over linear problems is observed quite often in practice and can be traced back to the fact that the frequency (10.15) of the fast system is not constant but varies in time as a function of $q ( t )$ .
+
+![](images/f2611859cdb02cab1e5ff5a097f1185d5183a35a6ef4e8b8a5f6de82de3f0468.jpg)  
+Figure 10.4 Maximum relative errors in total energy and adiabatic invariant as a function of $\Delta t / \varepsilon$ , $\varepsilon = 1 / 4 0$ , for LTS method.
+
+# 10.2 Averaging and reduced equations
+
+We have seen in Section 10.1.3 that the highly oscillatory motion in a single fast degree of freedom gives rise to the existence of an adiabatic invariant $\mathcal { I }$ . We will now use this adiabatic invariant to discuss the effect of the fast motion in $\left( x , p _ { x } \right)$ on the slow degrees of freedom $( \pmb q , \pmb p )$ . The relevant equations of motion in the variable $( \pmb q , \pmb p )$ are
+
+$$
+\dot { \boldsymbol { q } } = \boldsymbol { M } ^ { - 1 } \boldsymbol { p } , \qquad \dot { \boldsymbol { p } } = - \nabla _ { \boldsymbol { q } } \boldsymbol { V } ( \boldsymbol { q } ) - \varepsilon ^ { - 1 } \nabla _ { \boldsymbol { q } } \boldsymbol { V } _ { \mathrm { f } } ( \boldsymbol { x } ( t ) , \boldsymbol { q } ) ,
+$$
+
+where $x ( t )$ is now assumed to be a given function of time. In fact, we can deduce from the previous discussions that $x ( t )$ has to be of the form
+
+$$
+x ( t ) \approx \sqrt { \frac { 2 J } { \varepsilon \omega } } \sin ( \phi ( t ) ) + b ( \pmb { q } ) ,
+$$
+
+with $\phi ^ { \prime } ( t ) = \omega$ and $\omega = \omega ( q ( t ) )$ is the instantaneous frequency of the fast oscillations. For example, consider the Hamiltonian (10.7), then $\omega = \varepsilon ^ { - 1 }$ and $b ( \pmb q ) = L ( \pmb q )$ . On the other hand, we obtain $\omega = \varepsilon ^ { - 1 } \sqrt { K ( \pmb q ) }$ and $b ( \pmb q ) = 0$ for the system (10.8). Recall that the action $J$ is an adiabatic invariant. In accordance with this, we may set $J = { \mathsf { c o n s t } }$ .
+
+Let us now sketch the basic idea of averaging. See [197, 7, 8] for more details. Assume we are given a second-order time-dependent differential equation
+
+$$
+\ddot { y } = f ( y , \phi ( t ) ) ,
+$$
+
+where $\phi ( t )$ is a given function such that $\phi ^ { \prime } ( t ) = \omega ( t ) \gg 1$ and $f ( y , \tau )$ is $2 \pi -$ periodic in $\tau$ . One can think of these equations as a mechanical system driven by a highly oscillatory time-dependent excitation of instantaneous frequency $\omega$ . Let us assume that $\omega ( t ) \geq \varepsilon ^ { - 1 }$ and $\omega ( t )$ is slowly varying in time, then the motion in the variable $y$ is characterized by the averaged equations
+
+$$
+\ddot { y } = \bar { f } ( y ) , \qquad \bar { f } ( y ) = \frac { 1 } { 2 \pi } \int _ { 0 } ^ { 2 \pi } f ( y , \tau ) d \tau ,
+$$
+
+over time intervals of order one up to an approximation error of $\mathcal { O } ( \varepsilon )$ [197, 7, 8]. Let us apply this result to the system (10.16). We assume that $\omega ( q ) \geq \varepsilon ^ { - 1 }$ and obtain the averaged equations
+
+$$
+\dot { \pmb q } = { \pmb M } ^ { - 1 } { \pmb p } , \qquad \dot { \pmb p } = - \nabla _ { \pmb q } V ( \pmb q ) + \bar { \cal F } _ { \mathrm { f } } ( \pmb q ) ,
+$$
+
+where
+
+$$
+\bar { F } _ { \mathrm { f } } = - \frac { 1 } { 2 \pi } \int _ { 0 } ^ { 2 \pi } \varepsilon ^ { - 1 } \nabla _ { q } V _ { \mathrm { f } } \left( \sqrt { \frac { 2 J } { \omega } } \sin ( \tau ) + b ( q ) , q \right) d \tau .
+$$
+
+Once the averaged force $\bar { F } _ { \mathrm { f } }$ is known, the equations (10.17) form a set of reduced equations in the slow variable $( \pmb q , \pmb p )$ .
+
+Let us explicitly compute $\bar { F } _ { \mathrm { f } }$ for our two examples. We find that
+
+$$
+\frac { 1 } { 2 \pi } \int _ { 0 } ^ { 2 \pi } ( x ( \tau ) - L ) d \tau = 0 ,
+$$
+
+and
+
+$$
+\frac { 1 } { 2 \pi } \int _ { 0 } ^ { 2 \pi } { x ( \tau ) ^ { 2 } d \tau } = \frac { 1 } { 2 \pi } \int _ { 0 } ^ { 2 \pi } { \frac { 2 J } { K ^ { 1 / 2 } } \sin ^ { 2 } ( \tau ) d \tau } = \frac { J } { K ^ { 1 / 2 } } ,
+$$
+
+respectively. Hence we obtain $\bar { \pmb { F } } _ { \mathrm { f } } = { \bf 0 }$ for (10.7) and
+
+$$
+\bar { F } _ { \mathrm { f } } = - \frac { J } { 2 \varepsilon \sqrt { K ( \pmb q ) } } \nabla _ { \pmb q } K ( \pmb q ) = - \varepsilon ^ { - 1 } J \nabla _ { \pmb q } \sqrt { K ( \pmb q ) } ,
+$$
+
+for (10.8), respectively. Furthermore, the averaged equations (10.17) can be written in canonical form with Hamiltonian
+
+$$
+\bar { H } ( \pmb { q } , \pmb { p } ) = H _ { s } ( \pmb { q } , \pmb { p } ) + \omega ( \pmb { q } ) \mathcal { I } ,
+$$
+
+and $\omega = \varepsilon ^ { - 1 }$ or $\omega = \varepsilon ^ { - 1 } \sqrt { K ( \pmb q ) }$ , respectively. The value of the adiabatic invariant $J$ is taken to be constant and is determined from the initial values of $\left( q , x , p _ { x } \right)$ . We mention that $\bar { H }$ can, formally, be obtained from $H = H _ { \mathsf { s } } + H _ { \mathsf { f } }$ , the identity (10.11) and the adiabatic invariance of $J$ .
+
+With this we complete the short discussion on the concept of averaging and the idea of reduced equations. See, for example, [165, 18, 28, 163] for further results on mechanical systems with a single fast degree of freedom.
+
+Let us compare the full dynamics to the reduced dynamics for the Hamiltonian (10.14). The reduced Hamiltonian is given by
+
+$$
+\bar { H } = \frac { 1 } { 2 } ( p ^ { 2 } + q ^ { 2 } ) + \sqrt { 1 + \alpha q ^ { 2 } } J .
+$$
+
+We take the same initial conditions and parameter values as used in Section 10.1.4. In Fig. 10.5, we plot the solution curves in the slow $( q , p )$ variable for the unreduced and reduced equations. Note that the equations obtained by simply dropping the high-frequency part altogether, i.e. $\dot { q } = p$ , $\dot { p } = - q$ , would have completely circular solutions.
+
+The averaging approach and the complete elimination of the highly oscillatory degree of freedom, as just outlined, is difficult to generalize to systems with more than one fast degree of freedom. This is because of possible resonant interactions between the fast modes which lead to non-constant action variables [190, 27, 160]. However, the idea to average the fast forces can still be utilized in numerical methods and we will devote the rest of the chapter to two such numerical averaging approaches.
+
+![](images/3d21573f0ab02c9960bd5983f1e9c10cf4ab51948d601870f6894464a83f80bc.jpg)  
+Figure 10.5 Comparison of slow $q \mathrm { . }$ -component of the solutions to the unreduced and averaged equations.
+
+# 10.3 The reversible averaging (RA) method
+
+Let us now develop a numerical method that uses the idea of averaging to allow for larger timesteps. The main motivation is to avoid the loss of accuracy or, even worse, the instabilities near resonances that we observed for standard LTS methods. We wish to emphasize that the idea of averaging in the context of LTS methods and symplectic integration was first proposed by GARC´ıA-ARCHILLA, SANZ-SERNA, AND SKEEL [67]. The associated method MOLLY will be discussed in detail in the following section. In this section, we will focus on the reversible averaging (RA) method of LEIMKUHLER AND REICH [112].
+
+Let us assume that a numerical approximation $z ^ { n } = ( \pmb { q } ^ { n } , \pmb { p } ^ { n } , x ^ { n } , p _ { x } ^ { n } )$ is given at time level $t _ { n }$ . We first describe a procedure to numerically compute a timeaveraged force $\bar { F } _ { \mathrm { f } }$ at $t ~ = ~ t _ { n }$ . The idea is to freeze the value of $\pmb q ( t )$ at $\pmb q ^ { n }$ and to compute the solution $( x ( t ) , p _ { x } ( t ) )$ to the associated fast equations of motion
+
+$$
+\dot { x } = \varepsilon ^ { - 1 } p _ { x } , \qquad \dot { p } _ { x } = \varepsilon ^ { - 1 } \nabla _ { x } V _ { \mathsf { f } } ( x , \pmb { q } ^ { n } ) ,
+$$
+
+over the time interval $t \in \left[ t _ { n - 1 } , t _ { n + 1 } \right]$ with initial (“middle”) conditions $x ( t _ { n } ) =$ $x ^ { n }$ and $p _ { x } ( t _ { n } ) = p _ { x } ^ { n }$ . We determine a time-averaged force along this solution
+
+$$
+\bar { F } _ { \mathrm { f } } ^ { n } = - \frac { 1 } { 2 \Delta t } \int _ { - \Delta t } ^ { \Delta t } { \varepsilon } ^ { - 1 } \nabla _ { q } V _ { \mathrm { f } } ( x ( t _ { n } + \tau ) , { \pmb q } ^ { n } ) d \tau .
+$$
+
+The reversible averaging (RA) method is now defined by the following sequence of steps
+
+THE REVERSIBLE AVERAGING (RA) METHOD
+
+1. Compute the time-averaged force $\bar { F } _ { \mathrm { f } } ^ { n }$ using (10.18) and apply the f St¨ormer–Verlet method to compute the new position $\pmb q ^ { n + 1 }$ at $t _ { n + 1 }$
+
+$$
+\begin{array} { c } { { { \pmb p } ^ { n + 1 / 2 } = { \pmb p } ^ { n } + \displaystyle \frac { \Delta t } { 2 } \left[ \bar { \pmb F } _ { \mathrm { f } } ^ { n } - \nabla _ { \mathbfit q } V ( \pmb q ^ { n } ) \right] , } } \\ { { { \pmb q } ^ { n + 1 } = { \pmb q } ^ { n } + \Delta t { \pmb M } ^ { - 1 } { \pmb p } ^ { n + 1 / 2 } . } } \end{array}
+$$
+
+2. Compute the solution $( x ( t ) , p _ { x } ( t ) )$ to the fast equations of motion
+
+$$
+\dot { x } = \varepsilon ^ { - 1 } p _ { x } , \qquad \dot { p } _ { x } = \varepsilon ^ { - 1 } \nabla _ { x } V _ { \dagger } ( x , \bar { \pmb q } ( t ) ) ,
+$$
+
+over $t \in \left[ t _ { n } , t _ { n + 1 } \right]$ with $\pmb { \bar { q } } ( t )$ varying along the linear path
+
+$$
+\bar { q } ( t ) = \frac { { { q } ^ { n + 1 } } + { { q } ^ { n } } } { 2 } + ( t - { { t } _ { n + 1 / 2 } } ) { { M } ^ { - 1 } } { { p } ^ { n + 1 / 2 } } ,
+$$
+
+and initial conditions equal to $x ( t _ { n } ) = x ^ { n }$ , $p _ { x } ( t _ { n } ) = p _ { x } ^ { n }$ . Next set
+
+$$
+x ^ { n + 1 } = x ( t _ { n + 1 } ) , \qquad p _ { x } ^ { n + 1 } = p _ { x } ( t _ { n + 1 } ) .
+$$
+
+3. Compute the time-averaged force $\bar { F } ^ { n + 1 }$ and update the momentum
+
+$$
+\pmb { p } ^ { n + 1 } = \pmb { p } ^ { n + 1 / 2 } + \frac { \Delta t } { 2 } \left[ \bar { F } _ { \mathrm { f } } ^ { n + 1 } - \nabla _ { \pmb { q } } V ( \pmb { q } ^ { n + 1 } ) \right] .
+$$
+
+If the force acting on the slow particles is linear in $x$ , then the average to be computed for the slow momentum update simplifies to
+
+$$
+\bar { F } _ { \mathrm { f } } ^ { n } = - \varepsilon \nabla _ { \ b { q } } V _ { \mathrm { f } } ( \bar { x } ^ { n } , \pmb { q } ^ { n } ) ,
+$$
+
+where
+
+$$
+\bar { x } ^ { n } = \frac 1 { 2 \Delta t } \int _ { - \Delta t } ^ { \Delta t } x ( t _ { n } + \tau ) d \tau .
+$$
+
+The same simplification may be used whenever $\left| x ^ { n } - \bar { x } ^ { n } \right|$ is sufficiently small.
+
+The RA method is a symmetric one-step method. This implies that the method respects the time-reversal symmetry: $S : ( q , p , x , p _ { x } ) \to ( q , - p , x , - p _ { x } )$ , since it is easy to verify that
+
+$$
+\begin{array} { r } { { \pmb { S } } \pmb { \phi } _ { \Delta t } ( z ) = \pmb { \phi } _ { - \Delta t } ( { \pmb { S } } z ) . } \end{array}
+$$
+
+However, the RA method is, in general, not symplectic.
+
+# 10.3.1 Numerical experiments
+
+Let us explore the properties of the RA method by numerical investigation of three model problems.
+
+# A linear test problem
+
+Let us apply the RA method to the Hamiltonian (10.12). Since the system is linear, one can explicitly construct the associated linear timestep map ${ M } _ { \Delta t }$ .
+
+We first consider the motion of the fast system
+
+$$
+\dot { x } = \varepsilon ^ { - 1 } p _ { x } , \qquad \dot { p } _ { x } = - \varepsilon ^ { - 1 } ( x - q ) ,
+$$
+
+for $q = q ^ { n }$ fixed. We introduce the new variable $\xi = x - q$ and obtain the solution
+
+$$
+\xi ( t ) = \xi ( 0 ) \cos ( \omega t ) + p _ { x } ( 0 ) \sin ( \omega t ) ,
+$$
+
+$\omega = \varepsilon ^ { - 1 }$ . The averaged $\bar { \xi } ^ { n }$ is given by
+
+$$
+\bar { \xi } ^ { n } = \frac { 1 } { 2 \Delta t } \int _ { - \Delta t } ^ { \Delta t } \xi ( t ) d t = \xi ^ { n } \frac { 1 } { \omega \Delta t } \sin ( \omega \Delta t ) ,
+$$
+
+where $\xi ^ { n } = x ^ { n } - q ^ { n }$ . Hence the update of the slow variables becomes
+
+$$
+\begin{array} { l } { { p ^ { n + 1 / 2 } = p ^ { n } - \displaystyle \frac { \Delta t } { 2 } \left[ q ^ { n } + C \displaystyle \frac { q ^ { n } - x ^ { n } } { \varepsilon } \right] , } } \\ { { q ^ { n + 1 } = q ^ { n } + \Delta t p ^ { n + 1 / 2 } , } } \end{array}
+$$
+
+where
+
+$$
+C = \frac { \sin ( \omega \Delta t ) } { \omega \Delta t } .
+$$
+
+Next we have to find the propagator for the linear system (10.19) along $q ( t ) = q ^ { n } + t p ^ { n + 1 / 2 }$ . We again use the variable $\xi = x - q$ and obtain the linear system
+
+$$
+\dot { \xi } = \omega ( p _ { x } - \varepsilon p ^ { n + 1 / 2 } ) , \qquad \dot { p } _ { x } = - \omega \xi .
+$$
+
+The solutions of this system are given by
+
+$$
+\begin{array} { r l } & { \xi ( t ) = \xi ( 0 ) \cos ( \omega t ) + ( p _ { x } ( 0 ) - \varepsilon p ^ { n + 1 / 2 } ) \sin ( \omega t ) , } \\ & { p _ { x } ( t ) = \varepsilon p ^ { n + 1 / 2 } + ( p _ { x } ( 0 ) - \varepsilon p ^ { n + 1 / 2 } ) \cos ( \omega t ) - \xi ( 0 ) \sin ( \omega t ) , } \end{array}
+$$
+
+and we obtain the propagator
+
+$$
+\begin{array} { r l } & { x ^ { n + 1 } = q ^ { n + 1 } + ( x ^ { n } - q ^ { n } ) \cos ( \omega \Delta t ) + ( p _ { x } ^ { n } - \varepsilon p ^ { n + 1 / 2 } ) \sin ( \omega \Delta t ) \quad , } \\ & { p _ { x } ^ { n + 1 } = \varepsilon p ^ { n + 1 / 2 } + ( p _ { x } ^ { n } - \varepsilon p ^ { n + 1 / 2 } ) \cos ( \omega \Delta t ) - ( x ^ { n } - q ^ { n } ) \sin ( \omega \Delta t ) . } \end{array}
+$$
+
+We finally update the momentum by
+
+$$
+p ^ { n + 1 } = p ^ { n + 1 / 2 } - \frac { \Delta t } { 2 } \left[ q ^ { n + 1 } + C \frac { q ^ { n + 1 } - x ^ { n + 1 } } { \varepsilon } \right] .
+$$
+
+It is found that the associated propagator is stable for all values of $\Delta t$ . The precise motion of all four eigenvalues can be found in Fig. 10.6. Note that the eigenvalues stay on the unit circle.
+
+We wish to point out that the proper choice of the average in (10.20) is crucial. For example, replacing (10.20) by
+
+$$
+\bar { \xi } ^ { n } = \frac { 1 } { \Delta t } \int _ { - \Delta t / 2 } ^ { \Delta t / 2 } \xi ( t ) d t = \xi ^ { n } \frac { 2 } { \omega \Delta t } \sin ( \omega \Delta t / 2 ) ,
+$$
+
+leads to resonance instabilities similar to those observed in Fig. 10.2.
+
+The linear system (10.19) could also be integrated along a constant $q =$ $q ^ { n + 1 / 2 } = q ^ { n } + \Delta t / 2 p ^ { n }$ . In this case, the linear propagator (10.21)–(10.22) simplifies to
+
+$$
+\begin{array} { r l } & { x ^ { n + 1 } = q ^ { n + 1 / 2 } + ( x ^ { n } - q ^ { n + 1 / 2 } ) \cos ( \omega \Delta t ) + p _ { x } ^ { n } \sin ( \omega \Delta t ) , } \\ & { p _ { x } ^ { n + 1 } = p _ { x } ^ { n } \cos ( \omega \Delta t ) - ( x ^ { n } - q ^ { n + 1 / 2 } ) \sin ( \omega \Delta t ) . } \end{array}
+$$
+
+However, this modification degrades the performances of the RA method. See the numerical experiments in the following subsection.
+
+# A nonlinear model problem
+
+Let us come back to the nonlinear model problem (10.14) of Section 10.1.4. The momentum update for the RA method becomes
+
+$$
+\begin{array} { c } { { p ^ { n + 1 / 2 } = p ^ { n - 1 / 2 } - \Delta t q ^ { n } - { \displaystyle \frac { \alpha q ^ { n } } { 2 \sqrt { 1 + \alpha ( q ^ { n } ) ^ { 2 } } } \left[ \left( ( x ^ { n } ) ^ { 2 } + { \displaystyle \frac { ( p _ { x } ^ { n } ) ^ { 2 } } { 1 + \alpha ( q ^ { n } ) ^ { 2 } } } \right) \omega \Delta t \right. } } } \\ { { \left. + \left( ( x ^ { n } ) ^ { 2 } - { \displaystyle \frac { ( p _ { x } ^ { n } ) ^ { 2 } } { 1 + \alpha ( q ^ { n } ) ^ { 2 } } } \right) \cos ( \omega \Delta t ) \sin ( \omega \Delta t ) \right] , } } \end{array}
+$$
+
+![](images/2e44594645e229460cc625b3ef235131e8806ef280adaf6e55a5815205e08552.jpg)  
+Figure 10.6 Eigenvalues of RA propagator as a function of $\Delta t / \varepsilon$ , $\varepsilon = 1 / 4 0$ .
+
+where $\omega = \varepsilon ^ { - 1 } \sqrt { 1 + \alpha q ^ { 2 } }$ . The fast system is propagated by integrating
+
+$$
+\dot { q } = p ^ { n + 1 / 2 } , \quad \dot { p } = 0 , \quad \dot { x } = \varepsilon ^ { - 1 } p _ { x } \quad \dot { p } _ { x } = - \varepsilon ^ { - 1 } ( 1 + \alpha q ^ { 2 } ) x ,
+$$
+
+using St¨ormer–Verlet with a small stepsize $\delta t \approx 0 . 1 \varepsilon$ subject to the constraint that $\Delta t / \delta t$ is an integer. We call this the RA-1 method. For comparison, we also implemented the following version of the RA method. The momentum update in $p$ is kept the same as for RA-1. But the fast system is propagated via
+
+$$
+q ^ { n + 1 / 2 } = q ^ { n } + \frac { \Delta t } { 2 } p ^ { n + 1 / 2 } ,
+$$
+
+followed by the exact solution of
+
+$$
+\dot { x } = \varepsilon ^ { - 1 } p _ { x } \quad \dot { p } _ { x } = - \varepsilon ^ { - 1 } ( 1 + \alpha ( q ^ { n + 1 / 2 } ) ^ { 2 } ) x ,
+$$
+
+and
+
+$$
+q ^ { n + 1 } = q ^ { n + 1 / 2 } + \frac { \Delta t } { 2 } p ^ { n + 1 / 2 } .
+$$
+
+We call this method RA-0. We performed the same numerical experiment as described in Section 10.1.2 for the MTS method. The results can be found in Fig. 10.7. While RA-0 is cheaper to implement than RA-1, its performance does not match that of RA-1. The largest relative error in energy over the whole range of stepsizes $\Delta t / \varepsilon \in [ 1 , 1 0 ]$ is $\Delta E _ { \mathrm { m a x } } \approx 0 . 0 2 7 1$ for RA-1 and $\Delta E _ { \mathrm { m a x } } \approx 1 . 2 1 2 4$ for RA-0. RA-1 also clearly outperforms the MTS method of Section 10.2. Again, we emphasize that the increased errors in energy are not linked to instabilities but are to be attributed to a reduced accuracy of the method. The nearly level error in the adiabatic invariant for the RA-1 method is due to a constant resolution of the fast oscillations by choosing $\delta t \approx 0 . 1 \varepsilon$ independently of $\Delta t$ .
+
+![](images/efff6c36ff2e087b1fd72a0dd87e1cfe80fb9ba69934962707fe401619839098.jpg)  
+Figure 10.7 Maximum relative errors in total energy and adiabatic invariant as a function of $\Delta t / \varepsilon$ , $\varepsilon = 1 / 4 0$ , for RA methods.
+
+# 10.4 The mollified impulse (MOLLY) method
+
+The mollified impulse method (MOLLY) [67] has been designed for a slightly different class of Hamiltonian systems than those considered so far. Let us therefore
+
+assume that we are given a Hamiltonian
+
+$$
+H = \frac { 1 } { 2 } \pmb { p } ^ { T } \pmb { M } ^ { - 1 } \pmb { p } + V _ { \dagger } ( \pmb { q } ) + V _ { 5 } ( \pmb { q } ) ,
+$$
+
+such that the reduced Hamiltonian
+
+$$
+H _ { \mathsf { f } } = { \frac { 1 } { 2 } } { \pmb { p } } ^ { T } { \pmb { M } } ^ { - 1 } { \pmb { p } } + V _ { \mathsf { f } } ( { \pmb { q } } )
+$$
+
+well captures the motion of the overall system over short time intervals. Note that we do not have an associated splitting into slow and fast variables as assumed so far.
+
+An MTS method can be implemented in the following way. We integrate $H _ { \mathrm { f } }$ by the St¨ormer–Verlet method using a small timestep $\delta t$ . Denote the associated timestepping map by $\pmb { \psi } _ { \delta t , H _ { f } }$ . Now consider the symplectic composition method
+
+$$
+\pmb { \psi } _ { \Delta t } : = \pmb { \phi } _ { \Delta t / 2 , V _ { \mathrm { s } } } \circ \left[ \pmb { \psi } _ { \delta t , H _ { \mathrm { f } } } \right] ^ { N } \circ \pmb { \phi } _ { \Delta t / 2 , V _ { \mathrm { s } } } ,
+$$
+
+$\Delta t = \delta t \cdot N$ . If we apply this MTS method to a linear test problem, then resonance instabilities are, in general, observed (see BIESIADECKI AND SKEEL [20] and GARC´ıA-ARCHILLA, SANZ-SERNA, AND SKEEL [67]).
+
+The basic idea to eliminate or weaken some of these resonances is to replace the “slow” potential energy $V _ { s }$ by an averaged potential energy. In the mollified MTS (MOLLY) method, as suggested by GARC´ıA-ARCHILLA, SANZ-SERNA, AND SKEEL [67], this is achieved in the following way. Let $\pmb q ( t )$ denote the solution of $H _ { \mathrm { f } }$ with initial conditions $\pmb q ( 0 ) = \pmb q$ and $\pmb { p } ( 0 ) = \pmb { 0 }$ . Then one can compute an averaged $\bar { \pmb q }$ , for example the long average [67]
+
+$$
+\bar { \pmb q } = \frac { 1 } { 2 \Delta t } \int _ { - \Delta t } ^ { \Delta t } \pmb q ( t ) d t .
+$$
+
+The relation between the initial $\pmb q$ and the averaged $\bar { \pmb q }$ can be viewed as a map
+
+$$
+\bar { \pmb q } = \mathcal { A } ( \pmb q ) .
+$$
+
+This map is applied to the potential energy function $V _ { s }$ to yield a new (filtered) potential energy
+
+$$
+\bar { V } _ { 5 } ( \pmb q ) = V ( \mathcal { A } ( \pmb q ) ) .
+$$
+
+MOLLY is now characterized by the modified MTS method
+
+$$
+\pmb { \psi } _ { \Delta t } : = \pmb { \phi } _ { \Delta t / 2 , \bar { V } _ { \mathrm { s } } } \circ [ \pmb { \psi } _ { \delta t , H _ { \mathrm { r } } } ] ^ { N } \circ \pmb { \phi } _ { \Delta t / 2 , \bar { V } _ { \mathrm { s } } } .
+$$
+
+Note that $\pmb { \phi } _ { \Delta t / 2 , \bar { V } _ { \mathrm { s } } }$ denotes the $\mathsf { e x a c t }$ time- $\Delta t / 2$ -flow map associated to the smoothed potential energy function $\bar { V _ { \mathsf { s } } }$ . Hence the overall timestepping generates a symplectic map.
+
+An important limitation of MOLLY should be pointed out. Since averaging and differentiation do not, in general, commute, the smoothed potential energy can only be used when the difference between $\pmb q$ and $\boldsymbol { \mathcal { A } } ( \boldsymbol { q } )$ is small or the system is (nearly) linear.
+
+Let us come back to the linear test example (10.12). We split the Hamiltonian into
+
+$$
+H _ { \mathrm { f } } = \frac { 1 } { 2 } \left[ p ^ { 2 } + \varepsilon ^ { - 1 } ( p _ { x } ^ { 2 } + ( x - q ) ^ { 2 } ) \right]
+$$
+
+and
+
+$$
+V _ { s } ( x , q ) = \frac { 1 } { 2 } q ^ { 2 } .
+$$
+
+The propagator for the fast $H _ { \mathsf { f } }$ -system is $e ^ { \Delta t A }$ with
+
+$$
+\pmb { A } = \left[ \begin{array} { c c c c } { 0 } & { 1 } & { 0 } & { 0 } \\ { - \pmb { \varepsilon } ^ { - 1 } } & { 0 } & { \pmb { \varepsilon } ^ { - 1 } } & { 0 } \\ { 0 } & { 0 } & { 0 } & { \pmb { \varepsilon } ^ { - 1 } } \\ { \pmb { \varepsilon } ^ { - 1 } } & { 0 } & { - \pmb { \varepsilon } ^ { - 1 } } & { 0 } \end{array} \right] ,
+$$
+
+and $z = ( q , p , x , p _ { x } ) ^ { T }$ . The next step is to construct a mollifier $\mathcal { A }$ . To do so, it is convenient to introduce transformed coordinates $q _ { 1 } = q$ and $q _ { 2 } = x - q$ . The corresponding canonical momenta are given by $p = p _ { 1 } - p _ { 2 }$ and $p _ { x } = p _ { 2 }$ . Thus the transformed Hamiltonian $\tilde { H } _ { \mathrm { f } }$ is
+
+$$
+\tilde { { \cal H } } _ { \mathrm { f } } = \frac 1 2 \left[ ( p _ { 1 } - p _ { 2 } ) ^ { 2 } + \varepsilon ^ { - 1 } ( p _ { 2 } ^ { 2 } + q _ { 2 } ^ { 2 } ) \right] ,
+$$
+
+with associated equations of motion
+
+$$
+\dot { p } _ { 1 } = 0 , \quad \dot { q } _ { 1 } = p _ { 1 } - p _ { 2 } , \quad \dot { p } _ { 2 } = - \varepsilon ^ { - 1 } q _ { 2 } , \quad \dot { q } _ { 2 } = p _ { 2 } - p _ { 1 } + \varepsilon ^ { - 1 } p _ { 2 } .
+$$
+
+We solve these equations subject to zero initial conditions in $p _ { 1 }$ and $p _ { 2 }$ , i.e. $p _ { 1 } ( 0 ) = p _ { 2 } ( 0 ) = 0$ . We immediately conclude that $p _ { 1 } ( t ) = 0$ and the equations of motion simplify to
+
+$$
+\dot { q } _ { 1 } = - p _ { 2 } , \quad \dot { p } _ { 2 } = - \varepsilon ^ { - 1 } q _ { 2 } , \quad \dot { q } _ { 2 } = ( 1 + \varepsilon ^ { - 1 } ) p _ { 2 } .
+$$
+
+The frequency of the fast oscillations in $\left( q _ { 2 } , p _ { 2 } \right)$ is
+
+$$
+\omega = \sqrt { \varepsilon ^ { - 1 } ( 1 + \varepsilon ^ { - 1 } ) } ,
+$$
+
+and solutions are given explicitly by
+
+$$
+q _ { 2 } ( t ) = q _ { 2 } ( 0 ) \cos ( \omega t ) , \qquad p _ { 2 } ( t ) = - \frac { q _ { 2 } ( 0 ) } { \varepsilon \omega } \sin ( \omega t ) .
+$$
+
+Hence, we obtain
+
+$$
+q _ { 1 } ( t ) = q _ { 1 } ( 0 ) - \frac { q _ { 2 } ( 0 ) } { 1 + \varepsilon ^ { - 1 } } \left( \cos ( \omega t ) - 1 \right)
+$$
+
+and the averaged value
+
+$$
+\bar { q } _ { 1 } = \frac { 1 } { 2 \Delta t } \int _ { - \Delta t } ^ { \Delta t } q _ { 1 } ( t ) d t = q _ { 1 } ( 0 ) - \frac { q _ { 2 } ( 0 ) } { 1 + \varepsilon ^ { - 1 } } \left( \frac { \sin ( \omega \Delta t ) } { \Delta t \omega } - 1 \right) .
+$$
+
+If we translate this result back to the original variables, then the mollifier $\mathcal { A }$ is given by
+
+$$
+\bar { q } = \mathcal { A } ( x , q ) = q - \frac { x - q } { 1 + \varepsilon ^ { - 1 } } \left( \frac { \sin ( \omega \Delta t ) } { \omega \Delta t } - 1 \right)
+$$
+
+and the mollified potential energy $V _ { s }$ by
+
+$$
+\bar { V } _ { \mathrm { s } } = \frac { 1 } { 2 } \bar { q } ^ { 2 } = \frac { 1 } { 2 } q ^ { 2 } + \frac { C ^ { 2 } } { 2 } ( x - q ) ^ { 2 } + C ( q - x ) q ,
+$$
+
+where
+
+$$
+C = \frac { 1 } { 1 + \varepsilon ^ { - 1 } } \left( \frac { \sin ( \omega \Delta t ) } { \omega \Delta t } - 1 \right) .
+$$
+
+The propagator for the mollified slow system is $e ^ { \Delta t \bar { B } }$ with
+
+$$
+\bar { B } = \left[ \begin{array} { c c c c } { { 0 } } & { { 0 } } & { { 0 } } & { { 0 } } \\ { { - ( 1 + C ) ^ { 2 } } } & { { 0 } } & { { C + C ^ { 2 } } } & { { 0 } } \\ { { 0 } } & { { 0 } } & { { 0 } } & { { 0 } } \\ { { C + C ^ { 2 } } } & { { 0 } } & { { - C ^ { 2 } } } & { { 0 } } \end{array} \right] .
+$$
+
+Fig. 10.8 reveals that the mollified LTS method is vastly more stable than the original LTS method (10.13). However, tiny resonance instabilities are still present near multiples of $2 \pi$ .
+
+See problem 4 in the Exercises for another example of a mollified MTS method.
+
+# 10.5 Multiple frequency systems
+
+So far we have exclusively dealt with systems that possess a single fast degree of freedom. This is, of course, not the situation typically encountered in applications such as molecular dynamics or numerical weather prediction [47]. The LTS methods described in Sections 10.3 and 10.4 can still be applied to such more general highly oscillatory systems but they encounter additional difficulties. Take the case of two fast degrees of freedom with frequencies $\omega _ { 1 }$ and $\omega _ { 2 }$ . Following the discussion in Section 10.1.1, a standard LTS methods leads to the investigation of the two associated frequencies $\Omega _ { 1 , \Delta t }$ and $\Omega _ { 2 , \Delta t }$ which are both in the range ${ \mathcal { T } } = [ - \pi , \pi )$ . While $\omega _ { 1 }$ and $\omega _ { 2 }$ will in general be different and non-resonant, we can now always find a stepsize $\Delta t$ such that $\Omega _ { 1 , \Delta t } = \Omega _ { 2 , \Delta t }$ . Hence, for that particular $\Delta t$ , the two modes are in one-to-one resonance which, typically, manifests itself with a numerical instability of the associated integration scheme. Furthermore, these instabilities are not easily mollified because they can occur for any value of $\Omega _ { 1 , \Delta t } = \Omega _ { 2 , \Delta t }$ in the interval $\mathcal { T }$ . See also [67].
+
+![](images/245a95efd22a78460d6080f6739284d09d21fb208668e3fc540049eaece3abe7.jpg)  
+Figure 10.8 Stability of MOLLY as a function of $\Delta t / \varepsilon$ .
+
+The only known stable MTS method for general Hamiltonian systems of type
+
+$$
+H = \frac { 1 } { 2 } \pmb { p } ^ { T } \pmb { M } ^ { - 1 } \pmb { p } + V ( \pmb { q } ) + \frac { 1 } { 2 \varepsilon ^ { 2 } } \pmb { g } ( \pmb { q } ) ^ { T } \pmb { g } ( \pmb { q } )
+$$
+
+has been proposed by IZAGUIRRE, REICH AND SKEEL [93] and makes use of the holonomic constraint $g ( \pmb q ) = \pmb 0$ in the definition of the mollifier $\mathcal { A }$ . See the Exercises.
+
+# 10.6 Exercises
+
+1. Non-autonomous backward error analysis. Following a result by KUKSIN AND POSCHEL ¨ [100] (see also MOAN [135]), we can imbed a symplectic method
+
+into the time-one-flow map of a non-autonomous Hamiltonian system with Hamiltonian of the form
+
+$$
+\tilde { H } _ { \Delta t } = 2 \pi e + \Delta t H ( q , p ) + \Delta t g _ { \Delta t } ( q , p , \tau ) ,
+$$
+
+where $g _ { \Delta t }$ is an appropriate function which is $2 \pi$ -periodic in $\tau$ . The symplectic structure of the extended equations in $( q , p , \tau , e )$ is
+
+$$
+\omega = d p \wedge d q + d e \wedge d \tau .
+$$
+
+a. Perform a canonical change of variables from $( e , \tau )$ to $E = - 2 e$ and $s = - \tau / 2$ . Verify that the new equations of motion can be written in the form
+
+$$
+\begin{array} { r l } & { \dot { q } = + \Delta t \nabla _ { p } [ H ( q , p ) + h _ { \Delta t } ( q , p , s ) ] , } \\ & { \dot { p } = - \Delta t \nabla _ { q } [ H ( q , p ) + h _ { \Delta t } ( q , p , s ) ] , } \\ & { \dot { s } = - \pi , } \\ & { \dot { E } = - \Delta t \nabla _ { s } h _ { \Delta t } ( q , p , s ) , } \end{array}
+$$
+
+and find $h _ { \Delta t }$ in terms of $g _ { \Delta t }$ .
+
+b. Use the result from (a) to ”justify” the modified Hamiltonian (10.6).
+
+2. Resonance instabilities for single-degree-of-freedom systems. Consider a one degree of freedom linear system
+
+$$
+\dot { q } = \omega p , \qquad \dot { p } = - \omega q - q ,
+$$
+
+which we write as
+
+$$
+\dot { z } = \omega J z + B z ,
+$$
+
+with $z = ( q , p ) ^ { T }$ . An LTS method can be defined by
+
+$$
+M _ { \Delta t } = W _ { 2 } ( \Delta t / 2 ) W _ { 1 } ( \omega \Delta t ) W _ { 2 } ( \Delta t / 2 ) ,
+$$
+
+where
+
+$$
+W _ { 1 } ( \omega \Delta t ) = \mathbf { e } ^ { \omega \Delta t J } , \qquad W _ { 2 } ( \Delta t / 2 ) = \mathbf { e } ^ { \Delta t / 2 B } .
+$$
+
+a. According to standard stability results for symplectic matrices (see [7]), we know that ${ M } _ { \Delta t }$ is stable provided
+
+(i) $\Delta t$ is sufficiently small, (ii) the eigenvalues of $W _ { 1 } ( \omega \Delta t )$ are on the unit circle and simple.
+
+What values of $\tau = \omega \Delta t$ give rise to double eigenvalues of $W _ { 1 } ( \tau ) ?$
+
+b. Assume that $\Delta t$ has been chosen such that
+
+$$
+| \omega \Delta t - 2 \pi | \ll \Delta t .
+$$
+
+Show that ${ M } _ { \Delta t }$ is equivalent to
+
+$$
+M _ { \Delta t } = W _ { 2 } ( \Delta t / 2 ) W _ { 1 } ( \omega \Delta t - 2 \pi ) W _ { 2 } ( \Delta t / 2 ) .
+$$
+
+Determine the parameter $\hat { \omega }$ , $| \hat { \omega } | \leq \pi / \Delta t$ , in the equation
+
+$$
+\dot { z } = \hat { \omega } J z + B z ,
+$$
+
+such that the associated matrix exponential,
+
+$$
+\begin{array} { r } { \tilde { W } ( \Delta t ) = { \bf e } ^ { \Delta t ( \hat { \omega } J + B ) } , } \end{array}
+$$
+
+satisfies
+
+$$
+\begin{array} { r } { \pmb { M } _ { \Delta t } = \tilde { \pmb { W } } ( \Delta t ) + \mathcal { O } ( \Delta t ^ { 2 } ) , } \end{array}
+$$
+
+as $\Delta t \to 0$ and $\omega  \infty$ subject to (10.26).
+
+Show that $\hat { \omega }$ can become negative for certain values of $\Delta t$ . What implications can we deduce for the solution behavior of the modified equation (10.27)? Compare your findings with the results from Fig. 10.1.
+
+3. Resonance instabilities for single-degree-of-freedom systems. If one applies the LTS method (10.5) to the nonlinear oscillator
+
+$$
+\dot { q } = \omega p , \qquad \dot { p } = - \omega q - g ^ { \prime } ( q ) ,
+$$
+
+$g ^ { \prime } ( q )$ an odd function in $q$ , numerical instabilities can be observed for $\omega \Delta t \approx$ $k \pi$ , $k$ a positive integer. We have seen in Section 10.1.1 that the LTS method (10.5) leads to a modified Hamiltonian $\tilde { H }$ with an effective frequency $\hat { \omega } \approx 0$ for stepsizes $\Delta t$ such that $\omega \Delta t \approx 2 k \pi$ . A similar statement can, in fact, be derived for the case $\omega \Delta t \approx k \pi$ . We write the LTS method (10.5) applied to (10.28) in the abstract form
+
+$$
+z ^ { n + 1 } = \pmb { \psi } _ { \Delta t } ( z ^ { n } ) , \qquad z ^ { n } = ( q ^ { n } , p ^ { n } ) ^ { T } .
+$$
+
+Next we perform a change of variables
+
+$$
+\hat { z } ^ { n } = ( - 1 ) ^ { n } z ^ { n }
+$$
+
+and formally obtain a numerical method
+
+$$
+\hat { z } ^ { n + 1 } = \hat { \pmb { { \psi } } } _ { \Delta t } ( \hat { z } ^ { n } ) ,
+$$
+
+in terms of the new sequence of variables $\left\{ \hat { z } ^ { n } \right\}$ .
+
+a. Derive an explicit expression for $\hat { \pmb { { \psi } } } _ { \Delta t }$ assuming that $g ^ { \prime } ( - q ) = - g ^ { \prime } ( q )$ .   
+b. Show that $\hat { \pmb { { \psi } } } _ { \Delta t }$ is equivalent to the LTS method (10.5) applied to the nonlinear oscillator $\dot { q } = \left( \omega + \frac { \pi } { \Delta t } \right) p , \qquad \dot { p } = - \left( \omega + \frac { \pi } { \Delta t } \right) q - g ^ { \prime } ( q ) .$   
+c. Following the arguments of Section 10.1.1, discuss the numerical behavior of $\hat { \pmb { { \psi } } } _ { \Delta t }$ for $\omega \Delta t \approx k \pi$ , $k$ an odd integer. See also the previous problem.
+
+4. Mollified LTS methods. We develop a mollified version of the LTS method (10.5) applicable to the nonlinear oscillator (10.28). The basic idea is to find a mollified slow Hamiltonian $\bar { H } _ { s }$ such that
+
+$$
+\pmb { \phi } _ { \Delta t / 2 , \bar { H } _ { s } } = \mathbf { i d } ,
+$$
+
+for $\omega \Delta t = k \pi$ , $k$ a positive integer. This implies that the numerical method reduces to
+
+$$
+\pmb { \psi } _ { \Delta t } = \pmb { \phi } _ { \Delta t , H _ { f } } = \mathbf { e } ^ { \omega \Delta t J } ,
+$$
+
+for resonant stepsizes $\Delta t$ .
+
+a. Consider the matrix
+
+$$
+C ( \tau ) = \frac { 1 } { 2 \tau } J ^ { - 1 } \left( { \bf e } ^ { 2 \tau J } - I _ { 2 } \right) .
+$$
+
+Show that (i) $C ( \tau ) \to I _ { 2 }$ as $\tau  0$ and (ii) $c ( \tau ) = 0$ for $\tau = k \pi$ . Remark: Condition (i) is necessary for convergence of the method as $\tau  0$ .
+
+b. Given an arbitrary Hamiltonian $H _ { s } ( z )$ , we define the associated mollified Hamiltonian
+
+$$
+\bar { H } _ { s } ( z ; \tau ) = H _ { s } ( C ( \tau ) z ) .
+$$
+
+Find $\bar { H } _ { s } = \bar { V } _ { s }$ for $H _ { s } = V _ { s } = q ^ { 2 } / 2$ .
+
+c. Using the result from (b), implement the mollified LTS method
+
+$$
+\pmb { { \psi } } _ { \Delta t } = \pmb { { \phi } } _ { \Delta t / 2 , \bar { H } _ { s } } \circ \pmb { { \phi } } _ { \Delta t , H _ { f } } \circ \pmb { { \phi } } _ { \Delta t / 2 , \bar { H } _ { s } } ,
+$$
+
+for $H _ { s } = q ^ { 2 } / 2$ . How does the method behave near $\omega \Delta t = k \pi$ as compared with the non-mollified method?
+
+5. Many-degrees-of-freedom systems. Additional difficulties arise when considering systems with two fast degrees of freedom, for example
+
+$$
+H = \frac { \omega _ { 1 } } { 2 } \left( p _ { 1 } ^ { 2 } + q _ { 1 } ^ { 2 } \right) + \frac { \omega _ { 2 } } { 2 } \left( p _ { 1 } ^ { 2 } + q _ { 2 } ^ { 2 } \right) + V _ { s } ( q _ { 1 } , q _ { 2 } ) .
+$$
+
+For simplicity, we set $\omega _ { 1 } = \omega$ and $\omega _ { 2 } = 4 \omega$ and concentrate again on linear systems.
+
+An LTS method of type (10.5) will produce a symplectic matrix ${ M } _ { \Delta t }$ which can be thought of as a small perturbation of the symplectic matrix
+
+$$
+W ( \omega \Delta t ) = { \bf e } ^ { \omega \Delta t A } , \qquad A = \left[ \begin{array} { c c c c } { { 0 } } & { { 1 } } & { { 0 } } & { { 0 } } \\ { { - 1 } } & { { 0 } } & { { 0 } } & { { 0 } } \\ { { 0 } } & { { 0 } } & { { 0 } } & { { 2 } } \\ { { 0 } } & { { 0 } } & { { - 2 } } & { { 0 } } \end{array} \right] .
+$$
+
+Hence we have to make use of the perturbation theory of symplectic matrices. A good introduction to this topic and the associated theory due to KREJN (1950) can be found in [7]. Below we give a brief discussion on the implications for LTS methods.
+
+a. For which values of $\tau = \omega \Delta t \neq 0$ does $W ( \tau )$ have non-simple (repeated) eigenvalues on the unit circle? (Hint: sufficient condition is $\Delta t ( \omega _ { 1 } + \omega _ { 2 } ) =$ $\pi k$ . Is this condition also necessary?) For future reference, let $\lambda$ denote the double eigenvalue with $| \mathsf { m } \lambda > 0$ . (Recall that the complex conjugate of $\lambda$ is also an eigenvalue.)   
+b. Take one particular value of $\tau$ found under (a) and call it $\tau ^ { * }$ . Determine the two-dimensional plane spanned by the complex-valued eigenvectors $\pmb { v }$ of $W ( \tau ^ { * } )$ corresponding to the double eigenvalue $\lambda$ . Denote this plane by $\Pi _ { \lambda } \subset \mathbb { C } ^ { 2 }$ .   
+c. The matrix $W ( \tau )$ introduces a quadratic form
+
+$$
+\kappa ( x , y ; \tau ) = x ^ { T } J W ( \tau ) y , \qquad J = \left[ \begin{array} { c c c c } { 0 } & { 1 } & { 0 } & { 0 } \\ { - 1 } & { 0 } & { 0 } & { 0 } \\ { 0 } & { 0 } & { 0 } & { 1 } \\ { 0 } & { 0 } & { - 1 } & { 0 } \end{array} \right] .
+$$
+
+Find an explicit expression of $\kappa ( x , x ; \tau ^ { * } )$ for your choice of $\tau = \tau ^ { * }$ .
+
+d. A standard result in symplectic perturbation theory [7] implies that the symplectic matrix $W ( \tau )$ is stable under small (symplectic) perturbations, if its eigenvalues are simple or, in case there is a non-simple eigenvalue $\lambda$ , if the quadratic form $\kappa ( x , x ; \tau )$ has the same sign for all real vectors $x$ in $\Pi _ { \lambda }$ . Is $W ( \tau ^ { * } )$ stable for your choice of $\tau = \tau ^ { * } ?$ (Hint: The matrix is unstable under perturbations for all resonances satisfying $\Delta t ( \omega _ { 1 } + \omega _ { 2 } ) = 2 \pi k$ , $k$ a positive integer [67].)
+
+6. Averaged equations and adiabatic invariant. Consider a particle of unit mass with coordinate $\pmb q = ( q _ { 1 } , q _ { 2 } ) ^ { T } \in \mathbb { R } ^ { 2 }$ subject to the potential
+
+$$
+V ( \pmb q ) = \frac { 1 } { 2 } q _ { 1 } ^ { 2 } + \frac { 1 } { 2 \varepsilon ^ { 2 } } ( \| \pmb q \| - L ( \phi ) ) ^ { 2 } ,
+$$
+
+where the equilibrium length $L$ is given by $L ( \phi ) = 1 + 0 . 2 \sin ^ { 2 } \phi$ and $- \pi <$ $\phi \leq \pi$ is the angle of $\pmb { q } = ( q _ { 1 } , q _ { 2 } ) ^ { T }$ with the $q _ { 1 }$ -coordinate axis. We set $\varepsilon = 0 . 0 1$ .
+
+a. Reformulate the problem in polar coordinates $( r , \phi )$ . Clearly, for $\varepsilon \to 0$ , the motion in the radius $r ( t )$ is highly oscillatory about its equilibrium value $L \left( \phi \right)$ . Find the associated adiabatic invariant $J$ , the fast frequency $\omega$ , and the reduced/averaged Hamiltonian.   
+b. Implement a symplectic method for the unreduced Hamiltonian system and compare the results with a simulation of the constrained formulation
+
+$$
+{ \cal H } _ { \mathrm { c o n s t r } } ( \pmb q , { \pmb p } ) = \frac { 1 } { 2 } \| { \pmb p } \| ^ { 2 } + \frac { 1 } { 2 } q _ { 1 } ^ { 2 } + \lambda ( \| \pmb q \| ^ { 2 } - L ( \phi ) ^ { 2 } ) ,
+$$
+
+subject to $\| \pmb q \| ^ { 2 } = L ( \phi ) ^ { 2 }$ . Choose your initial conditions such that either $J = 0$ or $J = \varepsilon$ .
+
+Explain your numerical findings.
+
+7. The MTS method equilibrium. We derive the LTS method Equilibrium [93] for a Hamiltonian of the form (10.25). Given a set of coordinates $\pmb q$ , we first define the “projection” map $\bar { \pmb q } = \mathcal { A } ( \pmb q )$ as the solution to the nonlinear system
+
+$$
+\begin{array} { l } { { \bar { \pmb q } = \pmb q + \pmb G ( \pmb q ) ^ { T } \pmb \lambda , } } \\ { { \pmb 0 = \pmb g ( \bar { \pmb q } ) . } } \end{array}
+$$
+
+The map $\boldsymbol { \mathcal { A } } ( \boldsymbol { q } )$ gives rise to the mollified Hamiltonian
+
+$$
+H _ { \mathrm { m o l l y } } = \frac { 1 } { 2 } \pmb { p } ^ { T } \pmb { M } ^ { - 1 } \pmb { p } + V ( \pmb { A } ( \pmb { q } ) ) + \frac { 1 } { 2 \varepsilon ^ { 2 } } \pmb { g } ( \pmb { q } ) ^ { T } \pmb { g } ( \pmb { q } ) .
+$$
+
+a. Find the equations of motion corresponding to the mollified Hamiltonian (10.29). b. Describe an implementation of the associated MTS method (10.24).
+
+# Molecular dynamics
+
+Over the past several decades, molecular simulation has become increasingly important for chemists, physicists, bio-scientists, and engineers, and plays a role in applications such as rational drug design and the development of new types of materials. While many levels of detail can be incorporated if desired, in most cases work is performed with a simplified atomic model, consisting of a large number of mass points interacting in various types of forces, i.e. an N-body problem.
+
+There are essentially two principal types of simulation methodology in common use. In Monte-Carlo (MC) methods, random steps are taken in order to achieve a rapid sampling of the most likely states of the molecule. In molecular dynamics (MD), the idea is to construct approximate trajectories for the N-body problem and to use these to gain an understanding of how the molecule evolves in time, for example in response to a stimulus, during a transition between states, or as a means for calculating averages. It should be stressed that only MD and not MC methods allow the theoretical possibility of obtaining time-dependent quantities from simulation, while both schemes can in principle be used for the same statistical-mechanical calculations. Increasingly, one finds that MD and MC schemes are combined in various ways to seek improved efficiency. In this chapter we will focus only on (pure) MD methods, and in particular on the geometric integration issues associated to computing MD trajectories. For a more complete perspective on molecular simulation, the reader is referred to a text on the subject such as that of SCHLICK [174], ALLEN AND TILDESLEY [4], RAPPAPORT [152], or FRENKEL AND SMIT [66].
+
+Because of the very rapid oscillatory motions that are characteristic of molecular systems, very small timesteps of about a femtosecond $( 1 0 ^ { - 1 5 } 5 \mathsf { e c } )$ are typically used in molecular dynamics. This means that in order to get estimates for parameters of interest from simulation, it is necessary to perform runs involving enormous numbers of timesteps. Even a nanosecond is a very short time relative to physical phenomena, and that already represents around one million timesteps in a typical simulation. At the same time there are severe size limitations due to the complexity of the force evaluations that must be performed at each timestep.
+
+The type of forces involved in the model can make a huge difference. If the atoms have charge, then a very long-ranged Coulombic potential will be needed. Important advances have been made in the design of efficient algorithms for these types of non-bonded interactions, but the costs are still prohibitive: at the time of this writing, systems of this type of dimension up to only several hundred thousand particles can be simulated, typically for times of at the most a few nanoseconds. The physical dimensions of such systems are only a few tens of angstroms at most. This is the typical situation for biomolecular models, which invariably include charge. Other types of molecular systems arising in materials science and condensed matter physics may not have any long-ranged forces; in such cases, the complexity of the force calculation is greatly reduced and systems of up to even a billion atoms can be simulated.
+
+The first systems to be studied using direct simulation were purely collisional “hard sphere” systems [3]. Work on hard body models continues to the present [200, 181, 183, 88]. We will restrict ourselves to models involving a smooth potential energy function, especially those used most commonly for molecular liquids, as introduced by RAHMAN AND STILLINGER [151] and VERLET [198].
+
+A simple gas such as argon can be described easily using a Lennard–Jones potential
+
+$$
+\varphi ( r ) = 4 \epsilon \left( \left( \frac { \sigma } { r } \right) ^ { 1 2 } - 2 \left( \frac { \sigma } { r } \right) ^ { 6 } \right) ,
+$$
+
+where $r$ is atomic separation, $\epsilon$ the well depth, and $\sigma$ is the equilibrium atomic separation.
+
+To define a molecular system, we arrange $N$ particles in a cubic box with edges of length $L$ , with “periodic boundary conditions” imposed so that at any instant a particle with coordinates $( x , y , z )$ inside the computational domain interacts with an infinite number of periodic images obtained by adding or subtracting multiples of $L$ from each coordinate of each atom. When only short-range forces are involved, the potentials may be cut off so that particles in the computational domain do not interact with their own image. Ultimately, we are left with a system of Newton’s equations
+
+$$
+\pmb { M } \ddot { \pmb q } = \pmb { F } ( \pmb q ) : = - \nabla _ { \pmb { q } } V ( \pmb q ) ,
+$$
+
+where $M$ is the mass matrix. We typically simulate the system from some given positions and velocities $\pmb q ( t _ { 0 } ) = \pmb q _ { 0 }$ , $\dot { { \pmb q } } ( t _ { 0 } ) = \dot { { \pmb q } } _ { 0 }$ .
+
+Positions and velocities in a molecular system represent sample points from a certain ensemble of states. Because arbitrary initial data usually correspond to an unrepresentative state for the ensemble of interest, a crucial stage in molecular simulation is the so-called “equilibration” or “thermalization” of the system, usually performed by evolving the system for some time from provided data (typically a few thousand timesteps suffice). At the end of this initial phase, the positions and velocities are taken as the starting points for a sampling trajectory.
+
+For simple homogeneous liquids, one sometimes begins by placing the atoms on a regular “crystal lattice” and introducing random velocities of appropriate magnitude. In the case of more complicated systems such as biomolecules, the approximate structure of the system must be encoded in the position data, for example based on a computation using nuclear magnetic resonance (NMR) imaging. Again, randomized initial velocities will likely be used at the start of the equilibration phase. It is sometimes necessary for the simulator to correct certain very nonphysical initial positions and/or velocities in order to be able to get a successful initial run.
+
+There are several key computational challenges to be addressed when computing trajectories of a Lennard–Jones fluid. First, the greater part of the computational effort involves the calculation of the $\scriptstyle { \frac { 1 } { 2 } } N ( N - 1 )$ interaction forces and potentials between pairs of atoms, even though the force acting between distant pairs is very weak. Verlet resolved this difficulty by imposing cutoffs based on distance according to which the potential is replaced by zero for atomic separations greater than a certain cutoff value $r _ { c }$ (typically $2 . 5 \sigma { - 3 . 3 \sigma } )$ . A system for keeping track of close pairs, now referred to as the Verlet table, was introduced. All distances are computed from time to time, and those pairs within distance $r _ { M }$ , $r _ { M } > r _ { c }$ , are recorded in the table. Force evaluations are limited to entries in the table. The “skin” $r _ { M } - r _ { c }$ must be chosen carefully in accordance with the temperature of simulation, typical particle speed, and frequency of updating of the Verlet table so that no particle pairs can move into the cutoff range between table updates. Other techniques are available for tracking local interactions, such as retaining linked lists of neighbor atoms for each given atom, and adjusting these lists during simulation.
+
+In case long-ranged potentials (especially the $r ^ { - 1 }$ Coulomb potential) are involved, we must include even very distant images in the force summation. If the interaction between particles is uniform, in a box of side $L$ , then the potential energy of the system is
+
+$$
+V ( \pmb { q } ) = \sum _ { \pmb { k } } \sum _ { i < j } ^ { N } \varphi ( | | \pmb { q } _ { i } - \pmb { q } _ { j } - L \pmb { k } | | ) ,
+$$
+
+where the sum is taken over pairs of atoms $( i , j )$ and the repeating images defined by the multi-index $k$ with three integer components. Various techniques are used to simplify the computation of this infinite sum. In particular the method of fast Ewald summation computes the Coulomb potential at a point due to a periodic lattice of point charges by dividing the computation into sums over near and far terms through introduction of a smooth “screening potential” of a particular type. The sum of the screened terms converges rapidly. The complementary summation converges very rapidly if calculated instead in the Fourier domain. A scaling parameter in the screening potential allows for balancing the work done in each part of the calculation for maximal efficiency. An alternative approach, the so-called fast multipole method, is in some ways more flexible than Ewald summation since it does not depend on having an infinite periodic sum, although there are complex efficiency trade-offs between the two schemes, particularly in the context of parallel computing. Both methods are employed in MD simulations. Other methods of treating long-ranged solvent forces include implicit solvent models based on a simplified continuum description. While the development and assessment of force calculation techniques is an important area of research, it does not directly influence the time integration issues (as long as a sufficiently accurate approximation is used).
+
+The next issue is the choice of integrator. In Chapter 4, we introduced the St¨ormer–Verlet method, a popular explicit second-order symplectic scheme and applied it to a “planar molecular system”; in fact this was one of the first used for continuous potential molecular dynamics simulation. Verlet observed in his 1967 paper, “small irregularities in the total energy” but commented that “the error is of no consequence.” What Verlet and those who followed him observed was the lack of any systematic or secular drift when the St¨ormer–Verlet method was properly implemented. We have seen similar behavior in our simulation of the planar system in Chapter 4. Given the symplecticness of the method, and our understanding of the properties of symplectic discretizations (see especially Chapter 5), it is perhaps not surprising that the St¨ormer–Verlet method achieves good conservation of energy.1 The reason that backward error analysis seems to be accurate for molecular models is probably related to the presence of the Lennard–Jones potential (or other short-ranged repulsive component of the energy); through repulsion, very close approaches of atoms are ruled out. As we shall see below, the presence of a perturbed energy function is also of dramatic importance for validating computed statistical mechanics from MD trajectories.
+
+# 11.1 From liquids to biopolymers
+
+During the 1970s and 1980s, work continued on MD simulations of water [151] and other molecular liquids with internal degrees of freedom. Today molecular dynamics methods are being applied routinely to simulate large flexible biomolecules.
+
+The simple model of an MD pair potential requires a number of changes for more complicated systems. For example, the interaction between atoms of polyatomic molecules typically requires both Lennard–Jones and Coulombic terms between all atoms, not just simplified potentials between molecular centres. The potential energy function then must maintain internal geometries by including bonds (lengths, angles, and dihedral angles). This results in a more complicated molecular energy function of the form
+
+$$
+V = V _ { \mathrm { l . j . } } + V _ { \mathrm { C } } + V _ { \mathrm { l . b . } } + V _ { \mathrm { a . b . } } + V _ { \mathrm { d . b . } } + V _ { \mathrm { i . d . } } ,
+$$
+
+where $V _ { \mathrm { L . J . } }$ and $V _ { C }$ represent Lennard–Jones and Coulombic nonbonded potentials, $V _ { \left| . \mathrm { b } . \right. } , V _ { \mathrm { a } . \mathrm { b } . } , V _ { \mathrm { d } . \mathrm { b } . }$ correspond to length bonds, angle bonds, and dihedral angle bending, respectively. The latter terms consist of sums over various pairs, triples and quadruples of spatially localized groups of atoms. Table 11.1 describes the typical functional form of each term. All coefficients $\kappa _ { b } , \kappa _ { \theta } , \kappa _ { \phi }$ , and the equilibrium values $\bar { r } _ { i j }$ , $\bar { \theta } _ { i j k }$ , $\bar { \phi } _ { i j k I }$ are derived from empirical values; these coefficients may be different for each pair, triple, quadruple of atoms admitting the corresponding type of bond. (Another type of term, a so-called improper dihedral term, may also be present.)
+
+Some of the most popular parameterizations for potentials are those provided by the software packages CHARMM, AMBER, NAMD and GROMACS.2
+
+Because molecular simulation is concerned with very small regions of space and small time intervals, it is useful and numerically sensible to use an appropriate system of units. In practice, typical MD codes perform an internal conversion to a standard system such as the AKMA convention detailed in the following table:
+
+AKMA Units   
+
+<table><tr><td>length</td><td>angstrom</td></tr><tr><td>energy</td><td>kilocalorie/mole</td></tr><tr><td>mass</td><td>atomic mass unit (amu)</td></tr><tr><td>charge</td><td>electron charge e</td></tr><tr><td>time</td><td>20.455 ps</td></tr><tr><td>kB</td><td>1.987191 × 10-3</td></tr><tr><td>coulomb constant 1/(4π∈o)</td><td>3.320716 × 10²</td></tr></table>
+
+In typical MD codes, unit conversions are performed internally.
+
+2Because of the great volume of parameters involved in a model for even a modest molecule, it is essential to have access to a suitable software package. GROMACS and NAMD are freely distributed. Both CHARMM and AMBER are available for purchase; for academic users, the cost is relatively very modest. For CHARMM pricing and availability see the website at http://yuri.harvard.edu/. For AMBER pricing and availability, see the website at http://www.amber.ucsf.edu/amber/amber.html. For GROMACS, see http://www. gromacs.org/. For NAMD see http://www.ks.uiuc.edu/Research/namd/.
+
+Table 11.1 Typical components of the molecular dynamics energy function.   
+
+<table><tr><td>Nonbonded terms VL.J.</td><td>-2(</td><td></td></tr><tr><td>Vc</td><td>QiQj</td><td></td></tr><tr><td>Bonds</td><td></td><td></td></tr><tr><td>V.b. qk</td><td>(rm- 2</td><td></td></tr><tr><td>Va.b.</td><td></td><td></td></tr><tr><td>8</td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td>a</td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td>Vd.b.</td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td>K[1+cos(np(φijkl-φijk1)]</td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr></table>
+
+The terms in the potential energy include interactions on a broad range of spatial scales (including bonds with equilibrium length $1 \ \mathrm { \AA } { = } 1 0 ^ { - 1 0 } \ \mathrm { m }$ , as well as very long-ranged Coulombic terms). Likewise the variation of timescales is vast, ranging from rapid oscillations of the CH bond (around $1 0 ^ { - 1 4 } s $ ) to conformational changes such as the rotation or folding process of a large molecular component that may take milliseconds or even seconds. We have already learned in Chapter 2 that the numerical stability of an integrator will be limited by the fastest harmonic components (i.e., the bond stretch), which means that in molecular dynamics stepsize is limited to around a femtosecond. Much work is therefore concentrated on developing advanced multi-scale timestepping schemes (such as those we have encountered in Chapter 10), and on rapid evaluation of non-bonded forces.
+
+The MD potential is highly nonlinear. When many terms are present, the potential surface will be very rough. If we think of dynamics in terms of the analogy of a ball rolling on a potential energy surface, then it is easy to see how the dynamics may be trapped for long intervals in highly localized regions. We have mentioned that MD is often used as a sampling device. We typically assume that MD models are ergodic, implying that all but a few special trajectories will visit the entire allowable phase space. The critical practical question for MD simulation is how long does it take for this to happen; on a highly corrugated landscape sampling may be achieved very slowly, and algorithmic devices are needed to accelerate the process. Another related problem sometimes treated using dynamics is minimization of the potential energy; this problem is also very challenging, since there are likely to be many local minima.
+
+![](images/7519e3b87df5501e293e8edae34d7d2ff7a6346edda1c9cd924d14e0928e0a33.jpg)  
+Example1 One of the most popular small models used in biomolecular simulation is the alanine dipeptide (N-Acetylalanyl-N’-Methylamide), which serves as a common test example for demonstrating enhancements in simulation methodology. The allatom model contains 22 atoms (carbon, hydrogen, nitrogen and oxygen) as described by Figure 11.1. The labels in 11.1 are those used in describing the molecule and its interactions for input to a molecular dynamics code. These labels are defined in a “PDB” (protein databank) file which gives representative atomic positions, atomic types, and linking topology of the molecule. The force field parameters are then provided automatically by the MD software. There may be slight or even substantial differences in force parameters depending on which software package is used, so care is needed in comparing numerical simulation results.   
+Figure 11.1 Diagram showing atom numbers and labels for the alanine dipeptide used in a PDB file and for CHARMM simulation.
+
+The Alanine Dipeptide exhibits many of the features characteristic of biological molecules. While the dynamics is complicated, it turns out that the study of the energy surface can be simplified by reference to two central dihedral angles ( $\dot { \psi }$ and $\phi$ corresponding to the successive atom quadruples 5-7-9-15 and 7-9-15-17 in Fig. 11.1, respectively). For each pair of dihedral values, a global constrained minimization is performed over all degrees of freedom. The resulting “reduced energies” are plotted in the lower diagram in Fig. 11.2, with three states marked by the molecular conformations corresponding to the three stable local minima.
+
+![](images/64dbffc7e0e3d956cc6b225d683030ed026a841887cc1c3e577ea9fc796f64ad.jpg)  
+Figure 11.2 Reduced energy surface for the alanine dipeptide, see text for description.
+
+Together with the dipeptide molecule (the “solute”), one has to introduce as part of the modeling process a collection of surrounding water molecules (the “solvent”). Typically for the alanine dipeptide, this might require 500 additional water molecules. The whole system is then typically treated using periodic boundary conditions and Ewald summation for the long-ranged forces. The result is a model Hamiltonian of considerable detail with which simulations can be performed.
+
+As an illustration, we simulate the all-atom model using CHARMM. We first “equilibrated the system” to a temperature of $3 0 0 \mathsf { K }$ by solving with a thermostat (see later in this chapter for a discussion of thermostatting). The thermostat was then turned off and constant energy simulation was performed. On the left in Fig. 1, we illustrate a short-term (2500 timestep) simulation with 1 femtosecond timesteps by plotting the trajectory of the central dihedral angles. At the energy level used, the constant energy trajectory will visit both of the two local minima near the initial point (the two left-most conformations shown in Fig. 11.2). This is illustrated by plotting snapshots every 100 timesteps of a longer (1M timestep) simulation (Fig. 1, right).
+
+![](images/9b9491d6abb00621971487926ad57c7617b168ca4bd146756f336bc2e3cf95b2.jpg)  
+Figure 11.3 Short (left) and medium-length (right) trajectories for the alanine dipeptide. See text.
+
+The relative smoothness and simplicity of the reduced energy surface for the alanine dipeptide suggests that, if the “right” variables in a molecular system can be identified (the so-called essential degrees of freedom), then the study of molecular conformations might be made much more tractable. However, one should keep in mind that identifying essential degrees of freedom is not always so easy a task and that most biomolecules will have many more atoms than the alanine dipeptide and many more conformational states, and even the reduced energy landscape will be highly complicated. Even when, as here, the system reduces elegantly in the essential degrees of freedom, one must be cautious about the interpretations that are made regarding the “dynamics” on this surface, since no simple formula relates the slow timescale to the rapid timescales of the original system. ✷
+
+# 11.1.1 Constraints
+
+We have already discussed in Chapter 7 the use of constraints to remove the fastest oscillatory terms due to the presence of stiff springs with rest length. Since a bond stretch is nothing other than a stiff spring with rest length, this device is commonly used in molecular simulations. In this way, the energy function will be slightly smoothed, but it has often been argued in the molecular dynamics literature that the resulting simplification typically does not alter the dynamics appreciably on the timescales used in current simulation practice. However some caution must be exercised with regard to the thermodynamic equilibrium behavior as has been first pointed out by FIXMAN [61].
+
+See the Exercises for an example of using SHAKE in the molecular modeling context.
+
+# 11.2 Statistical mechanics from MD trajectories
+
+Given the small size of any atom, it is not obvious that simulating an atomic system consisting of several thousands or millions of particles can provide useful information about even the smallest realistic system. Only when the principles of statistical mechanics are brought into play can we extrapolate from the tiny simulated system to that of a much larger aggregate. Statistical mechanics begins with the identification of an appropriate density or ensemble of states with respect to which all averages are computed. The key premise is that any given state is representative of a continuum of similar states, and that the probability of finding the system in any given region $R$ of phase space at any arbitrary instant can be viewed as proportional to an integral of the provided density over $R$ .
+
+We will assume that any individual motion in the system is governed by a Hamiltonian $H$ . In general, we expect the density to be invariant under the evolution of the system, so that $\rho$ is a steady state of the Liouville equation, i.e.
+
+$$
+\frac { d \rho } { d t } = \{ \rho , H \} = \nabla _ { q } \rho \cdot \nabla _ { p } H - \nabla _ { p } \rho \cdot \nabla _ { q } H .
+$$
+
+One way, and in the generic case the only way, to guarantee this is to demand that $\rho$ be a function of $H$ .
+
+In general several parameters must be chosen to define the characteristics of the system. One approach is to fix the number $N$ of atoms and assume that these atoms comprise an isolated system which evolves in a fixed volume in space. While evidently unrealistic from a physical point of view, this finite model provides the simplest framework for simulation on a computer. (The restriction to a finite volume is achieved most readily by the use of periodic boundary conditions as mentioned previously, which introduces a modification of the potential energy function.) Because the system is isolated, its evolution is completely defined by the system Hamiltonian and the energy is a constant of motion. We still must define a suitable density. Since the density is to be a function of energy and the energy is a constant of motion, it seems that a natural choice for the density in these circumstances is
+
+$$
+\rho _ { \mathrm { m i c r o c a n o n i c a l } } = \delta [ H - E ] ,
+$$
+
+which, when normalized, implies that the relative likelihood of finding the system in a given bounded measurable subset of the energy surface $H \ = \ E$ is proportional to the corresponding surface area. Because this approach relies on the assumptions of constant particle number $N$ , volume $V$ , and energy $E$ we typically refer to it as the NVE ensemble. It is also commonly termed the microcanonical ensemble.
+
+A more realistic assumption than constant energy is that our finite system is continually exchanging energy with a larger bath of atoms at a fixed temperature.
+
+The instantaneous temperature of a molecular system with $N$ atoms is defined by
+
+$$
+T _ { \mathrm { i n s t } } : = \frac { 1 } { 3 k _ { B } N } \sum _ { i = 1 } ^ { N } m _ { i } \| \mathbf { v } _ { i } \| ^ { 2 } .
+$$
+
+The canonical ensemble assumes the density
+
+$$
+\rho _ { \mathsf { c a n o n i c a l } } = \exp ( - { \frac { 1 } { k _ { B } T } } H ) = : \exp ( - \beta H ) .
+$$
+
+Here $k _ { B }$ is Boltzmann’s constant, $\tau$ represents the fixed temperature of the bath, and $\beta = 1 / k _ { B } T$ . Again, the number of particles $N$ and the volume of the system $V$ are fixed, but the energy is now allowed to fluctuate. (The precise justification for the exponential function is due to Gibbs and is based on a simplified kinetic theory.) Whereas simulating the dynamics of a system in the microcanonical ensemble requires nothing more than numerical integration of the Hamiltonian system, the NVT ensemble demands some sort of stochastic or dynamic mechanism to model the effect of the bath. We will return to this issue momentarily. Note that just because the temperature of the environment is assumed to be fixed, it does not imply that $T _ { \mathrm { i n s t } }$ is constant. Rather, this quantity, which is a function of the $N$ variables of the system, will fluctuate along trajectories, although its long-term average will tend to $\tau$ .
+
+Some other examples of useful ensembles include the NPT (constant pressure, temperature and particle number) ensemble and the grand canonical ensemble (in which both energy and particle number are allowed to fluctuate). It is also possible to work with a more general density. In some cases, generalized ensembles are introduced based on physical arguments; in other instances they may be used as modeling devices to increase the sampling rate in phase space.
+
+In defining statistical mechanics as we have done here, we make several assumptions about the Hamiltonians involved, in particular that the energy is bounded below and that the total integral of the density function is bounded. An important assumption we commonly make about a physical model is that averages taken along trajectories reproduce the appropriate ensemble average. This is what is meant by ergodicity: that a typical trajectory will eventually visit all states with $\rho > 0$ . If we treat a system in the NVE ensemble, then we can infer that the energy is constant, but we cannot necessarily infer that all possible states on the constant energy surface will be reachable from any particular state. For small systems, it is common to find periodic orbits or quasi-periodic tori motion that restrict a typical trajectory to a small portion of phase space; more generally, the presence of strong potentials such as those due to harmonic bonds may introduce barriers which similarly confine trajectories. If ergodicity is assumed, however, then we can use trajectories as sampling devices, simply averaging a given quantity along the computed dynamics to obtain ensemble averages.
+
+# 11.2.1 Ensemble computations
+
+As we have stated, the typical use made of molecular simulation is to compute averages with respect to the underlying density. Examples of such computations include finding the internal energy, spatial extent, or the time constants associated with local relaxation of a perturbation. We will denote the average of some function $A ( \pmb q , \pmb p )$ with respect to the NVE ensemble for a given Hamiltonian $H$ by $\langle A \rangle _ { \mathsf { N V E } } ^ { H }$ , and use similar notation for other averages. Under the ergodicity assumption, a macroscopic quantity, which for real systems could be observed or measured, can be thought of as a long-time average $\bar { A } ( \tau )$ , $\tau \gg 1$ , of some (instantaneous) function $A ( t ) = A ( \pmb q ( t ) , \pmb p ( t ) )$ which depends on the collective position and velocity at time $t$ . The temporal average is defined as
+
+$$
+\langle A \rangle : = \operatorname* { l i m } _ { \tau \to \infty } \bar { A } ( \tau ) = \operatorname* { l i m } _ { \tau \to \infty } \frac { 1 } { \tau } \int _ { 0 } ^ { \tau } A ( \pmb { q } ( t ) , \pmb { p } ( t ) ) \ d t .
+$$
+
+Ergodicity in the NVE ensemble now becomes equivalent to the statement that $\langle A \rangle = \langle A \rangle _ { \mathsf { N V E } } ^ { H }$ .
+
+In practice, trajectories are computed at a large finite number of discrete times $\tau _ { 1 } , \dots , \tau _ { N }$ , in which case the integral is replaced by a (finite) discrete sum.
+
+Some macroscopic quantities of interest are collected in Table 11.2. In this table, the Boltzman constant is denoted $k _ { B }$ , and instantaneous temperature $\tau$ is proportional to kinetic energy and is defined as in (11.3). Specific heat at constant volume measures the rate of change of temperature due to a change in energy. The velocity autocorrelation function measures how the velocities at time $t$ are related to velocities at a later time $t + \tau$ . The pair correlation function, or radial distribution function for a system of particles with volume $V$ , gives the number of particles $n ( r )$ situated at a distance between $r$ and $r + \Delta r$ from another particle. The mean square displacement $R ( \tau )$ measures average atomic fluctuations over time windows of length $\tau$ . With $t = 0$ , the value of $\tau$ at which $R$ ceases to change significantly can be understood as the time required for a simulated system to achieve equilibrium. The diffusion coefficient $D$ is proportional to the slope of $R ( \tau )$ over long times via the Einstein relation given in Table 11.2. More details for computing these quantities can be found in ALLEN AND TILDESLEY [4], RAPPAPORT [152], and FRENKEL AND SMIT [66].
+
+Specific heat at constant volume
+
+$$
+C _ { V } = \left[ \frac { 2 } { 3 N } - \frac { 4 } { 9 } \frac { \langle ( T - \langle T \rangle ) ^ { 2 } \rangle } { \langle T \rangle ^ { 2 } } \right] ^ { - 1 } k _ { B }
+$$
+
+Velocity autocorrelation function
+
+$$
+Z ( \tau ) = \left. \frac { 1 } { N } \mathbf { \boldsymbol { v } } ( . ) \cdot \mathbf { \boldsymbol { v } } ( . + \tau ) \right.
+$$
+
+Pair correlation function (radial distribution function)
+
+$$
+g ( r , \Delta r ) = \left. \frac { V } { N } \frac { n ( r ) } { ( 4 \pi r ^ { 2 } \Delta r ) } \right.
+$$
+
+Mean square displacement after time $\tau$
+
+$$
+R ( \tau ) = \left. \frac { 1 } { N } \sum _ { i = 1 } ^ { N } ( r _ { i } ( . + \tau ) - r _ { i } ( . ) ) ^ { 2 } \right.
+$$
+
+Diffusion coefficient, $D$ ,
+
+$$
+2 \tau D = \frac { 1 } { 3 } R ( \tau )
+$$
+
+# 11.3 Dynamical formulations for the NVT, NPT and other ensembles
+
+Some modification of the dynamical system (or the introduction of a stochastic perturbation) is necessary to make the dynamics sample the other ensembles, for example the canonical one. There are many ways to do this, but the most popular techniques are Nos´e dynamics and Langevin dynamics. In Langevin dynamics, the combination of a damping force and a stochastic term maintains the system at a given temperature. (The stochastic component models the interactions with a temperature bath; the damping simulates the transfer of energy to the bath.)
+
+The dynamics take the form
+
+$$
+{ \pmb M } \ddot { \pmb q } = - \nabla _ { \pmb q } V ( \pmb q ) + { \pmb R } ( t ) - \gamma \dot { \pmb q } ,
+$$
+
+where the dissipation rate $\gamma$ and the vector $R ( t )$ of white noise processes are linked via the fluctuation–dissipation relation. Because of the presence of damping and the introduction of a random forcing, the dynamics are not any longer Hamiltonian. As the geometric integration of stochastic differential equations is beyond the scope of the current text (and indeed still at a preliminary stage of development compared with the deterministic theory), we consider rather alternatives which compute trajectories in the canonical ensemble from a modified continuous dynamics.
+
+NOSE [146] proposed to augment the phase space by an additional variable $S$ and its canonical momentum $\pi _ { s }$ , and to work with the extended Hamiltonian
+
+$$
+{ \mathcal H } _ { \sf N o s e } = H ( { \bf q } , \tilde { p } / s ) + \frac { \pi _ { s } ^ { 2 } } { 2 Q } + g \beta ^ { - 1 } | { \sf n } s .
+$$
+
+Here $\beta = 1 / k _ { B } T$ and $g = N _ { f } + 1$ , where $N _ { f }$ is the number of degrees of freedom of the real system (typically $N _ { f } = 3 N$ , where $N$ is the number of atoms, but this may be reduced if constraints are present). The constant $Q$ represents an artificial “mass” associated with $S$ . One should note that $\tilde { p }$ is the canonical momenta associated with the position variable, $\pmb q$ . The tilde is used to distinguish it from the from the real momenta given by $p = \tilde { p } / s$ .
+
+To understand how Nos´e’s extended Hamiltonian yields canonical averages, we consider the following sequence of calculations.
+
+1. From elementary calculus, we know that for any $^ { a }$ , the following holds
+
+$$
+e ^ { - a } = \int _ { 0 } ^ { \infty } \delta [ a + \mathsf { I n } s ] d s .
+$$
+
+Since here and below, all integration is over the entire real line, we will suppress the limits and simply write
+
+$$
+e ^ { - a } = \int \delta [ a + \mathsf { I n } s ] d s .
+$$
+
+2. A very slight generalization results in
+
+$$
+e ^ { - \beta H ( q , p ) } = \beta \int \delta [ H ( q , p ) + \beta ^ { - 1 } \ln s ] d s .
+$$
+
+3. We can also include a power of $s$ outside the $\delta$ -function, as in
+
+$$
+e ^ { - \beta H ( q , p ) } = \frac { \beta } { g } \int \delta [ H ( q , p ) + g \beta ^ { - 1 } \ln s ] s ^ { g - 1 } d s .
+$$
+
+4. Note that for a scalar function $h ( x )$ of an $N _ { f }$ -vector $x$ , we have, via change of variables,
+
+$$
+\iint \ldots \int h ( \tilde { x } / s ) d \tilde { x } _ { 1 } d \tilde { x } _ { 2 } \ldots d \tilde { x } _ { N _ { f } } = \iint \ldots \int s ^ { N _ { f } } h ( x ) d x _ { 1 } d x _ { 2 } \ldots d x _ { N _ { f } } .
+$$
+
+Again, the integration is over all real space. We introduce another shorthand at this point, writing, simply,
+
+$$
+\int h ( \tilde { x } / s ) d ^ { N _ { f } } \tilde { x } = \int s ^ { N _ { f } } h ( x ) d ^ { N _ { f } } x .
+$$
+
+As a consequence, we may write:
+
+$$
+\int A ( q , p ) \ e ^ { - \beta H ( q , p ) } \ d ^ { N _ { f } } p = { \frac { \beta } { g } } \int \int A ( q , \tilde { p } / s ) \delta [ H ( q , \tilde { p } / s ) + g \beta ^ { - 1 } \ln s ] \ d ^ { N _ { f } } \tilde { p } \ d \tilde { q } \ .
+$$
+
+where, as before, $g = N _ { f } + 1$ .
+
+5. Finally, we note that
+
+$$
+\begin{array} { r } { \displaystyle \int \int A ( \boldsymbol { q } , \tilde { p } / s ) \delta [ H ( \boldsymbol { q } , \tilde { p } / s ) + g \beta ^ { - 1 } \ln s ] d ^ { N _ { f } } \tilde { p } d s = } \\ { \displaystyle C \int \int A ( \boldsymbol { q } , \tilde { p } / s ) \delta [ \mathcal { H } _ { \sf N o s e } - E ] d ^ { N _ { f } } \tilde { p } d \pi _ { s } d s , } \end{array}
+$$
+
+where $C$ is a constant, and $E$ is the pseudo-energy level. It follows that the NVE ensemble average for the Hamiltonian (11.4) is equivalent to the canonical NVT ensemble for the original system with Hamiltonian $H$ in the following sense:
+
+$$
+\langle A ( \pmb q , \tilde { \pmb p } / s ) \rangle _ { \sf N V E } ^ { \mathcal { H } _ { \sf N o s e } } = \langle A ( \pmb q , \pmb p ) \rangle _ { \sf N V T } ^ { H } .
+$$
+
+The conclusion is that trajectories of the Nos´e extended Hamiltonian generate canonically distributed averages, given assumptions of equal a priori probabilities and ergodicity, hence Nos´e dynamics can be used for canonical sampling. The Nos´e formulation is the starting point for numerical schemes for realizing the canonical ensemble from trajectories, but it is not yet clear precisely how the extended Hamiltonian dynamics are related to the those of the original system. We take up this issue in the next subsections.
+
+# 11.3.1 Coordinate transformations: the separated form
+
+Consider first a canonical Hamiltonian of the form
+
+$$
+H = a ( \pmb q ) \frac { \pmb p ^ { T } \pmb M ^ { - 1 } \pmb p } { 2 } + V ( \pmb q ) ,
+$$
+
+where a is a positive scalar-valued function of position $q , \ V$ is a potential and $M$ is a mass matrix. Introducing a Poincar´e type time transformation, we can reduce (11.5) to mechanical form
+
+$$
+\hat { H } = \frac { H - E } { a ( \pmb q ) } = \frac { { \pmb p } ^ { T } { \pmb M } ^ { - 1 } { \pmb p } } { 2 } + \frac { V ( \pmb q ) - E } { a ( \pmb q ) } ,
+$$
+
+where $E$ is a constant representing the value of the energy integral along a given trajectory. The problem of separating the variables in the Hamiltonian therefore means finding a change of variables to the form (11.5).
+
+While we cannot flatten out just any metric using such simple coordinate and time transformations, it is possible to do this neatly for Nos´e dynamics. First replace $s$ by its logarithm, also modifying the momentum to make the transformation canonical:
+
+$$
+\begin{array} { r } { \theta = \mathsf { I n } s , \qquad \pi _ { s } = \mathsf { e x p } ( - \theta ) \pi _ { \theta } . } \end{array}
+$$
+
+We then follow with a rescaling of time by $e ^ { 2 \theta }$ , so that the Hamiltonian becomes
+
+$$
+\hat { H } = \frac { p ^ { T } M ^ { - 1 } p } { 2 } + \frac { \pi _ { \theta } ^ { 2 } } { 2 Q } + e ^ { 2 \theta } ( V ( \pmb q ) + g \beta ^ { - 1 } \theta - E ) .
+$$
+
+Because the transformation is canonical, it is also area preserving, and it can be shown that the averages of functions of $\pmb q$ and $p / s$ are not disturbed.
+
+The elementary form of the separated Hamiltonian can simplify the interpretation of Nos´e dynamics. With $g / \beta$ replaced by an arbitrary positive parameter $\gamma$ , we can define an “isothermal potential” by
+
+$$
+\tilde { V } ( \pmb { q } , \theta ) = e ^ { 2 \theta } ( \gamma \theta + V ( \pmb { q } ) - E ) .
+$$
+
+This has stationary points $( { \bar { q } } , { \bar { \theta } } )$ , where $\bar { \pmb q }$ is a stationary point of $V$ and $\bar { \theta } =$ $( E - V ( \bar { q } ) ) / \gamma - 1 / 2$ . The stability is determined from the original system. A stable center in the original mechanical system is thus mapped to a corresponding stable center in the constant temperature dynamics.
+
+Due to the shift of energy in the Poincar´e transformation, all motion takes place on the zero-energy surface of the Nos´e Hamiltonian. Since the kinetic energy is everywhere non-negative, the entire range of negative isothermal potential energy will be explored. For a fixed value of $\theta$ , the new potential is a shift and scaling of the original potential. For positive $\theta$ , the motion in a bounded potential is uniformly bounded, while in principle the dynamics may make very long excursions in the negative $\theta$ direction. With $\theta = 0$ we have $\tilde { V } ( \pmb { q } , 0 ) = V ( \pmb { q } ) - E$ , and
+
+![](images/a2e3ec7b2c7a8c33ffbfaf218e171a46f927cc5514c4a23e65377721322b7b36.jpg)  
+Figure 11.4 “Isothermal” potential surface corresponding to the double well potential at small (left) and large (right) values of $r$ .
+
+$$
+\operatorname* { l i m } _ { \theta \to + \infty } \tilde { V } ( \pmb q , \theta ) = + \infty , \qquad \operatorname* { l i m } _ { \theta \to - \infty } \tilde { V } ( \pmb q , \theta ) = 0 .
+$$
+
+The modified potential has a unique global minimum in $\theta$ , so the modified potential can be viewed as a “valley” with sides rising in $\theta$ .
+
+Let us illustrate this with the example of a double well potential
+
+$$
+V ( q ) = q ^ { 2 } ( q - 1 ) ^ { 2 } .
+$$
+
+In the constant energy dynamics, low energy orbits are automatically confined to one or the other of the two energy wells. The isothermal system does not exhibit such a separation, but the transition between wells becomes rare at low temperature. See Fig. 11.4.
+
+# 11.3.2 Time-reparameterization and the Nos´e–Hoover method
+
+The Nos´e Hamiltonian generates configurations from the canonical distribution, but it also introduces an unnatural scaling of the intrinsic time. This introduces some practical computational difficulties, since the configurations are not available at equally spaced points in real time. A similar problem is encountered when the separated formulation is used as the basis for computation, as described above. An alternative real-variable reformulation of the equations of motion was proposed by NOSE [146] which incorporates a time transformation. Simplifications to the real-variable system were suggested by HOOVER [87] resulting in the traditional treatment of the Nos´e Hamiltonian called the Nos´e–Hoover method. Let us briefly review the properties of the Nos´e–Hoover system of equations, and discuss some of the common numerical methods.
+
+The Nos´e Hamiltonian generates the equations of motion
+
+$$
+\begin{array} { r l } & { \frac { d q _ { i } } { d \tau } = \frac { \tilde { p } _ { i } } { m _ { i } s ^ { 2 } } , } \\ & { \frac { d s } { d \tau } = \frac { \pi _ { s } } { Q } , } \\ & { \frac { d \tilde { p } _ { i } } { d \tau } = - \nabla _ { q _ { i } } V ( q ) , } \\ & { \frac { d \pi _ { s } } { d \tau } = \sum _ { i } \frac { \| \tilde { p } _ { i } \| ^ { 2 } } { m _ { i } s ^ { 3 } } - \frac { \beta ^ { - 1 } g } { s } . } \end{array}
+$$
+
+The following change of variables can be applied
+
+$$
+p _ { i } = \frac { \tilde { p } _ { i } } { s } \qquad \pi = \pi _ { s } / s .
+$$
+
+This is followed by a time-transformation, $\begin{array} { r } { \frac { d \tau } { d t } = s } \end{array}$ yielding the non-Hamiltonian system in terms of the “real” variables
+
+$$
+\begin{array} { l } { { \displaystyle { \dot { q } _ { i } = \frac { p _ { i } } { m _ { i } } } , } } \\ { { \displaystyle { \dot { p } _ { i } = - \nabla _ { q _ { i } } V ( q ) - p _ { i } \frac { s \pi } { Q } } , } } \\ { { \displaystyle { \dot { s } = \frac { s ^ { 2 } \pi } { Q } } , } } \\ { { \displaystyle { \dot { \pi } = \frac { 1 } { s } \left( \sum _ { i } \frac { \| p \| _ { i } ^ { 2 } } { m _ { i } } - \beta ^ { - 1 } g \right) - \frac { s \pi ^ { 2 } } { Q } } . } } \end{array}
+$$
+
+Introducing $\xi = s \pi / Q$ and replacing ln $S$ by $\eta$ , one not only eliminates the variable $\pi$ , but also decouples the variable $S$ from the system; this yields the Nos´e–Hoover formulation:
+
+$$
+\begin{array} { l } { \displaystyle \dot { q } _ { i } = \frac { p _ { i } } { m _ { i } } , } \\ { \displaystyle \dot { p } _ { i } = - \nabla _ { q _ { i } } V ( q ) - p _ { i } \xi , } \\ { \displaystyle \dot { \eta } = \xi , } \\ { \displaystyle \dot { \xi } = \frac { 1 } { Q } \left( \sum _ { i } \frac { p _ { i } ^ { 2 } } { m _ { i } } - \beta ^ { - 1 } g \right) . } \end{array}
+$$
+
+Canonical sampling in Nos´e–Hoover can be shown to require $g = N _ { f }$ (the number of degrees of freedom of the real system). This reduction in the degrees of freedom is needed to recover configurations at the correct temperature. Although
+
+this system is not Hamiltonian, it does have a conserved quantity, the total extended energy
+
+$$
+E _ { e x t } = \sum _ { i } \frac { \| \pmb { p } \| _ { i } ^ { 2 } } { 2 m _ { i } } + V ( \pmb { q } ) + \frac { Q \xi ^ { 2 } } { 2 } + g \beta ^ { - 1 } \eta .
+$$
+
+This system is time reversible, and it is advisable to solve the equations of motion with a reversible integrator. A number of schemes are available, for example: [66, 126, 94].
+
+# 11.4 A symplectic approach: the Nos´e–Poincar´e method
+
+We introduce two different kinds of error when calculating an ensemble average using a molecular dynamics sampling technique. First, every timestepping scheme introduces some error at each timestep, and these accumulate in a complicated way. Second, the calculation of stochastic quantities from simulation is generally a slow-converging process, so very large numbers of timesteps will often be needed to deliver good estimates. Indeed, in systems with a large number of local minima, we may need to greatly restrict the space over which our trajectories sample in order to achieve any sort of useful estimates at all.
+
+In the most general setting, there is also not much we can say about the effect of the numerical error on the ensemble calculation, other than that if we use an off-the-shelf integrator, we expect the error to grow fairly rapidly with time. Methods which do not stay near the energy surface very soon lead to unrealistic averages. On the other hand, is it enough for the integrator to preserve energy approximately in order for us to trust the averages? The answer is of course, no: in the simplest case, we could think of using any arbitrary method projected on to the energy surface. We could apply this scheme in conjunction with any arbitrary method to obtain perfect energy conservation, but it would not generally be effective. For example if the method introduced dissipation, causing trajectories to spiral towards equilibria, we would expect to see similar artifacts in the projected method’s dynamics.
+
+If we use a symplectic method, we usually expect good energy conservation, but something else comes into play. There is also an associated perturbed statistical mechanics – a consequence of the Hamiltonian structure of the modified equations! Thus a symplectic scheme not only stays near the modified energy surface $\tilde { H } _ { \Delta t }$ , it allows us the possibility of computing averages in a modified microcanonical ensemble, for example $\dot { \delta } \left[ \tilde { H } _ { \Delta t } - \dot { E } \right]$ . Does this idea carry over to Nos´e dynamics? If we solve the Nos´e system at constant energy using a symplectic method, then what we are actually able to compute (assuming ergodicity) is a sampling with respect to a modified microcanonical ensemble of the form
+
+$$
+\rho _ { \mathsf { N V E } } ^ { \tilde { \mathcal { H } } _ { \Delta t } } = \delta \left[ \mathcal { H } _ { \mathsf { N } o s \epsilon } + \Delta t ^ { 2 } \Delta \mathcal { H } _ { 2 } + \ldots - E \right] .
+$$
+
+In order to move things forward we must show how to complete each of the steps described in the proof of Nos´e dynamics of integrating out the variables $S$ and $\pi _ { s }$ on which the above density depends, resulting in a modified canonical distribution. This introduces some new challenges, since all transformations involved must be global, and it is difficult to say anything about the perturbative expansion far from the trajectory of interest. However if we are willing to assume that trajectories of our system stay uniformly bounded for all time, then it is possible to invoke the implicit function theorem, which allows us to compute the integral over s as in the proof of Nos´e’s theorem, and using this we can show that the effective combination of Nos´e dynamics and symplectic discretization is real variable sampling of a modified canonical ensemble of the form $\exp ( - \beta \tilde { H } _ { \Delta t } )$ . This viewpoint is addressed in [25]. This perspective offers concrete motivation for using a symplectic method, since for bounded systems, at least, the symplectic property is crucial for establishing effective sampling.
+
+Note that the separated formulation makes possible a very simple symplectic discretization of Nos´e dynamics based on St¨ormer–Verlet, see [110]. However, although the method of implementation is trivial, the computation of autocorrelation functions typically requires data equally spaced in time, and since the separated form works in an artificial timescale, this requires some interpolation. It simplifies things to work with a scheme that is formulated in real time.
+
+In this section we will outline a procedure for scaling time while preserving the Hamiltonian structure. The method used here was first given in [26]. We have already seen in the separable formulation (and earlier in the context of variable stepsize) that a time transformation can be implemented as a rescaling of the Hamiltonian of the system, shifted to zero
+
+$$
+{ \tilde { \mathcal { H } } } = f ( q , p ) ( H - E ) ,
+$$
+
+where $f > 0$ is a “time scaling” function, and the constant $E$ is the initial value of $H$ along a trajectory of interest. With $H = E$ , the dynamics of the transformed system will be equivalent to those of the original system, up to a transformation of time $d t / d t ^ { \prime } = f$ .
+
+In order to correct the Nos´e timescale, the appropriate Poincar´e transformation is $d t / d t ^ { \prime } = s$ , applied to a slightly modified version of the Nos´e extended Hamiltonian in (11.4)
+
+$$
+\tilde { \mathcal { H } } = \left( \sum _ { j } \frac { \| \tilde { { \pmb { p } } } _ { i } \| ^ { 2 } } { 2 m _ { i } s ^ { 2 } } + V ( { \pmb q } ) + \frac { \pi _ { s } ^ { 2 } } { 2 Q } + g \beta ^ { - 1 } \ln s - E \right) s .
+$$
+
+The modification comes in that we must take the constant $g = N _ { f }$ (as opposed to $\tilde { g } = N _ { f } + 1 ,$ ), as in Nos´e–Hoover. The constant $E$ is chosen to be the initial value of the Nos´e Hamiltonian, $\mathcal { H } _ { \mathsf { N o s e } }$ . It is not difficult to show that this transformed Hamiltonian (11.13), which we call Nos´e–Poincar´e, generates configurations from the canonical distribution in the variables $\pmb q$ and $\tilde { p } / s$ , see [26] for details.
+
+The disadvantage of the general Poincar´e transformation in (11.12) is that it mixes the variables so that a straightforward explicit symplectic treatment of the extended Hamiltonian is not, in general, possible. However, the fact that the scaling function $f$ depends only on $s$ means that the discrete equations can often be decoupled, and we can easily formulate semi-explicit symplectic methods.
+
+Returning to the Nos´e–Poincar´e Hamiltonian, $\tilde { \mathcal { H } }$ , we write the equations of motion
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } q _ { i } = \frac { \tilde { p } _ { i } } { m _ { i } s } , } \\ { \displaystyle \frac { d } { d t } \tilde { p } _ { i } = - s \nabla _ { q _ { i } } V ( q ) , } \\ { \displaystyle \frac { d s } { d t } = s \frac { \pi _ { s } } { Q } , } \\ { \displaystyle \frac { d \pi _ { s } } { d t } = \sum _ { j } \frac { \| \tilde { p } _ { i } \| ^ { 2 } } { m _ { i } s ^ { 2 } } - g \beta ^ { - 1 } - \Delta \mathcal { H } \left( q , \tilde { p } , s , \pi _ { s } \right) , } \end{array}
+$$
+
+where
+
+$$
+\Delta \mathcal { H } \left( \pmb { q } , \widetilde { \pmb { p } } , s , \pi _ { s } \right) = \sum _ { i } \frac { \| \widetilde { \pmb { p } } _ { i } \| ^ { 2 } } { 2 m _ { i } s ^ { 2 } } + V ( \pmb { q } ) + \frac { \pi _ { s } ^ { 2 } } { 2 Q } + g \beta ^ { - 1 } \ln { s } - E .
+$$
+
+The value of $E$ is chosen such that $\Delta \mathcal { H } \left( \pmb q ( 0 ) , \tilde { \pmb p } ( 0 ) , s ( 0 ) , \pi _ { s } ( 0 ) \right) = 0$ . We apply to this the generalized leapfrog algorithm (see Chapter 4). Since we are treating a time-reversible Hamiltonian system, the resulting method is symplectic and time reversible
+
+$$
+\begin{array} { l } { { \displaystyle { \bar { p } } _ { i } ^ { n + 1 / 2 } = { \bar { p } } _ { i } ^ { n } - \frac { \Delta t } { 2 } s ^ { n } \nabla _ { q } V ( q ^ { n } ) } , } \\ { { \displaystyle \pi _ { s } ^ { n + 1 / 2 } = \pi _ { s } ^ { n } + \frac { \Delta t } { 2 } \left( \sum _ { i } \frac { 1 } { m _ { i } } \left( \frac { \| { \bar { p } } _ { i } ^ { n + 1 / 2 } \| } { s ^ { n } } \right) ^ { 2 } - g \beta ^ { - 1 } \right) } } \\ { ~ - \frac { \Delta t } { 2 } \Delta \mathcal { H } \left( q ^ { n } , \bar { p } ^ { n + 1 / 2 } , s ^ { n } , \pi _ { s } ^ { n + 1 / 2 } \right) , }  \\ { { \displaystyle s ^ { n + 1 } = s ^ { n } + \frac { \Delta t } { 2 } \left( s ^ { n + 1 } + s ^ { n } \right) \frac { \pi _ { s } ^ { n + 1 / 2 } } { Q } } , } \\ { { \displaystyle q _ { i } ^ { n + 1 } = q _ { i } ^ { n } + \frac { \Delta t } { 2 } \left( \frac { 1 } { s ^ { n + 1 } } + \frac { 1 } { s ^ { n } } \right) \frac { \bar { p } _ { i } ^ { n + 1 / 2 } } { m _ { i } } } , } \end{array}
+$$
+
+$$
+\begin{array} { l } { \displaystyle \pi _ { s } ^ { n + 1 } = \pi _ { s } ^ { n + 1 / 2 } + \frac { \Delta t } { 2 } \left( \sum _ { i } \frac { 1 } { m _ { i } } \left( \frac { \lVert \tilde { p } _ { i } ^ { n + 1 / 2 } \rVert } { s ^ { n + 1 } } \right) ^ { 2 } - g \beta ^ { - 1 } \right) } \\ { \displaystyle - \frac { \Delta t } { 2 } \Delta \mathcal { H } \left( q ^ { n + 1 } , \tilde { p } ^ { n + 1 / 2 } , s ^ { n + 1 } , \pi _ { s } ^ { n + 1 / 2 } \right) , } \\ { \displaystyle \tilde { p } _ { i } ^ { n + 1 } = \tilde { p } _ { i } ^ { n + 1 / 2 } - \frac { \Delta t } { 2 } s ^ { n + 1 } \nabla _ { q _ { i } } V ( q ^ { n + 1 } ) . } \end{array}
+$$
+
+Solving (11.16) requires us to find the roots of a quadratic equation for $\pi _ { s } ^ { n + 1 / 2 }$
+
+$$
+\frac { \Delta t } { 4 Q } \left( \pi _ { s } ^ { n + 1 / 2 } \right) ^ { 2 } + \pi _ { s } ^ { n + 1 / 2 } + \delta = 0 ,
+$$
+
+where
+
+$$
+\delta = \frac { \Delta t } { 2 } \left( g \beta ^ { - 1 } \left( 1 + \ln s ^ { n } \right) - \sum _ { i } \frac { \left( \tilde { p } _ { i } ^ { n + 1 / 2 } \right) ^ { 2 } } { 2 m _ { i } \left( s ^ { n } \right) ^ { 2 } } + V ( \pmb { q } ^ { n } ) - E \right) - \pi _ { s } ^ { n } .
+$$
+
+To avoid subtractive cancellation, we use the following quadratic formula to solve (11.21)
+
+$$
+\pi _ { s } ^ { n + 1 / 2 } = \frac { - 2 \delta } { 1 + \sqrt { 1 - \delta \Delta t / Q } } .
+$$
+
+The remaining steps of the method are explicit.
+
+# 11.4.1 Generalized baths
+
+In [102], an alternative to Nos´e dynamics is proposed based on a more powerful family of extended Hamiltonians. By examination of the proof that Nos´e dynamics recovers the canonical ensemble, we can observe that also the following Hamiltonian would have this property
+
+$$
+{ \mathcal H } _ { G N } = H ( \pmb q , \tilde { \pmb p } / s ) + g \beta ^ { - 1 } \ln s + G ( \pi _ { s } , \sigma _ { 1 } , \sigma _ { 2 } , \dots , \sigma _ { k } , \pi _ { 1 } , \pi _ { 2 } , \dots , \pi _ { k } ) ,
+$$
+
+Here new configuration variables $\sigma _ { 1 } , \sigma _ { 2 } , \ldots , \sigma _ { k }$ and the corresponding momenta $\pi _ { 1 }$ $1 , \pi _ { 2 } , \ldots , \pi _ { k }$ represent augmenting variables designed to (i) increase the rate of convergence to the canonical ensemble, or (ii) enable the bath to resonate with several components of the Hamiltonian system. It is possible to show that, under certain assumptions, the constant energy trajectories of the generalized bath Hamiltonian sample the canonical ensemble. The precise form of the term $G$ will be important both for the dynamical behavior and for the issues of numerical integrator design. However, there are some limitations on the choice of $G$ , as illustrated in the following examples.
+
+Example 2 Nosé-Hoover chains are often used to enhance ergodicity. The idea is to introduce additional thermostatting variables which successively “thermostat the thermostats.” It is natural to look for a Hamiltonian formulation of Nos´e–Hoover chains, such as
+
+$$
+\begin{array} { l } { \displaystyle { \mathcal { H } } _ { \mathrm { c h a i n } } = H ( \pmb { q } , \widetilde { \pmb { p } } / s ) + \frac { \pi _ { s } ^ { 2 } } { 2 s _ { 1 } ^ { 2 } Q } + \frac { \pi _ { 1 } ^ { 2 } } { 2 s _ { 2 } ^ { 2 } Q _ { 1 } } + . . . + \frac { \pi _ { r - 1 } ^ { 2 } } { 2 s _ { r } ^ { 2 } Q _ { r - 1 } } + \frac { \pi _ { r } ^ { 2 } } { 2 Q _ { r } } } \\ { \displaystyle + g \beta ^ { - 1 } \ln s + g _ { 1 } \beta ^ { - 1 } \ln s _ { 1 } + . . . g _ { r } \beta ^ { - 1 } \ln s _ { r } , } \end{array}
+$$
+
+which is clearly in the form (11.23).
+
+Take the case $r = 1$ , in which case the microcanonical partition function is
+
+$$
+\begin{array} { l } { { \displaystyle { \mathcal P } = \int \delta [ \mathcal { H } _ { \mathrm { c h a i n } } - E ] d \tilde { V } d s d s _ { 1 } d \pi _ { s } d \pi _ { 1 } } } \\ { { \displaystyle \quad = \int \delta [ H ( \boldsymbol { q } , \tilde { \boldsymbol { p } } / s ) + \frac { \pi _ { s } ^ { 2 } } { 2 S _ { 1 } ^ { 2 } Q } + \frac { \pi _ { 1 } ^ { 2 } } { 2 Q _ { 1 } } + g \beta ^ { - 1 } | { \mathrm n } s + g _ { 1 } \beta ^ { - 1 } | { \mathrm n } s _ { 1 } - E | d \tilde { V } d s d s _ { 1 } d \pi _ { s } d \pi _ { 1 }  } } \end{array}
+$$
+
+where $d { \tilde { V } } = d ^ { N _ { f } } q d ^ { N _ { f } } { \tilde { p } }$ is the volume form in phase space. We attempt now to integrate out with respect to $S _ { 1 }$ . Set $\pi _ { s } / s _ { 1 } = \bar { \pi }$ , so $d \pi = s _ { 1 } d \bar { \pi }$ and
+
+$$
+\begin{array} { l } { \displaystyle { \mathrm {  ~ \beta ~ } = \int \delta [ H ( \boldsymbol { q } , \tilde { p } / s ) + \frac { \bar { \pi } ^ { 2 } } { 2 Q _ { 0 } } + \frac { \pi _ { 1 } ^ { 2 } } { 2 Q _ { 1 } } + g \beta ^ { - 1 } | { \mathrm {  ~ n ~ } } s + g _ { 1 } \beta ^ { - 1 } | { \mathrm {  ~ n ~ } } s _ { 1 } - E | s _ { 1 } d \tilde { V } d s d s _ { 1 } d \bar { \pi } d \pi _ { 1 } + g \beta ^ { - 1 } | { \mathrm {  ~ n ~ } } s _ { 0 } | ] d s } } \end{array}
+$$
+
+This yields, for $g _ { 1 } = 2$
+
+$$
+\mathcal { P } = \int \exp \left( - \beta \left[ H ( \pmb { q } , \tilde { p } / s ) + \frac { \bar { \pi } ^ { 2 } } { 2 Q } + \frac { \pi _ { 1 } ^ { 2 } } { 2 Q _ { 1 } } + g \beta ^ { - 1 } \left| \mathfrak { n } s - \bar { \cal E } \right| \right) d \tilde { V } d s d \bar { \pi } d \pi _ { 1 } , \right.
+$$
+
+but now following this by ${ \tilde { p } } / s = p$ , we obtain
+
+$$
+{ \mathcal P } = \int \exp \left( - \beta \left[ H ( { \pmb q } , { \pmb p } ) + \frac { \bar { \pi } ^ { 2 } } { 2 Q } + \frac { \pi _ { 1 } ^ { 2 } } { 2 Q _ { 1 } } + g \beta ^ { - 1 } \ln s - E \right] \right) s ^ { N _ { f } } d V d s d \bar { \pi } d \pi _ { 1 } ,
+$$
+
+$d V = d ^ { N _ { f } } \pmb { q } d ^ { N _ { f } } \pmb { p }$ , if we then choose $g \ = \ N _ { f }$ , it appears in the exponential that $\mathrm { e x p } ( - g \ln s ) = s ^ { - N _ { f } }$ , but we must still perform the integration with respect to $s$ which is unbounded! ✷
+
+In order to correct this problem there are several approaches one can take, including modification of the chain Hamiltonian in order to bound the s-integral. On the other hand we can also try completely different kinds of couplings, such as the following from [102]:
+
+# Example 3
+
+$$
+\mathcal { H } _ { \mathrm { v e r t e x } } = \frac { \tilde { p } ^ { T } M ^ { - 1 } \tilde { p } } { 2 s ^ { 2 } } + V ( q ) + g \beta ^ { - 1 } \ln { s } + \frac { ( 1 + \sum \sigma _ { i } ^ { 2 } ) \pi _ { s } ^ { 2 } } { 2 Q _ { s } } + \sum _ { i } \frac { \sigma _ { i } ^ { 2 } } { 2 } + \sum _ { i = 1 , m } \frac { \pi _ { i } ^ { 2 } } { 2 Q _ { i } } .
+$$
+
+The $\sigma _ { i }$ are coupled to the original variables through $\pi _ { s }$ (a common vertex). To this generalized Hamiltonian we add a time transformation of Poincar´e type in the same manner as for Nos´e dynamics, resulting in
+
+$$
+\dot { \iota } _ { \mathrm { v e r t e x } } = s \left[ \frac { \tilde { p } ^ { T } M ^ { - 1 } \tilde { p } } { 2 s ^ { 2 } } + V ( q ) + g \beta ^ { - 1 } \ln s + \frac { ( 1 + \sum \sigma _ { i } ^ { 2 } ) \pi _ { s } ^ { 2 } } { 2 Q _ { s } } + \sum _ { i } \frac { \sigma _ { i } ^ { 2 } } { 2 } + \sum _ { i = 1 , m } \frac { \pi _ { i } ^ { 2 } } { 2 Q _ { i } } - E \right] ,
+$$
+
+$E = \mathcal { H } _ { \mathsf { v o r t e x } } ( 0 )$ . In this case a splitting method can be generated from the composition of the flows on
+
+$$
+\begin{array} { l } { { \displaystyle { H _ { 1 } = - s \left[ \frac { \left( 1 + \sum \sigma _ { i } ^ { 2 } \right) \pi _ { s } ^ { 2 } } { 2 Q _ { s } } + \frac { 1 } { 2 } \sum _ { i } \sigma _ { i } ^ { 2 } + g \beta ^ { - 1 } \ln s \right] } \ : , } } \\ { { \displaystyle { H _ { 2 } = s \left[ \frac { \tilde { p } ^ { T } M ^ { - 1 } \tilde { p } } { 2 s ^ { 2 } } + \sum \frac { \pi _ { i } ^ { 2 } } { 2 Q _ { i } } \right] } \ : , } } \\ { { \displaystyle { H _ { 3 } = s [ V ( \pmb q ) - E ] } . } } \end{array}
+$$
+
+This splitting is very similar to one proposed by Nos´e for the original Nos´e–Poincar´e method [147]. The flows for $H _ { 2 }$ and $H _ { 3 }$ are easily computed. For $H _ { 1 }$ we propose the use of a symplectic method such as the generalized Leapfrog scheme. ✷
+
+Example 4A well-known system with reasonably good ergodicity properties is the three-ball billiard system with three hard-sphere particles in a square box. While we could use a hard-sphere bath [88], this would introduce some complications. Instead, we suggest to use a simplified bath consisting of three “soft” spheres (with pair potentials of the form $r ^ { - p }$ ) constrained to a small region via a harmonic tether to the origin. We can use this system as a generalized bath. Define
+
+$$
+\mathcal { H } _ { \mathrm { b i l i a r d } } = \mathcal { H } _ { \mathrm { N o s } \in } \big ( \tilde { p } , q , s , \pi _ { s } \big ) + \mathcal { H } _ { \mathrm { b a t h } } \big ( \{ \pmb { \sigma } _ { i } , \pmb { \pi } _ { i } \} \big ) + \mathcal { H } _ { \mathrm { i n t } } \big ( \pi _ { s } , \{ \pmb { \sigma } _ { i } , \pmb { \pi } _ { i } \} \big ) ,
+$$
+
+where
+
+$$
+\mathcal { H } _ { \mathrm { b a t h } } = \sum _ { i = 1 } ^ { 3 } \frac { \Vert \pmb { \pi } _ { i } \Vert ^ { 2 } } { 2 Q _ { i } } + \sum _ { i = 1 } ^ { 3 } \frac { \Vert \pmb { \sigma } _ { i } \Vert ^ { 2 } } { 2 } + \sum _ { i } \sum _ { j > i } \Vert \pmb { \sigma } _ { i } - \pmb { \sigma } _ { j } \Vert ^ { - 1 2 } ,
+$$
+
+and
+
+$$
+\mathcal { H } _ { \mathrm { i n t } } = \left( \sum _ { i = 1 } ^ { 3 } \| \pmb { \sigma } _ { i } \| ^ { 2 } \right) \frac { \pi _ { s } ^ { 2 } } { 2 Q _ { s } } .
+$$
+
+The bath positions and momenta $\pmb { \sigma } _ { i }$ and $\pmb { \pi } _ { i }$ are vectors in $\mathbb { R } ^ { 3 }$ . The Nos´e–Poincar´e equations for this system can be integrated using a Hamiltonian splitting like that used in the vertex coupling. This is left as an exercise.
+
+Experiments with both of these generalized baths are discussed in [102] and, at the time of this writing, research is on-going into design of optimal baths. ✷
+
+![](images/a2d437f84d7f98752766b440f0fdc413687e946ca81fad9b06832e547bbc0ea8.jpg)  
+Figure 11.5 A simple energy rescaling function (left) and effect on energy of a double well model (right).
+
+The development of flexible ´e-like schemes with good ergodicity properties is a topic of current. The interested reader is referred to the articles by LEIMKUHLER and SWEET [113a, b].
+
+# 11.4.2 Simulation in other ensembles
+
+It is interesting to consider alternatives to computation in the microcanonical or canonical ensembles. One example is the constant temperature and pressure (NPT) ensemble. Schemes for NPT calculations can be derived which are very similar to the methods discussed above for NVT simulation. For example, a variant of Nos´e–Poincar´e has been adapted for NPT simulation [182].
+
+The development of non-standard distributions is often seen as a way to accelerate the configurational sampling of complex molecular systems having highly corrugated potential landscapes, for which the time scale of standard moleculardynamics simulations is insufficient for convergence of statistical averages. This is especially true of macromolecules, biomolecules, and amorphous materials. Over past decades, numerous schemes have been proposed for enhancing sampling efficiency, usually based on the systematic deformation of the potential (or total) energy surface to accelerate barrier crossings, either by lowering the barriers or raising the potential valleys. From a statistical mechanical perspective, such energetic modifications induce a corresponding alteration of the phase-space distribution by enhancing the statistical weight of configurations which otherwise would be rarely visited. If we have detailed knowledge of the modified sampling distribution, it is possible to “reweight” the computed trajectories to obtain averages in the original ensemble.
+
+One of the simplest smoothing consists of introducing an energy scaling at high energy. We consider a function $\eta ( E )$ , as depicted in Fig. 11.5, and define
+
+the “smoothed energy” by
+
+$$
+\begin{array} { r } { H ^ { \prime } = \eta ( H ) H . } \end{array}
+$$
+
+Canonical sampling with respect to this energy implies an ensemble density of the form
+
+$$
+\rho _ { \mathsf { c a n o n i c a l } } ( H ^ { \prime } ) = \mathsf { e x p } ( - \beta H ^ { \prime } ) = \mathsf { e x p } ( - \beta \eta ( H ) H ) = \rho ^ { \prime } ( H ) ,
+$$
+
+which can be viewed as a noncanonical sampling with respect to the original energy. Now suppose that we have computed a sampling trajectory for this ensemble using Nos´e dynamics, then
+
+$$
+\operatorname* { l i m } \frac { 1 } { T } \int _ { 0 } ^ { T } f ( \pmb { q } ( t ) , \tilde { \pmb { p } } ( t ) / s ( t ) ) d t \propto \int f ( \pmb { q } , \pmb { p } ) \ d \rho ^ { \prime } ( H ) d V .
+$$
+
+Of course this is not what we want! What we would like is to be able to recover the correct sampling with respect to the canonical ensemble. However, if we define
+
+$$
+\Delta H = H - H ^ { \prime } ,
+$$
+
+then
+
+$$
+\begin{array} { r l r } {  { \operatorname* { l i m } \frac { 1 } { T } \int _ { 0 } ^ { T } \exp [ - \beta \Delta H ( \pmb { q } ( t ) , \tilde { \pmb { p } } ( t ) / s ( t ) ) ] f ( \pmb { q } ( t ) , } } \\ & { } & { \tilde { \pmb { p } } ( t ) / s ( t ) ) d t \propto \int f ( \pmb { q } , \pmb { p } ) \rho _ { \mathrm { c a n } } ( H ) d V . } \end{array}
+$$
+
+This is what we mean by ensemble “reweighting.”
+
+Alternatively, if the density is given, expressed as a function of the phase variables, one can typically derive both extended Hamiltonians and numerical methods from a reformulation of the problem to one couched in the canonical ensemble. If $\rho ( \pmb q , \pmb p )$ is the given (positive) ensemble density, we solve
+
+$$
+\rho = \exp ( - \beta \tilde { H } )
+$$
+
+for $\tilde { H }$ , where $\beta$ is essentially a free parameter. Averages with respect to Hamiltonian $H$ in the $\rho$ ensemble are now recovered directly by computing canonical averages of the system with Hamiltonian $\tilde { H }$ . However, in this work, care is needed to develop sensible geometric integrators. The Nos´e Hamiltonian for Generalized Density Dynamics (GDD) is
+
+$$
+H _ { \ N o s \bar { e } } ^ { \rho } = - \frac { 1 } { \beta } \ln \rho \big ( \pmb { q } , \tilde { \pmb { p } } / s \big ) + \frac { \pi ^ { 2 } } { 2 Q } + g \beta ^ { - 1 } \ln s .
+$$
+
+After Poincar´e transformation, this results in the equations of motion
+
+$$
+\begin{array} { l } { \displaystyle \dot { q } = - \frac { \beta ^ { - 1 } } { \rho ( q , \tilde { p } / s ) } \nabla _ { \tilde { p } / s } \rho ( \tilde { p } / s , q ) , } \\ { \displaystyle \dot { \tilde { p } } = \frac { \beta ^ { - 1 } } { \rho ( q , \tilde { p } / s ) } \nabla _ { \tilde { q } } \rho ( q , \tilde { p } / s ) , } \\ { \displaystyle \dot { s } = \frac { s \pi _ { s } } { Q } , } \\ { \displaystyle \dot { \pi } _ { s } = \frac { \beta ^ { - 1 } \tilde { p } } { s \rho ( q , \tilde { p } / s ) } \nabla _ { \tilde { p } } \rho ( q , \tilde { p } / s ) - g \beta ^ { - 1 } - \Delta H _ { \mathrm { N o s e } } ^ { \rho } . } \end{array}
+$$
+
+A separable Hamiltonian $H$ will not result in a separable $\tilde { H }$ , and the result is that a straightforward treatment based on applying Nos´ep–Poincar´e to simulate $\tilde { H }$ would have to be fully implicit. In [14] this difficulty was analyzed in some special cases, for example where $\rho = \rho _ { A } ( { \pmb q } ) \rho _ { B } ( { \pmb p } )$ and for $\rho = \rho ( H )$ . In both of these cases, it turns out to be possible to derive semi-explicit second-order symplectic schemes which require only a single force evaluation per timestep.
+
+# 11.5 Exercises
+
+1. Smooth potential cutoff. Often, one replaces the Lennard–Jones potential by a cut-off version whose derivative has compact support. This should be done so that the potential remains at least smooth (continuously differentiable), for example
+
+$$
+\begin{array} { r } { \phi _ { \downarrow \downarrow } ( r ) \approx \hat { \phi } _ { \downarrow \downarrow } ( r ) = \left\{ \begin{array} { l c r } { \phi _ { \downarrow \downarrow } ( r ) , } & { r < R _ { 1 } } \\ { P ( r ) , } & { R _ { 1 } \leq r < R _ { 2 } , } \\ { 0 , } & { r \geq R _ { 2 } } \end{array} \right. } \end{array}
+$$
+
+where $P ( r )$ is an interpolating polynomial (Fig. 11.6). A $C ^ { m }$ -approximation (meaning that the approximation can be differentiated $m$ times) can be obtained by introducing a higher-order Hermite interpolant $P ( r ) = A _ { 0 } + A _ { 1 } r +$ $\ldots + A _ { 2 m - 1 } r ^ { 2 m - 1 }$ , and determining the $2 m$ coefficients to satisfy the $2 m$ conditions $P ^ { ( k ) } ( R _ { 1 } ) = \phi ^ { ( k ) } ( R _ { 1 } )$ , $P ^ { ( k ) } ( R _ { 2 } ) = 0$ , $k = 0 , 1 , 2 , \ldots , m - 1$ . Find a $C ^ { 2 }$ -cutoff of the Lennard–Jones potential.
+
+2. SHAKE discretization of Methane. Each molecule of Methane has five atoms (a carbon and four hydrogens) (see Fig. 11.7), arranged at the vertices and center of a regular tetrahedron. Let us order the atoms as follows: the central carbon of the first methane molecule, first hydrogen of first methane, second hydrogen of first methane, . . . , fourth hydrogen of first methane, central carbon of second methane, first hydrogen of second methane, etc., indexing them from 1. Just considering the equations for the first methane we have constrained equations of the form
+
+![](images/6e2546e09fb6fdfb3c1445ecdcdc852fb0354f5d855ca4cf76ac69c7ce64cb99.jpg)
+
+![](images/4c0e8f00749fe49593d51c4af1126ad30178d204c92db2f252ae294383d1de6d.jpg)  
+Figure 11.6 Smooth potential cutoff by Hermite interpolation.   
+Figure 11.7 Methane.
+
+$$
+\begin{array} { c } { { \dot { q } _ { 1 } = m _ { \mathrm { C } } ^ { - 1 } p _ { 1 } , } } \\ { { \dot { q } _ { k } = m _ { \mathrm { H } } ^ { - 1 } p _ { k } , } } \\ { { \dot { p } _ { 1 } = F _ { \mathrm { C } } - \displaystyle \sum _ { k = 1 } ^ { 4 } \lambda _ { k } ( q _ { 1 } - q _ { k + 1 } ) , } } \\ { { \dot { p } _ { k } = F _ { \mathrm { H } [ k - 1 ] } - \lambda _ { k - 1 } ( q _ { k } - q _ { 1 } ) , } } \\ { { \frac 1 2 \lVert q _ { k } - q _ { 1 } \rVert ^ { 2 } = \frac 1 2 L _ { \mathrm { C } \mathrm { H } } ^ { 2 } . } } \end{array}
+$$
+
+Here $m _ { C }$ , $m _ { H }$ represent the masses of the carbon and hydrogen atoms, respectively, $F _ { \mathrm { C } }$ and $F _ { \mathsf { H } [ k ] }$ , $k = 1 , 2 , 3 , 4$ are the forces acting on the carbon and each hydrogen atom due both to interactions with the other atoms of the first methane as well as to intermolecular interactions, and $L _ { \mathrm { C H } }$ is the natural length of this bond. The shape of the molecule is maintained by angle potentials between the hydrogens and the central carbon atom. After application of SHAKE and simplification, we find that we are left with a relatively simple system of four quadratic equations in $\lambda _ { 1 } , . . . , \lambda _ { 4 }$ . Since the equations look the same for each Methane, the SHAKE equations will only involve the Lagrange multipliers of the local group, so in a system of s methanes, we will face only s decoupled four-dimensional nonlinear subsystems, each of which can be solved by an iterative method.
+
+Determine the coupled quadratic equations that must be solved at each step of SHAKE discretization.
+
+3. Generalized Nos´e dynamics. State and prove conditions under which canonical sampling can be recovered from (11.23).
+
+4. Generalized Nos´e dynamics. Write a discretization scheme for the soft-particle (“billiard”) bath model in Example 4.
+
+# 12
+
+# Hamiltonian PDEs
+
+Many physical processes of interest not only evolve continuously in time but also possess a continuous spatial structure and, hence, can be described by partial differential equations (PDEs). Furthermore, many fundamental laws of physics, such as quantum mechanics, electrodynamics, ideal continuum mechanics, can be formulated within an extension of the Hamiltonian framework discussed so far to PDEs. In this chapter we focus on two particular examples of such Hamiltonian PDEs and discuss a number of numerical discretization techniques. The reader should, however, keep in mind that the solution behavior of PDEs is much more complex than that of ODEs and that the choice of an appropriate discretization will depend very much on the anticipated type of solutions. The techniques described in this chapter are very much restricted to smooth solutions such as solitons [53, 201] and balanced geophysical flows [169]. This excludes, in particular, the consideration of shocks [201]. A general introduction to numerical methods for PDEs can be found, for example, in [140].
+
+# 12.1 Examples of Hamiltonian PDEs
+
+# 12.1.1 The nonlinear wave equation
+
+Let us consider the nonlinear wave equation
+
+$$
+u _ { t t } = \partial _ { x } \sigma ^ { \prime } ( u _ { x } ) - f ^ { \prime } ( u ) , \quad u = u ( x , t ) ,
+$$
+
+where $\sigma$ and $f$ are smooth functions. If $\sigma ( u _ { x } ) = u _ { x } ^ { 2 } / 2$ , then the semi-linear wave equation
+
+$$
+{ { u } _ { t t } } = { { u } _ { x x } } - { { f } ^ { \prime } } ( u )
+$$
+
+is obtained. Other choices for $\sigma ( u _ { x } )$ lead to idealized one-dimensional models for fluids and materials.
+
+Throughout this chapter, solutions $\boldsymbol { u } = \boldsymbol { u } ( \boldsymbol { x } , t )$ of (12.1) are assumed to be smooth in the independent variables $x$ and $t$ and we impose periodic boundary conditions $\boldsymbol { { u } } ( \boldsymbol { x } , t ) = \boldsymbol { { u } } ( \boldsymbol { x } + \boldsymbol { L } , t ) , \boldsymbol { L } \ge$ $L > 0$ .
+
+We introduce the total energy ${ \mathcal { E } } [ u ]$ by
+
+$$
+\mathcal { E } [ u ] = \int _ { 0 } ^ { L } \left[ \frac { 1 } { 2 } u _ { t } ^ { 2 } + \sigma ( u _ { x } ) + f ( u ) \right] \ : d x ,
+$$
+
+and observe that, using integration by parts,
+
+$$
+\begin{array} { r } { \frac { d } { d t } \mathcal { E } [ u ] = \int _ { 0 } ^ { L } \left[ u _ { t } u _ { t t } + \sigma ^ { \prime } ( u _ { x } ) u _ { x t } + f ^ { \prime } ( u ) u _ { t } \right] d x } \\ { = \int _ { 0 } ^ { L } u _ { t } \left[ u _ { t t } - \partial _ { x } \sigma ^ { \prime } ( u _ { x } ) + f ^ { \prime } ( u ) \right] d x . } \end{array}
+$$
+
+However, the term in brackets is equal to zero along solutions of (12.1) and, hence, the total energy ${ \mathcal { E } } [ u ]$ is conserved.
+
+Let us denote the space of smooth and $L$ -periodic functions in $x$ by ${ \boldsymbol { S } } =$ $C ^ { \infty } [ 0 , L ]$ . Our assumption then is that $u ( . , t ) \in S$ for $t \geq 0$ or in short hand $u ( t ) \in S$ . This smoothness assumption explicitly excludes the consideration of shock-type solutions [201].
+
+Furthermore, upon rewriting (12.1) as
+
+$$
+\begin{array} { l l } { u _ { t } = v , } \\ { v _ { t } = \partial _ { x } \sigma ^ { \prime } ( u _ { x } ) - f ^ { \prime } ( u ) , } \end{array}
+$$
+
+the wave equation can, formally, be viewed as a Hamiltonian system with phase space $( u , v ) ^ { T } \in S \times S$ , symplectic form,
+
+$$
+\bar { \omega } = \int _ { 0 } ^ { L } d u \wedge d v d x ,
+$$
+
+and Hamiltonian functional
+
+$$
+\mathcal { H } [ u , v ] = \int _ { 0 } ^ { L } \left[ \frac { 1 } { 2 } v ^ { 2 } + \sigma ( u _ { x } ) + f ( u ) \right] d x .
+$$
+
+The Hamiltonian equations of motion are derived in the following way. First, the gradient $\nabla _ { z }$ of classical mechanics is replaced by the “variational” gradient $\pmb { \delta _ { z } } = ( \delta _ { u } , \delta _ { v } ) ^ { T }$ , $\boldsymbol { z } = ( u , v ) ^ { T } \in S { \times } S$ . The variational derivative $\delta _ { u } \mathcal { G }$ of a functional $\mathcal { G } [ \boldsymbol { u } ]$ is defined by
+
+$$
+\int _ { 0 } ^ { L } ( \delta _ { u } \mathcal { G } [ u ] \delta u ) d x = \operatorname* { l i m } _ { \varepsilon \to 0 } \frac { \mathcal { G } [ u + \varepsilon \delta u ] - \mathcal { G } [ u ] } { \varepsilon } ,
+$$
+
+for any $\delta u \in S$ . Let us demonstrate this for $\delta _ { u } \mathcal { H } [ u , v ]$ which is equivalent to the
+
+variational derivative of $\begin{array} { r } { \mathcal { G } [ u ] = \int _ { 0 } ^ { L } \left[ \sigma ( u _ { x } ) + f ( u ) \right] d x } \end{array}$
+
+$$
+\begin{array} { r l } { \displaystyle \int _ { 0 } ^ { L } \left( \delta _ { u } \mathcal { G } [ u ] \delta u \right) d x = } & { \underset { \varepsilon \to 0 } { \operatorname* { l i m } } \frac { 1 } { \varepsilon } \Bigg \lbrace \int _ { 0 } ^ { L } \left[ \sigma ( [ u + \varepsilon \delta u ] _ { x } ) + f ( u + \varepsilon \delta u ) \right] d x - } \\ & { } \\ { \displaystyle \int _ { 0 } ^ { L } \left[ \sigma ( \upsilon _ { x } ) + f ( u ) \right] d x \Bigg \rbrace } \\ & { = \displaystyle \int _ { 0 } ^ { L } \left[ \sigma ^ { \prime } ( u _ { x } ) ( \delta u ) _ { x } + f ^ { \prime } ( u ) \delta u \right] d x } \\ & { = \displaystyle \int _ { 0 } ^ { L } \left[ - \partial _ { x } \sigma ^ { \prime } ( u _ { x } ) \delta u + f ^ { \prime } ( u ) \delta u \right] d x } \\ & { = \displaystyle \int _ { 0 } ^ { L } \left[ - \partial _ { x } \sigma ^ { \prime } ( u _ { x } ) + f ^ { \prime } ( u ) \right] \delta u d x . } \end{array}
+$$
+
+Comparison of the left- and right-hand side yields
+
+$$
+\delta _ { u } \mathcal { H } [ u , v ] = \delta _ { u } \mathcal { G } [ u ] = - \partial _ { x } \sigma ^ { \prime } ( u _ { x } ) + f ^ { \prime } ( u ) .
+$$
+
+One also obtains $\delta _ { v } \mathcal { H } [ u , v ] = v$
+
+Next we rewrite the symplectic form (12.2) as
+
+$$
+\bar { \omega } = \frac { 1 } { 2 } \int _ { 0 } ^ { L } ( J _ { 2 } ^ { - 1 } d z ) \wedge d z d x ,
+$$
+
+with the (local) structure matrix
+
+$$
+J _ { 2 } = \left[ { \begin{array} { c c } { 0 } & { + 1 } \\ { - 1 } & { 0 } \end{array} } \right] ,
+$$
+
+and $d z = ( d u , d v ) ^ { T }$ . Then the wave equation (12.1) becomes equivalent to an abstract Hamiltonian system
+
+$$
+\begin{array} { r } { z _ { t } = J _ { 2 } \delta _ { z } \mathcal { H } [ z ] . } \end{array}
+$$
+
+We finally note that the nonappearance of the independent variable $x$ in the functions $f$ and $\sigma$ implies another conserved functional for the PDE (12.1), namely the total momentum
+
+$$
+\mathcal { M } [ u , v ] = \int _ { 0 } ^ { L } v u _ { x } d x .
+$$
+
+Indeed
+
+$$
+\begin{array} { c } { \displaystyle \frac { d } { d t } \mathcal { M } = \int _ { 0 } ^ { L } ( v _ { t } u _ { x } + v u _ { x t } ) d x } \\ { = \displaystyle \int _ { 0 } ^ { L } ( u _ { x } [ \partial _ { x } \sigma ^ { \prime } ( u _ { x } ) - f ^ { \prime } ( u ) ] + v v _ { x } ) d x } \end{array}
+$$
+
+$$
+\begin{array} { l } { = \displaystyle \int _ { 0 } ^ { L } [ - \sigma ( u _ { x } ) - f ( u ) + v ^ { 2 } / 2 ] _ { x } d x } \\ { = \displaystyle \left[ - \sigma ( u _ { x } ) - f ( u ) + v ^ { 2 } / 2 \right] _ { x = 0 } ^ { x = L } } \\ { = 0 . } \end{array}
+$$
+
+# 12.1.2 Soliton solutions
+
+Waves are one of the most important features of fluid dynamics [201]. Particular types of waves are those that travel at a constant speed $c \neq 0$ without changing their shape. These waves are called traveling waves or solitons [201, 53]. Mathematically a soliton is described by a (smooth) function $\phi$ such that
+
+$$
+u ( x , t ) = \phi ( x - c t ) .
+$$
+
+Let us introduce the new variable $\xi = x - c t$ , then $u _ { x } = \phi _ { \xi }$ , $u _ { t } = - c \phi _ { \xi }$ , etc. Hence, assuming a solitary solution, the wave equation (12.1) gives rise to a second-order ODE,
+
+$$
+c ^ { 2 } \phi _ { \xi \xi } = \partial _ { \xi } \sigma ^ { \prime } ( \phi _ { \xi } ) - f ^ { \prime } ( \phi ) ,
+$$
+
+in the independent variable $\xi$ . Equation (12.5) is a Euler–Lagrange equation and to obtain the corresponding Hamiltonian formulation we introduce the new dependent variable (conjugate momentum) $\psi = c ^ { 2 } \phi _ { \xi } - \sigma ^ { \prime } ( \phi _ { \xi } )$ . Let us assume that this relation is invertible, i.e., there is a function $g ( \psi )$ such that $\phi _ { \xi } ~ =$ $g ^ { \prime } ( \psi )$ . Hence one can rewrite the second-order ODE (12.5) as a conservative system
+
+$$
+\psi _ { \xi } = - f ^ { \prime } ( \phi ) , \qquad \phi _ { \xi } = g ^ { \prime } ( \psi ) ,
+$$
+
+with Hamiltonian
+
+$$
+\begin{array} { r } { H = g ( \psi ) + f ( \phi ) . } \end{array}
+$$
+
+A solution $\phi ( \xi )$ gives rise to a soliton solution if the boundary conditions $\phi _ { \xi } ( \pm \infty ) =$ 0 are satisfied, i.e., $\phi ( \xi )$ approaches some constant value as $\xi  \pm \infty$ . In particular, let $( \phi _ { i } , \psi _ { i } )$ denote the equilibrium solutions of (12.6), then any homoclinic or heteroclinic solution of (12.6) gives rise to a (not necessarily stable) soliton solution of the nonlinear wave equation (12.1).1
+
+Example 1 Let us consider the sine-Gordon equation
+
+$$
+U _ { t t } = U _ { x x } - \mathsf { S i n } ( U ) .
+$$
+
+Traveling wave solutions $u ( x , t ) = \phi ( x - c t )$ must satisfy the second-order ODE
+
+$$
+c ^ { 2 } \phi _ { \xi \xi } = \phi _ { \xi \xi } - \mathsf { s i n } ( \phi ) .
+$$
+
+We introduce the momentum $\psi = c ^ { 2 } \phi _ { \xi } - \phi _ { \xi }$ . For $c \neq \pm 1$ , this relation can be inverted and we obtain $\phi _ { \xi } = \psi / ( c ^ { 2 } - 1 )$ and $g ( \psi ) = { \textstyle \frac { 1 } { 2 } } \psi ^ { 2 } / ( c ^ { 2 } - 1 )$ . Hence the Hamiltonian equations are
+
+$$
+\psi _ { \xi } = - \sin ( \phi ) , \qquad \phi _ { \xi } = \frac { 1 } { c ^ { 2 } - 1 } \psi
+$$
+
+with Hamiltonian
+
+$$
+H = \frac { \psi ^ { 2 } } { 2 ( c ^ { 2 } - 1 ) } + ( 1 - \cos \phi ) .
+$$
+
+These are the equations of motion for a nonlinear pendulum with mass $m = c ^ { 2 } - 1$ . Hence we first consider the condition $| c | > 1$ . The nonlinear pendulum possesses heteroclinic solutions connecting pairs of hyperbolic equilibria $\displaystyle ( \phi , \psi ) = ( k \pi , 0 )$ and $( \phi , \psi ) = ( ( k + 2 ) \pi , 0 )$ for $k = 1 , \pm 3 , \pm 5 , . . . .$ These heteroclinic connections are easily found as the contour lines of constant energy $H = 0$ . Unfortunately, the associated soliton solutions are all unstable [201, 53]. For $| c | < 1$ , the equilibrium points $( k \pi , 0 )$ , $( ( k + 2 ) \pi , 0 )$ , $k = 0 , \pm 2 , \pm 4 , . . .$ , become hyperbolic and give rise to stable soliton solutions. An explicit soliton solution with wave speed $C$ , $| c | < 1$ , is given by
+
+$$
+u ( x , t ) = 4 \arctan \exp \left( { \frac { x - c t } { \sqrt { 1 - c ^ { 2 } } } } \right) .
+$$
+
+Because of their special shape, these solutions are called kink solitons.
+
+# 12.1.3 The two-dimensional rotating shallow-water equations
+
+Large-scale geophysical flows in the atmosphere and ocean are essentially incompressible and often stratified into nearly two-dimensional layers. Furthermore, the effect of the earth’s rotation significantly affects large-scale patterns away from the equator, for example in mid-latitude or near the poles. See ANDREWS [6] and SALMON [169] for an introduction to geophysical fluid dynamics and MORRI-SON [139] for further details on the Hamiltonian formalism of geophysical fluid dynamics.
+
+A simple one-layer model system is provided by the two-dimensional rotating shallow-water equations (SWEs) [139, 169]
+
+$$
+u _ { t } + u u _ { x } + v u _ { y } = + f v - c _ { 0 } ^ { 2 } h _ { x } ,
+$$
+
+$$
+\begin{array} { r } { v _ { t } + u v _ { x } + v v _ { y } = - f u - c _ { 0 } ^ { 2 } h _ { y } , } \\ { h _ { t } + u h _ { x } + v h _ { y } = - h ( u _ { x } + v _ { y } ) , } \end{array}
+$$
+
+where $\pmb { \mathscr { u } } = ( \mathscr { u } , \mathscr { v } ) ^ { T } \in \mathbb { R } ^ { 2 }$ is the horizontal velocity field, $c _ { 0 } = { \sqrt { g H } }$ , $g$ is the gravitational constant, $H$ is the mean layer depth of the fluid, $h > 0$ is the normalized layer depth with mean value scaled equal to one, and $f > 0$ is twice the angular velocity of the rotating fluid. For simplicity, we will consider the SWEs over a double periodic domain of size $L \times L$ and keep $f = f _ { 0 }$ constant.
+
+We next introduce the material time derivative of a function $w ( x , y , t )$
+
+$$
+\frac { D w } { D t } = w _ { t } + u w _ { x } + v w _ { y } = w _ { t } + u \cdot \nabla _ { x } w ,
+$$
+
+and rewrite the SWEs (12.7)–(12.9) in the form
+
+$$
+\begin{array} { l } { \displaystyle \frac { D \pmb { u } } { D t } = f _ { 0 } J _ { 2 } \pmb { u } - c _ { 0 } ^ { 2 } \nabla _ { \pmb { x } } \eta , } \\ { \displaystyle \frac { D h } { D t } = - h \nabla _ { \pmb { x } } \cdot \pmb { u } , } \end{array}
+$$
+
+where $\pmb { x } = ( x , y ) ^ { T }$ , $h = 1 + \eta$ , and
+
+$$
+J _ { 2 } = \left[ { \begin{array} { c c } { 0 } & { + 1 } \\ { - 1 } & { 0 } \end{array} } \right] .
+$$
+
+Given a function $w ( x , t )$ , the material time derivative characterizes the change of w along motion of a fluid particle $\pmb { X } ( t ) = ( X ( t ) , Y ( t ) ) ^ { T } \in \mathbb { R } ^ { 2 }$ , which is passively advected under the velocity field $\pmb { u }$ , i.e.
+
+$$
+{ \frac { D X } { D t } } = \pmb { u } .
+$$
+
+As an example consider absolute vorticity
+
+$$
+\zeta = v _ { x } - u _ { y } + f _ { 0 } = \nabla _ { x } \times \pmb { u } + f _ { 0 } .
+$$
+
+Using
+
+$$
+\begin{array} { l } { \displaystyle \nabla _ { x } \times \frac { D { \boldsymbol u } } { D t } = \frac { \partial } { \partial x } \frac { D } { D t } { \boldsymbol v } - \frac { \partial } { \partial y } \frac { D } { D t } { \boldsymbol u } } \\ { \displaystyle = ( { \boldsymbol v } _ { t } + { \boldsymbol u } { \boldsymbol v } _ { x } + { \boldsymbol v } { \boldsymbol v } _ { y } ) _ { x } - ( { \boldsymbol u } _ { t } + { \boldsymbol u } { \boldsymbol u } _ { x } + { \boldsymbol v } { \boldsymbol u } _ { y } ) _ { y } } \\ { \displaystyle = ( { \boldsymbol v } _ { x } - { \boldsymbol u } _ { y } ) _ { t } + { \boldsymbol u } ( { \boldsymbol v } _ { x } - { \boldsymbol u } _ { y } ) _ { x } + { \boldsymbol v } ( { \boldsymbol v } _ { x } - { \boldsymbol u } _ { y } ) _ { y } + ( { \boldsymbol v } _ { x } - { \boldsymbol u } _ { y } ) ( { \boldsymbol u } _ { x } + { \boldsymbol v } _ { y } ) } \\ { \displaystyle = \frac { D } { D t } \zeta + ( \zeta - f _ { 0 } ) \nabla _ { x } \cdot { \boldsymbol u } , } \end{array}
+$$
+
+it is easy to conclude from (12.10) that absolute vorticity satisfies the continuity equation
+
+$$
+\frac { D \zeta } { D t } = - \zeta \nabla _ { x } \cdot \pmb { u } .
+$$
+
+The ratio of absolute vorticity $\zeta$ and layer depth $h$ is called potential vorticity (PV) $q = \zeta / h$ [169]. The PV field $q$ is materially conserved since, using (12.11) and (12.13)
+
+$$
+\frac { D q } { D t } = \frac { 1 } { h } \left\{ \frac { D \zeta } { D t } - q \frac { D h } { D t } \right\} = 0 .
+$$
+
+Let us now assume that, for the scales and motion of interest, we find that the velocity field $\pmb { u }$ satisfies
+
+$$
+\frac { 1 } { f _ { 0 } } \frac { D \pmb { u } } { D t } \approx \pmb { 0 } .
+$$
+
+Then the momentum equation (12.10) reduces to
+
+$$
+\mathbf { 0 } \approx J _ { 2 } \pmb { u } - \frac { c _ { 0 } ^ { 2 } } { f _ { 0 } } \nabla _ { \pmb { x } } \eta .
+$$
+
+The right-hand side can be solved for the velocity and one obtains the geostrophic wind approximation
+
+$$
+\pmb { u } ^ { 9 } = - \frac { c _ { 0 } ^ { 2 } } { f _ { 0 } } J _ { 2 } \nabla _ { x } \eta .
+$$
+
+We next assume that potential vorticity $q$ is materially advected along the geostrophic wind $\pmb { u } ^ { 9 }$ , i.e.
+
+$$
+\begin{array} { r } { q _ { t } + \pmb { u } ^ { 9 } \cdot \nabla _ { \pmb { x } } q = 0 . } \end{array}
+$$
+
+Potential vorticity $q$ , with $\pmb { u }$ replaced by $\pmb { u } ^ { 9 }$ , can be expressed as
+
+$$
+q = \frac { \nabla _ { \boldsymbol { x } } \times \pmb { u } ^ { 9 } + f _ { 0 } } { 1 + \eta } = f _ { 0 } \frac { L _ { R } ^ { 2 } \nabla _ { \boldsymbol { x } } ^ { 2 } \eta + 1 } { 1 + \eta } ,
+$$
+
+where we used $h = 1 + \eta$ and introduced the Rossby deformation radius $L _ { R } =$ $c _ { 0 } / f _ { 0 }$ . The final step in our approximation is provided by the assumption
+
+$$
+\frac { L _ { R } ^ { 2 } \nabla _ { x } ^ { 2 } \eta + 1 } { 1 + \eta } \approx L _ { R } ^ { 2 } \nabla _ { x } ^ { 2 } \eta + 1 - \eta ,
+$$
+
+which leads to
+
+$$
+q / f _ { 0 } - 1 \approx L _ { R } ^ { 2 } \nabla _ { x } ^ { 2 } \eta - \eta .
+$$
+
+This approximation gives rise to the (linear) $P V$ inversion relation
+
+$$
+\eta ^ { 9 } = - \left( 1 - L _ { R } ^ { 2 } \nabla _ { x } ^ { 2 } \right) ^ { - 1 } ( q / f _ { 0 } - 1 ) .
+$$
+
+Equation (12.15) with $\eta$ replaced by $\eta ^ { \mathfrak { g } }$ together with (12.16) provide a closed set of equations called the quasi-geostrophic approximation [169]. The quasigeostrophic approximation is a valid approximation to the full SWEs for a layer depth $h$ evolving on a typical horizontal length-scale $L \ge L _ { R }$ and for velocities $\pmb { u }$ with a typical scale $U$ such that the associated Rossby number satisfies $\mathsf { R o } =$ $U / ( f _ { 0 } L ) \ll 1$ .2 The ratio of $L _ { R }$ to $L$ is called the Burger number: $\mathsf { B u } = ( L _ { R } / L ) ^ { 2 }$ .
+
+Instead of solving the reduced quasi-geostrophic equations, one is often interested in numerically approximating the full SWEs (12.10)–(12.11) subject to initial data satisfying (12.14). We will describe a numerical method in Section 12.2.2. The method is based on a Lagrangian formulation3 of fluid dynamics, which we outline next.
+
+The Lagrangian description of fluid dynamics is a particle-based formulation with the continuum of particles being advected according to (12.12). Hence, the positions of all fluid particles $\pmb { X } = ( X , Y ) ^ { T }$ are given as a time-dependent transformation from a label space $\mathbb { A } \subset \mathbb { R } ^ { 2 }$ to position space $\mathbb { X } \subset \mathbb { R } ^ { 2 }$
+
+$$
+\pmb { X } = \pmb { X } ( \pmb { a } , t ) , \quad \pmb { a } = ( \pmb { a } , \pmb { b } ) ^ { T } \in \mathbb { A } , \quad \pmb { X } = ( \pmb { X } , \pmb { Y } ) ^ { T } \in \mathbb { X } ^ { 2 } .
+$$
+
+The labels are fixed for each particle and a natural choice is provided by the particle’s initial conditions, i.e. $\pmb { a } = \pmb { X } ( \pmb { a } , 0 )$ , which we assume from now on.
+
+The fluid layer depth $h$ is defined as a function of the determinant of the $2 \times 2$ Jacobian matrix
+
+$$
+\pmb { X _ { a } } = \frac { \partial ( X , Y ) } { \partial ( a , b ) }
+$$
+
+through the relation
+
+$$
+h ( { \pmb X } , t ) | { \pmb X } _ { { \pmb a } } | = h _ { o } ( { \pmb a } ) ,
+$$
+
+where, for the specific labels defined above, $h _ { o } ( \pmb { a } ) = h ( \pmb { a } , 0 )$ is the initial layerdepth at $t = 0$ . Differentiation of (12.18) with respect to time and using (12.12) yields an expression that is equivalent to the continuity equation (12.11). Hence (12.18) and (12.11) are essentially equivalent statements.
+
+Consider the integral identity
+
+$$
+h ( \boldsymbol { x } , t ) = \int h ( \boldsymbol { X } , t ) \delta ( \boldsymbol { x } - \boldsymbol { X } ) d \boldsymbol { X } d \boldsymbol { Y }
+$$
+
+2More precisely, we also have to request that $| \eta | \ll 1$ [169].
+
+defining the layer-depth $h$ at time $t$ and Eulerian position $x$ . Here $\delta$ denotes the Dirac delta function. Using $d X d Y = \vert X _ { a } \vert d a d b$ and (12.18), we can pull this integral back to label space, arriving at the relation
+
+$$
+h ( x , t ) = \int h _ { o } ( { \pmb a } ) \delta ( { \pmb x } - { \pmb X } ( { \pmb a } , t ) ) d { \ b a } d b ,
+$$
+
+which can be taken as the definition of the layer depth in a Lagrangian description of fluid mechanics.
+
+The SWEs (12.10)–(12.11) are now reformulated to
+
+$$
+\begin{array} { l } { \displaystyle \frac { \partial \pmb { u } } { \partial t } = f _ { 0 } J _ { 2 } \pmb { u } ^ { \bot } - c _ { 0 } ^ { 2 } \nabla \pmb { x } h , } \\ { \displaystyle \frac { \partial \pmb { X } } { \partial t } = \pmb { u } , } \end{array}
+$$
+
+where $h$ is defined by (12.18) or (12.19). Note that the material time derivative was replaced by the partial derivative with respect to time. This reflects the fact that the material time derivative becomes a partial derivative in a Lagrangian formulation of fluid dynamics, where time $t$ and labels $\pmb { a } \in \mathbb { A }$ are now the independent variables. Next we introduce the canonical momenta
+
+$$
+\mathbf { \omega } \mathbf { p } = h _ { o } \mathbf { \omega } \mathbf { u } ,
+$$
+
+and the equations (12.20)–(12.21) become canonical with Hamiltonian
+
+$$
+{ \mathcal { H } } = { \frac { 1 } { 2 } } \int { \frac { \mathbf { p } \cdot \mathbf { p } } { h _ { o } } } d a d b + { \frac { c _ { 0 } ^ { 2 } } { 2 } } \int h _ { o } h d a d b
+$$
+
+and symplectic two-form
+
+$$
+\bar { \omega } : = \int \left( \frac { h _ { o } f _ { 0 } } { 2 } d \pmb { X } \wedge J _ { 2 } d \pmb { X } + d \pmb { p } \wedge d \pmb { X } \right) d a d b .
+$$
+
+# 12.1.4 Noncanonical Hamiltonian wave equations
+
+We have already encountered in Chapter 8 the rigid body as an example of a noncanonical Hamiltonian system of the general form
+
+$$
+\frac { d } { d t } z = J ( z ) \nabla _ { z } H ( z ) .
+$$
+
+For PDEs, this generalizes to
+
+$$
+\begin{array} { r } { u _ { t } = \mathcal { I } ( u ) \delta _ { u } \mathcal { H } . } \end{array}
+$$
+
+Here $\mathcal { I } ( u )$ is a linear (in general, differential) operator, called the Poisson operator, that has to satisfy certain properties similar to those for the matrix $J ( z )$ [139].
+
+A well-known example is provided by the Korteweg–de Vries (KdV) equation [53]
+
+$$
+u _ { t } + u u _ { x } + u _ { x x x } = 0 .
+$$
+
+Here the operator $\mathcal { I }$ is equal to
+
+$$
+{ \mathcal { I } } = - { \frac { \partial } { \partial x } } ,
+$$
+
+and the Hamiltonian functional is given by
+
+$$
+{ \mathcal { H } } = \int \left[ { \frac { 1 } { 6 } } u ^ { 3 } - { \frac { 1 } { 2 } } u _ { x } ^ { 2 } \right] d x .
+$$
+
+We can also introduce a noncanonical Poisson bracket
+
+$$
+\{ \mathcal { F } , \mathcal { G } \} = - \int ( \delta _ { u } \mathcal { F } ) \partial _ { x } ( \delta _ { u } \mathcal { G } ) d x ,
+$$
+
+and the skew-symmetry of $\{ { \mathcal { F } } , { \mathcal { G } } \}$ follows upon integration by parts. Similar to the rigid body, the Poisson operator $\mathcal { I }$ is not invertible and this gives rise to the Casimir function
+
+$$
+C [ u ] = \int u d x .
+$$
+
+Indeed, it is easy to verify that
+
+$$
+\frac { d } { d t } C = \{ C , \mathcal { H } \} = 0 ,
+$$
+
+along solutions of the KdV equation.
+
+Inviscid fluid dynamics leads to Eulerian equations of motion that are also noncanonical. However, compared with $\mathsf { K d V }$ , the situation is made more complicated by the fact that the Poisson operator $\mathcal { I }$ is now no longer constant and independent of the dynamical variables. In fact, one can draw an analogy between two-dimensional incompressible fluid dynamics and an infinite-dimensional version of rigid body dynamics. See the review article by MORRISON [139] for further details.
+
+# 12.2 Symplectic discretizations
+
+The basic idea of symplectic discretization methods for Hamiltonian PDEs consists of two steps:
+
+(i) A spatial truncation that reduces the PDE to a system of Hamiltonian ODEs.
+
+(ii) Timestepping of the finite-dimensional Hamiltonian ODE using an appropriate symplectic method.
+
+The crucial new step is the construction of a finite-dimensional ODE model that retains the Hamiltonian character of the given PDE. The most popular approach is based on the introduction of a spatial grid over which the equations of motion can be truncated. Another approach, particularly well suited for Lagrangian fluid dynamics, reduces the PDE to a set of moving particles interacting through an appropriate potential energy function. Both approaches will be described below.
+
+Finally we give a note of warning. Certain noncanonical Hamiltonian PDEs resist a spatial truncation to a finite-dimensional Hamiltonian system. This is true in particular for the Eulerian formulation of inviscid fluid dynamics. The only significant exception is provided by incompressible fluids on a plane with double periodic boundary conditions. See ZEITLIN [208] and MCLACHLAN [128] for a numerical implementation.
+
+# 12.2.1 Grid-based methods
+
+Consider the nonlinear wave equation (12.1). The first step towards a numerical algorithm is to introduce $N$ grid points $x _ { i } = i \Delta x , \Delta x = L / N$ , $i = 1 , \dots , N$ , and to approximate functions $u \in S$ by vectors $\pmb { \imath } = ( u _ { 1 } , u _ { 2 } , \ldots , u _ { N } ) ^ { T } \in \mathbb { R } ^ { N }$ with $u ( x _ { i } ) \approx u _ { i }$ . We define $u _ { i + N } = u _ { i }$ , reflecting the fact that periodic boundary conditions are imposed. The new state space is $z = \{ z _ { i } \} \in \mathbb { R } ^ { 2 N }$ , $z _ { i } = ( u _ { i } , v _ { i } ) ^ { T } \in$ $\mathbb { R } ^ { 2 }$ . The symplectic form (12.2) is naturally truncated to
+
+$$
+\bar { \omega } _ { N } = \sum _ { i = 1 } ^ { N } d u _ { i } \wedge d v _ { i } \Delta x = \frac { 1 } { 2 } \sum _ { i = 1 } ^ { N } d z _ { i } \wedge J _ { 2 } ^ { - 1 } d z _ { i } \Delta x ,
+$$
+
+and the Hamiltonian functional (12.3) is approximated by the sum
+
+$$
+H = \sum _ { i = 1 } ^ { N } \left[ \frac { 1 } { 2 } v _ { i } ^ { 2 } + \sigma \left( \frac { u _ { i } - u _ { i - 1 } } { \Delta x } \right) + f ( u _ { i } ) \right] \Delta x .
+$$
+
+Hence, we obtain the system of Hamiltonian ODEs
+
+$$
+\frac { d } { d t } z _ { i } = \frac { 1 } { \Delta x } J _ { 2 } \nabla _ { z _ { i } } H ( z ) , \qquad i = 1 , \ldots , N .
+$$
+
+Note that
+
+$$
+\operatorname* { l i m } _ { \Delta x \to 0 } \frac { 1 } { \Delta x } \nabla _ { u } H \to \delta _ { u } \mathcal H [ u , v ] \quad \mathrm { a n d } \quad \operatorname* { l i m } _ { \Delta x \to 0 } \frac { 1 } { \Delta x } \nabla _ { v } H \to \delta _ { v } \mathcal H [ u , v ] ,
+$$
+
+and the spatially discrete equations formally converge to the PDE limit (12.4).
+
+For the specific Hamiltonian, as given above, the finite-dimensional truncation becomes
+
+$$
+\begin{array} { l } { \displaystyle \frac { d } { d t } v _ { i } = \frac { \sigma ^ { \prime } \left( w _ { i + 1 } \right) - \sigma ^ { \prime } \left( w _ { i } \right) } { \Delta x } - f ^ { \prime } ( u _ { i } ) , } \\ { \displaystyle \frac { d } { d t } u _ { i } = v _ { i } , } \end{array}
+$$
+
+$i = 1 , \dots , N$ , with
+
+$$
+w _ { i + 1 } = \frac { u _ { i + 1 } - u _ { i } } { \Delta x } , \qquad w _ { i } = \frac { u _ { i } - u _ { i - 1 } } { \Delta x } .
+$$
+
+The equations of motion can be integrated in time using any canonical method such as a symplectic Euler method, for example,
+
+$$
+\begin{array} { r l } & { v _ { i } ^ { n + 1 } = v _ { i } ^ { n } + \Delta t \left[ \frac { \sigma ^ { \prime } \left( w _ { i + 1 } ^ { n } \right) - \sigma ^ { \prime } \left( w _ { i } ^ { n } \right) } { \Delta x } - f ^ { \prime } ( u _ { i } ^ { n } ) \right] , } \\ & { u _ { i } ^ { n + 1 } = u _ { i } ^ { n } + \Delta t v _ { i } ^ { n + 1 } , } \end{array}
+$$
+
+where
+
+$$
+w _ { i } ^ { n } = \frac { u _ { i } ^ { n } - u _ { i - 1 } ^ { n } } { \Delta x } , \qquad w _ { i + 1 } ^ { n } = \frac { u _ { i + 1 } ^ { n } - u _ { i } ^ { n } } { \Delta x } .
+$$
+
+See MCLACHLAN [129] for further details on this classical approach to the numerical solution of Hamiltonian PDEs.
+
+This might appear to be the end of the story. However, the interpretation of the wave equation (12.1) as an infinite-dimensional Hamiltonian system has masked some of the interesting local features of the PDE. For example, let us have another look at the Hamiltonian functional $\mathcal { H } [ u , v ]$ . We can write this functional as
+
+$$
+{ \mathcal { H } } [ u , v ] = \int _ { 0 } ^ { L } E ( u , v ) d x , \qquad E ( u , v ) = { \frac { 1 } { 2 } } v ^ { 2 } + \sigma ( u _ { x } ) + f ( u ) .
+$$
+
+The function $E$ is called the energy density. Let us compute the time derivative of $E$
+
+$$
+\begin{array} { r l } & { E _ { t } = v v _ { t } + \sigma ^ { \prime } ( u _ { x } ) u _ { x t } + f ^ { \prime } ( u ) u _ { t } } \\ & { \quad = v \left[ \partial _ { x } \sigma ^ { \prime } ( u _ { x } ) - f ^ { \prime } ( u ) \right] + \sigma ^ { \prime } ( u _ { x } ) v _ { x } + f ^ { \prime } ( u ) v } \\ & { \quad = \left[ v \sigma ^ { \prime } ( u _ { x } ) \right] _ { x } . } \end{array}
+$$
+
+We have obtained what is called an energy conservation law
+
+$$
+E _ { t } + F _ { x } = 0 ,
+$$
+
+where $F = - v \sigma ^ { \prime } ( u _ { x } )$ is called the energy flux. Under periodic boundary conditions, the conservation law (12.26) immediately implies conservation of total energy since $\begin{array} { r } { \int _ { 0 } ^ { L } F _ { x } = [ F ] _ { x = 0 } ^ { x = L } \dot { = } 0 } \end{array}$ . But the energy conservation law (12.26) is valid independently of any boundary conditions. Hence it is more fundamental than conservation of total energy.
+
+Let us repeat the above calculation for the spatially truncated system (12.24)– (12.25). We define the discrete energy density
+
+$$
+E _ { i } = \frac { 1 } { 2 } v _ { i } ^ { 2 } + \sigma ( w _ { i } ) + f ( u _ { i } ) ,
+$$
+
+and find:
+
+$$
+\begin{array} { r l } & { \frac { d } { d t } E _ { i } = v _ { i } \dot { v } _ { i } + \sigma ^ { \prime } ( w _ { i } ) \frac { \dot { u } _ { i } - \dot { u } _ { i - 1 } } { \Delta x } + { t ^ { \prime } } ( { u } _ { i } ) \dot { u } _ { i } } \\ & { \qquad = v _ { i } \frac { \sigma ^ { \prime } \left( W _ { i + 1 } \right) - \sigma ^ { \prime } \left( { w } _ { i } \right) } { \Delta x } + \sigma ^ { \prime } ( w _ { i } ) \frac { V _ { i } - V _ { i - 1 } } { \Delta x } } \\ & { \qquad = \frac { V _ { i } \sigma ^ { \prime } \left( { w } _ { i + 1 } \right) - \sigma ^ { \prime } \left( { w } _ { i } \right) V _ { i - 1 } } { \Delta x } } \\ & { \qquad = - \frac { F _ { i + 1 / 2 } - F _ { i - 1 / 2 } } { \Delta x } , } \end{array}
+$$
+
+where
+
+$$
+\begin{array} { r } { F _ { i + 1 / 2 } = - v _ { i } \sigma ^ { \prime } ( w _ { i + 1 } ) , \quad F _ { i - 1 / 2 } = - v _ { i - 1 } \sigma ^ { \prime } ( w _ { i } ) . } \end{array}
+$$
+
+Hence we have obtained a semi-discrete energy conservation law
+
+$$
+\frac { d } { d t } E _ { i } + \frac { F _ { i + 1 / 2 } - F _ { i - 1 / 2 } } { \Delta x } = 0 ,
+$$
+
+and $F _ { i \pm 1 / 2 }$ are approximations to the energy flux $F ( u ( x ) )$ at $x = i \Delta x \pm \Delta x / 2$ . Again this local energy conservation law is more fundamental than conservation of total energy $H$ . Applying a symplectic integration method in time, we can now monitor the residual,
+
+$$
+{ \mathsf { R } } _ { i } ^ { n + 1 / 2 } : = \frac { E _ { i } ^ { n + 1 } - E _ { i } ^ { n } } { \Delta t } + \frac { F _ { i + 1 / 2 } ^ { n + 1 / 2 } - F _ { i - 1 / 2 } ^ { n + 1 / 2 } } { \Delta x } ,
+$$
+
+of a fully discretized local energy conservation law with
+
+$$
+E _ { i } ^ { n } = \frac { 1 } { 2 } ( v _ { i } ^ { n } ) ^ { 2 } + \sigma ( w _ { i } ^ { n } ) + f ( u _ { i } ^ { n } ) ,
+$$
+
+and
+
+$$
+F _ { i + 1 / 2 } ^ { n + 1 / 2 } = - \frac { 1 } { 2 } \left[ v _ { i } ^ { n } \sigma ^ { \prime } ( w _ { i + 1 } ^ { n } ) + v _ { i } ^ { n + 1 } \sigma ^ { \prime } ( w _ { i + 1 } ^ { n + 1 } ) \right] ,
+$$
+
+etc. Similar to the non-conservation of total energy under symplectic time integration, we cannot, in general, expect the residual $\mathsf { R } _ { i } ^ { n + 1 / 2 }$ to be zero. But a formal backward error analysis has been developed by MOORE AND REICH [137, 138] to explain the remarkable global and local energy conservation of symplectic PDE discretizations observed, for example, in [162].
+
+One can also derive methods that exactly conserve energy. See, for example, [96] and [115]. Such methods will, in general, not be symplectic.
+
+Example 2Let us discuss the sine-Gordon equation
+
+$$
+U _ { t t } = U _ { x x } - \mathsf { S i n } ( U ) .
+$$
+
+The energy density is
+
+$$
+E = \frac { 1 } { 2 } ( ( u _ { t } ) ^ { 2 } + ( u _ { x } ) ^ { 2 } ) + ( 1 - \cos u ) ,
+$$
+
+and the energy flux is
+
+$$
+\boldsymbol { F } = - u _ { t } u _ { x } .
+$$
+
+The spatial discretization (12.24)–(12.25) followed by a symplectic Euler discretization in time yields
+
+$$
+\frac { V _ { i } ^ { n + 1 } - V _ { i } ^ { n } } { \Delta t } = \frac { W _ { i + 1 } ^ { n } - W _ { i } ^ { n } } { \Delta x } - \sin ( u _ { i } ^ { n } ) , \quad \frac { U _ { i } ^ { n + 1 } - u _ { i } ^ { n } } { \Delta t } = v _ { i } ^ { n + 1 } , \quad \frac { u _ { i + 1 } ^ { n + 1 } - u _ { i } ^ { n + 1 } } { \Delta x } = w _ { i + 1 } ^ { n + 1 } .
+$$
+
+The semi-discretized energy conservation law is
+
+$$
+\frac { d } { d t } \left[ \frac { 1 } { 2 } ( v _ { i } ^ { 2 } + w _ { i } ^ { 2 } ) + ( 1 - \cos ( u _ { i } ) ) \right] + \left[ \frac { - v _ { i } w _ { i + 1 } + v _ { i - 1 } w _ { i } } { \Delta x } \right] = 0 .
+$$
+
+Note that, upon eliminating $W _ { i } ^ { n }$ and $V _ { j } ^ { n }$ , the method (12.28) is equivalent to the classical centered leap-frog scheme
+
+$$
+\frac { u _ { i } ^ { n + 1 } - 2 u _ { i } ^ { n } + u _ { i } ^ { n - 1 } } { \Delta t ^ { 2 } } = \frac { u _ { i + 1 } ^ { n } - 2 u _ { i } ^ { n } + u _ { i - 1 } ^ { n } } { \Delta x ^ { 2 } } - \mathsf { s i n } ( u _ { i } ^ { n } ) .
+$$
+
+We will come back to the local aspects of Hamiltonian PDEs and their numerical counterparts in Section 12.3. Numerical results will be presented in Section 12.3.4.
+
+Let us briefly discuss a spatial discretization for the KdV equation (12.23). The Hamiltonian is easily discretized to
+
+$$
+H = \sum _ { i = 1 } ^ { N } \left[ \frac { 1 } { 6 } u _ { i } ^ { 3 } - \frac { 1 } { 2 } \left( \frac { u _ { i } - u _ { i - 1 } } { \Delta x } \right) ^ { 2 } \right] \Delta x .
+$$
+
+The spatial truncation of the Poisson operator $\mathcal { I }$ is potentially more challenging. However, for KdV, any skew symmetric approximation of the differential operator $\mathcal { I } = \partial _ { x }$ is sufficient and will lead to a finite-dimensional Hamiltonian system. This Hamiltonian ODE can be integrated in time by a symplectic integrator. Symplectic methods based on splitting the Hamiltonian into integrable problems are available. See, for example, QUISPEL AND MCLACHLAN [132] and ASCHER AND MCLACHLAN [9].
+
+# 12.2.2 Particle-based methods
+
+Standard grid-based methods are, in general, not applicable to Lagrangian fluid dynamics. This is due to the ill-conditioning of the map from an initial grid (labels) $\{ X _ { i j } ( 0 ) = a _ { i j } \}$ , $\pmb { a } _ { i j } = ( i \Delta x , j \Delta y )$ to the advected particle positions $\{ X _ { i j } ( t ) \}$ . Since this map determines the layer-depth approximation in a standard meshbased Lagrangian method via a discrete approximation of (12.18), the quality of the simulation results is usually rather poor and instabilities are observed.
+
+On the other hand, general grid-based methods are very easy to implement for an Eulerian formulation of fluid dynamics. See DURRAN [55] for an overview of such methods. However, none of these methods respects the Hamiltonian nature of the inviscid equations of motion. This is due to the already mentioned difficulty of finding a spatial truncation of the underlying noncanonical formulation of Eulerian fluid dynamics.
+
+All these problems disappear if we give up the grid and work with the Lagrangian instead of the reduced Eulerian formulation of inviscid fluid dynamics. The resulting so-called mesh-free methods are based on an approximation of the layer-depth $h$ via the identity (12.19). The most well-known mesh-free method for Lagrangian fluid dynamics simulations is the Smoothed Particle Hydrodynamics (SPH) method of LUCY [120] and GINGOLD AND MONAGHAN [71]. Many different variants of the basic SPH method have been proposed over the years. The first application of SPH to the shallow-water equations is due to SALMON [168]. We follow here the general framework of FRANK AND REICH [64].
+
+Any spatial discretization will lead to a finite spatial resolution. For grid-based methods that resolution is directly related to the mesh-size $\Delta x$ . For a mesh-free method, we have to instead introduce a smoothing or filter length $\alpha > 0$ . Any fluid motion below that length scale will not be properly resolved. Hence we may replace the SWEs (12.20)–(12.21) by the ‘regularized/smoothed’ formulation
+
+$$
+\begin{array} { r l } & { \frac { \partial } { \partial t } \pmb { u } = f _ { 0 } J _ { 2 } \pmb { u } - c _ { 0 } ^ { 2 } \nabla \pmb { x } ( \pmb { \mathcal { A } } * h ) , } \\ & { \frac { \partial } { \partial t } \pmb { X } = \pmb { u } , } \end{array}
+$$
+
+where the convolution $A * h$ is defined in terms of a smooth kernel function $\psi ( x , y ) \ge 0$ satisfying
+
+• $\psi ( x , y ) = \psi ( y , x ) \ ( \mathsf { s y m m e t r y } ) ,$ $\textstyle \int { \psi ( { \boldsymbol { x } } , { \boldsymbol { y } } ) d \boldsymbol { x } d \boldsymbol { y } } = 1$ (conservation of mass), • $\psi ( x , y ) = \phi ( | | x - y | | )$ (radial symmetry).
+
+More explicitly, we have
+
+$$
+\begin{array} { l } { \displaystyle \left( \mathcal { A } \ast h \right) ( x , t ) = \int \left( \psi ( x , \bar { x } ) \int h _ { o } ( a ) \delta ( \bar { x } - X ( a , t ) ) d a d b \right) d \bar { x } d \bar { y } } \\ { \displaystyle = \int h _ { o } ( a ) \left( \int \psi ( x , \bar { x } ) \delta ( \bar { x } - X ( a , t ) ) d \bar { x } d \bar { y } \right) d a d b } \\ { \displaystyle = \int h _ { o } ( a ) \psi ( x , X ( a , t ) ) d a d b . } \end{array}
+$$
+
+A kernel often used in the SPH method is the Gaussian
+
+$$
+\psi ( x , y ; \alpha ) = { \frac { 1 } { \pi ^ { 3 / 2 } \alpha } } \mathrm { e } ^ { - \| x - y \| ^ { 2 } / \alpha ^ { 2 } } ,
+$$
+
+where $\alpha > 0$ is the smoothing length scale.
+
+To set up the numerical method, we introduce a mesh in label space with equally spaced grid points $\left\{ a _ { i j } \right\}$ and mesh-size $\Delta a = \Delta b$ . The grid points are enumerated by integers $k = 1 , \dots , N$ , which serve as discrete labels, so the map $s : ( i , j ) \to k$ is one-to-one. The particle positions at time $t$ are denoted by $\pmb { X } _ { k } ( t )$ and initially $\pmb { X } _ { k } ( 0 ) = \pmb { a } _ { i j }$ . Each particle has a “mass” $m _ { k } = h _ { o } ( a _ { i j } )$ and a velocity $u _ { k } ( t ) \in \mathbb { R } ^ { 2 }$ . The layer depth at $\pmb { X } _ { k } ( t )$ is then approximated by
+
+$$
+h _ { k } ( t ) = \sum _ { I } m _ { I } \psi ( { \pmb X } _ { k } ( t ) , { \pmb X } _ { I } ( t ) ) \Delta a \Delta b .
+$$
+
+Similarly, any integral of the form
+
+$$
+I = \int h _ { o } ( \pmb { a } ) w ( \pmb { X } ( \pmb { a } ) ) d \ b { a } d \ b { b }
+$$
+
+is approximated by
+
+$$
+I \approx \sum _ { k } m _ { k } w _ { k } \Delta a \Delta b , \quad \quad w _ { k } = w ( \pmb { X } _ { k } ) .
+$$
+
+From here on we can follow exactly the same approach as outlined for the symplectic discretization of grid-based methods. The Hamiltonian functional
+
+$$
+{ \mathcal { H } } = { \frac { 1 } { 2 } } \int { \frac { \mathbf { p } \cdot \mathbf { p } } { h _ { o } } } d a d b + { \frac { c _ { 0 } ^ { 2 } } { 2 } } \int h _ { o } \left( A * h \right) d a d b
+$$
+
+is approximated by the Hamiltonian
+
+$$
+{ \cal H } = \frac { 1 } { 2 } \left( \sum _ { k = 1 } ^ { N } \frac { 1 } { m _ { k } } \| p _ { k } \| ^ { 2 } + c _ { 0 } ^ { 2 } \sum _ { k , l = 1 } ^ { N } m _ { k } m _ { I } \psi ( X _ { k } , X _ { I } ) \Delta a \Delta b \right) \Delta a \Delta b ,
+$$
+
+${ \pmb p } _ { k } = m _ { k } { \pmb u } _ { k }$ , and (12.22) is replaced by the symplectic form
+
+$$
+\bar { \omega } _ { N } : = \sum _ { k = 1 } ^ { N } \left( \frac { m _ { k } f _ { 0 } } { 2 } d \pmb { X } _ { k } \wedge \pmb { J } _ { 2 } d \pmb { X } _ { k } + d \pmb { p } _ { k } \wedge d \pmb { X } _ { k } \right) \Delta a \Delta b .
+$$
+
+The resulting equations of motion are
+
+$$
+\begin{array} { r l } & { \displaystyle \frac { d } { d t } \pmb { u } _ { k } = f _ { 0 } { J } _ { 2 } \pmb { u } _ { k } - c _ { 0 } ^ { 2 } \sum _ { I = 1 } ^ { N } \bar { m } _ { I } \nabla _ { { X } _ { k } } \psi ( { { X } } _ { k } , { { X } } _ { I } ) , } \\ & { \displaystyle \frac { d } { d t } { { X } } _ { k } = \pmb { u } _ { k } , } \end{array}
+$$
+
+$k = 1 , \dots , N$ , where we have made use of the symmetry of $\psi ( x , y )$ as well as $\begin{array} { r } { { \pmb p } _ { k } / m _ { k } = { \pmb u } _ { k } = \frac { d } { d t } { \pmb X } _ { k } } \end{array}$ , and defined
+
+$$
+\bar { m } _ { k } = m _ { k } \Delta a \Delta b .
+$$
+
+Note that the mesh $\{ a _ { i j } \}$ is only needed at time $t = 0$ to give each particle $\boldsymbol { x } _ { k }$ an initial position and velocity and to allocate a mass $m _ { k }$ .
+
+The behavior of the particle method depends crucially on a proper choice of the kernel $\psi$ . The classical SPH method uses a radially symmetric kernel of the form $\psi ( x , y ) = \phi ( | | x - y | | )$ , with $\phi ( r )$ , for example, a Gaussian or a spline function.
+
+In [63], FRANK, GOTTWALD, AND REICH dropped the radial symmetry condition and adopted the following somewhat different strategy called the Hamiltonian Particle-Mesh (HPM) method. Following the standard particle-mesh procedure [21, 85], one defines a computational grid $\{ x _ { m n } \}$ , ${ x _ { m n } } = ( m \Delta x , n \Delta y )$ , with, for simplicity, $\Delta x \ : = \ : \Delta y$ . The choice $\Delta x = 4 \Delta a$ seems to work well in practice. This implies that, initially, there are 16 particles per computational grid cell. We introduce the interpolation function
+
+$$
+\phi ( x - X _ { k } ) : = \frac { 1 } { \Delta x \Delta y } \rho \left( \frac { | x - X _ { k } | } { \Delta x } \right) \rho \left( \frac { | y - Y _ { k } | } { \Delta y } \right) ,
+$$
+
+where $\rho ( r )$ is given by the cubic spline
+
+$$
+\rho ( r ) = \left\{ \begin{array} { l l } { \frac 2 3 - r ^ { 2 } + \frac 1 2 r ^ { 3 } , r \le 1 } \\ { \frac 1 6 ( 2 - r ) ^ { 3 } , \quad \quad 1 < r \le 1 \cdot } \\ { 0 , \quad \quad \quad r > 2 } \end{array} \right.
+$$
+
+We define the scaling factor
+
+$$
+\gamma = \int \phi ( x ) d x d y
+$$
+
+and approximate the layer-depth $h ^ { m n }$ at a grid point $x _ { m n }$ by
+
+$$
+h ^ { m n } ( t ) = \sum _ { k } \frac { m _ { k } } { \gamma } \phi _ { m n } ( { \pmb X } _ { k } ( t ) ) \Delta a \Delta b , \qquad \phi _ { m n } ( { \pmb X } ) : = \phi ( x _ { m n } - { \pmb X } ) .
+$$
+
+Let $\pmb { \mathsf { S } } = \{ S _ { p q } ^ { m n } \}$ denote the representation of a spatial averaging operator $S$ over the given grid $\{ x _ { m n } \}$ . 4 Since the cubic splines form a partition of unity on the grid, i.e.
+
+$$
+\sum _ { m n } \phi _ { m n } ( { \pmb x } ) = 1 ,
+$$
+
+we can define a continuous approximation of a smoothed/averaged layer-depth in space by means of
+
+$$
+\left( \mathcal { A } \ast h \right) ( x , t ) = \sum _ { p q , m n } \phi _ { p q } ( x ) S _ { m n } ^ { p q } h ^ { m n } ( t ) ,
+$$
+
+and the kernel function $\psi$ , as used in the HPM method, is finally given by
+
+$$
+\psi ( x , y ) = \frac { 1 } { \gamma } \sum _ { p q , m n } \phi _ { m n } ( x ) S _ { p q } ^ { m n } \phi _ { p q } ( y ) .
+$$
+
+Note that
+
+$$
+\int \psi ( x , \bar { x } ) d x d y = \sum _ { m n , p q } S _ { p q } ^ { m n } \phi _ { p q } ( \bar { x } ) = \sum _ { p q } \phi _ { p q } ( \bar { x } ) = 1 ,
+$$
+
+and the constructed basis function is symmetric and satisfies conservation of mass.
+
+It is found that the inverse of the modified Helmholtz operator $H = 1 - \alpha ^ { 2 } \nabla _ { x } ^ { 2 }$ computed over the grid $\{ x _ { m n } \}$ using FFT provides a good choice for the matrix operator S. The smoothing length $\alpha$ is typically chosen between $\alpha = 2 \Delta x$ and $\alpha = 4 \Delta x$ . We assume that $\alpha$ is shorter than the Rossby deformation radius $L _ { R }$ . Hence the matrix operator S will filter out high-frequency waves but will leave the balanced geostrophic layer-depth (12.17) essentially unaffected.
+
+Note that the mesh has only been introduced to efficiently compute the kernel function (12.32).
+
+The geometric conservation properties of the particle method, including conservation of circulation and potential vorticity, have been discussed in [64] and [32].
+
+4The approximation S should be symmetric and $\textstyle \sum _ { p q } S _ { p q } ^ { m n } = 1$
+
+
+<!-- chunk 0006: pages 351-396 -->
+![](images/e7b7b374cd7f93f4f842e0f641882613a5ed3e7cd4154833e9a8c44cfbbeb28e.jpg)  
+Figure 12.1 Time evolution of PV field under merger of two vortices.
+
+As a simple demonstration we consider the merger of two vortices with parameters $f _ { 0 } = c _ { 0 } = L _ { R } = 1$ . The initial velocity field is set equal to $\pmb { u } ^ { 9 }$ with an initial layer-depth $h$ such that the Rossby number satisfies ${ \sf R o } \approx 0 . 1$ and $L \approx L _ { R }$ , i.e. $\mathsf { B u } \approx 1$ . This setting complies with quasi-geostrophic theory. We show snapshots of the time evolution of the PV field $q$ over 60 time units in Fig. 12.1. In Fig. 12.2 we demonstrate the excellent conservation of total energy and maintenance of geostrophic balance by monitoring the ratio of the $L _ { 2 }$ -norm of the ageostrophic velocity $\pmb { u } ^ { \mathrm { a g } } : = \pmb { u } - \pmb { u } ^ { \mathrm { g } }$ to the $L _ { 2 }$ -norm of the geostrophic wind approximation $\pmb { u } ^ { 9 }$
+
+$$
+R ( t ) : = \frac { \| \pmb { u } ^ { \mathrm { a } 9 } ( t ) \| _ { 2 } } { \| \pmb { u } ^ { \mathrm { g } } ( t ) \| _ { 2 } } .
+$$
+
+Note that $R ( t ) = 0$ at $t = 0$ . The simulation was run with $N = 2 6 2 1 4 4$ particles, $\Delta x = 2 \pi / 1 2 8$ and a smoothing length $\alpha = 2 \Delta x$ .
+
+One can apply the Hamiltonian particle-mesh method to the shallow-water equations on the sphere which provides a simple model for global atmospheric circulation [65]. Furthermore, the Hamiltonian particle-mesh method can be extended to fully three-dimensional flows. The basic approach and its relation to geostrophic and hydrostatic balance have been outlined by COTTER AND REICH [47].
+
+![](images/053c12de10bcc7ce0de2cbfce23f90da84e9a81268305e975b6703ff74b85de5.jpg)  
+Figure 12.2 Ratio $R ( t )$ of ageostrophic to geostrophic velocity contributions and relative error in energy.
+
+# 12.3 Multi-symplectic PDEs
+
+When we derived the Hamiltonian formulation of the wave equation (12.1), the PDE (12.1) was rewritten as a system of equations with only first-order derivatives in time. Let us now rewrite (12.1) as a system of equations containing only first-order derivatives in space and time. We obtain, for example,
+
+$$
+\begin{array} { c } { - v _ { t } - p _ { x } = f ^ { \prime } ( u ) , } \\ { u _ { t } = v , } \\ { u _ { x } = w , } \\ { 0 = p + \sigma ^ { \prime } ( w ) . } \end{array}
+$$
+
+As first noted by BRIDGES [31, 30], this system is of the general from
+
+$$
+K z _ { t } + L z _ { x } = \nabla _ { z } S ( z ) ,
+$$
+
+where $z \in \mathbb { R } ^ { d }$ is the state variable, $K , L \ \in \ \mathbb { R } ^ { d \times d }$ are two (constant) skewsymmetric matrices, $S : \mathbb { R } ^ { d }  \mathbb { R }$ is a smooth function, and $\nabla _ { z }$ is the standard gradient in $\mathbb { R } ^ { d }$ .
+
+Example3 In case of the nonlinear wave equation (12.1)，we can take $z =$ $( u , v , p , w ) ^ { T } \in \mathbb { R } ^ { 4 }$
+
+$$
+S ( z ) = { \frac { 1 } { 2 } } v ^ { 2 } + w p + \sigma ( w ) + f ( u ) ,
+$$
+
+and
+
+$$
+K = \left[ \begin{array} { c c c c } { 0 } & { - 1 } & { 0 } & { 0 } \\ { 1 } & { 0 } & { 0 } & { 0 } \\ { 0 } & { 0 } & { 0 } & { 0 } \\ { 0 } & { 0 } & { 0 } & { 0 } \end{array} \right] , \qquad L = \left[ \begin{array} { c c c c } { 0 } & { 0 } & { - 1 } & { 0 } \\ { 0 } & { 0 } & { 0 } & { 0 } \\ { 1 } & { 0 } & { 0 } & { 0 } \\ { 0 } & { 0 } & { 0 } & { 0 } \end{array} \right] .
+$$
+
+According to BRIDGES [31, 30], a PDE of the form (12.33) is now called a multisymplectic PDE for the following reason. With each of the two skew-symmetric matrices we identify a pre-symplectic form;5 i.e.
+
+$$
+\omega = \frac { 1 } { 2 } d z \wedge K d z , \qquad \kappa = \frac { 1 } { 2 } d z \wedge L d z .
+$$
+
+These pre-symplectic forms satisfy a conservation law of symplecticness
+
+$$
+\omega _ { t } + \kappa _ { X } = 0 .
+$$
+
+Indeed, the variational equation
+
+$$
+K d z _ { t } + L d z _ { x } = { \cal A } ( { x } , t ) d z , \qquad { \cal A } ( { x } , t ) = S _ { z z } ( z ( x , t ) ) ,
+$$
+
+implies
+
+$$
+d z \wedge K d z _ { t } + d z \wedge L d z _ { x } = d z \wedge A ( x , t ) d z ,
+$$
+
+and, since $d z \wedge A ( x , t ) d z = 0$
+
+$$
+\frac { 1 } { 2 } \partial _ { t } ( d z \wedge K d z ) + \frac { 1 } { 2 } \partial _ { x } ( d z \wedge L d z ) = 0 .
+$$
+
+Note that
+
+$$
+\frac { d } { d t } \bar { \omega } = \frac { d } { d t } \int _ { 0 } ^ { L } \omega d x = \int _ { 0 } ^ { L } \omega _ { t } d x = - \left[ \kappa \right] _ { x = 0 } ^ { x = L } = 0 ,
+$$
+
+and conservation of the total symplectic form (12.2) is a consequence of the conservation law of symplecticness (12.34).
+
+The Lagrangian formulation (12.20)–(12.21) of the shallow-water equations can also be rewritten as a multi-symplectic PDE of the form
+
+$$
+K z _ { t } + L _ { 1 } z _ { a } + L _ { 2 } z _ { b } = \nabla _ { z } S ( z ) ,
+$$
+
+where $K , L _ { 1 } , L _ { 2 }$ are again constant skew-symmetric matrices associated with the independent variables time $t$ and labels $\pmb { a } = ( a , b ) ^ { T }$ . The details can be found in [32]. As shown above for the nonlinear wave equation, the associated multisymplectic conservation law is of the form
+
+$$
+\partial _ { t } \omega + \partial _ { a } \kappa _ { 1 } + \partial _ { b } \kappa _ { 2 } = 0 ,
+$$
+
+where
+
+$$
+\omega = \frac { 1 } { 2 } d z \wedge K d z = \frac { h _ { o } f _ { 0 } } { 2 } d { \pmb X } \wedge J _ { 2 } d { \pmb X } + d { \pmb p } \wedge d { \pmb X }
+$$
+
+is the density of the symplectic form (12.22).
+
+# 12.3.1 Conservation laws
+
+Every multi-symplectic formulation (12.33) implies conservation laws of energy, momentum, and symplecticness [31, 30]. To derive those explicitly, let us introduce a decomposition of the two skew-symmetric matrices $\kappa$ and $\iota$ such that
+
+$$
+K = K _ { + } + K _ { - } \quad \mathrm { a n d } \quad L = L _ { + } + L _ { - } ,
+$$
+
+with
+
+$$
+K _ { + } ^ { T } = - K _ { - } \quad \mathrm { a n d } \quad L _ { + } ^ { T } = - L _ { - } .
+$$
+
+A decomposition of this form immediately implies that
+
+$$
+d z \wedge K _ { + } d z = d z \wedge K _ { - } d z \quad \mathrm { a n d } \quad d z \wedge L _ { + } d z = d z \wedge L _ { - } d z ,
+$$
+
+hence, the conservation law (12.34) holds with
+
+$$
+\omega = d z \wedge K _ { + } d z \quad \mathsf { a n d } \quad \kappa = d z \wedge L _ { + } d z .
+$$
+
+An energy conservation law (12.26) is obtained by taking the inner product of (12.33) and $z _ { t }$ . Since $\langle z _ { t } , K z _ { t } \rangle = 0$ , we obtain
+
+$$
+\langle z _ { t } , L z _ { x } \rangle = \langle z _ { t } , \nabla _ { z } S ( z ) \rangle = \partial _ { t } S ( z ) .
+$$
+
+Note that
+
+$$
+\begin{array} { r l } & { \langle z _ { t } , L z _ { x } \rangle = \langle z _ { t } , L _ { + } z _ { x } \rangle + \langle z _ { t } , L _ { - } z _ { x } \rangle } \\ & { \qquad = \langle z _ { t } , L _ { + } z _ { x } \rangle - \langle z _ { x } , L _ { + } z _ { t } \rangle } \\ & { \qquad = \partial _ { x } \langle z _ { t } , L _ { + } z \rangle - \partial _ { t } \langle z _ { x } , L _ { + } z \rangle , } \end{array}
+$$
+
+and the energy conservation law (12.26) is satisfied by
+
+$$
+E = S ( z ) + \langle z _ { x } , L _ { + } z \rangle \quad { \mathrm { a n d } } \quad F = - \langle z _ { t } , L _ { + } z \rangle .
+$$
+
+Similarly, taking the inner product with $z _ { x }$ , the momentum conservation law
+
+$$
+\partial _ { t } M + \partial _ { x } I = 0 ,
+$$
+
+is satisfied by
+
+$$
+M = - \langle z _ { x } , K _ { + } z \rangle \quad { \mathrm { a n d } } \quad I = S ( z ) + \langle z _ { t } , K _ { + } z \rangle .
+$$
+
+Example 4In case of the multi-symplectic formulation of the nonlinear wave equation (12.1), we can take a decomposition of the matrices $\kappa$ and $\iota$ defined by
+
+$$
+\begin{array} { r } { \boldsymbol { K } _ { + } = \left[ \begin{array} { c c c c } { 0 } & { - 1 } & { 0 } & { 0 } \\ { 0 } & { 0 } & { 0 } & { 0 } \\ { 0 } & { 0 } & { 0 } & { 0 } \\ { 0 } & { 0 } & { 0 } & { 0 } \end{array} \right] \quad \mathrm { ~ a n d ~ } \quad \boldsymbol { L } _ { + } = \left[ \begin{array} { c c c c } { 0 } & { 0 } & { - 1 } & { 0 } \\ { 0 } & { 0 } & { 0 } & { 0 } \\ { 0 } & { 0 } & { 0 } & { 0 } \\ { 0 } & { 0 } & { 0 } & { 0 } \end{array} \right] . } \end{array}
+$$
+
+The conservation law of symplecticness becomes
+
+$$
+\partial _ { t } [ d u \wedge d v ] + \partial _ { x } [ d u \wedge d p ] = 0 .
+$$
+
+It is also easy to show that (12.26) is satisfied with
+
+$$
+E = \frac { 1 } { 2 } v ^ { 2 } + \sigma ( w ) + f ( u ) = \frac { 1 } { 2 } u _ { t } ^ { 2 } + \sigma ( u _ { x } ) + f ( u ) \quad \mathrm { a n d } \quad F = v p = - u _ { t } \sigma ^ { \prime } ( u _ { x } ) .
+$$
+
+Similarly, the momentum conservation law (12.37) is satisfied for
+
+$$
+M = w v = u _ { x } u _ { t }
+$$
+
+and
+
+$$
+I = \sigma ( w ) + p w - \frac { 1 } { 2 } v ^ { 2 } + f ( u ) = \sigma ( u _ { x } ) - \sigma ^ { \prime } ( u _ { x } ) u _ { x } - \frac { 1 } { 2 } u _ { t } ^ { 2 } + f ( u ) .
+$$
+
+An additional conservation law is obtained from the restriction of the multisymplectic conservation law (12.34) to the space of solutions $z ( x , t )$ via
+
+$$
+d z = z _ { t } d t + z _ { x } d x .
+$$
+
+Hence
+
+$\omega _ { | z } = d z \wedge K d z = 2 \langle z _ { t } , K z _ { x } \rangle d t \wedge d x , \quad \kappa _ { | z } = d z \wedge L d z = 2 \langle z _ { t } , L z _ { x } \rangle d t \wedge d x .$ , and (12.34) reduces to
+
+$$
+\partial _ { t } \langle z _ { t } , K z _ { x } \rangle + \partial _ { x } \langle z _ { t } , L z _ { x } \rangle = 0 .
+$$
+
+If one applies a similar restriction
+
+$$
+d z = z _ { a } d a + z _ { b } d b
+$$
+
+to the multi-symplectic conservation law (12.35) of the shallow-water equations, then one finds that
+
+$$
+\omega _ { | z } = q , \qquad \kappa _ { | z } ^ { 1 } = \kappa _ { | z } ^ { 2 } = 0 ,
+$$
+
+and the restricted multi-symplectic conservation law is equivalent to conservation of potential vorticity, i.e. $q _ { t } = 0$ in the Lagrangian setting [32].
+
+# 12.3.2 Traveling waves and dispersion
+
+Traveling wave or soliton solutions are very easy to characterize once a multisymplectic formulation has been found. We make the ansatz
+
+$$
+z ( x , t ) = \pmb { \phi } ( x - c t ) = \pmb { \phi } ( \xi ) .
+$$
+
+Then the equation (12.33) becomes
+
+$$
+- c K \phi _ { \xi } + L \phi _ { \xi } = \nabla _ { \phi } S ( \phi ) .
+$$
+
+If we assume that the skew-symmetric matrix $L - c K$ is invertible, then we obtain the Hamiltonian ODE
+
+$$
+\frac { d } { d \xi } \phi = J _ { c } \nabla _ { \phi } S ( \phi ) , \qquad J _ { c } = [ L - c K ] ^ { - 1 } ,
+$$
+
+in the state variable $\pmb { \phi } \in \mathbb { R } ^ { n }$ and with Hamiltonian $S$ . It should be noted that the symplectic structure matrix $J _ { c }$ is a superposition of the temporal and spatial pre-symplectic structures $\omega$ and $\kappa$ , respectively.
+
+As an example, let us consider the KdV equation (12.23). We introduce the velocity potential $\psi$ with $\psi _ { x } = u$ and obtain
+
+$$
+\psi _ { x t } + \frac { 1 } { 2 } \partial _ { x } ( \psi _ { x } ) ^ { 2 } + \psi _ { x x x x } = 0 .
+$$
+
+It should be kept in mind that $\psi$ is only uniquely determined up to a constant. To remove this ambiguity we apply the normalization $\textstyle { \int { \psi d x } = 0 }$ . A multi-symplectic formulation of type (12.33) is provided by
+
+$$
+\begin{array} { c } { u _ { t } + p _ { x } = 0 , } \\ { - \psi _ { t } - 2 w _ { x } = - p + u ^ { 2 } , } \\ { 2 u _ { x } = 2 w , } \\ { - \psi _ { x } = - u , } \end{array}
+$$
+
+$z = ( \psi , u , w , p ) ^ { T }$ and
+
+$$
+S = { \frac { 1 } { 3 } } u ^ { 3 } + w ^ { 2 } - p u .
+$$
+
+If we look for soliton solutions with wave speed $C$ , then the associated structure matrix $J _ { c }$ is given by
+
+$$
+J _ { c } ^ { - 1 } = \left[ \begin{array} { c c c c } { 0 } & { - c } & { 0 } & { 1 } \\ { c } & { 0 } & { - 2 } & { 0 } \\ { 0 } & { 2 } & { 0 } & { 0 } \\ { - 1 } & { 0 } & { 0 } & { 0 } \end{array} \right] .
+$$
+
+The equilibrium solutions are given by $\nabla _ { z } S ( z ) = \mathbf { 0 }$ and, hence, $U = w = p =$ 0. Since the value of $\psi$ does not enter the equations, we set it to $\psi = 0$ in accordance with our normalization condition $\textstyle { \int { \psi d x } = 0 }$ . Hence there is only one equilibrium and a soliton solution must correspond to a homoclinic connection. Indeed, such a homoclinic orbit exists for any $c > 0$ and the soliton solutions with wave speed $c > 0$ are of the form
+
+$$
+u ( x , t ) = 3 c \ { \mathrm { s e c h } } ^ { 2 } \left( { \frac { 1 } { 2 } } { \sqrt { c } } ( x - c t ) \right) .
+$$
+
+As in the analysis of Section 5.1.1, for linear PDEs we can make the (harmonic) wave ansatz
+
+$$
+z ( x , t ) = \pmb { \phi } ( x - c t ) = \pmb { a } \mathrm { e } ^ { j ( k x - \omega t ) } ,
+$$
+
+where $\pmb { \partial } \in \mathbb { C } ^ { d }$ is a constant vector, $k \geq 0$ is the wave number, $\omega$ is the frequency6 of the wave with wave speed $c = \omega / k$ , and $j = \sqrt { - 1 }$ . Upon substituting this into a linear multi-symplectic PDE
+
+$$
+K z _ { t } + L z _ { x } = A z ,
+$$
+
+one obtains the linear system of equations
+
+$$
+\left[ j \omega K - j k { \pmb { L } } + { \pmb { A } } \right] { \pmb { a } } = { \pmb { 0 } } .
+$$
+
+6One should not confuse the frequency $\omega$ with the two form $\omega$ defined earlier.
+
+For a nontrivial solution $\pm \mathbf { 0 }$ , we must require that
+
+$$
+\operatorname* { d e t } \left[ j \omega K - j k L + { \cal A } \right] = 0 .
+$$
+
+The resulting polynomial expression in $\omega$ and $k$ is called the dispersion relation [201]. Consider, for example, the linear KdV equation
+
+$$
+u _ { t } + u _ { x } + u _ { x x x } = 0 ,
+$$
+
+which possesses a multi-symplectic structure identical to the nonlinear KdV equation (12.23), but with the Hamiltonian $S$ replaced by
+
+$$
+S = u ^ { 2 } + w ^ { 2 } - p u .
+$$
+
+The associated linear system of equations is
+
+$$
+\left[ \begin{array} { c c c c } { { 0 } } & { { j \omega } } & { { 0 } } & { { - j k } } \\ { { - j \omega } } & { { 2 } } & { { 2 j k } } & { { - 1 } } \\ { { 0 } } & { { - 2 j k } } & { { 2 } } & { { 0 } } \\ { { j k } } & { { - 1 } } & { { 0 } } & { { 0 } } \end{array} \right] \left[ \begin{array} { c c c c } { { a _ { \psi } } } \\ { { a _ { u } } } \\ { { a _ { w } } } \\ { { a _ { p } } } \end{array} \right] = { \bf 0 } ,
+$$
+
+which gives rise to the dispersion relation
+
+$$
+\operatorname* { d e t } { \left[ \begin{array} { c c c c } { 0 } & { j \omega } & { 0 } & { - j k } \\ { - j \omega } & { 2 } & { 2 j k } & { - 1 } \\ { 0 } & { - 2 j k } & { 2 } & { 0 } \\ { j k } & { - 1 } & { 0 } & { 0 } \end{array} \right] } = 4 \omega k - 4 k ^ { 2 } + 4 k ^ { 4 } = 0 .
+$$
+
+The more common form of this relation is $\omega = k - k ^ { 3 }$ .
+
+# 12.3.3 Multi-symplectic integrators
+
+In this section, we discuss numerical schemes that preserve a discrete version of the conservation law of symplecticness. Such schemes are called multi-symplectic. The idea is to apply symplectic discretization methods in space and in time. This is in contrast to the numerical approach outlined in Section 12.2 where only the time discretization was explicitly treated by a symplectic method. In other words, multi-symplectic methods treat space and time on equal footing.
+
+Here and throughout the remainder of the chapter, we use the notation $z _ { i } ^ { n }$ to denote a numerical approximation of $z ( x _ { i } , t _ { n } )$ , where $X _ { j }$ makes reference to a particular point on the spatial mesh and $t _ { n }$ refers to a specific point in time. We also define $\Delta x = x _ { i + 1 } - x _ { i }$ and $\Delta t = t _ { n + 1 } - t _ { n }$ and assume that both quantities are constant throughout the mesh. Then using both forward and backward differences, we define discrete approximations to $z _ { x }$ by
+
+$$
+\partial _ { x } ^ { + } z _ { i } ^ { n } : = \frac { z _ { i + 1 } ^ { n } - z _ { i } ^ { n } } { \Delta x } \quad \mathrm { a n d } \quad \partial _ { x } ^ { - } z _ { i } ^ { n } : = \frac { z _ { i } ^ { n } - z _ { i - 1 } ^ { n } } { \Delta x } ,
+$$
+
+and discrete approximations to $z _ { t }$ by
+
+$$
+\partial _ { t } ^ { + } z _ { i } ^ { n } : = \frac { z _ { i } ^ { n + 1 } - z _ { i } ^ { n } } { \Delta t } \quad \mathrm { a n d } \quad \partial _ { t } ^ { - } z _ { i } ^ { n } : = \frac { z _ { i } ^ { n } - z _ { i } ^ { n - 1 } } { \Delta t } .
+$$
+
+We have seen that the multi-symplectic formulation (12.33) provides a presymplectic form for each of the independent variables $x$ and $t$ . BRIDGES AND REICH [33] suggested to apply a symplectic discretization to each of the independent variables. We now give two specific examples for this approach.
+
+# Euler box scheme
+
+Given a Hamiltonian ODE, written as
+
+$$
+K z _ { t } = \nabla _ { z } H ( z ) , \quad K = J ^ { - 1 } ,
+$$
+
+consider the scheme
+
+$$
+K _ { + } \partial _ { t } ^ { + } z ^ { n } + K _ { - } \partial _ { t } ^ { - } z ^ { n } = \nabla _ { z } H ( z ^ { n } ) ,
+$$
+
+where ${ \cal K } = { \cal K } _ { + } + { \cal K } _ { - }$ is an appropriate decomposition in the sense discussed in Section 12.3.1.
+
+As suggested by MOORE AND REICH [137], the discretization (12.43) can also be applied to the spatial part of a multi-symplectic PDE (12.33). This yields the semi-discretization
+
+$$
+K \partial _ { t } z _ { i } + L _ { + } \partial _ { x } ^ { + } z _ { i } + L _ { - } \partial _ { x } ^ { - } z _ { i } = \nabla _ { z } S ( z _ { i } ) .
+$$
+
+We next discretize in time to obtain the fully discrete equations
+
+$$
+\begin{array} { r } { K _ { + } \partial _ { t } ^ { + } z _ { i } ^ { n } + K _ { - } \partial _ { t } ^ { - } z _ { i } ^ { n } + L _ { + } \partial _ { x } ^ { + } z _ { i } ^ { n } + L _ { - } \partial _ { x } ^ { - } z _ { i } ^ { n } = \nabla _ { z } S ( z _ { i } ^ { n } ) . } \end{array}
+$$
+
+In order to show that this discretization satisfies a discrete conservation law of symplecticness, consider the discrete variational equation
+
+$$
+\begin{array} { r } { K _ { + } \partial _ { t } ^ { + } d z _ { i } ^ { n } + K _ { - } \partial _ { t } ^ { - } d z _ { i } ^ { n } + L _ { + } \partial _ { x } ^ { + } d z _ { i } ^ { n } + L _ { - } \partial _ { x } ^ { - } d z _ { i } ^ { n } = S _ { z z } ( z _ { i } ^ { n } ) d z _ { i } ^ { n } . } \end{array}
+$$
+
+Now take the wedge product of this equation with $d z _ { i } ^ { n }$ , and notice that we have
+
+$$
+d z _ { i } ^ { n } \wedge S _ { z z } ( z _ { i } ^ { n } ) d z _ { i } ^ { n } = 0 ,
+$$
+
+because $S _ { z z } ( z _ { i } ^ { n } )$ is a symmetric matrix. Then, for the terms containing $\partial _ { t } ^ { \pm }$ , we obtain
+
+$$
+d z _ { i } ^ { n } \wedge K _ { + } \partial _ { t } ^ { + } d z _ { i } ^ { n } + d z _ { i } ^ { n } \wedge K _ { - } \partial _ { t } ^ { - } d z _ { i } ^ { n } = \partial _ { t } ^ { + } \left( d z _ { i } ^ { n - 1 } \wedge K _ { + } d z _ { i } ^ { n } \right) .
+$$
+
+Doing the same for the terms containing $\partial _ { x } ^ { \pm }$ , we derive a discrete conservation law
+
+$$
+\partial _ { t } ^ { + } \omega _ { i } ^ { n } + \partial _ { x } ^ { + } \kappa _ { i } ^ { n } = 0 ,
+$$
+
+for
+
+$$
+\omega _ { i } ^ { n } = d z _ { i } ^ { n - 1 } \wedge K _ { + } d z _ { i } ^ { n } \quad \mathrm { a n d } \quad \kappa _ { i } ^ { n } = d z _ { i - 1 } ^ { n } \wedge L _ { + } d z _ { i } ^ { n } .
+$$
+
+Example 5The sine-Gordon equation can be rewritten as a multi-symplectic PDE
+
+$$
+- v _ { t } - p _ { x } = \sin ( u ) , \quad u _ { t } = v , \quad u _ { x } = - p .
+$$
+
+Spatial discretization by a method (12.43) yields
+
+$$
+- \frac { d } { d t } v _ { i } - \frac { p _ { i + 1 } - p _ { i } } { \Delta x } = \mathsf { s i n } ( u _ { i } ) , \quad \frac { d } { d t } u _ { i } = v _ { i } , \quad \frac { u _ { i } - u _ { i - 1 } } { \Delta x } = - p _ { i } ,
+$$
+
+or, equivalently
+
+$$
+- \frac { d } { d t } v _ { i } + \frac { u _ { i + 1 } - 2 u _ { i } + u _ { i - 1 } } { \Delta x } = \mathsf { s i n } ( u _ { i } ) , \quad \frac { d } { d t } u _ { i } = v _ { i } .
+$$
+
+The same spatial truncation is obtained from the truncated Hamiltonian
+
+$$
+H = \sum _ { i } \left[ \frac { 1 } { 2 } ( v _ { i } ) ^ { 2 } + \frac { 1 } { 2 } \left( \frac { u _ { i + 1 } - u _ { i } } { \Delta x } \right) ^ { 2 } + \left( 1 - \cos u _ { i } \right) \right] \Delta x
+$$
+
+and the Hamiltonian equations of motion
+
+$$
+\frac { d } { d t } v _ { i } = - \Delta x ^ { - 1 } \nabla _ { u _ { i } } H , \qquad \frac { d } { d t } u _ { i } = \Delta x ^ { - 1 } \nabla _ { v _ { i } } H .
+$$
+
+Another application of the discretization (12.43) in time yields the method (12.28). ✷
+
+Let us now go back to the spatially discretized PDE (12.44). Taking the inner product with $\partial _ { t } z _ { i }$ yields
+
+$$
+\langle \partial _ { t } z _ { i } , L _ { + } \partial _ { x } ^ { + } z _ { i } \rangle + \langle \partial _ { t } z _ { i } , L _ { - } \partial _ { x } ^ { - } z _ { i } \rangle = \partial _ { t } S ( z _ { i } ) ,
+$$
+
+because $\langle \partial _ { t } z _ { i } , \nabla _ { z } S ( z _ { i } ) \rangle = \partial _ { t } S ( z _ { i } )$ . Next we note that
+
+$$
+\begin{array} { r l } & { \partial _ { t } E _ { i } = \partial _ { t } S ( z _ { i } ) + \partial _ { t } \langle \partial _ { x } ^ { - } z _ { i } , L _ { + } z _ { i } \rangle } \\ & { \qquad = \langle \partial _ { t } z _ { i } , L _ { + } \partial _ { x } ^ { + } z _ { i } \rangle + \langle \partial _ { t } z _ { i } , L _ { - } \partial _ { x } ^ { - } z _ { i } \rangle + \partial _ { t } \langle \partial _ { x } ^ { - } z _ { i } , L _ { + } z _ { i } \rangle } \\ & { \qquad = \langle \partial _ { t } z _ { i } , L _ { + } \partial _ { x } ^ { + } z _ { i } \rangle + \langle \partial _ { t } \partial _ { x } ^ { - } z _ { i } , L _ { + } z _ { i } \rangle } \\ & { \qquad = \partial _ { x } ^ { + } \langle \partial _ { t } z _ { i - 1 } , L _ { + } z _ { i } \rangle . } \end{array}
+$$
+
+Hence, the spatially discrete energy conservation law
+
+$$
+\partial _ { t } E _ { i } + \partial _ { x } ^ { - } F _ { i + 1 / 2 } = 0
+$$
+
+is obtained for the discrete energy density
+
+$$
+E _ { i } = S ( z _ { i } ) + \langle \partial _ { x } ^ { - } z _ { i } , L _ { + } z _ { i } \rangle ,
+$$
+
+and the energy flux
+
+$$
+F _ { i + 1 / 2 } = - \langle \partial _ { t } z _ { i } , L _ { + } z _ { i + 1 } \rangle .
+$$
+
+Now consider the momentum conservation law (12.37). A semi-discretized version of this law can be obtained in the same manner as the spatially discretized version of the energy conservation law by simply exchanging the roles of space and time. Hence, we formally discretized (12.33) in time using (12.43) and take the inner product with $\partial _ { x } z ^ { n }$ to get the semi-discretized momentum conservation law
+
+$$
+\partial _ { t } ^ { + } M ^ { n - 1 / 2 } + \partial _ { x } I ^ { n } = 0 ,
+$$
+
+where
+
+$$
+M ^ { n + 1 / 2 } = - \langle \partial _ { x } z ^ { n } , K _ { + } z ^ { n + 1 } \rangle \quad \mathrm { a n d } \quad I ^ { n } = S ( z ^ { n } ) + \langle \partial _ { t } ^ { - } z ^ { n } , K _ { + } z ^ { n } \rangle .
+$$
+
+See [137] for further details on the energy-momentum conservation of the fully discretized equations using modified equation analysis.
+
+Example6 The semi-discretized energy conservation law for the Euler box scheme applied to the sine-Gordon equation is given by (12.29). Let us also derive the semidiscretized momentum conservation law. We formally introduce a symplectic Euler time-discretization of the multi-symplectic sine-Gordon equation
+
+$$
+- \partial _ { t } ^ { + } v ^ { n } - p _ { x } ^ { n } = \sin ( u ^ { n } ) , \quad \partial _ { t } ^ { - } u ^ { n } = v ^ { n } , \quad u _ { x } ^ { n } = - p ^ { n } .
+$$
+
+Taking the appropriate inner product and rearranging terms we obtain
+
+$$
+- u _ { x } ^ { n } \partial _ { t } ^ { + } v ^ { n } + v _ { x } ^ { n + 1 } \partial _ { t } ^ { + } u ^ { n } = \left( 1 - \cos ( u ^ { n } ) + ( v ^ { n + 1 } ) ^ { 2 } / 2 - ( p ^ { n } ) ^ { 2 } / 2 \right) _ { x } .
+$$
+
+The left-hand side is equivalent to
+
+$$
+- u _ { x } ^ { n } \partial _ { t } ^ { + } v ^ { n } + v _ { x } ^ { n + 1 } \partial _ { t } ^ { + } u ^ { n } = - \partial _ { t } ^ { + } ( u _ { x } ^ { n } v ^ { n } ) + \left( v ^ { n + 1 } \partial _ { t } ^ { + } u ^ { n } \right) _ { x } = - \partial _ { t } ^ { + } ( u _ { x } ^ { n } v ^ { n } ) + \partial _ { x } ( v ^ { n + 1 } ) ^ { 2 } .
+$$
+
+Hence the semi-discretized momentum conservation law is given by
+
+$$
+\begin{array} { r } { \partial _ { t } ^ { + } ( p ^ { n } v ^ { n } ) - \partial _ { x } \left( 1 - \cos ( u ^ { n } ) - ( v ^ { n + 1 } ) ^ { 2 } / 2 - ( p ^ { n } ) ^ { 2 } / 2 \right) = 0 . } \end{array}
+$$
+
+# Preissman box scheme
+
+The Preissman box scheme can be viewed as the space-time version of the implicit midpoint scheme for ODEs and is widely used in hydraulics [1]. The scheme, applied to a multi-symplectic PDE, is given by
+
+$$
+\begin{array} { r } { \pmb { K } \partial _ { t } ^ { + } z _ { i + 1 / 2 } ^ { n } + \pmb { L } \partial _ { x } ^ { + } z _ { i } ^ { n + 1 / 2 } = \nabla _ { z } S ( z _ { i + 1 / 2 } ^ { n + 1 / 2 } ) , } \end{array}
+$$
+
+where we use the notation
+
+$$
+z _ { i } ^ { n + 1 / 2 } = \frac { 1 } { 2 } \left( z _ { i } ^ { n } + z _ { i } ^ { n + 1 } \right) , \qquad z _ { i + 1 / 2 } ^ { n } = \frac { 1 } { 2 } \left( z _ { i } ^ { n } + z _ { i + 1 } ^ { n } \right) ,
+$$
+
+and
+
+$$
+z _ { i + 1 / 2 } ^ { n + 1 / 2 } = \frac { 1 } { 4 } \left( z _ { i } ^ { n } + z _ { i } ^ { n + 1 } + z _ { i + 1 } ^ { n } + z _ { i + 1 } ^ { n + 1 } \right) .
+$$
+
+Example 7 The implicit midpoint method in space applied to the sine-Gordon equation results in
+
+$$
+\begin{array} { c } { \displaystyle { - \frac { d } { d t } \frac { v _ { i + 1 } + v _ { i } } { 2 } - \frac { p _ { i + 1 } - p _ { i } } { \Delta x } = \sin \left( \frac { u _ { i + 1 } + u _ { i } } { 2 } \right) , } } \\ { \displaystyle { \frac { d } { d t } \frac { u _ { i + 1 } + u _ { i } } { 2 } = \frac { v _ { i + 1 } + v _ { i } } { 2 } , } } \\ { \displaystyle { \frac { u _ { i + 1 } - u _ { i } } { \Delta x } = - \frac { p _ { i + 1 } + p _ { i } } { 2 } } . } \end{array}
+$$
+
+Note that this discretization is different from a midpoint discretization of the Hamiltonian
+
+$$
+H = \sum _ { i } \left[ \frac { 1 } { 2 } \left( \frac { v _ { i + 1 } + v _ { i } } { 2 } \right) ^ { 2 } + \frac { 1 } { 2 } \left( \frac { u _ { i + 1 } - u _ { i } } { \Delta x } \right) ^ { 2 } + \left( 1 - \cos \left( \frac { u _ { i + 1 } + u _ { i } } { 2 } \right) \right) \right] \Delta x
+$$
+
+and associated Hamiltonian equations of motion
+
+$$
+\frac { d } { d t } v _ { i } = - \Delta x ^ { - 1 } \nabla _ { u _ { i } } H , \qquad \frac { d } { d t } u _ { i } = \Delta x ^ { - 1 } \nabla _ { v _ { i } } H .
+$$
+
+It was shown by BRIDGES AND REICH [33] that the scheme (12.49) satisfies a discrete conservation law of symplecticness (12.45) with
+
+$$
+\omega _ { i } ^ { n } = \frac { 1 } { 2 } d z _ { i + 1 / 2 } ^ { n } \wedge K d z _ { i + 1 / 2 } ^ { n } \quad \mathrm { a n d } \quad \kappa _ { i } ^ { n } = \frac { 1 } { 2 } d z _ { i } ^ { n + 1 / 2 } \wedge L d z _ { i } ^ { n + 1 / 2 } .
+$$
+
+Similar to the Euler box scheme, a semi-discretized energy conservation law of type (12.46) can be derived for the spatially discretized system
+
+$$
+K \partial _ { t } z _ { i + 1 / 2 } + L \partial _ { x } ^ { + } z _ { i } = \nabla _ { z } S ( z _ { i + 1 / 2 } ) .
+$$
+
+In particular, taking the inner product with $\partial _ { t } z _ { i + 1 / 2 }$ , we obtain
+
+$$
+\langle \partial _ { t } z _ { i + 1 / 2 } , L \partial _ { x } ^ { + } z _ { i } \rangle = \partial _ { t } S ( z _ { i + 1 / 2 } ) ,
+$$
+
+which, after a few formal manipulations, leads to the spatially discrete energy conservation law
+
+$$
+\partial _ { t } E _ { i + 1 / 2 } + \partial _ { x } ^ { + } F _ { i } = 0 ,
+$$
+
+with
+
+$$
+E _ { i + 1 / 2 } = S ( z _ { i + 1 / 2 } ) + \langle \partial _ { x } ^ { + } z _ { i } , L _ { + } z _ { i + 1 / 2 } \rangle ,
+$$
+
+and
+
+$$
+F _ { i } = - \langle \partial _ { t } z _ { i } , L _ { + } z _ { i } \rangle .
+$$
+
+Upon applying the implicit midpoint method to (12.50) in time, the Preissman box scheme is obtained and one can consider the fully discretized energy conservation law
+
+$$
+\partial _ { t } ^ { + } E _ { i + 1 / 2 } ^ { n } + \partial _ { x } ^ { + } F _ { i } ^ { n + 1 / 2 } = \mathsf { R } _ { i + 1 / 2 } ^ { n + 1 / 2 } .
+$$
+
+The residual Rn+1/2 will be non-zero, in general. However, for a linear multisymplectic PDE
+
+$$
+K z _ { t } + L z _ { x } = A z ,
+$$
+
+$\pmb { A }$ a (constant) symmetric matrix, the residual is identically equal to zero and
+
+$$
+\partial _ { t } ^ { + } E _ { i + 1 / 2 } ^ { n } + \partial _ { x } ^ { + } F _ { i } ^ { n + 1 / 2 } = 0 ,
+$$
+
+along numerical solutions $\left\{ z _ { i } ^ { n } \right\}$ , where
+
+$$
+\begin{array} { r } { E _ { i + 1 / 2 } ^ { n } = \langle z _ { i + 1 / 2 } ^ { n } , \pm z _ { i + 1 / 2 } ^ { n } \rangle + \langle \partial _ { x } ^ { + } z _ { i } ^ { n } , L _ { + } z _ { i + 1 / 2 } ^ { n } \rangle , } \end{array}
+$$
+
+and
+
+$$
+F _ { i } ^ { n + 1 / 2 } = - \langle \partial _ { t } ^ { + } z _ { i } ^ { n } , L _ { + } z _ { i } ^ { n + 1 / 2 } \rangle .
+$$
+
+A semi-discretized momentum conservation law is derived in a similar manner by switching the roles of space and time. Thus the semi-discrete conservation law
+
+$$
+\partial _ { t } ^ { + } M ^ { n } + \partial _ { x } I ^ { n + 1 / 2 } = 0
+$$
+
+is obtained, where
+
+$$
+M ^ { n } = - \langle \partial _ { x } z ^ { n } , K _ { + } z ^ { n } \rangle ,
+$$
+
+and
+
+$$
+I ^ { n + 1 / 2 } = S ( z ^ { n + 1 / 2 } ) + \langle \partial _ { t } ^ { + } z ^ { n } , K _ { + } z ^ { n + 1 / 2 } \rangle .
+$$
+
+Again, the Preissman box scheme applied to a linear PDE (12.51) yields a fully discretized momentum conservation law
+
+$$
+\partial _ { t } ^ { + } M _ { i + 1 / 2 } ^ { n } + \partial _ { x } ^ { + } I _ { i } ^ { n + 1 / 2 } = 0 ,
+$$
+
+that is exactly satisfied by the numerical solutions $\left\{ z _ { i } ^ { n } \right\}$ .
+
+See [33, 138] for more details on the energy and momentum conservation properties of the Preissman box scheme. The Preissman box scheme has been successfully applied to the KdV equation and the nonlinear Schr¨odinger equation (see, for example [209, 92]). A generalization to higher-order Gauss–Legendre RK methods has been given by REICH in [162].
+
+Example 8 A Preissman box scheme discretization of the multi-symplectic formulation (12.38)–(12.41) of the KdV equation results in
+
+$$
+\begin{array} { r l } & { \quad \partial _ { t } ^ { + } u _ { i + 1 / 2 } ^ { n } + \partial _ { x } ^ { + } p _ { i } ^ { n + 1 / 2 } = 0 , } \\ & { - \partial _ { t } ^ { + } \phi _ { i + 1 / 2 } ^ { n } - 2 \partial _ { x } ^ { + } w _ { i } ^ { n + 1 / 2 } = - p _ { i + 1 / 2 } ^ { n + 1 / 2 } + ( u _ { i + 1 / 2 } ^ { n + 1 / 2 } ) ^ { 2 } , } \\ & { \quad \quad 2 \partial _ { x } ^ { + } u _ { i } ^ { n + 1 / 2 } = 2 w _ { i + 1 / 2 } ^ { n + 1 / 2 } , } \\ & { \quad \quad - \partial _ { x } ^ { + } \phi _ { i } ^ { n + 1 / 2 } = - u _ { i + 1 / 2 } ^ { n + 1 / 2 } . } \end{array}
+$$
+
+We assume that initially $\partial _ { x } ^ { + } u _ { i } ^ { 0 } = w _ { i + 1 / 2 } ^ { 0 }$ and $\partial _ { x } ^ { + } \phi _ { i } ^ { 0 } = u _ { i + 1 / 2 } ^ { 0 }$ . Upon collecting all approximations $U _ { j } ^ { n }$ at time-level $t _ { n }$ into a vector $\pmb { u } ^ { n } = \{ u _ { i } ^ { n } \}$ etc. and upon introducing two appropriate matrices $\pmb { A }$ and $D$ , we can rewrite the scheme as
+
+$$
+\begin{array} { c } { { \partial _ { t } ^ { + } { \pmb A } { \pmb u } ^ { n } + { \pmb D } { \pmb p } ^ { n + 1 / 2 } = { \bf 0 } , } } \\ { { - \partial _ { t } ^ { + } { \pmb A } \pmb \phi ^ { n } - 2 { \pmb D } { \pmb w } ^ { n + 1 / 2 } = - { \pmb A } { \pmb p } ^ { n + 1 / 2 } + ( { \pmb A } { \pmb u } ^ { n + 1 / 2 } ) * ( { \pmb A } { \pmb u } ^ { n + 1 / 2 } ) , } } \\ { { { \pmb D } { \pmb u } ^ { n } = { \pmb A } { \pmb w } ^ { n } , } } \\ { { { \pmb D } \pmb \phi ^ { n } = { \pmb A } { \pmb u } ^ { n } , } } \end{array}
+$$
+
+where $c = a * b$ denotes the component-wise vector product. Note that the averaging operator $\pmb { A }$ and the differentiation operator $D$ commute. We also assume that $\pmb { A }$ is invertible. Hence we can eliminate $\phi ^ { n } , \mathsf { \pmb { p } } ^ { n }$ and $w ^ { n }$ from the system and obtain the timestepping scheme
+
+$$
+\frac { \pmb { A } \pmb { u } ^ { n + 1 } - \pmb { A } \pmb { u } ^ { n } } { \Delta t } + \frac { 1 } { 2 } \pmb { A } ^ { - 1 } D \left[ ( \pmb { A } \pmb { u } ^ { n + 1 / 2 } ) * ( \pmb { A } \pmb { u } ^ { n + 1 / 2 } ) \right] + ( \pmb { A } ^ { - 1 } D ) ^ { 3 } \pmb { A } \pmb { u } ^ { n + 1 / 2 } = \pmb { 0 } .
+$$
+
+Finally, introduce the variable $\bar { \pmb { u } } ^ { n } = \pmb { A } \pmb { u } ^ { n }$ , then
+
+$$
+\frac { \bar { u } ^ { n + 1 } - \bar { u } ^ { n } } { \Delta t } + \frac { 1 } { 2 } A ^ { - 1 } D \left[ ( \bar { u } ^ { n + 1 / 2 } ) * ( \bar { u } ^ { n + 1 / 2 } ) \right] + ( A ^ { - 1 } D ) ^ { 3 } \bar { u } ^ { n + 1 / 2 } = \bf { 0 } .
+$$
+
+See [161] for a similar approach to the shallow-water Boussinesq equation.
+
+# Discrete variational methods
+
+The nonlinear wave equation (12.1) can also be derived from a Lagrangian variational principle. Consider the Lagrangian functional
+
+$$
+\mathcal { L } [ u ] = \int _ { t = 0 } ^ { T } \int _ { x = 0 } ^ { L } \mathsf { L } ( u _ { t } , u _ { x } , u ) d x d t ,
+$$
+
+with the Lagrangian density
+
+$$
+\mathsf { L } \bigl ( u _ { t } , u _ { x } , u \bigr ) = \frac { 1 } { 2 } u _ { t } ^ { 2 } - \sigma ( u _ { x } ) - f ( u ) .
+$$
+
+Then, using the Lagrangian variational principle, we derive the Euler–Lagrange equation
+
+$$
+\partial _ { t } \mathsf { L } _ { u _ { t } } + \partial _ { x } \mathsf { L } _ { u _ { x } } - \mathsf { L } _ { u } = 0 .
+$$
+
+For the particular Lagrangian density given above, the Euler–Lagrange equation reduces to the nonlinear wave equation (12.1).
+
+The concept of multi-symplectic integration was first proposed in the context of the Euler–Lagrange equation (12.52) by MARSDEN, PATRICK, AND SHKOLLER [123] as a generalization of the discrete variational principle to first-order field theories.
+
+Introduce, for example, the discrete density
+
+$$
+\mathsf { L } _ { i } ^ { n } = \mathsf { L } ( \partial _ { t } ^ { + } u _ { i } ^ { n } , \partial _ { x } ^ { + } u _ { i } ^ { n } , u _ { i } ^ { n } )
+$$
+
+and the associated discrete Lagrangian functional
+
+$$
+\mathcal { L } [ u _ { i } ^ { n } ] = \sum _ { i } \sum _ { n } \mathsf { L } _ { i } ^ { n } \Delta x \Delta t .
+$$
+
+Minimization of this functional along sequences $\left\{ u _ { i } ^ { n } \right\}$ yields the discrete Euler– Lagrange equations
+
+$$
+\partial _ { t } ^ { - } \mathsf { L } _ { \partial _ { t } ^ { + } u _ { i } ^ { n } } + \partial _ { x } ^ { - } \mathsf { L } _ { \partial _ { x } ^ { + } u _ { i } ^ { n } } - \mathsf { L } _ { u _ { i } ^ { n } } = 0 .
+$$
+
+See MARSDEN, PATRICK, AND SHKOLLER [123] for details on the underlying discrete multi-symplectic form formula and a proper differential geometric treatment.
+
+For the nonlinear wave equation (12.1) and the above discrete Lagrangian density, the discrete variational principle yields the discretization
+
+$$
+\frac { u _ { i } ^ { n + 1 } - 2 u _ { i } ^ { n } + u _ { i } ^ { n - 1 } } { \Delta t ^ { 2 } } = \frac { \sigma ^ { \prime } \left( \frac { u _ { i + 1 } ^ { n } - u _ { i } ^ { n } } { \Delta x } \right) - \sigma ^ { \prime } \left( \frac { u _ { i } ^ { n } - u _ { i - 1 } ^ { n } } { \Delta x } \right) } { \Delta x } - f ^ { \prime } ( u _ { i } ^ { n } ) ,
+$$
+
+which is equivalent to Euler box scheme discretization applied to the nonlinear wave equation. In fact, the Euler–Lagrange equation (12.52) can be rewritten as a multi-symplectic PDE
+
+$$
+\begin{array} { r l } & { \cdot \ : p _ { x } = L _ { u } , } \\ & { u _ { t } = v , } \\ & { u _ { x } = w , } \\ & { \quad 0 = q + L _ { v } , } \\ & { \quad 0 = p + L _ { w } , } \end{array}
+$$
+
+and, hence, the variational and the multi-symplectic approach are complementary for first-order field theories, i.e. for Lagrangian densities of the form $\begin{array} { r l } { \mathrm { L } ( u _ { t } , u _ { x } , u ) = } \end{array}$ $\mathsf { L } ( v , w , u )$ .
+
+The discrete variational approach can be generalized to second-order field theories such as the KdV equation. See, for example, [209].
+
+# 12.3.4 Numerical dispersion and soliton solutions
+
+We have seen in Section 12.3.2 that linear multi-symplectic PDEs can be discussed in terms of their dispersion relation. Following the idea of von Neumann stability analysis [140], a numerical dispersion relation can be defined by making the ansatz
+
+$$
+z _ { i } ^ { n } = a \mathrm { e } ^ { j ( K x _ { i } - \Omega t _ { n } ) } ,
+$$
+
+where $x _ { i } = i \Delta x$ , $t _ { n } = n \Delta t$ , and $j = \sqrt { - 1 }$ . It is easy to derive that, for example,
+
+$$
+\begin{array} { c } { { \displaystyle \partial _ { x } ^ { + } z _ { i + 1 / 2 } ^ { n } = \frac { \mathrm { e } ^ { - j \Omega \Delta t / 2 } - \mathrm { e } ^ { j \Omega \Delta t / 2 } } { \Delta t } \frac { \mathrm { e } ^ { j K \Delta x / 2 } + \mathrm { e } ^ { - j K \Delta x / 2 } } { 2 } \bar { z } _ { i + 1 / 2 } ^ { n + 1 / 2 } } } \\ { { = - \displaystyle \frac { 2 j } { \Delta t } \sin ( \Omega \Delta t / 2 ) \cos ( K \Delta x / 2 ) \bar { z } _ { i + 1 / 2 } ^ { n + 1 / 2 } , } } \end{array}
+$$
+
+where we used the “exact” midpoint approximation
+
+$$
+\bar { z } _ { i + 1 / 2 } ^ { n + 1 / 2 } : = \pmb { a } \mathrm { e } ^ { j ( K x _ { i + 1 / 2 } - \Omega t _ { n + 1 / 2 } ) } ,
+$$
+
+$t _ { n + 1 / 2 } = ( n + 1 / 2 ) \Delta t , x _ { i + 1 / 2 } = ( i + 1 / 2 ) \Delta x$ , which should not be confused with the approximation $z _ { i + 1 / 2 } ^ { n + 1 / 2 }$ used in the numerical scheme, i.e.
+
+$$
+z _ { i + 1 / 2 } ^ { n + 1 / 2 } = \cos ( \Omega \Delta t / 2 ) \cos ( K \Delta x / 2 ) \bar { z } _ { i + 1 / 2 } ^ { n + 1 / 2 } .
+$$
+
+If one substitutes these formulas and the corresponding expression for $\partial _ { x } ^ { + }$ into the Preissman box scheme, then the following linear system appears
+
+$$
+\left[ \frac { 2 j } { \Delta t } \tan ( \Omega \Delta t / 2 ) { \cal K } - \frac { 2 j } { \Delta x } \tan ( { \cal K } \Delta x / 2 ) { \cal L } + { \cal A } \right] a = 0 .
+$$
+
+This equation leads to the numerical dispersion relation via
+
+$$
+\operatorname* { d e t } \left[ \frac { 2 j } { \Delta t } \tan ( \Omega \Delta t / 2 ) { \cal K } - \frac { 2 j } { \Delta x } \tan ( { \cal K } \Delta x / 2 ) { \cal L } + { \cal A } \right] = 0 .
+$$
+
+Upon defining
+
+$$
+\omega = \frac { 2 } { \Delta t } \tan ( \Omega \Delta t / 2 )
+$$
+
+and
+
+$$
+k = \frac { 2 } { \Delta x } \tan ( K \Delta x / 2 ) ,
+$$
+
+the numerical dispersion relation turns into the analytic relation (12.42) for $k$ and $\omega$ .
+
+The important point is that only wave numbers $\boldsymbol { K }$ with
+
+$$
+- \pi < K \Delta x \le \pi
+$$
+
+and frequencies $\Omega$ with
+
+$$
+- \pi < \Omega \Delta t \leq \pi
+$$
+
+are distinguishable in terms of the associated numerical solution $z _ { i } ^ { n }$ . Hence (12.53)–(12.54) can be uniquely solved for $( K , \Omega )$ in terms of $\Delta t \omega$ and $\Delta x k$ , respectively. In other words, the numerical discretization does not introduce any spurious modes. This is a desirable property of the multi-symplectic Preissman box scheme [9, 136].
+
+One should, however, keep in mind that multi-symplectic methods can be subject to resonance instabilities very much like those discussed for large time step (LTS) methods in Chapter 10. The concept of a Krein signature has been generalized to multi-symplectic PDEs by BRIDGES in [30] and has been used to classify instabilities. The same concept could be used to study numerical-induced resonance instabilities similar to what has been outlined in Chapter 10.
+
+We finally conduct a numerical experiment for the sine-Gordon equation over a periodic domain $x \in \left( { - L / 2 , L / 2 } \right]$ , $L = 6 0$ , and initial data
+
+$$
+u _ { o } ( x ) = 4 \tan ^ { - 1 } \left( \mathrm { e } ^ { ( x - L / 4 ) / \sqrt { 1 - c ^ { 2 } } } \right) + 4 \tan ^ { - 1 } \left( \mathrm { e } ^ { ( - x - L / 4 ) / \sqrt { 1 - c ^ { 2 } } } \right) ,
+$$
+
+and
+
+$$
+v _ { o } ( x ) = { \frac { - 4 c } { \sqrt { 1 - c ^ { 2 } } } } \left[ { \frac { \mathrm { e } ^ { ( x - L / 4 ) / \sqrt { 1 - c ^ { 2 } } } } { 1 + \mathrm { e } ^ { 2 ( x - L / 4 ) / \sqrt { 1 - c ^ { 2 } } } } } - { \frac { \mathrm { e } ^ { ( - x - L / 4 ) / \sqrt { 1 - c ^ { 2 } } } } { 1 + \mathrm { e } ^ { 2 ( - x - L / 4 ) / \sqrt { 1 - c ^ { 2 } } } } } \right] ,
+$$
+
+$c = 0 . 5$ . The solution consists of a pair of kink solitons moving with speed $c = 0 . 5$ in opposite directions which, due to the periodicity of the domain, meet at $x = 0$ and $x = L / 2$ .
+
+We use the Euler box scheme and set the spatial mesh-size to $\Delta x = 0 . 0 1 8 7$ and the timestep to $\Delta t = 0 . 0 1$ . In Figs. 12.3 and 12.4, we plot the numerical errors in the local energy and momentum conservation laws under a soliton collision near $t = 1 0 0$ and $x = 0$ . These errors are defined in terms of fully discretized formulations of the semi-discrete conservation laws (12.29) and (12.48), for example we use formula (12.27) for the energy conservation law. One can clearly see that the errors are concentrated along the moving fronts of the two solitons. The error in energy increases locally whenever the two solitons collide. Interestingly enough this is not the case for the momentum conservation law. This indicates that the larger energy error near collisions is due to numerical timestepping errors in the “pendulum part”
+
+![](images/f1370189f9a4bd8c62de9eb7e6809babc95748c8fb52f2bc86d64c6576ddf576.jpg)  
+Figure 12.3 Numerical residual in the energy conservation law.
+
+$$
+\begin{array} { r } { u _ { t t } = - \sin ( u ) . } \end{array}
+$$
+
+# 12.3.5 Summary
+
+At present the range of applicability and the advantages of classical symplectic methods, as described in Section 12.2, and multi-symplectic methods is an open question. A careful comparison of several methods has been carried out by AS-CHER AND MCLACHLAN [9] for the KdV equation. One should keep in mind that a large number of “classical” symplectic methods are in fact multi-symplectic. Furthermore, whatever method is chosen, it should correctly reflect the important physical quantities on a local discretization level. This is clearly the point of view taken with the multi-symplectic approach with regard to energy and momentum conservation. Other applications might lead to other relevant quantities such as potential vorticity (PV) and hence to other preferable discretization methods. In some cases, such as turbulent fluid flows, one also has to address the problem of numerically unresolved motion on sub-grid length scales. These issues are clearly beyond this exposition. But they would lead into the area of stochastic sub-grid modeling and averaging.
+
+![](images/0934668c9c89dcf7dd3ab97f1feaf55ee72c86a2c42046f04464d0fcc5813ff6.jpg)  
+Figure 12.4 Numerical residual in the momentum conservation law.
+
+# 12.4 Exercises
+
+1. Symplectic Euler scheme. Apply the scheme (12.43) to the canonical Hamiltonian
+
+$$
+\frac { d } { d t } p = - \nabla _ { \boldsymbol { q } } H ( \boldsymbol { q } , \boldsymbol { p } ) , \qquad \frac { d } { d t } \boldsymbol { q } = + \nabla _ { \boldsymbol { p } } H ( \boldsymbol { q } , \boldsymbol { p } ) ,
+$$
+
+with $z = ( q , p ) ^ { T }$ , and
+
+$$
+K _ { + } z = { \binom { q } { 0 } } \ .
+$$
+
+Show that the scheme preserves the symplectic form
+
+$$
+d { \pmb q } ^ { n + 1 } \wedge d { \pmb p } ^ { n } = d { \pmb q } ^ { n } \wedge d { \pmb p } ^ { n - 1 } .
+$$
+
+How can the scheme be related to a standard symplectic Euler method?
+
+2. Nonlinear Schr¨odinger equation, Preissman box scheme. Consider complexvalued functions $\psi ( x , t )$ which satisfy the nonlinear Schr¨odinger equation
+
+$$
+j \psi _ { t } = \psi _ { x x } + | \psi | ^ { 2 } \psi ,
+$$
+
+over the spatial domain $x \in [ 0 , L )$ subject to periodic boundary conditions. We introduce the real part $\boldsymbol { a } ( \boldsymbol { x } , t )$ and the imaginary part $b ( x , t )$ of the wave function, i.e.
+
+$$
+\psi ( x , t ) = a ( x , t ) + j b ( x , t ) ,
+$$
+
+and rewrite the nonlinear Schr¨odinger equation as
+
+$$
+\begin{array} { r } { - b _ { t } = a _ { x x } + ( a ^ { 2 } + b ^ { 2 } ) a , } \\ { a _ { t } = b _ { x x } + ( a ^ { 2 } + b ^ { 2 } ) b . } \end{array}
+$$
+
+a. Write (12.55)–(12.56) in multi-symplectic form.
+
+b. Apply the Preissman box scheme to the multi-symplectic formulation derived under (a).
+
+c. The norm of the wave function is a conserved quantity for the nonlinear Schr¨odinger equation, i.e.
+
+$$
+\frac { d } { d t } \int _ { 0 } ^ { L } ( a ^ { 2 } + b ^ { 2 } ) d x = 0 .
+$$
+
+A discrete analog of this conservation law is
+
+$$
+\sum _ { i } \left[ ( a _ { i + 1 / 2 } ^ { n } ) ^ { 2 } + ( b _ { i + 1 / 2 } ^ { n } ) ^ { 2 } \right] = \sum _ { i } \left[ ( a _ { i + 1 / 2 } ^ { n + 1 } ) ^ { 2 } + ( b _ { i + 1 / 2 } ^ { n + 1 } ) ^ { 2 } \right] .
+$$
+
+Does this identity hold for the multi-symplectic scheme derived under (b)?
+
+3. Sine-Gordon equation, energy-momentum conservation. Implement the Euler box scheme for the sine-Gordon equation over a periodic domain $x \in$ $( - L / 2 , L / 2 ]$ , $L = 6 0$ , and initial data
+
+$$
+u _ { o } ( x ) = 4 \tan ^ { - 1 } \left( \mathrm { e } ^ { ( x - L / 4 ) / \sqrt { 1 - c ^ { 2 } } } \right) + 4 \tan ^ { - 1 } \left( \mathrm { e } ^ { ( - x - L / 4 ) / \sqrt { 1 - c ^ { 2 } } } \right)
+$$
+
+and
+
+$$
+v _ { o } ( x ) = { \frac { - 4 c } { \sqrt { 1 - c ^ { 2 } } } } \left[ { \frac { \mathrm { e } ^ { ( x - L / 4 ) / \sqrt { 1 - c ^ { 2 } } } } { 1 + \mathrm { e } ^ { 2 ( x - L / 4 ) / \sqrt { 1 - c ^ { 2 } } } } } - { \frac { \mathrm { e } ^ { ( - x - L / 4 ) / \sqrt { 1 - c ^ { 2 } } } } { 1 + \mathrm { e } ^ { 2 ( - x - L / 4 ) / \sqrt { 1 - c ^ { 2 } } } } } \right] ,
+$$
+
+with wave speed $c = 0 . 5$ .
+
+a. Compute the numerical solution over a time-interval [0, 200] using a stepsize of $\Delta t = 0 . 0 1$ and a spatial mesh-size of $\Delta x = L / 3 2 0 0$ .   
+b. Implement formula (12.27) into your scheme to monitor the residual in the energy conservation law. You should reproduce the results from Fig. 12.3.   
+c. Find the analog of (12.27) for the momentum conservation law. Implement the formula into your scheme and monitor the residual in the discrete momentum conservation law.
+
+4. Dispersion relation. Consider the linear advection equation
+
+$$
+{ \cal U } _ { t } + { \cal U } _ { X } = 0 .
+$$
+
+We introduce the velocity potential $\boldsymbol { u } = \boldsymbol { \phi } _ { x }$ and write the advection equation in the multi-symplectic form
+
+$$
+u _ { t } + w _ { x } = 0 , \quad - \phi _ { t } = - w + 2 u , \quad - \phi _ { x } = - u .
+$$
+
+a. Find the linear dispersion relation for the formulation (12.57).
+
+b. Apply the Preissman box scheme to the multi-symplectic formulation (12.57). Discuss the associated numerical dispersion relations. Verify the result from Fig. 12.5.   
+c. Compare the results from (b) with a direct application of the box scheme to the linear advection equation.   
+d. The advection equation is an example of a noncanonical Hamiltonian system with Poisson operator $\mathcal { I } = - \partial _ { x }$ and Hamiltonian $\textstyle { \mathcal { H } } = \int u ^ { 2 } / 2 d x$ . Does the direct application of the box scheme to the linear wave equation lead to a “classical” symplectic method?
+
+5. KdV and Schr¨odinger equation, mixed multi-symplectic discretization. Besides the two box schemes discussed in this chapter so far, another useful class of multi-symplectic methods can be obtained by applying the symplectic Euler scheme (12.43) in space and the implicit midpoint method in time.
+
+![](images/0fb1a160223474278f521eff440729382ee6b093868ecf731c77a8eac5bfad7c.jpg)  
+Figure 12.5 Numerical dispersion relation for Preissman box scheme applied to (12.57) and a Courant number $c = \Delta t / \Delta x = 1 0$ . We also plot the exact dispersion relation (’o’) for comparison.
+
+a. What scheme do you obtain when applying this discretization to the multi-symplectic KdV formulation (12.38)–(12.41)? Show that, in terms of the variable $u$ , the scheme is equivalent to
+
+$$
+\partial _ { t } ^ { + } u _ { i + 1 / 2 } ^ { n } + \frac { 1 } { 2 } \partial _ { x } ^ { + } ( u _ { i } ^ { n + 1 / 2 } ) ^ { 2 } + \partial _ { x } ^ { + } \partial _ { x } ^ { - } \partial _ { x } ^ { + } u _ { i } ^ { n + 1 / 2 } = 0 .
+$$
+
+b. Discuss the dispersion relation of the linear KdV scheme
+
+$$
+\partial _ { t } ^ { + } u _ { i + 1 / 2 } ^ { n } + \partial _ { x } ^ { + } u _ { i } ^ { n + 1 / 2 } + \partial _ { x } ^ { + } \partial _ { x } ^ { - } \partial _ { x } ^ { + } u _ { i } ^ { n + 1 / 2 } = 0 .
+$$
+
+c. Apply the same space-time discretization to the nonlinear Schr¨odinger equations (12.55)–(12.56). Compare the scheme with the Preissman box scheme discretization of the same equations in terms of conservation properties and computational complexity.
+
+6. Modified equation analysis. Application of the Euler box scheme to a multisymplectic PDE results in the discrete formula
+
+$$
+\begin{array} { r } { K _ { + } \partial _ { t } ^ { + } z _ { i } ^ { n } + K _ { - } \partial _ { t } ^ { - } z _ { i } ^ { n } + L _ { + } \partial _ { x } ^ { + } z _ { i } ^ { n } + L _ { - } \partial _ { x } ^ { - } z _ { i } ^ { n } = \nabla _ { z } S ( z _ { i } ^ { n } ) . } \end{array}
+$$
+
+Performing standard Taylor expansions, we find that
+
+$$
+\partial _ { t } ^ { + } z ( x _ { i } , t _ { n } ) = z _ { t } ( x _ { i } , t _ { n } ) + \frac { \Delta t } { 2 } z _ { t t } ( x _ { i } , t _ { n } ) + \mathcal { O } ( \Delta t ^ { 2 } )
+$$
+
+and similar terms for the other discrete derivative approximations.
+
+a. Let us drop all terms of order $\mathcal { O } ( \Delta t ^ { 2 } , \Delta x ^ { 2 } )$ and higher in the Taylor expansions for the discrete derivatives. Verify that, following standard local error analysis, the Euler box scheme becomes formally equivalent to the modified PDE
+
+$$
+K z _ { t } + \frac { \Delta t } { 2 } A z _ { t t } + L z _ { x } + \frac { \Delta x } { 2 } B z _ { x x } = \nabla _ { z } S ( z ) ,
+$$
+
+where
+
+$$
+A = K _ { + } - K _ { - } , \qquad B = L _ { + } - L _ { - }
+$$
+
+are both symmetric matrices.
+
+b. Write (12.58) as a multi-symplectic PDE over some enlarged phase space.
+
+c. Use the multi-symplectic formulation, derived under (b), to find modified energy and momentum conservation laws. Note that these conservation laws can also be obtained by direct manipulation of the modified equation (12.58).
+
+d. Show that (12.58) is the Euler–Lagrange equation arising from a Lagrangian functional $\mathcal { L }$ with density $L \left( z , z _ { t } , z _ { x } , z _ { t t } , z _ { x x } \right)$ . Find the specific form of $L$ .
+
+e. The modified conservation laws, derived under (c), are satisfied by the Euler box scheme to second-order accuracy. What needs to be done to derive modified conservation laws that are satisfied to third-order by the Euler box scheme?
+
+See [137, 138] for more details.
+
+# References
+
+[1] M.B. Abbott and D.R. Basco. Computational Fluid Dynamics. Harlow, Essex: Longman Scientific & Technical, 1989.   
+[2] R. Abraham and J.E. Marsden. Foundations of Mechanics. Reading, MA: Benjamin Cummings Pub. Co. 2nd edition, 1978.   
+[3] B.J. Alder and T.E. Wainwright. Hard-sphere molecular dynamics. J. Chem. Phys., 27:1208–1209, 1957.   
+[4] M.P. Allen and D.J. Tildesley. Computer Simulation of Liquids. Oxford: Clarendon Press, 1987.   
+[5] H.C. Andersen. Rattle: a “velocity” version of the Shake algorithm for molecular dynamics calculations. J. Comput. Phys., 52:24–34, 1983.   
+[6] D.G. Andrews. An Introduction to Atmospheric Physics. Cambridge: Cambridge University Press, 2000.   
+[7] V.I. Arnold. Mathematical Methods of Classical Mechanics. New York: Springer-Verlag, 2nd edition, 1989.   
+[8] V.I. Arnold, V.V. Kozlov, and A.I. Neishtadt. Mathematical Aspects of Classical and Celestial Mechanics. Berlin Heidelberg: Springer-Verlag, 2nd edition, 1993.   
+[9] U. Ascher and R.I. McLachlan. Multisymplectic box schemes and the Korteweg-de Vries equation. Appl. Numer. Math., 48:255–269, 2004.   
+[10] U.M. Ascher, H. Chin, and S. Reich. Stablization of DAEs and invariant manifolds. Numer. Math., 67:131–149, 1994.   
+[11] K. Atkinson. Elementary Numerical Analysis. New York: John Wiley & Sons, 1985.   
+[12] S.P. Auerbach and A. Friedman. Long-time behavior of numerically computed orbits: small and intermediate timestep analysis of one-dimensional systems. J. Comput. Phys., 93:189–223, 1991.   
+[13] E. Barth, K. Kuczera, B. Leimkuhler, and R.D. Skeel. Algorithms for constrained molecular dynamics. J. Comput. Chem., 16:1192–1209, 1995.   
+[14] E. Barth, B. Laird, and B. Leimkuhler. Generating generalized distributions from dynamical simulation. J. Chem. Phys., 118:5759–5768, 2003.   
+[15] E. Barth and B. Leimkuhler. Symplectic methods for conservative multibody systems. In J.E. Mardsen, G.W. Patrick, and W.F. Shadwick, editors, Integration Algorithms and Classical Mechanics, volume 10 of Fields Inst. Comm., pages 25–44. Amer. Math. Soc., 1996.   
+[16] G. Benettin and A. Giorgilli. On the Hamiltonian interpolation of near to the identity symplectic mappings with application to symplectic integration algorithms. J. Stat. Phys., 74:1117–1143, 1994.   
+[17] G. Benettin, A. M. Cherubini, and F. Fass\`o. A changing charts symplectic algorithm for rigid bodies and other dynamical systems on manifolds. SIAM J. Sci. Comput., 23:1189–1203, 2001.   
+[18] G. Benettin, L. Galgani, and A. Giorgilli. Realization of holonomic constraints and freezing of high frequency degrees of freedom in the light of classical perturbation theory. Part I. Comm. Math. Phys., 113:87–103, 1987.   
+[19] F. Benvenuto, G. Casati, and D. Shepelyansky. Dynamical localization: Hydrogen atom in magnetic and microwave fields. Phys. Rev. A, 55:1732–1735, 1997.   
+[20] J.J. Biesiadecki and R.D. Skeel. Dangers of multiple-time-step methods. J. Comput. Phys., 109:318–328, 1993.   
+[21] C.K. Birdsall and A.B. Langdon. Plasma Physics via Computer Simulations. New York: McGraw-Hill, 1981.   
+[22] S. Blanes. High order numerical integrators for differential equations using composition and processing of low order methods. Appl. Numer. Math., 37:289–306, 2001.   
+[35] R.C. Buck. Advanced Calculus. New York: McGraw-Hill, 3rd edition, 1978.   
+[36] C. Budd, B. Leimkuhler, and M. Piggott. Scaling invariance and adaptivity. Appl. Numer. Math., 39:261–288, 2001.   
+[37] R. Burden and J. Faires. Numerical Analysis. Brooks Cole Publishing, 7th edition, 2001.   
+[38] S.R. Buss. Accurate and efficient simulation of rigid body rotations. J. Comput. Phys., 164:377–406, 2000.   
+[39] J.C. Butcher. Numerical Methods for Ordinary Differential Equations. New York: John Wiley & Sons, 2003.   
+[40] M.P. Calvo, A. Murua, and J.M. Sanz-Serna. Modified equations for ODEs. Contemp. Math., 172:63–74, 1994.   
+[41] M.P. Calvo and A. Portillo. Are higher order equistage initializers better than standard starting algorithms? J. Comput. Appl. Math, 169:333– 344, 2004.   
+[42] M.P. Calvo and J.M. Sanz-Serna. Variable steps for symplectic integrators. In Dundee Conference on Numerial Analysis 1991, volume 260 of Pitman Res. Notes Math. Ser., pages 34–48. Pitman, London, 1992.   
+[43] P.J. Channel. Symplectic integration algorithms. Technical Report AT-6:ATN 83–9, Los Alamos National Laboratory, 1983.   
+[44] P.J. Channel and J.S. Scovel. Integrators for Lie–Poisson dynamical systems. Physica D, 50:80–88, 1991.   
+[45] S. Cirilli, E. Hairer, and B. Leimkuhler. Asymptotic error analysis of the Adaptive Verlet method. BIT, 39:25–33, 1999.   
+[46] G.J. Cooper. Stability of Runge–Kutta methods for trajectory problems. IMA J. Numer. Anal., 7:1–13, 1987.   
+[47] C.J. Cotter and S. Reich. Adiabatic invariance and applications to molecular dynamics and numerical weather prediction. BIT, to appear.   
+[48] G. Dahlquist and A. Bj¨ork. Numerical Methods. Englewood Cliffs, NJ: Prentice-Hall, 1974.   
+[49] R. de Vogelaere. Methods of integration which preserve the contact transformation property of the Hamiltonian equations. Technical Report 4, Dept. Math. Univ. of Notre Dame, 1956.   
+[50] P.A.M. Dirac. Lectures on Quantum Mechanics. Technical Report 3, Belfer Graduate School Monographs, Yeshiva University, 1964.   
+[51] A.J. Dragt and J.M. Finn. Lie series and invariant functions for analytic symplectic maps. J. Math. Phys., 17:2215–2227, 1976.   
+[52] A.J. Dragt, F. Neri, G. Rangarajan, D.R. Douglas, L.M. Healy, and R.D. Ryne. Lie algebraic treatment of linear and nonlinear beam dynamics. Ann. Rev. Nucl. Part. Sci., 38:455–496, 1988.   
+[53] P.G. Drazin. Solitons, volume 85 of London Mathematical Society Lecture Note Series. Cambridge: Cambridge University Press, 1983.   
+[54] A. Dullweber, B. Leimkuhler, and R.I. McLachlan. Split-Hamiltonian methods for rigid body molecular dynamics. J. Chem. Phys., 107:5840– 5851, 1997.   
+[55] D.R. Durran. Numerical Methods for Wave Equations in Geophysical Fluid Dynamics. Berlin: Springer-Verlag, 1998.   
+[56] F. Fass\`o. Comparison of splitting algorithms for the rigid body. J. Comput. Phys., 189:527–538, 2003.   
+[57] K. Feng. On difference schemes and symplectic geometry. In K. Feng, editor, Proceedings of the 1984 Beijing Symposium on Differential Geometry and Differential Equations, pages 42–58, Beijing: Science Press, 1985.   
+[58] K. Feng. Canonical difference schemes for Hamiltonian canonical differential equations. In International Workshop on Applied Differential Equations (Beijing, 1985), pages 59–73, Singapore: World Sci. Publishing, 1986.   
+[59] K. Feng. Formal power series and numerical algorithms for dynamical systems. In T. Chan and Chong-Ci Shi, editors, Proceedings of International Conference on Scientific Computation (Hangzhao, China), volume 1 of Series on Appl. Math., pages 28–35, 1991.   
+[60] E. Fermi, J. Pasta, and S. Ulam. Studies of nonlinear problems-I. Technical Report LA-1940, Los Alamos National Laboratory, Los Alamos, NM, 1955.   
+[61] M. Fixman. Classical statistical mechanics of constraints: a theorem and applications to polymers. Proc. Nat. Acad. Sci., 71:3050–3053, 1974.   
+[62] E. Forest and R.D. Ruth. Fourth order symplectic integration. Physica D, 43:105–117, 1990.   
+[63] J. Frank, G. Gottwald, and S. Reich. The Hamiltonian particle-mesh method. In M. Griebel and M.A. Schweitzer, editors, Meshfree Methods for Partial Differential Equations, volume 26 of Lect. Notes Comput. Sci. Eng., pages 131–142, Berlin Heidelberg: Springer-Verlag, 2002.   
+[64] J. Frank and S. Reich. Conservation properties of Smoothed Particle Hydrodynamics applied to the shallow-water equations. BIT, 43:40–54, 2003.   
+[65] J. Frank and S. Reich. The Hamiltonian particle-mesh method for the spherical shallow water equations. Atmos. Sci. Lett., 5:89–95, 2004.   
+[66] D. Frenkel and B. Smit. Understanding Molecular Simulation: From Algorithms to Applications. New York: Academic Press, 2nd edition, 2002.   
+[67] B. Garc´ıa-Archilla, J.M. Sanz-Serna, and R.D. Skeel. The mollified impulse method for oscillatory differential equations. SIAM J. Sci. Comput., 20:930–963, 1998.   
+[68] Z. Ge. Equivariant symplectic difference schemes and generating functions. Physica D, 49:376–386, 1991.   
+[69] Z. Ge and J. Marsden. Lie–Poisson integrators and Lie–Poisson Hamiltonian–Jacobi theory. Phys. Lett. A, 133:134–139, 1988.   
+[70] C.W. Gear. Numerical Initial Value Problems in Ordinary Differential Equations. Englewood Cliffs, NJ: Prentice-Hall, 1971.   
+[71] R.A. Gingold and J.J. Monaghan. Smoothed Particle Hydrodynamics: theory and application to non-spherical stars. Mon. Not. R. Astr. Soc., 181:375–389, 1977.   
+[72] B. Gladman, M. Duncan, and J. Candy. Symplectic integrators for longterm integration in celestial mechanics. Celest. Mech., 52:221–240, 1991.   
+[73] H. Goldstein, C. Pole, and J. Safko. Classical Mechanics. San Francisco, CA: Addison Wesley, 3nd edition, 2002.   
+[74] O. Gonzalez, D.J. Higham, and A.M. Stuart. Qualitative properties of modified equations. IMA J. Numer. Anal., 19:169–190, 1999.
+
+[89] W. Huang and B. Leimkuhler. The adaptive Verlet method. SIAM J. Sci. Comput., 18:239–256, 1997.   
+[90] P. Hut, J. Makino, and S. McMillan. Building a better leapfrog. Astrophys. J. Lett., 443:L93–L96, 1995.   
+[91] A. Iserles. A First Course in the Numerical Analysis of Differential Equations. Cambridge: Cambridge University Press, 1996.   
+[92] A.L. Islas, D.A. Karpeev, and C.M. Schober. Geometric integrators for the nonlinear Schr¨odinger equation. J. Comput. Phys., 173:116–148, 2001.   
+[93] J.A. Izaguirre, S. Reich, and R.D. Skeel. Longer time steps for molecular dynamics. J. Chem. Phys., 110:9853–9864, 1999.   
+[94] S. Jang and G.A. Madden. Simple reversible molecular dynamics algorithms for Nos´e–Hoover chain dynamics. J. Chem. Phys., 107:9514– 9526, 1997.   
+[95] L.O. Jay. Runge–Kutta type methods for index three differentialalgebraic equations with applications to Hamiltonian systems. Ph.D. thesis, Department of Mathematics, University of Geneva, Switzerland, 1994.   
+[96] S. Jim´enez. Derivation of the discrete conservation laws for a family of finite difference schemes. Appl. Math. Comput., 64:13–45, 1994.   
+[97] W. Kahan and R.C. Li. Composition constants for raising the order of unconventional schemes for ordinary differential equations. Math. Comp., 66:1089–1099, 1997.   
+[98] A. Kol, B. Laird, and B. Leimkuhler. A symplectic method for rigid-body molecular simulation. J. Chem. Phys., 107:2580–2588, 1997.   
+[99] F. Krogh. Issues in the design of a multistep code. Annals of Numer. Math., 1:423–437, 1994.   
+[100] S. Kuksin and J. P¨oschel. On the inclusion of analytic symplectic maps in analytic Hamiltonian flows and its applications. In S. Kuksin, V. Lazutkin, and J. P¨oschel, editors, Seminar on Dynamical Systems (St. Petersburg, 1991), volume 12 of Progr. Nonlinear Differential Equations Appl., pages 96–116, Basel: Birkh¨auser Verlag, 1994.   
+[101] A. Kværnø and B. Leimkuhler. A time-reversible, regularized, switching integrator for the $n$ -body problem. SIAM J. Sci. Comput., 22:1016– 1035, 2001.   
+[102] B. Laird and B. Leimkuhler. Generalized dynamical thermostatting technique. Phys. Rev. E, 68:art. no. 016704, 2003.   
+[103] P. Lancaster. Theory of Matrices. New York: Academic Press, 1969.   
+[104] C. Lanczos. The Variational Principles of Mechanics. Toronto: University of Toronto Press, 1949.   
+[105] L.D. Landau and E.M. Lifshitz. Course in Theoretical Physics, Vol. 1: Mechanics. Oxford: Pergamon Press, 1976.   
+[106] F.M. Lasagni. Canonical Runge–Kutta methods. Z. Angew. Math. Phys., 39:952–953, 1988.   
+[107] F.M. Lasagni. Integration methods for Hamiltonian differential equations. Unpublished manuscript, 1990.   
+[108] E. Lee, A. Brunello, and D. Farrelly. Coherent states in a Rydberg atom: classical mechanics. Phys. Rev. A, 55:2203–2221, 1997.   
+[109] B. Leimkuhler. Reversible adaptive regularization: perturbed Kepler motion and classical atomic trajectories. Philos. T. Roy. Soc. A, 357:1101– 1133, 1999.   
+[110] B. Leimkuhler. A separated form of Nos´e dynamics for constant temperature and pressure simulation. Comput. Phys. Comm., 148:206–213, 2002.   
+[111] B. Leimkuhler and S. Reich. Symplectic integration of constrained Hamiltonian systems. Math. Comp., 63:589–606, 1994.   
+[112] B. Leimkuhler and S. Reich. A reversible averaging integrator for multiple time-scale dynamics. J. Comput. Phys., 171:95–114, 2001.   
+[113] B. Leimkuhler and R.D. Skeel. Symplectic numerical integrators in constrained Hamiltonian systems. J. Comput. Phys., 112:117–125, 1994.   
+[113a] B. Leimkuhler and C. Sweet. The canonical ensemble via symplectic integrators using ´e and ´e-Poincar´e chains. J. Chem. Phys. 121:106–116, 2004a.
+
+[152] D.C. Rappaport. The Art of Molecular Dynamics Simulation. New York: Cambridge University Press, 1995.
+
+153] S. Reich. Numerical integration of the generalized Euler equation. Technical Report TR 93-20, University of British Columbia, 1993.
+
+S. Reich. Momentum conserving symplectic integrators. Physica D, 76:375–383, 1994.
+
+S. Reich. Symplectic integration of constrained Hamiltonian systems by composition methods. SIAM J. Numer. Anal., 33:475–491, 1996.
+
+[156] S. Reich. Symplectic methods for conservative multibody systems. In J.E. Mardsen, G.W. Patrick, and W.F. Shadwick, editors, Integration Algorithms and Classical Mechanics, volume 10 of Fields Inst. Com., pages 181–192. Amer. Math. Soc., 1996.
+
+[157] S. Reich. On higher-order semi-explicit symplectic partitioned Runge– Kutta methods for constrained Hamiltonian systems. Numer. Math., 76:249–263, 1997.
+
+58] S. Reich. Backward error analysis for numerical integrators. SIAM J. Numer. Anal., 36:475–491, 1999.
+
+S. Reich. Conservation of adiabatic invariants under symplectic discretization. Appl. Numer. Math., 29:45–55, 1999.
+
+S. Reich. Multiple times-scales in classical and quantum-classical molecular dynamics. J. Comput. Phys., 151:49–73, 1999.
+
+S. Reich. Finite volume methods for multi-symplectic PDEs. BIT, 40:559–582, 2000.
+
+S. Reich. Multi-symplectic Runge–Kutta collocation methods for Hamiltonian wave equations. J. Comput. Phys., 157:473–499, 2000.
+
+S. Reich. Smoothed Langevin dynamics of highly oscillatory systems.   
+Physica D, 138:210–224, 2000. E.J. Routh. Dynamics of a System of Rigid Bodies, Elementary Part.   
+New York: Dover, 7th edition, 1960.
+
+[165] H. Rubin and P. Ungar. Motion under a strong constraining force. Comm. Pure and Appl. Math., 10:65–87, 1957.
+
+[166] R.D. Ruth. A canonical integration technique. IEEE Trans. Nucl. Sci., 30:2669–2671, 1983.   
+[167] J.P. Ryckaert, G. Ciccotti, and H.J.C. Berendsen. Numerical integration of the cartesian equations of motion of a system with constraints: molecular dynamics of n-alkanes. J. Comput. Phys., 23:327–341, 1977.   
+[168] R. Salmon. Practical use of Hamilton’s principle. J. Fluid Mech., 132:431–444, 1983.   
+[169] R. Salmon. Lectures on Geophysical Fluid Dynamics. Oxford: Oxford University Press, 1999.   
+[170] J.M. Sanz-Serna. Runge–Kutta schemes for Hamiltonian systems. BIT, 28:877–883, 1988.   
+[171] J.M. Sanz-Serna. Symplectic integrators for Hamiltonian problems: an overview. Acta Numerica, 1:243–286, 1992.   
+[172] J.M. Sanz-Serna and M.P. Calvo. Numerical Hamiltonian Problems. London: Chapman & Hall, 1994.   
+[173] T. Sauer and J.A. York. Rigorous verification of trajectories for the computer simulation of dynamical systems. Nonlinearity, 4:961–979, 1994.   
+[174] T. Schlick. Molecular Modeling and Simulation. New York: Springer-Verlag, 2002.   
+[175] M. Shimada and H. Yoshida. Long-term conservation of adiabatic invariants by using symplectic integrators. Publ. Astron. Soc. Japan, 48:147– 155, 1996.   
+[176] R.D. Skeel and C.W. Gear. Does variable step size ruin a symplectic integrator? Physica D, 60:311–313, 1992.   
+[177] R.D. Skeel and D.J. Hardy. Practical construciton of modified Hamiltonians. SIAM J. Sci. Comput., 23:1172–1188, 2001.   
+[178] D. Stoffer. On reversible and canonical integration methods. Technical Report SAM-Report No. 88-05, ETH Z¨urich, 1988.   
+[179] D. Stoffer. Variable steps for reversible integration methods. Computing, 55:1–22, 1995.
+
+[207] L.-S. Young. Large deviations in dynamical systems. Trans. Amer. Math. Soc., 318:525–543, 1990.
+
+[208] V. Zeitlin. Finite-mode analogs of 2D ideal hydordynamcis: coadjoint orbits and local canonical structure. Physica D, 49:353–362, 1991.
+
+[209] P.-F. Zhao and M.-Z. Qin. Multisymplectic geometry and multisymplectic Preissman scheme for the KdV equation. J. Phys. A, 33:3613–3626, 2000.
+
+# Index
+
+accuracy, 12, 105   
+action integral, Euler–Lagrange equation,   
+43   
+adaptive integration, 234   
+Adaptive Verlet method, 245   
+adiabatic invariant, 106, 126, 264   
+adjoint method, 84   
+AKMA, 291   
+AMBER, 291   
+angular momentum, 46, 47, 66, 68, 88   
+conservation of for an $n$ -body system, 48   
+angular velocity, 211   
+anharmonic oscillator, 40   
+arclength parameterization, 246   
+Arenstorf orbit, 161, 166   
+Argon, 288   
+asymptotic expansion, 118   
+asymptotic stability, 27, 28   
+autonomous Hamiltonian system, 39   
+averaging, 126, 257, 264, 269, 272, 277
+
+backward error analysis, 106, 235, 260 non-autonomous, 260, 280   
+backward error analysis, for Adaptive Verlet, 249   
+Baker–Campbell–Hausdorff formula, 134, 146   
+bead-on-wire, 8, 10   
+Blanes and Moan, higher-order methods of, 146   
+body angular momentum, 211   
+Boltzmann constant, 298
+
+canonical ensemble, 297   
+canonical Hamiltonian system, 38   
+canonical lift transformation, 65   
+canonical point transformation, 54   
+canonical property (see also symplectic   
+property), 53   
+canonical structure matrix, 38   
+canonical transformation, 68   
+canonical transformation (see also   
+symplectic transformation), 67   
+Cayley–Klein parameters, 200   
+celestial mechanics, 3, 4, 257   
+central forces, 42, 43, 47, 67, 68   
+chaotic dynamics, ix, 4, 12, 124   
+CHARMM, 291   
+charts of a manifold, 58, 191   
+commutator of vector fields, 135   
+commuting flow maps, 100   
+composition methods, 76, 144, 166   
+for rigid body motion, 217   
+symmetric, 147   
+configuration manifold, 170   
+conjugate momenta, 43   
+conservation of volume, 36   
+of a Hamiltonian flow map, 55   
+symplecticness vs., 55   
+conservative systems, 3   
+conserved quantity, see first integral   
+constant of motion, see first integral   
+constant pressure, 297   
+constrained dynamics, 6, 169   
+constrained formulation of rigid body mo  
+tion, 201   
+constrained Hamiltonian system, 39   
+constrained numerical methods, 173   
+constraint chain, 198   
+constraint force, 7   
+coordinate charts, 58   
+Coulomb systems, 247   
+critical point, 3, 41   
+cross product, xiv   
+D’Alembert’s Principle, 7, 170   
+degree of freedom, 3   
+diagonalizable matrix, 31   
+diffeomorphism, 50   
+differential, 61   
+differential one-form, 61   
+diffusion coefficient, 298   
+Dirac theory of constraints, 186   
+directional derivative, 61   
+discrete variational methods, 168   
+Diva, 142   
+dot product, xiv   
+double well potential, 303
+
+eccentric orbits, 234   
+eigenvalues, 28, 282 of a linear Hamiltonian system, 40 of a numerical method, 30, 258   
+electron motion, 42   
+energy conservation of, 3, 120, 141 of a Hamiltonian system, 37 of a mechanical system, 3 potential, 2   
+energy drift, 24, 268   
+energy functional, 5   
+equilibration, 289   
+equilibrium point, 3, 41, 67   
+ergodicity, 293, 297   
+error global, 17 local, 15 local propagation formula, 18   
+error analysis, 15   
+error bound, 21 for Euler’s method, 17   
+error bounds for one-step methods, 18   
+error estimate, 235, 242   
+Euler, 12   
+Euler angles, 199   
+Euler equations, 200, 213 symplectic discretization of, 217   
+Euler’s method, 14, 15, 27, 28, 32, 35 local error of, 16   
+Euler-A, 26, 33, 35 for a general Hamiltonian system, 74 symplecticness of, 74, 99   
+Euler-B, 26, 32, 33, 35, 70, 72, 100 as a splitting method, 80 for a general canonical Hamiltonian sy tem, 74 symplecticness of, 74
+
+Euler–Lagrange equations, 8   
+exponential growth, 28
+
+fast modes, 32, 257, 261   
+fast multipole method, 290   
+Fermi–Pasta–Ulam problem, 99, 100   
+first integrals, 38, 44, 106 conservation by numerical methods, 87 conservation of by numerical methods, 157 preservation of, 91 usefulness of, 48   
+fixed-point iteration for Runge–Kutta methods, 155   
+Floquet theory, 52   
+flow map, 11, 36, 48, 50, 52 existence of for smooth Hamiltonians, 50 group property of, 34 operation on sets of points, 50   
+fourth-order Runge–Kutta method, 23   
+Gauss–Legendre Runge–Kutta methods, 151   
+generalized baths, 308   
+generalized ensembles, 311   
+generalized Hamiltonian system, 38   
+generalized leapfrog method, 156, 243   
+generating functions, 126, 159, 167 and backward error analysis, 160, 168 and symplectic methods, 167   
+geometric integrators, ix modified equations and, 129 accuracy v. efficiency of, 142 properties of, 105   
+geometric property, 36, 45   
+geophysical fluids, 320, 335 global circulation, 335 particle methods, 332   
+global error, 17   
+gradient, xv   
+gravitational dynamics, 3, 4, 42, 98, 161, 236   
+GROMACS, 291   
+group property of the flow map, 34, 49   
+growth factor, 106
+
+H´enon map, 53 symplecticness of, 53 Hamilton–Jacobi equation, 160, 167
+
+Hamiltonian matrix, 39   
+Hamiltonian PDEs, 316 KdV equation, 325 sine-Gordon equation, 320, 353 noncanonical formulation, 324 Schr¨odinger equation, 353   
+Hamiltonian system, 1, 36–38 with constraints, 184   
+hard sphere model, 288   
+harmonic oscillator, 27, 39, 49, 70 flow map of, 50   
+Hessian matrix, 244   
+high-frequency components, 32, 257, 261   
+higher-order methods, 20, 142, 144 by composition, 144 for constrained dynamics, 190   
+holonomic constraint, 169   
+hyperbolic differential equation, 124   
+identity map, 48   
+impact oscillator, 239, 246   
+implicit Euler method, 14 local error of, 16   
+Implicit midpoint method, 14, 75, 151 local error of, 16 preserves quadratic first integrals, 91 symplecticness of, 76   
+inertia tensor, 211   
+inner product, xiv   
+integrable Hamiltonian system, 47   
+integral invariants, 55   
+integral preservation symplecticness v., 73   
+integrator, ix   
+isothermal potential, 302
+
+J, canonical structure matrix, 38 Jacobian matrix, xiv
+
+Kahan and Li, high-order method of, 148   
+KAM theorem, 2   
+Kepler problem, 42, 47, 67, 99, 234, 247 backward error analysis for, 140 conserved quantities of, 46   
+kinetic energy of rigid body rotation, 202 of rigid body translation, 202   
+Lagrangian function, 168   
+Lagrangian top, 219   
+Langevin dynamics, 299   
+large timestep methods, 257, 276, 271, 280   
+leapfrog method, 26 generalized, 156   
+Legendre transformation, 185   
+Lennard–Jones oscillator, 18, 40, 41, 70 fourth-order Runge–Kutta method applied to, 23, 24 Euler’s method applied to, 19   
+Lennard–Jones potential, 4, 91, 288   
+Lie derivative, 141   
+Lie group, 200   
+Lie–Poisson bracket, 214   
+Lie–Poisson system, 214   
+linear Hamiltonian system, 39, 49, 52 eigenvalues of, 40   
+linear momentum, 37, 48, 88   
+linear system, 30, 33, 49 with constraints, 196   
+linear/nonlinear splitting, 99   
+Liouville’s Theorem, 55   
+Lipschitz condition, 17 for a numerical method, 21   
+Lobatto Runge–Kutta methods, 151   
+Lobatto-IIIA–IIIB methods, 157 for constrained dynamics, 190   
+local charts, 191   
+local error, 15   
+long-range force, 4   
+Lorenz, 105   
+magnetic field angular momentum and, 67 canonical Hamiltonian for, 104 motion in, 42 motion in a, 94 reversing symmetry and, 103 symplectic method for, 95   
+magnetic momentum, 96   
+Maple, xiii   
+mass tensor, 203   
+Mathematica, xiii   
+MATLAB, xiii   
+matrix exponential, 49   
+McLachlan’s symmetric composition methods, 148   
+MD, 287   
+mechanical system, 169   
+Methane model, 313   
+microcanonical ensemble, 296   
+modified equations, 108, 129, 355 for symmetric methods, 139   
+modified Hamiltonians, for higher-order methods, 168   
+molecular dynamics, 4–6, 23, 48, 91, 105, 257, 287 software for, 291   
+molecular dynamics potentials, 292   
+momentum constraint, 186   
+Monte-Carlo, 287   
+Morse oscillator, 9, 35   
+multi–symplectic discretizations Preissman box scheme, 344   
+multi-symplectic discretizations, 341 discrete conservation laws, 342, 345 discrete variational methods, 347 Euler box scheme, 342 numerical dispersion, 349   
+multi-symplectic PDEs, 335 discretization, 341 solitons, 339 conservation laws, 337   
+multiple pendulum, 171   
+multiple timestepping, 257, 261 Equilibrium, 280, 285 impulse method, 263 mollified impulse method (MOLLY), 276, 283 reversible averaging (RA), 271   
+multistep methods, 13, 142   
+N-body problem, 2, 3, 287 angular momentum of, 88 applications of, 3 Hamiltonian for, 44 linear momentum of, 88 momentum conservation for, 67 on the sphere, 178   
+NAMD, 291   
+near-earth objects, 143   
+neighbor list, 289   
+Newton iteration, 244   
+Newton’s equations, 2, 37, 52 discretization of, 15 Hamiltonian form of, 37   
+non-autonomous Hamiltonian system, 39, 102   
+non-separable Hamiltonian systems, 150, 157   
+nonlinear oscillator, 8, 9, 40, 72   
+norm, xiv   
+Nos´e dynamics, 299, 314, 315 generalization of, 308–310 separated form of, 302   
+Nos´e–Hoover method, 303   
+Nos´e–Poincar´e method, 305, 307   
+Notation, xiv   
+NPT ensemble, 297   
+numerical dispersion, 349, 354   
+NVE ensemble, 296   
+NVT ensemble, 297   
+Octave, xiii   
+one-form, 61   
+one-step method, 13, 14   
+order conditions, 145, 146   
+order of a numerical method, 15, 20, 22   
+order parameter, 92   
+ordinary differential equations existence and uniqueness of solutions, 1   
+orthogonal matrix, 200   
+pair correlation function, 298   
+parameterization, 191 of rigid body motion, 200   
+partial differential equations, 5   
+partitioned Runge–Kutta methods, 25, 26, 144, 155 symplecticness condition, 156   
+pendulum, 8, 9, 33, 41, 176 multiple, 171   
+periodic boundary conditions, 48, 288   
+perturbed Hamiltonian, 235   
+phase portrait, 41   
+phase space, 3, 39 of a constrained system, 186   
+Poincar´e transformation, 235, 236, 253, 306   
+Poisson bracket, 45 properties of, 45   
+polar coordinates, 54, 67   
+post-processing methods, 164   
+post-processing schemes, 148   
+potential cut-off, 4   
+potential cutoff, 313   
+potential energy, 2, 5, 37   
+programming, xiii   
+projection methods, 195   
+propagator for Euler’s method, 28 for St¨ormer–Verlet method, 28
+
+quadratic first integrals, 90   
+quantum mechanics, 101   
+quaternion, 200
+
+Radau Runge–Kutta methods, 151   
+radial distribution function, 298   
+rank-one updates, 243   
+RATTLE (see also SHAKE), 169, 173, 175   
+reflection symmetry, 81   
+resonance instability, 281, 282, 350 Krein index, 284, 350 numerical, 257, 258, 265   
+restricted three-body problem, 161   
+reversible method, 238, 271   
+reweighting, 311, 312   
+rigid body dynamics, 6, 199 linear or planar, 206 angular momentum of, 211 definition of, 201 Hamiltonian formulation for, 204 in molecular dynamics, 6   
+RKSUITE, 142   
+Rodrigues’ Formula, 95   
+Runge–Kutta methods, 22, 35, 142, 144, 149, 150, 164 fourth-order, 23 symplecticness condition for, 152 implicitness of, 150 partitioned (see partitioned Runge–Kutta method), 25   
+Runge–Kutta–Nystr¨om method, 25   
+Runge–Lenz vector, 47, 67
+
+satellite orbits, 142   
+scalar product, xiv   
+Schr¨odinger Equation, 101   
+Scovel’s method, 95, 162   
+separable Hamiltonian, 144, 145
+
+shadowing, 124   
+SHAKE discretization, 169, 173, 313 application to a constraint chain, 181 error growth in, 177 implementation of, 178 symplecticness of, 174   
+shallow-water equations, 320 geostrophic balance, 322 Lagrangian particle formulation, 323 particle discretizations, 330   
+short range force, 4   
+singular potential, 50   
+SO(3), 200   
+solar system, 143, 163   
+soliton, 319, 350   
+spatial discretization, 6 grid-based methods, 326 Hamiltonian Particle-Mesh (HPM) method, 332 particle-based methods, 330 particle-mesh methods, 332 Smoothed Particle Hydrodynamics (SPH), 330   
+specific heat, 298   
+sphere shallow-water equations on, 334 $N .$ -body problem on, 178   
+splitting methods, 76, 78, 91, 144, 166, 217, 257, 263, 276 first-order, 77 for a separable Hamiltonian system, 79 for dynamics in a magnetic field, 94 for weakly coupled systems, 97 linear/nonlinear, 99, 100   
+spring-mass system, 30, 33   
+St¨ormer–Verlet method, 26, 35, 70, 71, 91 as a splitting method, 80 relationship to Euler-A and Euler-B, 81 symplecticness of, 80   
+stability, 33, 70 for nonlinear systems, 33 of a numerical method, 27   
+stability region, 33   
+statistical mechanics, 296   
+stepsize bounds, 248   
+Strang splitting, 135   
+Sundman transformation, 235   
+symmetric adaptive composition, 251   
+symmetric composition, 85 table of methods, 148   
+symmetric methods modified equations for, 139 even order of, 86   
+symmetric top, 209   
+symmetry, 241   
+Symplectic Euler, 26, 32, 33, 75, 84   
+symplectic maps closure under composition, 99   
+symplectic matrix, 53   
+symplectic numerical method, 72 for constrained dynamics, 189 for rigid body motion, 207   
+symplectic property, 52, 59, 60, 63 definition of a symplectic map, 53 of a Hamiltonian flow map, 54 same as area conservation for planar maps, 56   
+symplectic structure, 38   
+symplectic transformation, 67, 68   
+symplectic two-form, 57, 61, 63   
+symplectic variable stepsize, 253   
+symplecticness conservation of volume vs., 55 integral preservation vs., 73   
+temperature, 297   
+temperature bath, 299   
+thermalization, 289   
+three-body problem, 4, 161, 166   
+time reparameterization, 238   
+time-dependent Hamiltonian system, 102   
+time-reversal symmetry, 73, 236 and SHAKE/RATTLE discretization, 196 eigenvalues and, 83 flow map and, 83 for a Hamiltonian system, 82 linear systems, 83 vector fields and, 83   
+timestepping schemes, 13   
+torque, 214   
+trajectory, 3, 11 discrete, 12   
+trapezoidal rule, 14, 239 local error of, 16   
+trees, 146   
+Trotter factorization, 134   
+two-form, 56, 60, 63 geometric interpretation of, 57 symplectic, 57, 63   
+variable stepsize, 234, 235   
+variational derivative, 5 as a gradient, 5   
+variational equations, 51, 52, 67   
+velocity autocorrelation function, 298   
+volume preservation, 68   
+Von Neumann, John, $\times$   
+wave equation, 316 conservation laws, 316 Hamiltonian formulation, 317   
+weakly coupled systems, 97   
+weather prediction, 105   
+wedge product, 63, 64 properties, 69   
+Wilkinson, 106   
+Yoshida method of, 148 

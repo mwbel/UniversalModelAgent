@@ -1,0 +1,5 @@
+Chapter 3 begins with a discussion of nine fundamental processor organizations and continues with a description of three parallel computer architectures: the processor array, the multiprocessor, and the multicomputer. Several commercial parallel computers are presented as case studies. Chapter 4 summarizes the features of six parallel imperative programming languages. Both low-level and high-level languages are described. Chapter 5 concludes the introductory portion of the text with some important theoretical results in the areas of mapping and scheduling.
+
+Chapters 6 through 13 cover the design,analysis,and implementation of parallel algorithms on parallel computers. The chapters are organized by problem domain.As much as possible, I have ordered the chapters by increasing level of difficulty. Chapter 6 describes three elementary parallel algorithms:
+
+reduction,broadcast, and prefix sums. Chapter 7discusses parallel implementations of matrix multiplication and Chapter 8 covers the parallelization of the Fast Fourier transform.

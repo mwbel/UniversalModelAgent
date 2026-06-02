@@ -1,0 +1,1 @@
+Chapter 2 recalls the fundamental principles of time measurement for macroscopic phenomena, the only ones to be considered here. In truth,this is essentially a review of H. Poincaré's analysis,whose relevance extends to the relativistic context.

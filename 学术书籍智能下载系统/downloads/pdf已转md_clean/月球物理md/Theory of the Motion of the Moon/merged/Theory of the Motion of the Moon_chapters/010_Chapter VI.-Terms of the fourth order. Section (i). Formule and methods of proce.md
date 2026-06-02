@@ -1,0 +1,1 @@
+Chapter VI.-Terms of the fourth order. Section (i). Formule and methods of procedire. Section (ii). Values of α $; u _ { \lambda } \zeta ^ { - 1 } / { \mathrm { a } } \lambda ; \varLambda , \iota = _ { \lambda } / { \mathrm { a } } \lambda .$

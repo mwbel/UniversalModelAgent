@@ -1,0 +1,15 @@
+Chapter 8 covers methods for nonlinear least squares problems. Several new topics are included, such as inexact Gauss-Newton methods, bilinear least squares,and nonnegative least squares. Also discussed here are algorithms for robust regression, least-angle regression, and LASSO; compressed sensing; and iteratively reweighted least squares (IRLS).
+
+# Acknowledgments
+
+The works of Nick Higham, Lars Eldén, G. W. Stewart, Luc Giraud, and many others have been prominent inspirations for many of the topics new to this edition. Special thanks goes to Michael Saunders, who patiently read several versions of the book and gave valuable advice.Without his encouragement and support, this revision would never have been finished.
+
+Ake Bjorck Linkoping,March 2023
+
+# Preface to the First Edition
+
+A basic problem in science is to fit a model to observations subject to errors. It is clear that the more observations that are available the more accurately will it be possible to calculate the parameters in the model. This gives rise to the problem of “solving”an overdetermined linear or nonlinear system of equations.It can be shown that the solution which minimizes a weighted sum of the squares of the residual is optimal in a certain sense. Gauss claims to have discovered the method of least squares in 1795 when he was 18 years old. Hence this book also marks the bicentennial of the use of the least squares principle.
+
+The development of the basic modern numerical methods for solving linear least squares problems took place in the late sixties. The QR decomposition by Householder transformations was developed by Golub and published in 1965.The implicit QR algorithm for computing the singular value decomposition (SVD) was developed about the same time by Kahan, Golub,and Wilkinson,and the final algorithm was published in 1970. These matrix decompositions have since been developed and generalized to a high level of sophistication. Great progress has been made in the last decade in methods for generalized and modified least squares problems and in direct and iterative methods for large sparse problems.Methods for total least squares problems, which allow errors also in the system matrix,have been systematically developed.
+
+Applications of least squares of crucial importance occur in many areas of applied and en-gineering research such as statistics, geodetics, photogrammetry, signal processing,and control. Because of the great increase in the capacity for automatic data capturing, least squares problems of large size are now routinely solved. Therefore, sparse direct methods as well as iterative methods play an increasingly important role. Applications in signal processing have created a great demand for stable and efficient methods for modifying least squares solutions when data are added or deleted. This has led to renewed interest in rank-revealing QR decompositions, which lend themselves beter to updating than the singular value decomposition. Generalized and weighted least squares problems and problems of Toeplitz and Kronecker structure are becoming increasingly important.

@@ -1,0 +1,10 @@
+# 335 The methods of Verner
+
+The methods of Verner overcome the fault inherent in many of the Fehlberg methods, that the two embedded methods both have the same underlying quadrature formula. The following method from Verner (1978) consists of a fifth order method which uses just the first six stages together with a sixth order method based on all of the eight stages. Denote the two output coefficient vectors by $b ^ { \scriptscriptstyle 1 }$ and $\widehat { b } ^ { \intercal }$ , respectively. As usual we give the difference $\widehat { b ^ { \intercal } } - b ^ { \intercal }$ which is used for error estimation purposes:
+
+<table><tr><td rowspan="9">0 1 18 GR 1</td><td>369</td></tr><tr><td>中</td></tr><tr><td></td><td></td></tr><tr><td></td><td></td></tr><tr><td></td><td>8</td></tr><tr><td></td><td>81</td></tr><tr><td>五</td><td>56 54</td></tr><tr><td></td><td>11</td></tr><tr><td>11 7 5380 219</td><td>12285 2695</td></tr><tr><td>73 656</td><td>584 1752 52</td></tr><tr><td>8716 891 297 9</td><td>39520 416</td></tr><tr><td>8 1 3015</td><td>27 891 11 4219 5985</td></tr><tr><td>256</td><td>539 0 128 384</td></tr><tr><td>3 80</td><td>78 4 243 77 73 700</td></tr><tr><td></td><td>0</td></tr><tr><td></td><td>25 1120</td></tr><tr><td>57 640</td><td>160 16 1377 121</td></tr><tr><td></td><td>0 891</td></tr><tr><td>0 33 0 640</td><td>2240 320 8320</td></tr></table>
+
+As for the Fehlberg methods, we have a choice as to whether we use the fifth or sixth order approximation as output for propagation purposes. Even though the sixth order choice leaves us without an asymptotically correct local error estimator, the use of this more accurate approximation has definite advantages. In Figure 335(i) the stability regions for the two approximations are plotted. It is clear that stability considerations favour the higher order method.
+
+![](../chunks/Numerical Methods for Differential Equations, Butcher_part_0004_pages_0211-0280/auto/images/15da8a01811fb95f49f1d23ac0f93efbbdcc497a4af4adbf5de2e0e5b57e4f14.jpg)  
+Stability regions of embedded Verner method with orders 5 and 6

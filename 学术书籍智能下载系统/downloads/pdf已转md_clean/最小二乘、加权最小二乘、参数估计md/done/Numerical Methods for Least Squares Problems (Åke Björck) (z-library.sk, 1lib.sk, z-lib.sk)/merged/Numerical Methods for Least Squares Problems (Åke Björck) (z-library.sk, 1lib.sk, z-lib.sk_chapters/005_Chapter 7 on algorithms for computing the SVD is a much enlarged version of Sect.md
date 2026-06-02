@@ -1,0 +1,1 @@
+Chapter 7 on algorithms for computing the SVD is a much enlarged version of Section 2.6 of the first edition. Here,new topics are Jacobi-type methods and differential qd and MRRR algorithms. Brief surveys of the matrix square root and sign functions as well as the polar decomposition are also included.

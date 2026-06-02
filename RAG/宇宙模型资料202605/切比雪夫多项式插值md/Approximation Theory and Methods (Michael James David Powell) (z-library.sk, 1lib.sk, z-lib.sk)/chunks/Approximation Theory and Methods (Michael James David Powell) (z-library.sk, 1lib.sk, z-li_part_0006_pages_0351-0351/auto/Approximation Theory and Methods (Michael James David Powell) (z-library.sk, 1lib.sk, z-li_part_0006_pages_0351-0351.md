@@ -1,0 +1,5 @@
+Most functions that occur in mathematics cannot be used directly in computer calculations. Instead they are approximated by manageable functions such as polynomialsand piecewise polynomials.The general theory of the subject and itsapplication to polynomial roimtionare ascal,utpecewiseplls have become far more useful during the last twenty years.Thus many important theoretical properties have been found recently and many new techniques for the automatic calculation of approximationsto prescribedaccuracy havebeen developed.
+
+This book gives a thorough and coherent introduction to the theory that is the basis of current approximation methods.Professor Powell describes and analyses the main techniques of calculation supplying sufficient motivation throughout the book to make it accessible to scientists and engineers who require approximation methods for practical needs.Because the book is based ona course of lectures to third-year undergraduates in mathematics at CambridgeUiversity,suficientattention isgiven totryto makeit highly suitable asa mathematical textbook atundergraduateorpostgraduatelevel.
+
+Also issued in hardcovers Coverdesigned by James Butler

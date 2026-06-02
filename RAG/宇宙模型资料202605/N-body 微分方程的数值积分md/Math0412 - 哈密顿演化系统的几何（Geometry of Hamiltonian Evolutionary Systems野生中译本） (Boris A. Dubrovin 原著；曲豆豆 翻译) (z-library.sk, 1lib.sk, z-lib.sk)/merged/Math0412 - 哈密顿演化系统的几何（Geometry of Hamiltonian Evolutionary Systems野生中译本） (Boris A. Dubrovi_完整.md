@@ -1,0 +1,4712 @@
+<!-- source: Math0412 - 哈密顿演化系统的几何（Geometry of Hamiltonian Evolutionary Systems野生中译本） (Boris A. Dubrovin 原著；曲豆豆 翻译) (z-library.sk, 1lib.sk, z-lib.sk).pdf -->
+
+<!-- pdf_type: normal; pages: 128; chunk_pages: 70 -->
+
+
+<!-- chunk 0001: pages 1-70 -->
+# 哈密顿演化系统的几何
+
+Math4012 第 1.28 稿
+
+曲豆豆 翻译 原著: Boris A. Dubrovin
+
+2020 年 12 月 22 日
+
+![](images/9899135dd942c6cc4c8e60882909103b72bb647a3b8dc96f4c1704a7f931f083.jpg)
+
+![](images/b4b62a5a5edaee9c74f9d0bea51e46749446f6de9b61148932eca4eaf7673001.jpg)  
+图: Boris Dubrovin, 个人主页: https://people.sissa.it/\~dubrovin/
+
+本书为 Boris Dubrovin
+
+Geometry of Hamiltonian Evolutionary Systems的非官方 (野生) 中译本, 以此纪念 Dubrovin!
+
+# 目录
+
+# 引言
+
+#
+
+# 第一章 泊松括号的几何 1
+
+1.1 有限维泊松括号的主要例子 1
+
+补充内容: 哈密顿-李群与量子群 8
+
+1.2 完全可积系统及其摄动. 平均化方法 13
+
+1.3 局部场论泊松括号: 主要例子 16
+
+1.4 微分几何泊松括号. 流体力学型泊松括号与黎曼几何 27
+
+# 第二章 可积系统理论基础 41
+
+# 2.1 流体力学型系统的可积性理论 41
+
+附录 1. 流体力学型系统的黎曼不变量 49  
+附录 2. 正交曲线坐标系与可积系统 51
+
+2.2 演化系统的不变环 55
+
+2.3 交换表示, 守恒律与演化系统的哈密顿理论 64
+
+附录: 引理 2.9 的证明 72
+
+2.4 构造演化系统的不变环并寻找相应作用量-角参数的代数几何方法 (“有
+
+限空缺积分方法”) 73
+
+# 第三章 场论哈密顿系统的慢摄动与平均化方法 87
+
+3.1 演化系统在不变环上的泊松括号的平均化 . . 873.2 应用: KdV 理论中某步骤的分解; 色散版本的冲击波. Gurevich-Pitaevskii问题的解析解 1003.3 有限空缺势的平均化方法与半经典量子化. Painlevé-I 方程的渐近积分 . . 105
+
+# 参考文献
+
+# 引言
+
+这本书基于本人 1990 年在那不勒斯大学 (University of Naples) 理论物理系的讲稿编写而成, 目的是介绍偏微分方程的演化系统的哈密顿理论的基本几何想法, 并介绍该想法的一些应用. 我们暂不考虑量子哈密顿系统中的问题, 只局限于经典的情况 (尤其是 $1 + 1$ 维).
+
+第一章的前两节介绍有限维哈密顿理论, 该理论基于泊松括号的观点. 泊松括号的几何在局部上是平凡的, 毕竟 Darboux 定理断言在适当的局部坐标下泊松括号可以写成标准形式. 但是在整体上, 泊松括号不再平凡; 例如我们讨论了磁场, 二次泊松括号及其与量子群的关系等等非平凡的例子. 有限维可积哈密顿系统的几何非常简单: 在Liouville 定理的情况下, 相空间被 不变环 (invariant tori) 所充满; 在如此的不变环上的一点出的小邻域内, 泊松结构是典范的, 因为可以在该邻域内构造 作用量-角参数(action-angle variable) . 摄动后的可积系统的相曲线的行为可以通过 Poincaré 平均化方法来研究; 这里仅仅介绍该平均方法的启发性的想法 (这对无限维情形也十分有益),而不会去严谨地考虑 KAM 理论.
+
+在无限维哈密顿系统的几何中, 我们也能证明一些将泊松括号化为常值的 Darboux型定理. 但在我们的情形下, 容许的“变量代换”类被局部性原理所限制: 在此变换下局部演化偏微分方程系统应为保守的. 这就引出了关于演化系统的泊松括号的几何的一系列非平凡的问题; 这之中的一些会在第一章讨论.
+
+在演化系统的可积性理论中, 我们在第二章重点关注寻找有限维不变流形的问题.$1 + 1$ 维演化系统的任何一个局部守恒律的驻点集都构成该系统的一个有限维不变流形.若哈密顿演化系统具有充分多的两两交换的守恒律, 则有限维驻点集被不变环所充满.最简单的情形 [一维, 或者二维环面] 可用初等方法求解. 但对于高维的不变环面, 目前只有来自孤子理论 [例如 KdV] 的可积系统可以显式构造. 我们以 Korteweg-de Vires(KdV) 方程为例子, 介绍求解高维不变环面及其相应作用量-角参数的代数几何方法 [“有限空缺积分”] 的一些基本想法. 关于未知函数的导数的一阶线性系统 [所谓的“流体力学型系统”] 的可积性理论的介绍分布于不同章节. 相比一般情形, 此理论更加基本, 并且在此理论中哈密顿理论与古典微分几何格外重要. 第三章揭示了这种流体力学系统在哈密顿演化系统的有限维不变流形的小邻域研究中的普适性.
+
+第三章讨论了哈密顿演化系统的“相曲线”在不变环面的有限维族的小邻域中的行为 [无限维版本的 Poincaré 平均化方法, 也是非线性版本的 WKB 方法] . 可以证明, 该小邻域可以表示为一类 [带内部自由度的] 理想流体系统的相空间, 并且原来的哈密顿系统在此小邻域中的演化可以用流体力学型哈密顿系统来描述 [所谓的“平均化系统”] .并且, 这个平均化过程不仅保持哈密顿性质, 还保持可积性. 此章还讨论了该理论在色散流体力学的应用. 它甚至在有限维动力系统的研究中也有用. 本章最后一节给出了这种应用的一个例子——非摄动弦理论中新近出现的一个系统的渐近积分.
+
+致谢. 感谢那不勒斯大学 (University of Naples) 物理系以及 INFN 的热情好客和对编写本讲义的支持. 这个讲座是在与系里的同事讨论互动中形成的; 感谢他们, 尤其感谢G.Marmo 教授有益探讨与建议. 我也感谢我在莫斯科, 列宁格勒的同事们, 包括 A.R.Its, I.M. Krichever, S.P. Novikov, S.P. Tsarev 的有益探讨. 也感谢 Guido Celentano 为本讲义准备 TEX 文档.
+
+# 第 1 章 泊松括号的几何
+
+# 1.1 有限维泊松括号的主要例子
+
+在本章, 我试图说清楚在几何的观点下哈密顿理论是什么, 以及现代数学物理的一些想法如何在其中自然地出现. 本节介绍有限维的哈密顿理论, 这之中几乎所有的想法与内容都是大家或多或少熟知的.
+
+我想先回顾基于 泊松括号 (Poisson bracket) 的标准的 (有限维) 哈密顿理论(Hamiltonian formalism) . 对于 相空间 (phase space) $P$ 上的两个函数 $f ( x )$ 与 $g ( x )$ ,其泊松括号是一个新的函数 $\{ f , g \}$ . 我们希望该操作是双线性, 反对称的, 并且服从 莱布尼茨法则 (Leibnitz rule) 以及 雅可比恒等式 (Jacobi identity) :
+
+$$
+\{ \lambda f + \mu g , h \} = \lambda \{ f , h \} + \mu \{ g , h \} ,
+$$
+
+$$
+\{ g , f \} = - \{ f , g \} ,
+$$
+
+$$
+\{ f g , h \} = f \{ g , h \} + g \{ f , h \} ,
+$$
+
+$$
+\{ \{ f , g \} , h \} + \{ \{ g , h \} , f \} + \{ \{ h , f \} , g \} = 0 .
+$$
+
+在局部坐标 $( x ^ { 1 } , x ^ { 2 } , . . . , x ^ { N } )$ 下, 定义如下的反对称矩阵
+
+$$
+h ^ { i j } ( x ) = \{ x ^ { i } , x ^ { j } \} , \quad h ^ { j i } = - h ^ { i j } .
+$$
+
+由莱布尼茨法则可知, 在坐标变换 $x ^ { i }  y ^ { i } = y ^ { i } ( x )$ 下该矩阵满足 $( 2 , 0 )$ -张量的变化规律1
+
+$$
+h ^ { k l } ( y ) = { \frac { \partial y ^ { k } } { \partial x ^ { i } } } { \frac { \partial y ^ { l } } { \partial x ^ { j } } } h ^ { i j } ( x )
+$$
+
+反之, 张量 $h ^ { i j } ( x )$ 可通过公式
+
+$$
+\{ f , g \} = h ^ { i j } ( x ) \frac { \partial f } { \partial x ^ { i } } \frac { \partial g } { \partial x ^ { j } }
+$$
+
+来完全决定泊松括号 (双线性与莱布尼茨法则的推论).
+
+而雅可比恒等式给张量 $h ^ { i j } ( x )$ 更多限制:
+
+$$
+\{ \{ x ^ { i } , x ^ { j } \} , x ^ { k } \} + \{ \{ x ^ { j } , x ^ { k } \} , x ^ { i } \} + \{ \{ x ^ { k } , x ^ { i } \} , x ^ { j } \} \equiv { \frac { \partial h ^ { i j } } { \partial x ^ { s } } } h ^ { s k } + { \frac { \partial h ^ { j k } } { \partial x ^ { s } } } h ^ { s i } + { \frac { \partial h ^ { k i } } { \partial x ^ { s } } } h ^ { s j } = 0
+$$
+
+(上式左边在微分几何中称为 Schouten 括号 (Schouten bracket) $[ h , h ] ^ { i j k } )$ . 该式显然是雅可比恒等式的必要条件; 其逆命题的证明也是直接的. 在非退化, 即 $\operatorname* { d e t } ( h ^ { i j } ) \neq 0$ 的情形, 逆矩阵 $( h _ { i j } ) = ( h ^ { i j } ) ^ { - 1 }$ 定义了相空间 $P$ 上的 辛结构 (symplectic structure)$\omega = h _ { i j } \mathrm { d } x ^ { i } \wedge \mathrm { d } x ^ { j }$ , (即 2-形式 $\omega$ 是非退化的闭形式, $\mathrm { d } \omega = 0 \mathrm { . }$ ). 此时相空间 $P$ 为 辛流形(symplectic manifold) . 反之也成立: 对于任何配以辛形式 $\omega = h _ { i j } \mathrm { d } x ^ { i } \wedge \mathrm { d } x ^ { j }$ 的辛流形,逆矩阵 $( h ^ { i j } ) = ( h _ { i j } ) ^ { - 1 }$ 确定了泊松括号 $\{ f , g \} = h ^ { i j } \frac { \partial f } { \partial x ^ { i } } \frac { \partial g } { \partial x ^ { j } }$ 由 Darboux 定理可知, 在适当的局部坐标下 $( h ^ { i j } )$ 为常值矩阵. 而若 $( h ^ { i j } )$ 是退化但常秩的, 则相空间 $P$ 在整体上是由 辛叶 (symplectic leaf) 构成的 叶状结构 (foliation) , 局部坐标下辛叶有如下表示:
+
+$$
+\begin{array} { l } { P = \displaystyle \bigcup _ { a _ { 0 } } P _ { a _ { 0 } } , } \\ { P _ { a _ { 0 } } = \{ a ( x ) = a _ { 0 } \} , } \\ { a = ( a ^ { 1 } , . . . , a ^ { k } ) , \quad \textstyle \sharp \sharp \ d } \\ { \{ a ^ { i } , f \} \equiv 0 \quad \forall f . } \end{array}
+$$
+
+使得泊松括号 $\{ , \}$ 在每一片辛叶 $P _ { a _ { 0 } }$ 当中非退化. (函数 $a ^ { 1 } , . . . , a ^ { n }$ 为泊松括号 $\{ , \}$ 的零化子 (annihilator) 的一组生成元. )
+
+上述内容都是经典的.
+
+泊松括号诱导了相空间上的 哈密顿系统 (Hamiltonian system) . 每一个函数 $H ( x )$ 都可通过下述公式
+
+$$
+\frac { \mathrm { d } x ^ { i } } { \mathrm { d } t } = \{ H ( x ) , x ^ { i } \} , \quad i = 1 , . . . , N
+$$
+
+来定义一个哈密顿系统. 此时函数 $H$ 称为该系统的 哈密顿量 (Hamiltonian) . 向量场
+
+$h ^ { i } ( x ) = \{ H ( x ) , x ^ { i } \}$ 称为哈密顿量 $H$ 的 斜梯度 (skew gradient) 2 在哈密顿理论中, 对称性和守恒律的关系密切. 对任意函数 $F ( x )$ , 成立 $\frac { \mathrm { d } } { \mathrm { d } t } F ( x ) = \{ H ( x ) , F ( x ) \}$ . 该哈密顿系统的 守恒律 (consetvation law) 定义为如下方程
+
+$$
+\{ H , F \} = 0 , \quad F = F ( x ) .
+$$
+
+对于给定的哈密顿系统, 其所有的守恒律构成一个李代数.
+
+若 $F ( x )$ 为该哈密顿系统的一个守恒律, 则以 $F$ 为哈密顿量的另一个哈密顿系统
+
+$$
+\frac { \mathrm { d } x ^ { i } } { \mathrm { d } s } = \{ F ( x ) , x ^ { i } \}
+$$
+
+是之前那个哈密顿系统的一个 对称 (symmetry) , 也就是说它与前者交换:
+
+$$
+{ \frac { \mathrm { d } } { \mathrm { d } s } } { \frac { \mathrm { d } } { \mathrm { d } t } } x ^ { i } = { \frac { \mathrm { d } } { \mathrm { d } t } } { \frac { \mathrm { d } } { \mathrm { d } s } } x ^ { i } .
+$$
+
+若两个函数 $F _ { 1 } , F _ { 2 }$ 的泊松括号 $\{ F _ { 1 } , F _ { 2 } \}$ 为零, 则相应的对称也是交换的.
+
+哈密顿量诱导 泊松对称 (Poisson symmetry) , 即保持泊松括号. 具体地讲, 张量$h ^ { i j } ( x )$ 关于向量场 $f ^ { i } ( x ) = \{ F ( x ) , x ^ { i } \}$ 的李导数为零:
+
+$$
+{ \mathcal { L } } _ { f } h ^ { i j } ( x ) \equiv f ^ { k } { \frac { \partial h ^ { i j } } { \partial x ^ { k } } } - { \frac { \partial f ^ { i } } { \partial x ^ { k } } } h ^ { k j } - h ^ { i k } { \frac { \partial f ^ { j } } { \partial x ^ { k } } } = 0 .
+$$
+
+反之, 对于非退化泊松括号 (即 $\operatorname* { d e t } ( h ^ { i j } ) \neq 0 )$ , 则任何泊松对称在局部上都对应关于某个哈密顿量 $F ( x )$ 的哈密顿系统. 函数 $F ( x )$ 称为该泊松对称的生成元. 若该泊松对称也是以 $H ( x )$ 为哈密顿量的另一个哈密顿系统的对称, 则 $A ( x ) : = \{ H , F \}$ 为泊松括号的零化子. 非退化泊松括号的情况下, $A ( x )$ 恒为常值.
+
+这些性质是对原系统进行哈密顿约化以及在完全可积性理论的要点.
+
+例子 1. 常值泊松括号. 此时 $h ^ { i j }$ 为任意的常值反对称矩阵, 雅可比恒等式显然成立.若 $N = 2 n$ 且 $\operatorname* { d e t } ( h ^ { i j } ) \neq 0$ , 则可取局部坐标 $( x ^ { 1 } , . . . , x ^ { n } ) = ( q ^ { 1 } , . . . , q ^ { n } ; p _ { 1 } , . . . , p _ { n } )$ 使得
+
+$$
+\{ p _ { i } , q ^ { j } \} = \delta _ { i } ^ { j } , \quad \{ q ^ { i } , q ^ { j } \} = \{ p _ { i } , p _ { j } \} = 0 ,
+$$
+
+(典范坐标).
+
+相应的哈密顿系统具有如下的典范形式:
+
+$$
+{ \dot { q } } ^ { i } = { \frac { \partial H } { \partial p _ { i } } } , \quad { \dot { p } } { \boldsymbol { i } } = - { \frac { \partial H } { \partial q ^ { i } } } , \quad { \boldsymbol { i } } = 1 , . . . , n .
+$$
+
+众所周知, 欧拉-拉格朗日方程
+
+$$
+\delta \int L ( q , \dot { q } , \ddot { q } , . . . , q ^ { ( n ) } ) \mathrm { d } t = 0
+$$
+
+可通过 Legendre 变换来写成哈密顿的形式 (对非退化的拉格朗日量 $L$ ). 在最简单的$L = L ( q , \dot { q } )$ 情形, 相应的泊松括号正是某个流形 $Q$ (经典力学的位形空间) 的余切丛$P = T ^ { * } Q$ 上的常值泊松括号. (此情形下, 泊松括号在整体上是常值的). 相空间 $P$ 配以典范泊松括号下的任何哈密顿系统都能写为如下的拉格朗日形式:
+
+$$
+\delta \int ( p _ { i } \dot { q } ^ { i } - H ( p , q ) ) \mathrm { d } t = 0 ,
+$$
+
+其中我们要将 ${ \dot { q } } ^ { i } = { \frac { \partial H } { \partial p _ { i } } } \quad$ 代入 $p _ { i } = p _ { i } ( q , \dot { q } )$ . 这种形式在定性研究哈密顿系统时有时很有用.
+
+例子 2. 磁场. 对于位形空间 $Q$ 上的闭 2-形式 $\Omega = \frac { 1 } { 2 } \Omega _ { i j } ( q ) \mathrm { d } q ^ { i } \wedge \mathrm { d } q ^ { j }$ , $\mathrm { d } \Omega = 0$ , 定义如下的泊松括号 $\{ , \} _ { \Omega }$ :
+
+$$
+{ } \{ p _ { i } , q ^ { j } \} _ { \Omega } = \delta _ { i } ^ { j } , \quad \{ q ^ { i } , q ^ { j } \} _ { \Omega } = 0 , \quad { } \{ p _ { i } , p _ { j } \} _ { \Omega } = \Omega _ { i j } ( q ) .
+$$
+
+局部上, 我们可以引入“矢势”(1-形式) $\textstyle | A = A _ { i } \mathrm { d } q ^ { i }$ 使得 $\Omega = \mathrm { d } A$ . 则 (局部上) 通过以下变换公式
+
+$$
+\tilde { q } ^ { i } = q ^ { i } , \quad \tilde { p } _ { i } = p _ { i } - A _ { i } ( q )
+$$
+
+可构造出典范坐标 $( \tilde { q } ^ { i } , \tilde { p } _ { i } )$ . 在整体上将泊松括号化为常值的障碍, 是微分形式 $\Omega$ 所在的流形 $Q$ 的上同调类. 该运动方程可写成欧拉-拉格朗日形式
+
+$$
+\frac { \delta S [ q ] } { \delta q ( t ) } = 0 , \quad S [ q ] = \int L ( q , \dot { q } ) \mathrm { d } t - \int A _ { i } ( q ) \mathrm { d } q ^ { i } ,
+$$
+
+其中 $L ( q , \dot { q } ) = p _ { i } \dot { q } ^ { i } - H ( p , q )$ , ${ \dot { q } } ^ { i } = { \frac { \partial H } { \partial p _ { i } } } \quad$ 而整体地 (对于非恰当的 $\Omega$ ), 我们得到多值作用泛函 $S$ . 此时我们无法确切定义泛函 $S$ (因为 1-形式 $A _ { i } ( q )$ 无法整体定义), 但其变分$\delta S$ 是良好定义的, 并且是由全体路径 $q ( t )$ 构成的空间上的闭 1-形式. 这是 Dirac 单极点类型的一种情形. 经典力学中的一些系统 (例如轴对称场中的陀螺, 浸入流体之中的刚体... 等等) 在去掉“循环变量”之后也能表示为如此形式. 无限维 (也就是场论) 版本的这种多值泛函由 Novikov 在 80 年代初所引入, 并被 Witten 等人使用. 多值泛函的Morse 理论的基本想法可参见 [10].
+
+# 例子 3. 线性泊松括号.
+
+$$
+h ^ { i j } ( x ) = c _ { k } ^ { i j } x ^ { k } , \quad c _ { k } ^ { i j } \equiv { \stackrel { \mathrm { \tiny ~ * ~ } } { \Pi } } { } ^ { * } { \stackrel { \mathrm { \tiny ~ * ~ } } { \ast } } { \mit \Psi } .
+$$
+
+此时, 相空间 $P$ 上的线性泛函之全体构成李代数:
+
+$$
+a = a _ { i } x ^ { i } , \quad b = b _ { i } x ^ { i } \implies \{ a , b \} = c = c _ { i } x ^ { i } , \quad c _ { k } = a _ { k } b _ { j } c _ { k } ^ { i j } .
+$$
+
+因此对偶空间 $P ^ { * }$ 为李代数, $P ^ { * } = L$ , 并且其结构常数为 $c _ { k } ^ { i j }$ , $P = L ^ { * }$ (相空间是李代数的对偶). 李代数的对偶空间上的如此的泊松括号也称为 李-泊松括号 (Lie-Poissonbracket) , 其通常是退化的. 相应的辛叶为以 $L$ 为李代数的李群 $G$ 的在 $L ^ { * }$ 上的余伴随表示 $\operatorname { a d } ^ { * }$ 的轨道. 在这些轨道上的相应的辛结构正是众所周知的 Kirillov-Konstant 辛结构.
+
+例如, $\mathbb { R } ^ { 3 }$ 的刚体运动群 $E ( 3 )$ 的李代数的李-泊松括号为如下:
+
+$$
+\{ M _ { i } , M _ { j } \} = \varepsilon _ { i j k } M _ { k } , ~ \{ M _ { i } , p _ { j } \} = \varepsilon _ { i j k } p _ { k } , ~ \{ p _ { i } , p _ { j } \} = 0 ,
+$$
+
+$i , j , k = 1 , . . . , 3$ . 其秩为 4, 相应的辛叶由方程
+
+$$
+p ^ { 2 } \equiv \sum _ { i } p _ { i } ^ { 2 } = \frac { \cdot \mathrm { s } \cdot p } { \mathrm { H } ^ { 2 } } \frac { \cdot \mathrm { s } \cdot p } { \bar { \bar { \xi } } \bar { \bar { \xi } } } \chi > 0 , \quad M p \equiv \sum _ { i } M _ { i } p _ { i } = \frac { \cdot \mathrm { s } \cdot p } { \mathrm { H } }
+$$
+
+所给定. 变量代换
+
+$$
+( M _ { i } , p _ { j } ) \mapsto ( \tilde { M } _ { i } = M _ { i } - \lambda p _ { i } , \tilde { p } _ { j } = p _ { j } ) , \lambda = \frac { M p } { p ^ { 2 } }
+$$
+
+给出了此辛叶与二维球面的余切丛
+
+$$
+\sum _ { i } \tilde { p } _ { i } ^ { 2 } = \stackrel {  } { \ P } \stackrel {  } { \ast } \acute { \chi } , \quad \sum _ { i } \tilde { M } _ { i } \tilde { p } _ { i } = 0
+$$
+
+的同构.
+
+习题: 证明该辛叶上的泊松括号与例子 2 中的磁场是等价的. 并且当 $M P \ne 0$ 时,相应的磁场的上同调类非零.
+
+对任意哈密顿量 $H = H ( M , p )$ , 运动方程可写为如下形式:
+
+$$
+\left\{ \begin{array} { l l } { \dot { \pmb { p } } = [ \pmb { p } , \omega ] , } & { \left( \omega = \frac { \partial H } { \partial M } \right) } \\ { \dot { \pmb { M } } = [ \pmb { M } , \omega ] + [ \pmb { p } , \pmb { u } ] , } & { \left( \pmb { u } = \frac { \partial H } { \partial \pmb { p } } \right) . } \end{array} \right.
+$$
+
+而对二次哈密顿量 $H ( M , p )$ , 此方程恰为刚体在理想流体中运动的 Kirchhoff 方程.
+
+至于线性非齐次情形
+
+$$
+\begin{array} { r }  h ^ { i j } ( x ) = c _ { k } ^ { i j } x ^ { k } + c _ { 0 } ^ { i j } , \quad c _ { k } ^ { i j } , c _ { 0 } ^ { i j } = \overset { \underset { \mathrm { r e f } } { \mathrm { a r } } } { \underset { \mathrm { r e f } } { \mathrm { a r } } } \overset { \ast \} { \underset { \mathrm { b l } } { \mathrm { b r } } } , } \end{array}
+$$
+
+矩阵元 $c _ { 0 } ^ { i j } = - c _ { 0 } ^ { j i }$ 构成以 $c _ { k } ^ { i j }$ 为结构常数的李代数 $L$ 上的二维上链 (cocycle). 也就是说,
+
+$$
+c _ { s } ^ { i j } c _ { 0 } ^ { s k } + c _ { s } ^ { j k } c _ { 0 } ^ { s i } + c _ { s } ^ { k i } c _ { 0 } ^ { s j } = 0 .
+$$
+
+此时, 所有的形如 $a ( x ) = a _ { i } x ^ { i } + a _ { 0 }$ 的函数在此泊松括号下通过上链 $c _ { 0 } ^ { i j }$ 构成李代数 $L$ 的一个中心扩张:
+
+$$
+a ( x ) = a _ { i } x ^ { i } + a _ { 0 } , \quad b ( x ) = b _ { i } x ^ { i } + b _ { 0 } , \quad \{ a , b \} = c ( x ) = c _ { i } x ^ { i } + c _ { 0 } ,
+$$
+
+$$
+c _ { k } = c _ { k } ^ { i j } a _ { i } b _ { j } , \quad c _ { 0 } = c _ { 0 } ^ { i j } a _ { i } b _ { j } .
+$$
+
+上链 $c _ { 0 } ^ { i j }$ 上同调于零当且仅当存在向量 $( x _ { 0 } ^ { 1 } , . . . , x _ { 0 } ^ { N } )$ 使得
+
+$$
+c _ { 0 } ^ { i j } = c _ { k } ^ { i j } x _ { 0 } ^ { k } .
+$$
+
+此时通过变量代换 $x ^ { i } \mapsto x ^ { i } + x _ { 0 } ^ { i }$ 可将泊松括号化为齐次的.
+
+例子 4. 线性化 Yang-Baxter 方程与二次泊松括号. (Sklyanin-Drinfel’d, 见 [3,24]).设 $r = ( r _ { k l } ^ { i j } )$ 为所谓的经典 $r .$ -矩阵, 即满足如下的线性化 Yang-Baxter 方程:
+
+$$
+[ r _ { 1 2 } , r _ { 1 3 } ] + [ r _ { 1 2 } , r _ { 2 3 } ] + [ r _ { 1 3 } , r _ { 2 3 } ] = 0
+$$
+
+以及“酉条件”
+
+$$
+r _ { l k } ^ { j i } = - r _ { k l } ^ { i j } .
+$$
+
+这里
+
+$$
+\begin{array} { r } { ( r _ { 1 2 } ) _ { j _ { 1 } j _ { 2 } j _ { 3 } } ^ { i _ { 1 } i _ { 2 } i _ { 3 } } = r _ { j _ { 1 } j _ { 2 } } ^ { i _ { 1 } i _ { 2 } } \delta _ { j _ { 3 } } ^ { i _ { 3 } } , } \\ { ( r _ { 1 3 } ) _ { j _ { 1 } j _ { 2 } j _ { 3 } } ^ { i _ { 1 } i _ { 2 } i _ { 3 } } = r _ { j _ { 1 } j _ { 3 } } ^ { i _ { 1 } i _ { 3 } } \delta _ { j _ { 2 } } ^ { i _ { 2 } } , } \\ { ( r _ { 2 3 } ) _ { j _ { 1 } j _ { 2 } j _ { 3 } } ^ { i _ { 1 } i _ { 2 } i _ { 3 } } = r _ { j _ { 2 } j _ { 3 } } ^ { i _ { 2 } i _ { 3 } } \delta _ { j _ { 1 } } ^ { i _ { 1 } } . } \end{array}
+$$
+
+如此的 $r .$ -矩阵定义了矩阵 $( t _ { j } ^ { i } )$ 空间上的一个二次泊松括号:
+
+$$
+\{ t _ { k } ^ { i } , t _ { l } ^ { j } \} = r _ { a b } ^ { i j } t _ { k } ^ { a } t _ { l } ^ { b } - t _ { a } ^ { i } t _ { b } ^ { j } r _ { k l } ^ { a b } ,
+$$
+
+或者写成紧凑形式,
+
+$$
+\{ T \stackrel { \otimes } { , } T \} = [ r , T \otimes T ] , \quad T = ( t _ { j } ^ { i } ) .
+$$
+
+此泊松括号是量子群中如下交换关系的半经典极限:
+
+$$
+R T _ { 1 } T _ { 2 } = T _ { 2 } T _ { 1 } R , \quad T = ( t _ { j } ^ { i } ) , \quad T _ { 1 } = T \otimes 1 , \quad T _ { 2 } = 1 \otimes T .
+$$
+
+这里的变量 $t _ { j } ^ { i }$ 可被看作量子群中非交换的坐标.
+
+矩阵 $R = ( R _ { k l } ^ { i j } ) _ { \sf K }$ 指标 $k , l$ 固定 满足经典 Yang-Baxter 方程
+
+$$
+R ^ { 1 2 } R ^ { 1 3 } R ^ { 2 3 } = R ^ { 2 3 } R ^ { 1 3 } R ^ { 1 2 } .
+$$
+
+取半经典极限, 有
+
+$$
+R _ { k l } ^ { i j } = \delta _ { k l } ^ { i j } + \hbar r _ { k l } ^ { i j } , \hbar  0 , \quad [ t _ { k } ^ { i } , t _ { l } ^ { j } ] = - \hbar \{ t _ { k } ^ { i } , t _ { l } ^ { j } \} + o ( \hbar ) .
+$$
+
+以下公式也给出了二次泊松括号的其它例子:
+
+$$
+\{ T \stackrel { \otimes } { , } T \} _ { \cal R } = r \cdot T \otimes T , \quad \{ T \stackrel { \otimes } { , } T \} _ { \cal L } = T \otimes T \cdot r .
+$$
+
+上述任何一个泊松括号反对称性与雅可比恒等式都等价于 Yang-Baxter 方程与酉条件.这些泊松括号是相容的, 这是指它们的任何线性组合依然是泊松括号. $\{ , \} _ { R }$ 与 $\{ , \} _ { L }$ 分别为线性群上的右, 左不变泊松括号.
+
+若 $r = { \mathfrak { g } } \otimes { \mathfrak { g } }$ (其中 $\mathfrak { g }$ 为矩阵李代数) 3, 则二次泊松括号 $\{ , \} , \{ , \} _ { R }$ 与 $\{ , \} _ { L }$ 可定义在相空间 $P = G$ 上, 其中 $G$ 为相应的李群. $G$ 配以泊松括号 $\{ , \}$ 构成了一个 哈密顿-李群 (Hamiltonian-Lie group) , 即群乘法 $G \times G \to G$ 为泊松流形之间的映射, 其中$G \times G$ 配以泊松括号的“直积”.
+
+# 补充内容: 哈密顿-李群与量子群
+
+根据 Drinfel’d[4] 的观点, 哈密顿-李群是量子群的半经典极限.
+
+有两种方式来理解此观点. (在某种意义下其中一种是另一种的对偶). 第一种观点代表了量子化的思想. 我们考虑哈密顿-李群 $G$ 上的函数构成的线性空间 $\mathcal { A } _ { 0 }$ . (这里的“函数”为某些恰当的类型, 例如对于矩阵群 $G$ , 我们应考虑关于其矩阵元的多项式函数). 则该空间具有如下的结构:
+
+1. 关于通常的函数乘法构成交换代数: $f _ { 1 } ( x ) \cdot f _ { 2 } ( x ) , ( x \in G )$ ;
+
+2. $G$ 上的乘法定义了对角映射
+
+$$
+\triangle : { \cal A } _ { 0 }  { \cal A } _ { 0 } \otimes { \cal A } _ { 0 } , \quad ( \triangle f ) ( x , y ) = f ( x \cdot y ) .
+$$
+
+在上述两种运算下, $\mathcal { A } _ { 0 }$ 构成交换结合 Hopf 代数, 也就是说满足如下: (i) 对角映射为代数同态, (ii) 对角映射是 余结合 (co-associative) 的 (此性质与群 $G$ 乘法
+
+$$
+c _ { \mu \nu } ^ { \alpha } r ^ { \mu \beta } r ^ { \nu \gamma } + r ^ { \alpha \mu } c _ { \mu \nu } ^ { \beta } r ^ { \nu \gamma } + r ^ { \alpha \mu } r ^ { \beta \nu } c _ { \mu \nu } ^ { \gamma } = 0
+$$
+
+的结合性可得), (iii) $\mathcal { A } _ { 0 }$ 具有单位元 $C  A _ { 0 } ( C$ 指常函数), 以及 (iv) 余单位元${ \mathcal { A } } _ { 0 } \mapsto C$ , $f \mapsto f ( e )$ , 其中 $e \in G$ 为群 $G$ 的乘法单位元. 这些映射所满足的公理是我们熟知的. (此外, $\mathcal { A } _ { 0 }$ 还满足: (v) $\mathcal { A } _ { 0 }$ 具有对极同态 $f ( x ) \mapsto f ( x ^ { - 1 } )$ , 但我们在此不去探讨它).
+
+3. 泊松括号 $\{ , \}$ 给出了 $\mathcal { A } _ { 0 }$ 的另一个反对称双线性算子 $\mathcal { A } _ { 0 } \otimes \mathcal { A } _ { 0 }  \mathcal { A } _ { 0 }$ , $f _ { 1 } , f _ { 2 } \mapsto$ $\{ f _ { 1 } , f _ { 2 } \}$ .
+
+上述这些结构在后文将介绍的某种意义下是相容的. 这由泊松括号, 李群, 哈密顿-李群的定义可知. 为将上述内容量子化, 我们要构造一个 (与小参数 $\hbar$ 有关的) 非交换的代数 $\mathcal { A }$ , 使得对任意 $f _ { 1 } , f _ { 2 }$ 都成立
+
+$$
+f _ { 1 } f _ { 2 } - f _ { 2 } f _ { 1 } = \hbar \{ f _ { 1 } , f _ { 2 } \} + o ( \hbar ) .
+$$
+
+自然地, 我们也假设对角映射 $\triangle$ 也定义在“量子化”代数 $\mathcal { A }$ 上. 更确切地讲, 下述断言成立: [4]
+
+引理. 设 $\mathcal { A }$ 为与小参数 $\hbar$ 有关的 Hopf 代数, 并且 $\mathcal { A } / \hbar \mathcal { A }$ 同构于由某个李群 $G$ 上的函数构成的 Hopf 代数 $\mathcal { A } _ { 0 }$ . 则算子
+
+$$
+\{ f _ { 1 } , f _ { 2 } \} = \frac { f _ { 1 } f _ { 2 } - f _ { 2 } f _ { 1 } } { \hbar } \mod \hbar \cal { A }
+$$
+
+定义了 $G$ 的哈密顿-李群结构.
+
+该 Hopf 代数 $\mathcal { A }$ 可视为“量子化的李群 $G ^ { \dprime }$ 上的函数代数 (但某些点集构成的群不能被如此“量子化”) 或者“ $G$ 上的函数代数的 $\hbar .$ -形变”. 例如在之前的例子中, 含幺结合代数 $\mathcal { A }$ 具有生成元 $t _ { j } ^ { i }$ , 满足二次关系
+
+$$
+R T _ { 1 } T _ { 2 } = T _ { 2 } T _ { 1 } R
+$$
+
+对角映射
+
+$$
+\triangle ( t _ { j } ^ { i } ) = t _ { k } ^ { i } \otimes t _ { j } ^ { k }
+$$
+
+以及余单位元 $\varepsilon ( t _ { j } ^ { i } ) = \delta _ { j } ^ { i }$ . 上述性质的验证都是直接的.
+
+于是, 量子群 (quantum group) 的定义非常简单: 它是非交换的 Hopf 代数 $\mathcal { A }$ (它也是非余交换的, 即对偶代数 $\mathcal { A } ^ { \prime }$ 也非交换), 但它是某个交换 Hopf 代数的形变.
+
+当然, 若按上述解释, 我们难以看出 Yang-Baxter 方程在一般的“量子群的理论”中起到的作用. 我打算稍后再探讨此问题.
+
+另一种观点 (前一种的对偶) 是考虑“泛包络代数 $\mathcal { U } { \mathfrak { g } }$ 的量子化”. 我们回顾, 李代数 $\mathfrak { g }$ 的泛包络代数 $\mathcal { U } { \mathfrak { g } }$ 是由 $\mathfrak { g }$ 中的元素构成的非交换的多项式所构成. 它在对角映射
+
+$$
+\triangle _ { 0 } a = a \otimes 1 + 1 \otimes a
+$$
+
+(此对角映射是余交换的) 的意义下构成 Hopf 代数. $\mathcal { U } { \mathfrak { g } }$ 的量子化是指 (与小参数 $\hbar$ 有关) 的 Hopf 代数 $\mathcal { A }$ , 并且满足
+
+$$
+\mathcal { A } / \hbar \mathcal { A } \cong \mathcal { U } \mathfrak { g }
+$$
+
+(Hopf 代数的同构). 这里的 Hopf 代数 $\mathcal { A }$ 通常记作 $\mathcal { U } _ { \hbar } \mathfrak { g }$ (或者 $\mathcal { U } _ { q } { \mathfrak { g } }$ , $q = \exp \hbar$ ), 称为泛包络代数 $\mathcal { U } { \mathfrak { g } }$ 的 $\hbar \cdot$ -形变 (或者 $q \mathrm { . }$ -形变). 他也可以被认为是“量子群 (或者其李代数) 的泛包络代数”.
+
+上述的量子化方法与哈密顿-李群之间的关系并不是太明显. 为说明它, 我需要说明(李群) $G$ 的哈密顿-李群的结构 (假定 $G$ 是连通且单连通的) 由其李代数 $\mathfrak { g }$ 的对偶空间${ \mathfrak { g } } ^ { * }$ 上的给定的李代数结构所唯一决定. 其中 $\mathfrak { g }$ 与 ${ \mathfrak { g } } ^ { * }$ 的李代数结构在某种意义下要相容.设 $I _ { * } ^ { \alpha }$ 为 ${ \mathfrak { g } } ^ { * }$ 的一组基, $I _ { \alpha }$ 为 $\mathfrak { g }$ 的相应的对偶基. 记 $f _ { \gamma } ^ { \alpha \beta }$ 为 ${ \mathfrak { g } } ^ { * }$ 的结构常数:
+
+$$
+[ I _ { * } ^ { \alpha } , I _ { * } ^ { \beta } ] = f _ { \gamma } ^ { \alpha \beta } I _ { * } ^ { \gamma } .
+$$
+
+则系数 $f _ { \gamma } ^ { \alpha \beta }$ 定义了 $H ^ { 1 } ( { \mathfrak { g } } , { \mathfrak { g } } \otimes { \mathfrak { g } } )$ 中的一个 1-上链 (cocycle), (也就是线性映射 ${ \mathfrak { g } } \to$ ${ \mathfrak { g } } \otimes { \mathfrak { g } }$ , $I _ { \gamma } \mapsto f _ { \gamma } ^ { \alpha \beta } I _ { \alpha } \otimes I _ { \beta } )$ , 并且需要满足下述关系
+
+$$
+c _ { \rho \lambda } ^ { \varepsilon } f _ { \varepsilon } ^ { \mu \nu } = c _ { \varepsilon \lambda } ^ { \mu } f _ { \rho } ^ { \varepsilon \nu } + c _ { \varepsilon \lambda } ^ { \nu } f _ { \rho } ^ { \mu \varepsilon } - c _ { \varepsilon \rho } ^ { \mu } f _ { \lambda } ^ { \varepsilon \nu } - c _ { \varepsilon \rho } ^ { \nu } f _ { \lambda } ^ { \mu \varepsilon } .
+$$
+
+(Drinfel’d 将这样的 $\mathfrak { g }$ 称为 李双代数 (Lie bi-algebra) .)
+
+对于哈密顿-李群, 系数 $f _ { \gamma } ^ { \alpha \beta }$ 的具体构造如下. 设 $\partial _ { \alpha }$ 为 $G$ 的左不变向量场构成的一组基, 设在该基下泊松括号 $\{ , \}$ 的系数矩阵为 $\eta ^ { \alpha \beta } = \eta ^ { \alpha \beta } ( x )$ , 即
+
+$$
+\{ f , g \} = \eta ^ { \alpha \beta } ( x ) \partial _ { \alpha } f ( x ) \partial _ { \beta } g ( x ) .
+$$
+
+则我们定义
+
+$$
+f _ { \gamma } ^ { \alpha \beta } = \partial _ { \gamma } \eta ^ { \alpha \beta } ( x ) | _ { x = e } .
+$$
+
+反过来, 也可从结构常数 $f _ { \gamma } ^ { \alpha \beta }$ 来将泊松括号 $\{ , \}$ 恢复出来, 这只需要求解以解线性微分方程的初值问题
+
+$$
+\left\{ \begin{array} { l l } { { \partial _ { \lambda } \eta ^ { \mu \nu } = c _ { \varepsilon \lambda } ^ { \mu } \eta ^ { \varepsilon \nu } + c _ { \varepsilon \lambda } ^ { \nu } \eta ^ { \mu \varepsilon } + f _ { \lambda } ^ { \mu \nu } } } \\ { { \eta ^ { \alpha \beta } ( x ) | _ { x = e } = 0 . } } \end{array} \right.
+$$
+
+上述超定的微分方程组的相容性条件由 $f _ { \gamma } ^ { \alpha \beta }$ 所满足的前面给出的那个方程所保证.
+
+在我们的二次泊松括号的例子中, $f _ { \gamma } ^ { \alpha \beta }$ 为 上边缘 (coboundary) :
+
+$$
+f _ { \gamma } ^ { \alpha \beta } = c _ { \varepsilon \gamma } ^ { \alpha } r ^ { \varepsilon \beta } + c _ { \varepsilon \gamma } ^ { \beta } r ^ { \alpha \varepsilon } , \quad r ^ { \alpha \beta } = - r ^ { \beta \alpha } .
+$$
+
+此结构常数 $f _ { \gamma } ^ { \alpha \beta }$ 的雅可比恒等式由 $r ^ { \alpha \beta }$ 所满足的线性 Yang-Baxter 方程所保证. $G$ 上的泊松括号具有如下的显式表达式:
+
+$$
+\{ f , g \} = r ^ { \alpha \beta } ( \partial _ { \alpha } f \partial _ { \beta } g - \partial _ { \alpha } ^ { \prime } f \partial _ { \beta } ^ { \prime } g )
+$$
+
+其中 $\partial _ { \alpha } ^ { \prime }$ 为 $G$ 的关于 $\mathfrak { g }$ 的基向量 $I _ { \alpha }$ 的右不变向量场.
+
+现在回到泛包络代数的量子化. 以下引理成立 [4]:
+
+引理. 设 $\mathcal { A }$ 为与小参数 $\hbar$ 有关的 Hopf 代数, 并且 $\mathcal { A } / \hbar \mathcal { A }$ 同构于 Hopf 代数 $\mathcal { U } { \mathfrak { g } }$ .则映射 $f ( a ) = { \frac { \triangle ( a ) - \triangle ^ { \prime } ( a ) } { \hbar } }$ mod $\hbar$ , $a \in { \mathfrak { g } } \in \mathcal { U } { \mathfrak { g } }$ 定义了 $\mathfrak { g }$ 的李双代数结构. (这里的 $\triangle ^ { \prime }$ 与 $\triangle$ 相差一个对换: 若 $\triangle ( a ) = \sum a _ { i } \otimes b _ { i }$ , 则 $\triangle ^ { \prime } ( a ) = \sum b _ { i } \otimes a _ { i } )$ .
+
+上述表述将 Hopf 代数 $\mathcal { U } _ { \hbar } \mathfrak { g }$ 看作量子化的泛包络代数, 其半经典极限与给定的哈密顿-李群是一致的.
+
+其最简单 (也可能是最重要) 的例子 (Jimbo, Drinfel’d) 是 ${ \mathfrak { g } } = { \mathfrak { s l } } ( 2 )$ 的泛包络代数的量子形变. 代数 $\mathcal { U } _ { \hbar } \mathfrak { s l } ( 2 )$ 由 $H , X ^ { + } , X ^ { - }$ 所生成, 其生成关系为
+
+$$
+[ H , X ^ { + } ] = \pm 2 X ^ { \pm } , \quad [ X ^ { + } , X ^ { - } ] = 2 \hbar ^ { - 1 } \sinh ( \hbar H / 2 ) .
+$$
+
+对角映射 $\triangle$ 定义为
+
+$$
+\triangle ( H ) = H \otimes 1 + 1 \otimes H , \quad \triangle ( X ^ { \pm } ) = X ^ { \pm } \otimes \exp ( \hbar H / 4 ) + \exp ( - \hbar H / 4 ) \otimes X ^ { \pm } .
+$$
+
+现在我们来谈谈与量子 Yang-Baxter 方程的关系. 有一类称为 拟三角 Hopf 代数(quasi-triangular Hopf algebra) 的特殊的 Hopf 代数 (此概念也是由 Drinfel’d 引入的).其主要想法来自于 Hopf 代数的表示论.
+
+设 $V , W$ 为结合代数 $\mathcal { A }$ 的两个表示, 则有 $A \otimes A$ 自然地作用于 $V \otimes W$ . 而若 $\mathcal { A }$ 为 Hopf 代数, 则我们可通过对角映射 $\triangle : { \mathcal { A } }  { \mathcal { A } } \otimes { \mathcal { A } }$ 来定义 $\mathcal { A }$ 在 $V \otimes W$ 上的作用. 如此定义的表示的张量积显然是结合的, 但当 $\triangle ^ { \prime } \ne \triangle$ 时此张量积非交换 (回顾: 若$\triangle ( a ) = \sum a _ { i } \otimes b _ { i }$ , 则 $\triangle ^ { \prime } ( a ) = \sum b _ { i } \otimes a _ { i } )$ . Hopf 代数 $\mathcal { A }$ 称为拟三角的, 若存在可逆元$R \in { \cal { A } } \otimes { \cal { A } }$ 使得
+
+$$
+\triangle ^ { \prime } ( a ) = R \triangle ( a ) R ^ { - 1 } , \quad \forall a \in \mathcal { A } .
+$$
+
+此时表示 $V \otimes W$ 与 $W \otimes V$ 在下述“交换同构”映射下是同构的:
+
+$$
+C : V \otimes W \to W \otimes V , \quad C = C _ { 0 } R _ { V , W } ,
+$$
+
+其中 $C _ { 0 }$ 为线性空间之间的显然的同构 $V \otimes W \ { \stackrel { \approx } { \to } } \ W \otimes V$ , $R _ { V , W }$ 为关于 $R$ 的算子$V \otimes W \to V \otimes W$ . 交换性与结合性的同构的一些相容性条件应当满足 (细节详见Drinfel’d 的 Berkeley ICM-86 talk). 它们可以写成如下形式:
+
+$$
+( \triangle \otimes \mathrm { i d } ) ( R ) = R ^ { 1 3 } R ^ { 2 3 } , \quad ( \mathrm { i d } \otimes \triangle ) ( R ) = R ^ { 1 3 } R ^ { 1 2 } .
+$$
+
+这里的 $R ^ { 1 2 } , R ^ { 1 3 } , R ^ { 2 3 }$ 为 $\mathcal { A } \otimes \mathcal { A } \otimes \mathcal { A }$ 中的元素, 且
+
+$$
+R ^ { 1 2 } = \sum r _ { i } ^ { \prime } \otimes r _ { i } ^ { \prime \prime } \otimes 1 , \quad R ^ { 1 3 } = \sum r _ { i } ^ { \prime } \otimes 1 \otimes r _ { i } ^ { \prime \prime } , \quad R ^ { 2 3 } = \sum 1 \otimes r _ { i } ^ { \prime } \otimes r _ { i } ^ { \prime \prime } ,
+$$
+
+其中 $R = \sum r _ { i } ^ { \prime } \otimes r _ { i } ^ { \prime \prime }$ . 从这三个等式立刻得到 ( $\mathcal { A } \otimes \mathcal { A } \otimes \mathcal { A }$ 中的) Yang-Baxter 方程为
+
+$$
+R ^ { 1 2 } R ^ { 1 3 } R ^ { 2 3 } = R ^ { 2 3 } R ^ { 1 3 } R ^ { 1 2 } .
+$$
+
+正因为此, $R$ 常被称为“万有 $R$ -矩阵”. 对于 $\mathcal { A }$ 的任何表示, 都能得到矩阵元为数字的$R \mathrm { . }$ -矩阵.
+
+在量子化李代数 ${ \mathfrak { s l } } ( 2 )$ 的例子中, $( \mathcal { U } _ { \hbar } \mathfrak { s l } ( 2 ) \otimes \mathcal { U } _ { \hbar } \mathfrak { s l } ( 2 )$ 中的) 万有 $R \mathrm { . }$ -矩阵为如下:
+
+$$
+R = \sum _ { k = 0 } ^ { \infty } p _ { k } ( \hbar ) \left\{ \exp { \frac { \hbar } { 4 } } [ H \otimes H + k ( H \otimes 1 - 1 \otimes H ) ] \right\} ( X ^ { + } ) ^ { k } \otimes ( X ^ { - } ) ^ { k } ,
+$$
+
+其中
+
+$$
+p _ { k } ( \hbar ) = \hbar ^ { k } e ^ { - \frac { k \hbar } { 2 } } \prod _ { r = 1 } ^ { k } \frac { e ^ { \hbar } - 1 } { e ^ { r \hbar } - 1 } .
+$$
+
+# 1.2 完全可积系统及其摄动. 平均化方法
+
+来说一下 完全可积性 (complete integrability) . 此概念是 Liouville 基于对可分离的系统的分析而提出的. 完全可积系统首先是哈密顿系统, 配以 $2 n$ 维相空间中的哈密顿量 $H$ , 非退化的泊松括号, 以及 $n$ 个两两独立且交换的守恒律 $I _ { 1 } , . . . , I _ { n }$ ,
+
+$$
+\left\{ I _ { i } , I _ { j } \right\} = 0 .
+$$
+
+由于 $I _ { 1 } , . . . , I _ { n }$ 的独立性, 其 等值面 (level surface) 的切空间由 $I _ { 1 } , . . . , I _ { n }$ 的斜梯度所张成. 且这些斜梯度两两交换. 于是群 $\mathbb { R } ^ { n }$ 在等值面的任何一个连通分支上的作用都可迁. 于是这些等值面的任何紧致光滑连通分支
+
+$$
+I _ { 1 } = c _ { 1 } , . . . , I _ { n } = c _ { n }
+$$
+
+是 $n$ 维环面 $T ^ { n } = { \cal T } ^ { n } ( c _ { 1 } , . . . , c _ { n } )$ . 在环面 $T ^ { n } = { \cal T } ^ { n } ( c _ { 1 } , . . . , c _ { n } )$ 附近存在典范坐标$J _ { 1 } , . . . , J _ { n } , \varphi _ { 1 } , . . . , \varphi _ { n }$ 使得 $\{ J _ { i } , \varphi _ { j } \} = \delta _ { i j }$ 并且其余泊松括号为零. 这是所谓的“作用量-角参数”— $\varphi _ { 1 } , . . . , \varphi _ { n }$ 是该 $T ^ { n }$ 附近的任何一个环面 $T ^ { n } ( c _ { 1 } , . . . , c _ { n } )$ 上的坐标, 而$J _ { 1 } , . . . , J _ { n }$ (在这些环面上) 为 (与 $c _ { 1 } , . . . , c _ { n }$ 有关的) 常数. 该完全可积系统的哈密顿量$H$ 形如 $H = H ( J _ { 1 } , . . . , J _ { n } )$ , 从而该系统的演化方程形如
+
+$$
+\left. \begin{array} { l } { \dot { J } _ { i } = 0 } \\ { \dot { \varphi } _ { i } = \omega _ { i } ( J _ { 1 } , . . . , J _ { n } ) } \end{array} \right\} i = { 1 , . . . , n } ,
+$$
+
+其中 ωi = $\omega _ { i } = \frac { \partial H } { \partial J _ { i } }$ 该系统在 Liouville 环面上的运动是周期的或者近似周期的, 角参数为时
+
+间 $t$ 的线性函数, 即 $\omega = ( \omega _ { 1 } , . . . , \omega _ { n } )$ 为相应的频率向量. 哈密顿系统 $\frac { \mathrm { d } x ^ { a } } { \mathrm { d } t } = \{ H ( x ) , x ^ { a } \}$ 相应的解为关于时间 $t$ 的周期函数或近似周期函数, 且形如
+
+$$
+x ^ { a } ( t ) = X ^ { a } ( \omega t + \varphi ^ { 0 } ; c ) , \quad a = 1 , . . . , 2 n .
+$$
+
+这里的函数 $X ^ { a } = X ^ { a } ( \varphi ; c )$ 关于每个 $\varphi _ { i }$ 都是 $2 \pi \cdot$ -周期的; $\varphi = ( \varphi _ { 1 } , . . . , \varphi _ { n } )$ , 与参数$\pmb { c } = ( c _ { 1 } , . . . , c _ { n } )$ 有关; 相位 $\varphi ^ { 0 } = ( \varphi _ { 1 } ^ { 0 } , . . . , \varphi _ { n } ^ { 0 } )$ 为任意向量.
+
+作用量 $J _ { i }$ 可如下构造. 对于标准的相空间 $\mathbb { R } ^ { 2 n }$ , 典范坐标 $( p _ { 1 } , . . . , p _ { n } , q ^ { 1 } , . . . , q ^ { n } )$ , 作用量形如
+
+$$
+J _ { i } = { \frac { 1 } { 2 \pi } } \oint _ { \gamma _ { i } } p _ { k } \mathrm { d } q ^ { k } , \quad i = 1 , . . . , n .
+$$
+
+这里的 $\gamma _ { i }$ 为环面 $T ^ { n }$ 的第 $i$ 个基本闭路:
+
+在具有辛形式 $\Omega = { \frac { 1 } { 2 } } h _ { i j } \operatorname { d } x ^ { i } \wedge \operatorname { d } x ^ { j }$ 的任意辛相空间中, $\Omega$ 在环面的某个邻域里是恰当的,$\Omega = \mathrm { d } \eta$ . 此时作用量的表达式为
+
+$$
+J _ { i } = \frac { 1 } { 2 \pi } \oint _ { \gamma _ { i } } \eta , i = 1 , . . . , n .
+$$
+
+而角变量 $\varphi _ { i }$ 可通过生成函数的标准的理论来构造.
+
+对于单自由度哈密顿系统 (若哈密顿量 $H ( p , q )$ 不显含时间, 则该系统必完全可积),作用量-角参数可显式构造. 若哈密顿量的等值线 $H ( p , q ) = E$ 为光滑闭曲线, 则作用量可通过下述公式计算:
+
+$$
+J = J ( E ) = { \frac { 1 } { 2 \pi } } \oint _ { H = E } p \mathrm { d } q .
+$$
+
+由于
+
+$$
+{ \frac { \mathrm { d } J } { \mathrm { d } E } } = \int _ { H = E } { \frac { \mathrm { d } s } { | \mathrm { g r a d } H | } } , \quad \mathrm { d } s = \sqrt { \mathrm { d } p ^ { 2 } + \mathrm { d } q ^ { 2 } } ,
+$$
+
+从而 $\mathrm { d } J / \mathrm { d } E \ne 0$ . 取 $J , q$ 为曲线 $H \ = \ E$ 上的某点的某邻域上的局部坐标, 假设$\frac { \partial H } { \partial q } \neq 0$ , 则引入生成函数
+
+$$
+S _ { ( q ) } ( J , q ) = \int _ { q _ { 0 } } ^ { q } p ( J , q ^ { \prime } ) \mathrm { d } q ^ { \prime } ,
+$$
+
+$$
+H ( p ( J , q ) , q ) \equiv E ( J ) .
+$$
+
+之后令
+
+$$
+\varphi _ { ( q ) } = \frac { \partial S _ { ( q ) } } { \partial J } ,
+$$
+
+$\{ J , \varphi _ { ( q ) } \} = 1$ . 而对于 $\frac { \partial H } { \partial p } \neq 0$ 的情况, 我们令
+
+$$
+\begin{array} { l l l } & { \displaystyle \varphi _ { ( p ) } = \frac { \partial S _ { ( p ) } } { \partial J } } \\ & { S _ { ( p ) } ( J , p ) = - \int _ { p _ { 0 } } ^ { p } q ( J , p ^ { \prime } ) \mathrm { d } p ^ { \prime } } \\ & { H ( p , q ( J , p ) ) \equiv E ( J ) . } \end{array}
+$$
+
+在这些小邻域的公共部分, 由 $\{ J , \varphi _ { ( p ) } - \varphi _ { ( q ) } \} = 0$ 可知 $\varphi _ { ( p ) } - \varphi _ { ( q ) } \equiv$ 常数. 因此我们能够沿着等值线构造角参数 $\varphi$ . 注意此角参数是在模 $2 \pi$ 意义下定义的, 因为
+
+$$
+\oint _ { H = E } p \mathrm { d } q = 2 \pi J .
+$$
+
+我想强调一点, 当 $n \geq 2$ 时, 不可分离的完全可积系统的作用量-角参数不存在显式表达式 (例如 Novikov 等人近期的工作表明 Kovalevskaja 陀螺的作用量-角参数不存在显示表达).
+
+不幸的是, 一般的动力系统并不是可积的. 若系统 (在某种意义下) 近似是可积的,则我们可以用 摄动理论 (perturbation theory) 来研究它.
+
+假设可以用小参数 $\varepsilon$ 来描述摄动. 摄动理论的最简单的问题是计算摄动后的相曲线 $x _ { \varepsilon } ( t )$ 与未摄动的相曲线 $x ( t )$ 之间的误差 $| x _ { \varepsilon } ( t ) - x ( t ) |$ 的一阶部分. 该误差可以通过求解解 $x ( t )$ 附近的线性化系统来得到. 但这种方法不能提供 $x _ { \varepsilon } ( t )$ 的长时间行为的任何信息, 具体地说, 时间区间在 $\varepsilon ^ { - 1 }$ 量级. 有多种解决此问题的有用的渐近方法, 而Poincaré-Bogolyubov 等人的 平均化方法 (averaging method) 是非线性振动理论中最有效的渐近方法之一.
+
+这种平均化方法用于未摄动的系统为一族闭路, 恰当的周期解 (“单相情形”) 的情形, 或者一组 $m$ 维不变环面, 关于参数 $J = \left( J _ { 1 } , . . . , J _ { k } \right)$ 的拟周期解 (“ $m \cdot$ -相情形”)
+
+$$
+x ^ { a } ( t ) = X ^ { a } ( \omega t + \varphi ^ { 0 } ; J )
+$$
+
+的情形. 这里的函数 $X ^ { a } ( \varphi , J )$ 关于每个 $\varphi _ { 1 } , . . . , \varphi _ { m }$ 都是 $2 \pi \cdot$ -周期的, $\varphi = ( \varphi _ { 1 } , . . . , \varphi _ { m } )$ 与参数 $J$ 有关. 相空间中这个解族附近的点将沿着该族的环面迅速振荡, 并沿参数族 $J$ 缓慢滑动. 为描述参数 $J$ 的这种“缓慢滑动”, 平均化系统出现了.
+
+我们在此介绍平均化方法的最简单的情形. 此时 $m + k$ 等于相空间的维数. 换句话说相空间的某个区域被不变环面充满. 变量 $J _ { 1 } , . . . , J _ { k } , \varphi _ { 1 } , . . . , \varphi _ { m }$ (其中 $\varphi _ { i }$ 是在模 $2 \pi$ 意义下) 作为该区域的坐标. 频率向量 $\omega = ( \omega _ { 1 } , . . . , \omega _ { m } )$ 与 $J$ 有关, $\omega = \omega ( J )$ . 未摄动的系统在该坐标下形如
+
+$$
+\begin{array} { l } { \varphi _ { t } = \omega ( J ) } \\ { J _ { t } = 0 . } \end{array}
+$$
+
+假设摄动后的系统形如
+
+$$
+\begin{array} { l } { \varphi _ { t } = \omega ( J ) + \varepsilon f ( J , \varphi , \varepsilon ) } \\ { J _ { t } = \varepsilon g ( J , \varphi , \varepsilon ) . } \end{array}
+$$
+
+则其平均化系统定义为如下:
+
+$$
+\begin{array} { l } { { J _ { t } = G ( J ) , \quad T = \varepsilon t , } } \\ { { G ( J ) = \displaystyle \frac { 1 } { ( 2 \pi ) ^ { m } } \int _ { T ^ { m } } g ( J , \varphi , 0 ) \mathrm { d } ^ { m } \varphi . } } \end{array}
+$$
+
+(这里的 $T ^ { m }$ 为 $m$ 维环面 $0 \leq \varphi _ { i } \leq 2 \pi$ , $i = 1 , . . . , m$ .) 则 $J = J _ { \overline { { \mathcal { F } } } \dot { \bf z } \dot { \bf z } } ( \varepsilon t )$ 给出了参数 $J$ 关于时间的“缓慢滑动”. 在单相情形, 函数 $J _ { \overline { { \Psi } } \dot { \Sigma } \dot { \Sigma } } ( \varepsilon t )$ 是摄动后的系统的精确解 $J = J _ { \varepsilon } ( t )$ 的非常好的近似: 当时间 $t \overset \sim { < } \varepsilon ^ { - 1 }$ 时, 无穷小量 $| J _ { \mathcal { \vec { F } \vec { \pmb { \mathscr { H } } } } } ( \varepsilon t ) - J _ { \varepsilon } ( t ) |$ 与 $\varepsilon$ 同阶. 而在多相情形, 情况就更复杂了 (比如, 见 [26]).
+
+我们将在本书第三章考虑平均化方法的一例应用.
+
+在哈密顿系统的情形, 我们假定未摄动的系统时完全可积的, 其哈密顿量为 $H _ { 0 }$ .$J _ { 1 } , . . . , J _ { n } , \varphi _ { 1 } , . . . , \varphi _ { n }$ 为此系统的作用量-角参数, $H _ { 0 } = H _ { 0 } ( J )$ , $\omega _ { i } ( J ) = \frac { \partial H _ { 0 } } { \partial J _ { i } }$ $i = 1 , . . . , n$ .我们假定摄动后的系统也是哈密顿系统, 且哈密顿量 $H _ { \varepsilon } = H _ { 0 } ( J ) + \varepsilon H _ { 1 } ( J , \varphi , \varepsilon )$ . 上述基本观察对于完全可积哈密顿系统的摄动理论 (KAM 理论, 见 [26]) 大有所益.
+
+# 1.3 局部场论泊松括号: 主要例子
+
+我们来考虑无限维的泊松括号. 我们将只考虑场论型的泊松括号. 在场论中, 我们
+
+考虑由场
+
+$$
+u ( \boldsymbol { x } ) = ( u ^ { 1 } ( \boldsymbol { x } ) , . . . , u ^ { N } ( \boldsymbol { x } ) ) , \quad \boldsymbol { x } = ( x ^ { 1 } , . . . , x ^ { d } )
+$$
+
+构成的无限维相空间, 其中 $u ( x )$ 取值于某空间 $Y$ (靶空间). 这里的 $x$ 视为公式中的一个(类似于 $i = 1 , 2 , \dots$ 的) 指标. 我不打算详细说明 $u ( x )$ 到底属于哪个函数类, 只给出泊松括号的形式的理论. 在此形式的理论中, 我们只需要让导函数的积分为零:
+
+$$
+\int ( . . . ) ^ { \prime } \mathrm { d } ^ { d } x = 0 .
+$$
+
+例如, 可以考虑紧致 $x \cdot$ -流形 $M$ , $x \in M$ , 或者某些有限向量值函数 $u ( x ) , x \in \mathbb { R } ^ { d }$ .
+
+泊松括号应定义在场 $u ( x )$ 的适当的泛函类上. 在我们的理论中, 泊松括号定义在“逐点的”泛函上. 我们要求这种泛函形如
+
+$$
+f ( u ( x ) , u ^ { \prime } ( x ) , . . . , u ^ { ( k ) } ( x ) ) ,
+$$
+
+其中 $x$ 为给定某点, $f ( u , u ^ { \prime } , . . . , u ^ { ( k ) } )$ 为解析函数 $( u ^ { \prime } , . . . , u ^ { ( k ) }$ 为 $u ( x )$ 的各阶导数). 泊松括号由如下公式定义:
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} = h ^ { i j } ( x , y ) .
+$$
+
+这里的 $h ^ { i j } ( x , y ) \ = \ h ^ { i j } ( x , y ) [ u ]$ 也是与场 $u$ 有关的泛函, 它是关于 $x , y$ 的 广义函数(distribution) . 泊松括号可以通过双线性与莱布尼茨法则推广到“多点泛函”上:
+
+$$
+\begin{array} { l l } { { } } & { { \{ f ( u ( x ) , . . . ) g ( u ( y ) , . . . ) , h ( u ( z ) , . . . ) \} } } \\ { { = } } & { { f ( u ( x ) , . . . ) \{ g ( u ( y ) , . . . ) , h ( u ( z ) , . . . ) \} } } \\ { { + } } & { { g ( u ( y ) , . . . ) \{ f ( u ( x ) , . . . ) , h ( u ( z ) , . . . ) \} . } } \end{array}
+$$
+
+下述性质也非常有用:
+
+$$
+\left\{ { \frac { \partial f ( u ( x ) , \ldots ) } { \partial x ^ { \alpha } } } , g ( u ( y ) , \ldots ) \right\} = { \frac { \partial } { x ^ { \alpha } } } \{ f ( u ( x ) , \ldots ) , g ( u ( y ) , \ldots ) \}
+$$
+
+(这是双线性的显然推论). 关于积分的类似性质
+
+$$
+\left\{ \int f ( u ( x ) , \ldots ) \mathrm { d } ^ { d } x , g ( u ( y ) , \ldots ) \right\} = \int \{ f ( u ( x ) , \ldots ) , g ( u ( y ) , \ldots ) \} \mathrm { d } ^ { d } x
+$$
+
+使得我们能将泊松括号推广到形如下述的 局部场论泛函 (local field-theoretic func-tional)
+
+$$
+F [ u ] = \int f ( x , u ( x ) , u ^ { \prime } ( x ) , . . . , u ^ { ( k ) } ( x ) ) \mathrm { d } ^ { d } x ,
+$$
+
+简称局部泛函 ( $f$ 称为 $F$ 的密度, 假定它是关于 $u , u ^ { \prime } , . . . , u ^ { ( k ) }$ 的多项式或者解析函数).
+
+引理. 对于局部泛函 $F [ u ] , G [ u ]$ , 其泊松括号的表达式如下:
+
+$$
+\{ F , G \} = \iint \frac { \delta F } { \delta u ^ { i } ( x ) } \frac { \delta G } { \delta u ^ { j } ( y ) } h ^ { i j } ( x , y ) \mathrm { d } ^ { d } x \mathrm { d } ^ { d } y .
+$$
+
+[上述公式中出现的变分导数由以下展开式所确定
+
+$$
+F [ u + \delta u ] - F [ u ] = \int \frac { \delta F } { \delta u ^ { i } ( x ) } \delta u ^ { i } ( x ) \mathrm { d } ^ { d } x + o ( \delta u ) .
+$$
+
+对于局部泛函, 变分导数为如下的欧拉-拉格朗日算子:
+
+$$
+\frac { \delta F } { \delta u ^ { i } ( x ) } = \frac { \partial f } { \partial u ^ { i } } - \frac { \partial } { \partial x ^ { \alpha } } \frac { \partial f } { \partial u _ { \alpha } ^ { i } } + \frac { \partial ^ { 2 } } { \partial x ^ { \alpha } \partial x ^ { \beta } } \frac { \partial f } { \partial u _ { \alpha \beta } ^ { i } } - \cdot \cdot \cdot
+$$
+
+这里 $u _ { \alpha } ^ { i } \equiv \frac { \partial u ^ { i } } { \partial x ^ { \alpha } }$ ≡ ∂ u ∂ x α , u iαβ = $u _ { \alpha \beta } ^ { i } = \frac { \partial ^ { 2 } u ^ { i } } { \partial x ^ { \alpha } \partial x ^ { \beta } } , \dots ~ ]$
+
+证明. (不妨只证明 $d = 1$ 的情况). 我们有
+
+$$
+\begin{array} { r c l } { { \{ F , u ^ { j } ( y ) \} } } & { { = } } & { { \displaystyle \int \mathrm { d } ^ { d } x \{ f ( x , u ( x ) , u ^ { \prime } ( x ) , \ldots ) , u ^ { j } ( y ) \} } } \\ { { } } & { { = } } & { { \displaystyle \int \mathrm { d } ^ { d } x \left[ \frac { \partial f } { \partial u ^ { i } } ( x ) \{ u ^ { i } ( x ) , u ^ { j } ( y ) \} + \frac { \partial f } { \partial u _ { x } ^ { i } } ( x ) \{ u _ { x } ^ { i } ( x ) , u ^ { j } ( y ) \} + \cdots \right] } } \\ { { } } & { { = } } & { { \displaystyle \int \mathrm { d } ^ { d } x \left[ \frac { \partial f } { \partial u ^ { i } } ( x ) h ^ { i j } ( x , y ) + \frac { \partial f } { \partial u _ { x } ^ { i } } ( x ) \partial _ { x } h ^ { i j } ( x , y ) + \cdots \right] } } \\ { { } } & { { = } } & { { \displaystyle \int \mathrm { d } ^ { d } x \left[ \frac { \partial f } { \partial u ^ { i } } ( x ) - \partial _ { x } \frac { \partial f } { \partial u _ { x } ^ { i } } ( x ) + \cdots \right] h ^ { i j } ( x , y ) } } \\ { { } } & { { = } } & { { \displaystyle \int \frac { \delta f } { \delta u ^ { i } ( x ) } h ^ { i j } ( x , y ) \mathrm { d } ^ { d } x . } } \end{array}
+$$
+
+再记泛函 $G$ 的密度为 $g$ , 因此有
+
+$$
+\begin{array} { r c l } { { \{ F , G \} } } & { { = } } & { { \displaystyle \int \mathrm { d } ^ { d } y \{ F , g ( y , u ( y ) , u ^ { \prime } ( y ) , \ldots ) \} } } \\ { { } } & { { = } } & { { \displaystyle \int \mathrm { d } ^ { d } y \left[ \{ F , u ^ { j } ( y ) \} \frac { \partial g } { \partial u ^ { j } } ( y ) + \partial _ { y } \{ F , u ^ { j } ( y ) \} \frac { \partial g } { \partial u _ { y } ^ { j } } ( y ) + \cdots \right] } } \\ { { } } & { { = } } & { { \displaystyle \int \mathrm { d } ^ { d } y \{ F , u ^ { j } ( y ) \} \frac { \delta G } { \delta u ^ { j } ( y ) } } } \\ { { } } & { { = } } & { { \displaystyle \iint \frac { \delta F } { \delta u ^ { i } ( x ) } \{ u ^ { i } ( x ) , u ^ { j } ( y ) \} \frac { \delta G } { \delta u ^ { j } ( y ) } \mathrm { d } ^ { d } x \mathrm { d } ^ { d } y . } } \end{array}
+$$
+
+现在我们再对泊松括号的类型加以限制.
+
+定义. 局部场论泊松括号 (local field-theoretic Poisson bracket) 是指形如以下的泊松括号:
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} = \sum _ { | k | \leq K } A _ { k } ^ { i j } ( x , u ( x ) , u ^ { \prime } ( x ) , . . . , u ^ { n _ { k } } ( x ) ) \partial _ { x } ^ { k } \delta ( x - y ) .
+$$
+
+上式中的 $\delta$ 为 Dirac $\delta$ -函数, $\boldsymbol { k } = ( k _ { 1 } , . . . , k _ { d } )$ 为多重指标, $| k | = k _ { 1 } + \ldots + k _ { d }$ , $\partial _ { x } ^ { k } = $ ${ \bigg ( } { \frac { \partial } { \partial x ^ { 1 } } } { \bigg ) } ^ { k _ { 1 } } \dots { \bigg ( } { \frac { \partial } { \partial x ^ { d } } } { \bigg ) } ^ { k _ { d } }$ , $\kappa$ 称为该泊松括号的阶数, 系数 $A _ { k } ^ { i j }$ 为关于 $x , u , u ^ { \prime } , \ldots$ 的解析函数. 此外, 该泊松括号称为平移不变的, 若 $\boldsymbol { x } \in \mathbb { R } ^ { d }$ (或 $x \in T ^ { d } ,$ ) 并且系数 $A _ { k } ^ { i j }$ 与 $x$ 无关.
+
+此外, 该泊松括号称为常值的, 若系数 $A _ { k } ^ { i j }$ 也与 $u ( x ) , u ^ { \prime } ( x ) , \ldots$ 无关.
+
+我们引入算子
+
+$$
+A ^ { i j } = \sum _ { | k | \leq \mathcal { K } } A _ { k } ^ { i j } ( u ( x ) , u ^ { \prime } ( x ) , \ldots ) \partial _ { x } ^ { k } .
+$$
+
+则局部泛函在此泊松括号下的表达式为
+
+$$
+\{ F , G \} = \int { \frac { \delta F } { \delta u ^ { i } ( x ) } } A ^ { i j } { \frac { \delta G } { \delta u ^ { j } ( x ) } } \mathrm { d } ^ { d } x .
+$$
+
+很显然, 局部泛函关于局部场论泊松括号构成李代数.
+
+泊松括号的反对称性要求算子 $A ^ { i j }$ 满足
+
+$$
+( A ^ { i j } ) ^ { * } = - A ^ { j i } ,
+$$
+
+这里的 $( A ^ { i j } ) ^ { * }$ 为其伴随算子, 定义为
+
+$$
+( A ^ { i j } ) ^ { * } = \sum _ { | k | \leq \mathcal { K } } ( - \partial _ { x } ) ^ { k } A _ { k } ^ { i j } .
+$$
+
+至于雅可比恒等式, 那等价于一个关于系数 $A _ { k } ^ { i j }$ 及其导数的非常复杂的二次方程组, 形如
+
+$$
+\begin{array} { l } { { \{ \{ u ^ { i } ( x ) , u ^ { j } ( y ) \} , u ^ { k } ( z ) \} + \cdots } } \\ { { \equiv } } \\ { { \displaystyle \partial u ^ { i j } ( x ) } } \end{array}
+$$
+
+关于局部泊松括号与局部哈密顿量
+
+$$
+H = \int h ( \boldsymbol { u } , \boldsymbol { u } ^ { \prime } , \ldots ) \mathrm { d } ^ { d } \boldsymbol { x }
+$$
+
+的哈密顿系统形如
+
+$$
+\frac { \partial u ^ { i } ( x ) } { \partial t } = \{ H , u ^ { i } ( x ) \} = - A ^ { i j } \frac { \delta H } { \delta u ^ { j } ( x ) } .
+$$
+
+重要的是, 如此的哈密顿系统是演化型的偏微分方程组. 这也是我们考虑局部泊松括号的一个原因.
+
+例子 1. 常值泊松括号的典型例子. 记 $N \ : = \ : 2 n$ , 相空间由场 $( u ^ { 1 } ( x ) , . . . , u ^ { N } ( x ) ) \ =$ $( q ^ { 1 } ( x ) , . . . , q ^ { n } ( x ) , p _ { 1 } ( x ) , . . . , p _ { n } ( x ) )$ 构成:
+
+$$
+\{ p _ { i } ( x ) , q ^ { j } ( y ) \} = \delta _ { i } ^ { j } \delta ( x - y ) , \quad \{ p _ { i } ( x ) , p _ { j } ( y ) \} = \{ q ^ { i } ( x ) , q ^ { j } ( y ) \} = 0 .
+$$
+
+此泊松括号出现于形如
+
+$$
+\delta \int \int \mathrm { d } t \mathrm { d } ^ { d } x { \cal L } ( q , q _ { t } , q _ { x } ) = 0
+$$
+
+的多维变分问题的欧拉-拉格朗日理论 (这里 pi = $p _ { i } = { \frac { \partial L } { \partial q _ { t } ^ { i } } }$ $= \frac { \partial L } { \partial q _ { t } ^ { i } } , H = \int \mathrm { d } ^ { d } x ( p _ { i } q _ { t } ^ { i } - L ) = \int \mathrm { d } ^ { d } x h ( q , p , q _ { x } ) ) .$
+
+例子 2. 超局部泊松括号. 5 更一般地, 设 $P$ 为有限维泊松流形, 其泊松括号 $\{ u ^ { i } , u ^ { j } \} =$ $h ^ { i j } ( u )$ $( u ^ { 1 } , . . . , u ^ { N }$ 为 $P$ 的局部坐标), 则在场 $u ^ { i } ( x ) , x \in X$ 上可定义如下的 超局部泊松括号 (ultralocal Poisson bracket) :
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} = h ^ { i j } ( u ) \delta ( x - y ) .
+$$
+
+若 $h ^ { i j }$ 为常值, 则此例退化为例子 1.
+
+例子 3. Gardner-Zakharov-Faddeev 泊松括号. 取 $N = d = 1$ , 令 $\{ u ( x ) , u ( y ) \} =$ $\delta ^ { \prime } ( x - y )$ . 该运算的反对称性与雅可比恒等式显然成立 (这是常值泊松括号). 相应的哈密顿系统形如
+
+$$
+u _ { t } ( x ) = \{ H , u ( x ) \} = - \partial _ { x } \frac { \delta H } { \delta u ( x ) } .
+$$
+
+例如取
+
+$$
+H = \int \left( \frac { { { u ^ { \prime } } ^ { 2 } } } { 2 } + u ^ { 3 } \right) \mathrm { { d } } x
+$$
+
+时, 我们得到 KdV 方程
+
+$$
+u _ { t } + 6 u u _ { x } - u _ { x x x } = 0 .
+$$
+
+此泊松括号是退化的. 其零化子形如
+
+$$
+I _ { 0 } [ u ] = \int u \mathrm { d } x .
+$$
+
+这种常值泊松括号的更一般的例子是
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} = g ^ { i j } \delta ^ { \prime } ( x - y ) , \quad i , j = 1 , . . . , N ,
+$$
+
+其中 $( g ^ { i j } )$ 为常值对称矩阵. 对于 $N = 2 n$ , 且 $( g ^ { i j } )$ 的正负惯性指数为 $( n , n )$ 时, 可以适当选取线性坐标使得
+
+$$
+\begin{array} { l } { { \{ u ^ { i } ( x ) , u ^ { n + j } ( y ) \} = \delta ^ { i j } \delta ^ { \prime } ( x - y ) , \quad \{ u ^ { i } ( x ) , u ^ { j } ( y ) \} = \{ u ^ { n + i } ( x ) , u ^ { n + j } ( y ) \} = 0 } } \\ { { \ } } \\ { { i , j = 1 , . . . , n . } } \end{array}
+$$
+
+此泊松括号可通过下述变量代换化为例子 1 中的标准形式:
+
+$$
+u ^ { i } ( x ) = p _ { i } ( x ) , \quad u ^ { n + i } ( x ) = q ^ { i } ( x ) ^ { \prime } , \quad i = 1 , . . . , n .
+$$
+
+着用引入典范坐标的技巧 19 世纪以来就在流体力学中众所周知了. 该技巧被称为“引入 Clebsch 变量”, 可用于将偏微分方程化为拉格朗日形式. 当 $N$ 为奇数或者正负惯性指数不是 $( n , n )$ 时无法引入 Clebsch 变量.
+
+例子 4. (Novikov). 对于任何两个流形 $M ^ { d }$ , $Y ^ { n }$ (其中 $M ^ { d }$ 紧致),定义在由映射 $M ^ { d } $ $Y ^ { n }$ 构成的空间上的可定义 手性场 (chiral field) 型拉格朗日量. 为构造最简单的例子,我们需要 $M ^ { d }$ 上的度量 $\gamma _ { \alpha \beta }$ 以及 $Y ^ { n }$ 上的度量 $g _ { i j }$ . 手性场作用泛函形如以下:
+
+$$
+\begin{array} { l } { { S _ { 0 } = \displaystyle \frac { 1 } { 2 } \int \mathrm { d } t \int _ { M ^ { d } } \sqrt { \gamma } \mathrm { d } ^ { d } x g _ { i j } ( y ( x ) ) ( y _ { t } ^ { i } y _ { t } ^ { j } - \gamma ^ { \alpha \beta } ( x ) \partial _ { \alpha } y ^ { i } \partial _ { \beta } y ^ { j } ) , } } \\ { { y ^ { i } = y ^ { i } ( t , x ) , \quad x \in M ^ { d } , \quad y \in Y ^ { n } , } } \\ { { ( \gamma ^ { \alpha \beta } ) = ( \gamma _ { \alpha \beta } ) ^ { - 1 } , \quad \gamma = | \mathrm { d e t } ( \gamma _ { \alpha \beta } ) | . } } \end{array}
+$$
+
+可通过标准的 Legendre 变换将其化为哈密顿形式. 这里的“位形空间” $Q$ 为由映射$M ^ { d } \to Y ^ { n }$ 构成的空间. $Y ^ { n }$ 上的任何闭 $( d + 2 )$ -形式 $\Omega = { \frac { 1 } { ( d + 2 ) ! } } \Omega _ { i _ { 1 } , \dots , i _ { d + 2 } } ( y ) \mathrm { d } y ^ { i _ { 1 } } \wedge$ $\cdots \wedge \mathrm { ~ d } y ^ { i _ { d + 2 } }$ , $\mathrm { d } \Omega = 0$ 通过下式决定了 $Q$ 上闭 2-形式 $\hat { \Omega }$ :
+
+$$
+\hat { \Omega } ( \xi , \eta ) = \frac 1 { d ! } \int _ { M ^ { d } } \xi ^ { i } ( x ) \eta ^ { j } ( x ) \Omega _ { i j i _ { i } \cdots i _ { d } } ( y ( x ) ) \mathop { } \mathrm { d } y ^ { i _ { 1 } } ( x ) \wedge \cdots \wedge \mathop { } \mathrm { d } y ^ { i _ { d } } ( x ) .
+$$
+
+这里的 $\xi = ( \xi ^ { i } ( x ) )$ , $\eta = ( \eta ^ { i } ( x ) )$ 为空间 $Q$ 在点 $y ( x )$ 处的两个“切向量”(即 $\xi ( x ) , \eta ( x )$ 为 $Y ^ { n }$ 的在点 $y ( x )$ 的切向量. 此 2-形式 $\hat { \Omega }$ 定义了第 1 节例子 2“磁场中的泊松括号”的无限维版本):
+
+$$
+\{ p _ { i } ( x ) , p _ { j } ( x ^ { \prime } ) \} _ { \Omega } = \frac { 1 } { d ! } \frac { \Omega _ { i j i _ { 1 } \cdots i _ { d } } ( y ( x ) ) \mathrm { d } y ^ { i _ { 1 } } ( x ) \wedge \cdots \wedge \mathrm { d } y ^ { i _ { d } } ( x ) } { \mathrm { d } x ^ { 1 } \wedge \cdots \wedge \mathrm { d } x ^ { d } } \cdot \delta ( x - x ^ { \prime } ) ,
+$$
+
+其余泊松括号都是标准的.
+
+这里的 $\delta$ 为流形 $M ^ { d }$ 上的 Dirac 函数:
+
+$$
+\int _ { M ^ { d } } f ( x ^ { \prime } ) \delta ( x - x ^ { \prime } ) \mathrm { d } ^ { d } x ^ { \prime } = f ( x ) ;
+$$
+
+动量 $p _ { i } ( x )$ 为 $M ^ { d }$ 的余切向量密度. 与有限维情形一样, 该系统的哈密顿方程也能表示为多值泛函 (若 $\Omega$ 整体上不是恰当形式) 的欧拉-拉格朗日系统, 相应的作用泛函形如
+
+$$
+S = S _ { 0 } - \iint _ { M ^ { d } \times \mathbb { R } } A _ { i _ { 0 } i _ { 1 } \cdots i _ { d } } ( y ( x ) ) \mathrm { d } y ^ { i _ { 0 } } ( t , x ) \wedge \cdots \wedge \mathrm { d } y ^ { i _ { d } } ( t , x ) ,
+$$
+
+其中 $A$ 为 $( d + 1 )$ -形式, 使得局部成立 $\mathrm { d } A = \Omega$ , $A = { \frac { 1 } { ( d + 1 ) ! } } A _ { i _ { 0 } i _ { 1 } \cdots i _ { d } } \mathrm { d } y ^ { i _ { 0 } } \wedge \cdot \cdot \cdot \mathrm { d } y ^ { i _ { d } }$ , 而$\mathbb { R }$ 为 $t { \cdot }$ -轴.
+
+在 $d = 1 , \gamma _ { \alpha \beta } = 1$ , $Y ^ { n } = G$ (紧群) 配以双不变度量 $g _ { i j }$ 的重要特殊情形, $S _ { 0 }$ 为主手性场作用泛函. 此时的运动方程在 反散射方法 (inverse scattering method) (简称ISM) 的意义下是可积的 (Palmayer, Zakharov, Mikhailov, 见 [27]). 这里的磁场 ( $G$ 上的闭 3-形式 $\Omega$ ) 可自然地引入, 因为任何紧群都满足 $H ^ { 3 } ( G ) \neq 0$ . 对于最简单的例子$G = { \mathrm { S U } } ( 2 )$ , 可取 $\Omega$ 为其体积形式, 可以证明此时的运动方程在反散射方法的意义下可积 (Takhtadjan, Veselov [28]).
+
+例子 5. 圈代数与泊松括号. 线性的场论泊松括号的最简单的例子与 圈代数 (loopalgebra) 有关. 设场 $u ^ { 1 } ( x ) , . . . , u ^ { N } ( x )$ 为 $x \in X$ 上的 $d .$ -形式, $d = \dim X$ , 且取值于某个李代数 $L$ 的对偶空间 $L ^ { * }$ , 其中 $L$ 的的结构常数为 $( c _ { k } ^ { i j } )$ . 因此相空间 $L ^ { * }$ 形式地成为圈群 (loop group) $G ^ { X }$ 的无限维李代数, 其中 $G$ 是以 $L$ 为李代数的李群, $X$ 为变量$x ^ { 1 } , . . . , x ^ { d }$ 所在的空间, $G ^ { X }$ 为由光滑映射 $X  G$ 构成的群. $( L ^ { X } ) ^ { * }$ 上的泊松括号是超局部, 线性的:
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} = c _ { k } ^ { i j } u ^ { k } ( x ) \delta ( x - y ) .
+$$
+
+我们假设李代数 $L$ 配有不变双线性型 $g ^ { i j } = g ^ { j i }$ , 即满足
+
+$$
+c _ { s } ^ { i j } g ^ { s k } = - c _ { s } ^ { i k } g ^ { s j } .
+$$
+
+例如对于半单李代数 $L$ , $g ^ { i j }$ 可取其 Killing 型, $g ^ { i j } = - c _ { l } ^ { i k } c _ { k } ^ { j l }$ . 则在一维空间情形 (即$d = 1 \mathrm { \Omega }$ ), 我们得到圈代数 $L ^ { X }$ 的一个中心扩张 (Kac-Moody 代数), 且相应的泊松括号为如下非齐次的:
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} _ { g } = g ^ { i j } \delta ^ { \prime } ( x - y ) + c _ { k } ^ { i j } u ^ { k } ( x ) \delta ( x - y ) .
+$$
+
+圈代数的中心扩张在共形场论中扮演重要角色.
+
+例子 6. 李代数 $L ( d )$ . 考虑 $d$ 为空间的切向量场构成的李代数 $L ( d )$ , 其中的向量场$a , b \in L ( d )$ 的交换子为形如下式的向量场 $c = [ a , b ]$ :
+
+$$
+c = c ^ { i } \partial _ { i } , \quad a = a ^ { i } \partial _ { i } , \quad b = b ^ { i } \partial _ { i } , \quad c ^ { i } = a ^ { k } \partial _ { k } b ^ { i } - b ^ { k } \partial _ { k } a ^ { i } .
+$$
+
+我们来验证对偶空间 $L ( d ) ^ { * }$ 上的李-泊松括号形如
+
+$$
+\{ p _ { i } ( x ) , p _ { j } ( y ) \} = p _ { j } ( x ) \partial _ { i } \delta ( x - y ) + p _ { i } ( y ) \partial _ { j } \delta ( x - y ) , \quad i , j = 1 , . . . , d .
+$$
+
+这里的变量 $p _ { i } ( x )$ 为余切向量密度 (即 1-形式与体积元相乘), 使得对任意向量场 $a =$ $a ^ { i } \partial _ { i }$ , 数量积
+
+$$
+a [ p ] \equiv ( a , p ) = \int p _ { i } a ^ { i } \mathrm { d } ^ { d } x
+$$
+
+是良好定义的. 事实上, 两个线性泛函
+
+$$
+a = a [ p ] = \int a ^ { i } p _ { i } \mathrm { d } ^ { d } x , \quad b = b [ p ] = \int b ^ { i } p _ { i } \mathrm { d } ^ { d } x
+$$
+
+的泊松括号也是线性泛函
+
+$$
+\{ a , b \} = c = \int c ^ { i } p _ { i } \mathrm { d } ^ { d } x ,
+$$
+
+其中向量场 $c = c ^ { i } \partial _ { i }$ 为 $a , b$ 的交换子.
+
+设 $L _ { 0 } ( d ) \subseteq L ( d )$ 为无散向量场 $a = a ^ { i } \partial _ { i }$ , $\partial _ { i } a ^ { i } = 0$ 构成的李子代数. 对偶空间 $L _ { 0 } ( d ) ^ { * }$ 可由模掉梯度向量 $p _ { i } = \partial _ { i } \phi$ 的商空间来实现:
+
+$$
+{ \cal L } _ { 0 } ( d ) ^ { * } = { \cal L } ( d ) ^ { * } / ( \partial _ { i } \phi ) .
+$$
+
+事实上, $p$ 满足对任何使得 $\partial _ { i } a ^ { i } = 0$ 的 $a ^ { i }$ 都有 $\int { p _ { i } } { a ^ { i } } { { \mathrm { d } } ^ { d } } x = 0$ , 当且仅当 $p _ { i } = \partial _ { i } \phi$ .$L _ { 0 } ( d ) ^ { * }$ 的哈密顿系统可以在 $L ( d ) ^ { * }$ 上写为下式:
+
+$$
+\partial _ { t } p _ { i } ( x ) = \{ H , p _ { i } ( x ) \} + \partial _ { i } \phi , \quad i = 1 , . . . , d .
+$$
+
+理想不可压缩流体的哈密顿理论可以用 $L _ { 0 } ( d ) ^ { * }$ 上的此泊松括号来描述 (这首先由 Arnol’d用辛流形的语言发现, 见 [26]). 对于理想不可压缩流, $X = \mathbb { R } ^ { d }$ 为欧氏空间, 配以欧氏度量 $g _ { i j } = \rho \delta _ { i j }$ , 其中常数 $\rho$ 为流体的密度. 余切向量 $p _ { i }$ 与切向量 $v _ { i }$ 通过公式 $p _ { i } = \rho v _ { i }$ 相
+
+联系. 对于哈密顿量
+
+$$
+H = \int { \frac { p ^ { 2 } } { 2 \rho } } \mathrm { d } ^ { d } x = \int { \frac { \rho v ^ { 2 } } { 2 } } \mathrm { d } ^ { d } x
+$$
+
+$\langle \equiv \int \frac { 1 } { 2 } \langle \boldsymbol { v } , \boldsymbol { v } \rangle \mathrm { d } ^ { d } x$ , 数量积 $\langle , \rangle$ 为度量 $g _ { i j }$ ), 则我们得到理想不可压缩流体的欧拉方程
+
+$$
+\partial _ { t } p _ { i } ( \boldsymbol { x } ) = \{ H , p _ { i } ( \boldsymbol { x } ) \} + \partial _ { i } \phi \iff \partial _ { t } \boldsymbol { v } + ( \boldsymbol { v } \nabla ) \boldsymbol { v } = - \frac { 1 } { \rho } \operatorname { g r a d } \mathcal { P } .
+$$
+
+这里的 $( v \nabla ) = v _ { i } \partial _ { i }$ ; 函数 $\mathcal { P } = \mathcal { P } ( \boldsymbol { x } )$ 为压强 (形如 $\mathcal { P } = \rho \frac { v ^ { 2 } } { 2 } - \phi )$ .
+
+$d$ 维空间向量场李代数 $L ( d )$ 由自然的中心扩张, 其可以用来描述带有“冻结的”(frozen-in) 张量场的可压缩流体. 为描述这种扩张, 我们在 $p _ { i } ( x )$ (切向量场的对偶) 当中添加一定数量的 $( m _ { s } , n _ { s } )$ 型张量 $T _ { ( } s ) ( x )$ . 这些张量 $T _ { ( } s )$ 之间的泊松括号恒为 0
+
+$$
+\{ T _ { ( s _ { 1 } ) } ( x ) , T _ { ( s _ { 2 } ) } ( y ) \} = 0 .
+$$
+
+而泊松括号 $\{ p _ { i } ( x ) , T _ { ( s ) } ( y ) \}$ 由以下条件唯一确定: 对于形如
+
+$$
+H _ { v } = \int v ^ { i } p _ { i } \mathrm { d } ^ { d } x
+$$
+
+的哈密顿量 (由向量场 $v ^ { i } ( x )$ 所确定的单参数群的生成元), 应满足
+
+$$
+\{ T _ { ( s ) } ( x ) , H _ { v } \} = \mathcal { L } _ { v } T _ { ( s ) } ( x )
+$$
+
+(这里的 $\mathcal { L } _ { v }$ 为李导数).
+
+对于可压缩流的情况, 我们应添加 $\rho ( \boldsymbol { x } ) \mathrm { d } ^ { d } \boldsymbol { x }$ (质量密度) 与 $\sigma ( x ) \mathrm { d } ^ { d } x$ (熵密度), 它们都是 $d .$ -形式. 从而有
+
+$$
+\begin{array} { l } { { \{ p _ { i } ( x ) , \rho ( y ) \} = \rho ( x ) \partial _ { i } \delta ( x - y ) , } } \\ { { \{ p _ { i } ( x ) , \sigma ( y ) \} = \sigma ( x ) \partial _ { i } \delta ( x - y ) , } } \\ { { \{ \rho ( x ) , \rho ( y ) \} = \{ \sigma ( x ) , \sigma ( y ) \} = \{ \rho ( x ) , \sigma ( y ) \} = 0 . } } \end{array}
+$$
+
+理想可压缩流体的哈密顿量形如
+
+$$
+H = \int \left[ { \frac { p ^ { 2 } } { 2 \rho } } + { \mathcal { E } } ( \rho , \sigma ) \right] { \mathrm { d } } ^ { d } x ,
+$$
+
+其中 $\mathcal { E } ( \rho , \sigma ) \mathrm { d } ^ { d } x$ 为内能密度. 相应的哈密顿系统
+
+$$
+\begin{array} { l } { \rho _ { t } ( x ) = \{ H , \rho ( x ) \} } \\ { \sigma _ { t } ( x ) = \{ H , \sigma ( x ) \} } \\ { p _ { i _ { t } } ( x ) = \{ H , p _ { i } ( x ) \} } \end{array}
+$$
+
+恰为理想不可压缩流体的运动方程:
+
+$$
+\begin{array} { r l } & { \rho _ { t } + \mathrm { { d i v } } ( \rho { \boldsymbol { v } } ) = 0 } \\ & { \sigma _ { t } + { \mathrm { d i v } } ( \rho \sigma ) = 0 } \\ & { v _ { t } + ( v \nabla ) v = - \displaystyle \frac { 1 } { \rho } \mathrm { { g r a d } } \mathcal { P } . } \end{array}
+$$
+
+这里 $p _ { i } = \rho v _ { i }$ . 压强 $\mathcal { P } = \mathcal { P } ( \rho , \sigma )$ 为函数 $\mathcal { E }$ 的 Legendre 变换:
+
+$$
+\mathcal { P } = \rho \mathcal { E } _ { \rho } + \sigma \mathcal { E } _ { \sigma } - \mathcal { E } .
+$$
+
+也常引入单位质量的熵密度 $s = \sigma / \rho$ , 此函数为标量. 也引入单位质量的内能 $\varepsilon$ :
+
+$$
+\mathcal { E } ( \rho , \sigma ) = \rho \varepsilon ( \rho , s ) .
+$$
+
+则我们得到标准的热力学方程
+
+$$
+\mathcal { P } = \rho ^ { 2 } \frac { \partial \varepsilon ( \rho , s ) } { \partial \rho } .
+$$
+
+作为本例结尾, 我们要注意场 $p _ { i } ( x ) , \rho ( x ) , \sigma ( x )$ 的线性泛函的李代数 (相空间的对偶空间) 是 $L ( d )$ 与 $C ^ { \infty } ( \mathbb { R } ^ { d } ) \times C ^ { \infty } ( \mathbb { R } ^ { d } )$ 的半直积, 其中李代数 $L ( d )$ 中的向量场在每个函数空间 $C ^ { \infty } ( \mathbb { R } ^ { d } )$ 上的作用都是通常的. 换句话说, 在此半直积中, 向量场 $a = a ^ { i } \partial _ { i }$ 与函数$f$ 的交换子形如
+
+$$
+[ a , f ] = a ^ { i } \partial _ { i } f .
+$$
+
+磁流体力学方程的哈密顿理论也可类似描述, 不过要用到 $L ( d )$ 的别的中心扩张, 添加别的张量. 磁场张量需要添加. 我们不再探讨其细节.
+
+例子 7. Magri 括号与 Virasoro 代数. 一维向量场的李代数 $L ( 1 )$ 的泊松括号形如
+
+$$
+\{ p ( x ) , p ( y ) \} = [ p ( x ) + p ( y ) ] \delta ^ { \prime } ( x - y ) = 2 p ( x ) \delta ^ { \prime } ( x - y ) + p ^ { \prime } ( x ) \delta ( x - y ) .
+$$
+
+有趣的是, 可通过变量代换
+
+$$
+p ( x ) = { \frac { u ^ { 2 } ( x ) } { 2 } }
+$$
+
+将其化为 Gardner-Zakharov-Faddeev 泊松括号 (见前面的例子 3). 事实上, 若 $\{ u ( x ) , u ( y ) \} =$ $\delta ^ { \prime } ( x - y )$ , 则
+
+$$
+\begin{array} { r c l } { { \{ p ( x ) , p ( y ) \} } } & { { = } } & { { u ( x ) u ( y ) \{ u ( x ) , u ( y ) \} = u ^ { 2 } ( x ) \delta ^ { \prime } ( x - y ) + u ( x ) u ^ { \prime } ( x ) \delta ( x - y ) } } \\ { { } } & { { = } } & { { 2 p ( x ) \delta ^ { \prime } ( x - y ) + p ^ { \prime } ( x ) \delta ( x - y ) . } } \end{array}
+$$
+
+李代数 $L ( 1 )$ 通过 Gel’fand-Fuks 上链的的众所周知的一维中心扩张 ( $\ b { x } \in \ b { S } ^ { 1 }$ 的 Virasoro代数) 诱导了线性非齐次泊松括号
+
+$$
+\{ p ( x ) , p ( y ) \} _ { c } = c \delta ^ { \prime \prime \prime } ( x - y ) + [ p ( x ) + p ( y ) ] \delta ^ { \prime } ( x - y )
+$$
+
+(见第 1 节例子 3). 这里的 $c$ 为常数. 此括号在可积系统理论中称为 Magri 括号 [29].KdV 方程 $p _ { t } + 6 p p _ { x } - p _ { x x x } = 0$ 也是关于 Magri 括号的哈密顿系统, 且 $c = - { \frac { 1 } { 2 } }$ 时相应的哈密顿量为
+
+$$
+H = \int p ^ { 2 } \mathrm { d } x .
+$$
+
+# 1.4 微分几何泊松括号. 流体力学型泊松括号与黎曼几何
+
+我们考虑流形 $M ^ { d } , Y ^ { N }$ 之间的映射 $X ^ { d }  Y ^ { N }$ 构成的空间. 为定义空间 $\{ M ^ { d } $ ${ { Y } ^ { N } } \}$ 上的局部泊松括号, 应该在流形 $Y ^ { N }$ 上引入什么样的结构呢? 是否可能在此空间里定义常值的局部泊松括号? 若靶空间 $Y ^ { N }$ 不是线性空间, 则上述问题是不平凡的. 其原因是莱布尼茨法则: 若泊松括号在 $Y ^ { N }$ 的局部坐标 $\boldsymbol { u } ^ { 1 } , . . . , \boldsymbol { u } ^ { N }$ 下为常值的,
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} = \sum _ { k \le | K | } A _ { k } ^ { i j } \delta ^ { ( k ) } ( x - y ) , \quad A _ { k } ^ { i j } \nearrow | \stackrel { \mathrm { \scriptsize { \sim } } \Psi } { \overbrace { \mathrm { \large { \cdot } } \mathrm { \large { \cdot } } \mathrm { \large { \cdot } } \mathrm { \large { \cdot } } \mathrm { \large { \cdot } } \mathrm { \large { \cdot } } \mathrm { \large { \cdot } } \mathrm { \large { \cdot } } \mathrm { \large { \cdot } } \mathrm { \large { \cdot } } } } .
+$$
+
+则在新坐标
+
+$$
+u ^ { i ^ { \prime } } ( x ) = u ^ { i ^ { \prime } } ( u ( x ) )
+$$
+
+下, 该泊松括号未必是常值的:
+
+$$
+\begin{array} { r c l } { { \{ u ^ { i ^ { \prime } } ( u ( x ) ) , u ^ { j ^ { \prime } } ( u ( y ) ) \} } } & { { = } } & { { \displaystyle \frac { \partial u ^ { i ^ { \prime } } ( u ( x ) ) } { \partial u ^ { i } } \frac { \partial u ^ { j ^ { \prime } } ( u ( y ) ) } { \partial u ^ { j } } \{ u ^ { i } ( x ) , u ^ { j } ( y ) \} } } \\ { { } } & { { = } } & { { \displaystyle \sum A _ { k } ^ { i ^ { \prime } j ^ { \prime } } ( u ( x ) , u ^ { \prime } ( x ) , . . . , u ^ { ( K - k ) } ( x ) ) \delta ^ { ( k ) } ( x - y ) . } } \end{array}
+$$
+
+[上式是由如下公式导出的:
+
+$$
+f ( y ) \delta ^ { ( n ) } ( x - y ) = \sum _ { k = 0 } ^ { n } { \binom { n } { k } } f ^ { ( n - k ) } ( x ) \delta ^ { ( k ) } ( x - y ) .
+$$
+
+] 在靶空间的坐标变换下保持“不变”的 $\kappa$ 阶局部泊松括号的极小类称为局部微分几何泊松括号 (local differential geometric Poisson bracket, 简称 D.G.P.B, 见 Novikov,Dubrovin [7]). 为给出上述概念的严格定义, 我们接下来只考虑空间一维情形 $( d = 1 )$ ),$\boldsymbol { M } ^ { d } = \mathbb { R }$ 或 $S ^ { 1 }$ .
+
+定义. $( 1 )$ . 在靶空间局部坐标 $u ^ { 1 } , . . . , u ^ { N }$ 下, $\kappa$ 次齐次微分几何泊松括号是指形如下述的泊松括号:
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} = \sum _ { k = 0 } ^ { \kappa } A _ { k } ^ { i j } ( u ( x ) , u ^ { \prime } ( x ) , . . . , u ^ { ( K - k ) } ( x ) ) \delta ^ { ( k ) } ( x - y ) ,
+$$
+
+其中系数 $A _ { k } ^ { i j }$ 是关于变元 $u ^ { \prime } , u ^ { \prime \prime } , \ldots$ 的 $( { \boldsymbol { \kappa } } - { \boldsymbol { k } } )$ 次齐次多项式 [这里的次数定义为:$\deg u ^ { ( s ) } = s , s = 1 , 2 , \ldots \rfloor$ :
+
+$$
+A _ { \mathcal K } ^ { i j } = g ^ { i j } ( u ) , \quad A _ { \mathcal K - 1 } ^ { i j } = b _ { k } ^ { i j } ( u ) u _ { x } ^ { k } , \quad A _ { \mathcal K - 2 } ^ { i j } = c _ { k } ^ { i j } ( u ) u _ { x x } ^ { k } + d _ { k l } ^ { i j } ( u ) u _ { x } ^ { k } u _ { x } ^ { l } , . . .
+$$
+
+(2). 非齐次局部微分几何泊松括号是不同 $\kappa$ 次齐次微分几何泊松括号的有限线性组合.
+
+我们来看例子.
+
+例子 1. 0 次微分几何泊松括号. 这正是上一节例子 2 当中的“超局部”泊松括号:
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} = h ^ { i j } ( u ( x ) ) \delta ( x - y ) , \quad h ^ { j i } = - h ^ { i j } .
+$$
+
+例子 2. 1 次齐次微分几何泊松括号. 它具有如下形式:
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} = g ^ { i j } ( u ( x ) ) \delta ^ { \prime } ( x - y ) + b _ { k } ^ { i j } ( u ( x ) ) u _ { x } ^ { k } \delta ( x - y ) .
+$$
+
+该泊松括号出现于流体力学型哈密顿系统的描述 (Novikov, Dubrovin[6]). 确切地说, 一维 (齐次) 流体力学型系统 (system of hydrodynamic type, 简称 SHT) 是指形如下述的偏微分方程组:
+
+$$
+u _ { t } ^ { i } = v _ { j } ^ { i } ( u ) u _ { x } ^ { j } , \quad i = 1 , . . . , N .
+$$
+
+所有的理想流体运动方程 (可能有内在的自由度) 都形如此 (比如可见上一节). 我们还将 (第三章) 介绍, 流体力学型系统也可用于描述任何场论哈密顿系统的孤子格的弱形变. 我们称形如
+
+$$
+H [ u ] = \int h ( u ) \mathrm { d } x
+$$
+
+的泛函为流体力学型泛函 (注意密度 $h$ 不显含 $u ^ { \prime } , u ^ { \prime \prime } , \ldots )$ . 某些理想流体的运动方程的全部守恒量都形如此 (比如, 可见第 3 节).
+
+容易验证在一次齐次微分几何泊松括号以及流体力学型哈密顿量的情况下, 相应的哈密顿系统是流体力学型的:
+
+$$
+\begin{array} { r c l } { { u _ { t } ^ { i } ( x ) } } & { { = } } & { { \{ H , u ^ { i } ( x ) \} = v _ { j } ^ { i } ( u ) u _ { x } ^ { j } } } \\ { { } } & { { \equiv } } & { { - ( g ^ { i k } ( u ) \partial _ { x } + b _ { j } ^ { i k } ( u ) u _ { x } ^ { j } ) { \frac { \partial h } { \partial u ^ { k } } } } } \\ { { } } & { { = } } & { { - \left[ g ^ { i k } ( u ) { \frac { \partial ^ { 2 } h } { \partial u ^ { k } \partial u ^ { j } } } + b _ { j } ^ { i k } ( u ) { \frac { \partial h } { \partial u ^ { k } } } \right] u _ { x } ^ { j } . } } \end{array}
+$$
+
+正由于此原因, 我们也把这种泊松括号称为流体力学型泊松括号 (Poisson bracket ofhydrodynamic type, 简称 P.B.H.T.). 易知流体力学型泊松括号是与流体力学型哈密顿量生成流体力学型系统的最一般的一类局部泊松括号.
+
+这些演化系统与泛函的类型在靶空间坐标变换下不变. 在坐标变换下, 系数矩阵$( v _ { j } ^ { i } ( x ) )$ 的变化规律同 $( 1 , 1 )$ 型张量.
+
+流体力学型泊松括号经过靶空间坐标变换之后还是流体力学型的. 下述断言对流体力学型泊松括号十分重要:
+
+引理. $( a )$ . 在靶空间坐标变换下, 系数矩阵 $g ^ { i j } ( u )$ 的变化规律同 $( 2 , 0 )$ 型张量.
+
+$( b )$ . 假设 $\operatorname* { d e t } ( g ^ { i j } ( u ) ) \neq 0$ , 则可由下式唯一确定系数 $\Gamma _ { j k } ^ { i } = \Gamma _ { j k } ^ { i } ( u )$ :
+
+$$
+b _ { k } ^ { i j } = - g ^ { i s } \Gamma _ { s k } ^ { j } ,
+$$
+
+并且系数 $\Gamma _ { j k } ^ { i }$ 在坐标变换下的变化规律同仿射联络系数 (Christoffel 符号).
+
+由下式可证此引理:
+
+$$
+\begin{array} { r c l } { { \{ u ^ { i ^ { \prime } } ( x ) , u ^ { j ^ { \prime } } ( y ) \} } } & { { = } } & { { \displaystyle \frac { \partial u ^ { i ^ { \prime } } ( u ( x ) ) } { \partial u ^ { i } } \frac { \partial u ^ { j ^ { \prime } } ( u ( y ) ) } { \partial u ^ { j } } \{ u ^ { i } ( x ) , u ^ { j } ( y ) \} } } \\ { { } } & { { = } } & { { \displaystyle \frac { \partial u ^ { i ^ { \prime } } ( u ( x ) ) } { \partial u ^ { i } } \frac { \partial u ^ { j ^ { \prime } } ( u ( y ) ) } { \partial u ^ { j } } g ^ { i j } ( u ( x ) ) \delta ^ { \prime } ( x - y ) } } \\ { { } } & { { } } & { { \displaystyle + \frac { \partial u ^ { i ^ { \prime } } } { \partial u ^ { i } } \left[ \frac { \partial u ^ { j ^ { \prime } } } { \partial u ^ { j } } \frac { \partial u ^ { k } } { \partial u ^ { k ^ { \prime } } } b _ { k } ^ { i j } u _ { x } ^ { k ^ { \prime } } + \partial _ { x } \left( \frac { \partial u ^ { j ^ { \prime } } } { \partial u ^ { j } } \right) g ^ { i j } \right] \cdot \delta ( x - y ) . } } \end{array}
+$$
+
+下面我们只考虑满足非退化条件 $\operatorname* { d e t } ( g ^ { i j } ) \neq 0$ 的流体力学型泊松括号. 这种泊松括号的微分几何十分简单.
+
+定理. (a). 流体力学型泊松括号的反对称性 $\Longleftrightarrow$ 张量 $g ^ { i j }$ 是对称的 (即它定义了靶空间上的一个度量 a), 并且联络 $b _ { k } ^ { i j }$ (或者 $\Gamma _ { j k , } ^ { i }$ ) 与此度量相容 (即 $\nabla _ { k } g ^ { i j } \equiv 0 ,$ ).
+
+$( b )$ . 流体力学型泊松括号的雅可比恒等式 $\Longleftrightarrow$ 联络的对称性 $\Gamma _ { j k } ^ { i } = \Gamma _ { k j } ^ { i }$ (即此联络是度量 $g ^ { i j }$ 的 Levi-Civita 联络), 并且度量 $g ^ { i j }$ 的曲率 $R _ { j k l } ^ { i }$ 为零.
+
+a本书中的“度量”不要求具有正定性, 只需要非退化, 对称即可--译者注.
+
+若此定理成立, 则可选取局部平坦坐标 $\boldsymbol { v } ^ { 1 } , . . . , \boldsymbol { v } ^ { N }$ 使得在此坐标下的泊松括号为常值的:
+
+$$
+\{ v ^ { i } ( x ) , v ^ { j } ( y ) \} = \hat { g } ^ { i j } \delta ^ { \prime } ( x - y ) , \quad \hat { g } ^ { i j } = \hat { g } ^ { j i } = { } ^ { \cdot }
+$$
+
+(见上一节例子 3). 流体力学型泊松括号的全系局部不变量为度量 $g ^ { i j }$ 的正负惯性指数.
+
+证明. 反对称条件为
+
+$$
+\begin{array} { r c l } { { \{ u ^ { j } ( y ) , u ^ { i } ( x ) \} } } & { { = } } & { { g ^ { j i } ( u ( y ) ) \delta ^ { \prime } ( y - x ) + b _ { k } ^ { j i } ( u ( y ) ) \delta ( y - x ) } } \\ { { } } & { { = } } & { { - g ^ { j i } ( u ( x ) ) \delta ^ { \prime } ( x - y ) + [ - g ^ { j i } ( u ( x ) ) + b _ { k } ^ { j i } ( u ( x ) ) ] \delta ( x - y ) } } \\ { { } } & { { = } } & { { - [ g ^ { i j } ( u ( x ) ) \delta ^ { \prime } ( x - y ) + b _ { k } ^ { i j } ( u ( x ) ) \delta ( x - y ) ] } } \\ { { } } & { { = } } & { { - \{ u ^ { i } ( x ) , u ^ { j } ( y ) \} . } } \end{array}
+$$
+
+注意在上式中我们用到了 $f ( y ) \delta ^ { \prime } ( x - y ) = f ( x ) \delta ^ { \prime } ( x - y ) + f ^ { \prime } ( x ) \delta ( x - y )$ , 以及 $\delta ( y - x ) =$ $( x - y ) , \delta ^ { \prime } ( y - x ) = - \delta ^ { \prime } ( x - y )$ . 从而有
+
+$$
+g ^ { i j } ( u ) = g ^ { j i } ( u ) ,
+$$
+
+$$
+b _ { k } ^ { i j } ( u ) + b _ { k } ^ { j i } ( u ) = \frac { \partial g ^ { i j } ( u ) } { \partial u ^ { k } } .
+$$
+
+上面第二个方程正是联络 $b _ { k } ^ { i j } = - g ^ { i s } \Gamma _ { s k } ^ { j }$ 与度量 $g ^ { i j }$ 的相容性:
+
+$$
+\begin{array} { r c l } { { \nabla _ { k } g ^ { i j } } } & { { = } } & { { \displaystyle \frac { \partial g ^ { i j } } { \partial u ^ { k } } + \Gamma _ { s k } ^ { i } g ^ { s j } + \Gamma _ { s k } ^ { j } g ^ { i s } } } \\ { { } } & { { = } } & { { \displaystyle \frac { \partial g ^ { i j } } { \partial u ^ { k } } - b _ { k } ^ { i j } - b _ { k } ^ { j i } = 0 . } } \end{array}
+$$
+
+为证明度量的平坦性与联络的对称性, 我们用雅可比恒等式. 令
+
+$$
+\begin{array} { r c l } { { J ^ { i j k } ( x , y , z ) } } & { { = } } & { { \{ \{ u ^ { i } ( x ) , u ^ { j } ( y ) \} , u ^ { k } ( z ) \} + \{ \{ u ^ { j } ( y ) , u ^ { k } ( z ) \} , u ^ { i } ( x ) \} } } \\ { { } } & { { } } & { { } } \\ { { } } & { { } } & { { + \{ \{ u ^ { k } ( z ) , u ^ { i } ( x ) \} , u ^ { j } ( y ) \} } } \end{array}
+$$
+
+为雅可比恒等式的一端. 关于 $x , y , z$ 的广义函数 $J ^ { i j k } ( x , y , z )$ 对任意 $i , j , k$ 都为零, 当且仅当对任意“好的”向量值函数 $p , q , r$ 都有
+
+$$
+\iiint \mathrm { d } x \mathrm { d } y \mathrm { d } z p _ { i } ( x ) q _ { j } ( y ) r _ { k } ( z ) J ^ { i j k } ( x , y , z ) = 0 .
+$$
+
+上述积分可化为如下的单重积分
+
+$$
+\int \mathrm { d } x \sum _ { \sigma , \tau = 0 } ^ { 2 } A _ { \sigma \tau } ^ { i j k } p _ { i } q _ { j } ^ { ( \sigma ) } r _ { k } ^ { ( \tau ) } = 0 ,
+$$
+
+其中系数 $A _ { \sigma \tau } ^ { i j k }$ 与 $p , q , r$ 无关. 从而得到下述与雅可比恒等式等价的方程组:
+
+$$
+A _ { \sigma \tau } ^ { i j k } = 0 , \quad 1 \leq i , j , k \leq N , \quad 0 \leq \sigma , \tau \leq 2 .
+$$
+
+我们来写出这些关系的具体表达式. 首先有
+
+$$
+A _ { 0 2 } ^ { i j k } \equiv b _ { s } ^ { i j } g ^ { s k } - b _ { s } ^ { k j } g ^ { s i } = 0 ,
+$$
+
+这恰好是联络 $b _ { k } ^ { i j } = - g ^ { i s } \Gamma _ { s k } ^ { j }$ 的对称性条件. 此外,
+
+$$
+A _ { 0 0 } ^ { i j k } = B _ { s } ^ { i j k } ( u ) u _ { x x } ^ { s } + C _ { s t } ^ { i j k } ( u ) u _ { x } ^ { s } u _ { x } ^ { t } = 0 ,
+$$
+
+其中
+
+$$
+\begin{array} { r c l } { { { \cal B } _ { s } ^ { i j k } } } & { { = } } & { { ( b _ { t , s } ^ { j k } - b _ { s , t } ^ { j k } ) g ^ { t i } + b _ { t } ^ { i j } b _ { s } ^ { t k } - b _ { t } ^ { i k } b _ { s } ^ { t j } } } \\ { { } } & { { = } } & { { - g ^ { i t } g ^ { j r } R _ { r s t } ^ { k } . } } \end{array}
+$$
+
+[这里的 $b _ { t , s } ^ { j k } = \partial _ { s } b _ { t } ^ { j k }$ , 其余类似] . 从而曲率为零. 此定理的必要性条件得证.
+
+至于充分性, 我们不必用到其余的那几个 $A _ { \sigma \tau } ^ { i j k } = 0$ 的关系. 事实上, 适当选取坐标变换 $u ^ { i } \mapsto v ^ { i } = v ^ { i } ( u )$ 可将泊松括号化为常值, 此时雅可比恒等式是显然的. 这就完成了证明. □
+
+在讲具体例子前我想说, 这种平坦坐标是“非物理的”. 还有另外一种重要的坐标选取. 若局部坐标 $u ^ { 1 } , . . . , u ^ { N }$ 使得其度量与联络形如
+
+$$
+g ^ { i j } = \gamma ^ { i j } + \gamma ^ { j i } , \quad b _ { k } ^ { i j } = \frac { \partial \gamma ^ { i j } } { \partial u ^ { k } }
+$$
+
+其中 $\gamma ^ { i j } = \gamma ^ { i j } ( u )$ 为矩阵函数, 则称此坐标为 Liouville 坐标. 在此坐标下的流体力学型泊松括号形如
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} = [ \gamma ^ { i j } ( u ( y ) ) + \gamma ^ { j i } ( u ( x ) ) ] \delta ^ { \prime } ( x - y ) .
+$$
+
+这种局部坐标的代表性质是下述泛函两两交换:
+
+$$
+U ^ { i } = \int u ^ { i } ( x ) \mathrm { d } x , \quad \{ U ^ { i } , U ^ { j } \} \equiv 0 .
+$$
+
+第一个例子是一维可压缩流体 (也可见第 3 节的例子 6) 的运动方程. 这里 $N = 3$ ,靶空间的自然的坐标选取为
+
+$$
+\begin{array}{c} \begin{array} { r l } { u ^ { 1 } = p } & { \left( \vec { z } \right) \varTheta \varXi \varTheta ^ { * } \varTheta } \\ { u ^ { 2 } = \rho } & { \left( \vec { \jmath } \varTheta \varXi \varXi \varTheta ^ { * } \varTheta \varTheta \right)} \\ { u ^ { 3 } = \sigma } & { \left( \imath \rlap / \hbar \partial \not \Xi \varTheta ^ { * } \varTheta \varTheta \right) \varXi } \end{array}   \end{array}
+$$
+
+泊松括号形如
+
+$$
+\begin{array} { l } { { \{ p ( x ) , p ( y ) \} = [ p ( x ) + p ( y ) ] \delta ^ { \prime } ( x - y ) , } } \\ { { \{ p ( x ) , \rho ( y ) \} = \rho ( x ) \delta ^ { \prime } ( x - y ) , } } \\ { { \{ p ( x ) , \sigma ( y ) \} = \sigma ( x ) \delta ^ { \prime } ( x - y ) , } } \\ { { \{ \rho ( x ) , \rho ( y ) \} = \{ \sigma ( x ) , \sigma ( y ) \} = \{ \rho ( x ) , \sigma ( y ) \} = 0 . } } \end{array}
+$$
+
+其 Liouville 矩阵为
+
+$$
+( \gamma ^ { i j } ) = { \binom { p } { \rho } } \ 0 0 \rangle \ .
+$$
+
+该系统的哈密顿量形如
+
+$$
+H = \int \left[ { \frac { p ^ { 2 } } { 2 \rho } } + { \mathcal { E } } ( \rho , \sigma ) \right] { \mathrm { d } } x .
+$$
+
+相应的度量 $g ^ { i j } = \gamma ^ { i j } + \gamma ^ { j i }$ 恒退化. 但在正压 (barotropic) 情形 $\sigma / \rho =$ 常数时 (此时$N = 2$ ), 相应的二维度量非退化:
+
+$$
+( g ^ { i j } ) = { \binom { 2 p } { \rho } } \ \rho \sp { } \ \rho \nonumber ) ,
+$$
+
+其正负惯性指数为 $( 1 , 1 )$ .
+
+第二个例子时一维相对论流体. 其运动方程形如
+
+$$
+\frac { \partial T ^ { i j } } { \partial x ^ { j } } = 0 , \quad i = 0 , 1 , \quad x ^ { 0 } = t , \quad x ^ { 1 } = x .
+$$
+
+能-动量张量 $T ^ { i j } = T j i$ 的三个分量并不是独立的, 它们要满足一个约束条件, 此约束为相对论流体的状态方程. 根据相对论的不变性条件, 此状态方程仅仅是对张量 $( T ^ { i j } )$ 的不变量的限制:
+
+$$
+f ( { \mathcal { E } } , { \mathcal { P } } ) = 0 .
+$$
+
+这里的 $\mathcal { E } , \mathcal { P }$ 为此流体在余活动标架 [使得成立
+
+$$
+T ^ { i ^ { \prime } j ^ { \prime } } = { \binom { \varepsilon } { 0 } } \mathcal { P } \Biggr )
+$$
+
+的洛伦兹标架] 下的能量密度与压强.
+
+记靶空间坐标 $u ^ { 0 } = T ^ { 0 0 } = \varepsilon$ (能量密度) 与 $u ^ { 1 } = T ^ { 0 1 } = p$ (动量密度). 在此局部坐标下的运动方程为
+
+$$
+\varepsilon _ { t } + p _ { x } = 0 , \quad p _ { t } + ( \varepsilon - 2 q ) _ { x } = 0 .
+$$
+
+其中 $2 q = T _ { i } ^ { i } = \mathcal { E } - \mathcal { P }$ 为能-动量张量的洛伦兹迹 (Lorentz-trace). 此 $\varepsilon , p$ 是关于其泊松括号的 Liouville 坐标, 且相应的
+
+$$
+( \gamma ^ { i j } ) = - \left( { p \atop \varepsilon } \ : \ : \ : ^ { \varepsilon - 2 q } \right) .
+$$
+
+哈密顿量为 $H = \int \varepsilon \mathrm { d } x$ . 度量 $g ^ { i j } = \gamma ^ { i j } + \gamma ^ { j i }$ 的正负惯性指数为 $( 1 , 1 )$
+
+我们回到一般的一维流体力学型系统. 下述断言给出了如下系统
+
+$$
+u _ { t } ^ { i } = v _ { j } ^ { i } ( u ) u _ { x } ^ { j }
+$$
+
+为哈密顿系统的一个判据 (Tsarev [17]).
+
+引理. 上述系统是流体力学型哈密顿系统 $\Longleftrightarrow$ 存在靶空间上的 (非退化的) 平坦度量 $g ^ { i j } ( u )$ 满足
+
+$$
+\begin{array} { l } { g _ { i k } v _ { j } ^ { k } = g _ { j k } v _ { i } ^ { k } } \\ { \nabla _ { i } v _ { j } ^ { k } = \nabla _ { j } v _ { i } ^ { k } . } \end{array}
+$$
+
+证明. 若上述系统具有哈密顿量
+
+$$
+H = \int h ( \boldsymbol { u } ) \mathrm { d } \boldsymbol { x } ,
+$$
+
+则相应哈密顿系统 $u _ { t } ^ { i } ( x ) = \{ u ^ { i } ( x ) , H \}$ 系数矩阵满足6
+
+$$
+v _ { j } ^ { i } ( u ) = \nabla ^ { i } \nabla _ { j } h ( u )
+$$
+
+这里的 $\nabla _ { i }$ 为度量 $\left( g _ { i j } \right)$ 的 Levi-Civita 联络的协变导数, $\nabla ^ { i } = g ^ { i k } \nabla _ { k }$ . 因此有
+
+$$
+g _ { i k } v _ { j } ^ { k } = \nabla _ { i } \nabla _ { j } h .
+$$
+
+从而由 Levi-Civita 联络的对称性立刻得到 (a). 再由度量的平坦性以及联络与度量相容性可证明 (b):
+
+$$
+\nabla _ { i } v _ { j } ^ { k } = - \nabla _ { i } \nabla ^ { k } \nabla _ { j } h = - \nabla _ { i } \nabla _ { j } \nabla ^ { k } h = \nabla _ { j } v _ { i } ^ { k } .
+$$
+
+反之, 从 (b) 可知存在向量场 $h ^ { i }$ 使得系数矩阵 $v _ { j } ^ { i }$ 形如
+
+$$
+v _ { j } ^ { i } = - \nabla _ { j } h ^ { i } .
+$$
+
+再由 (a) 可知相应的 1-形式 $h _ { i } = g _ { i k } h ^ { k }$ 是闭的, 从而形如
+
+$$
+h _ { i } = \partial _ { i } h \equiv \nabla _ { i } h .
+$$
+
+引理证毕.
+
+例子 3. 非齐次的一次泊松括号. 这种泊松括号形如
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} = g ^ { i j } ( u ( x ) ) \delta ^ { \prime } ( x - y ) + [ b _ { k } ^ { i j } ( u ) u _ { x } ^ { k } + h ^ { i j } ( u ) ] \delta ( x - y ) .
+$$
+
+$g ^ { i j } ( u )$ , $h _ { k } ^ { i j } ( u )$ 的微分几何意义与之前一样. 反对称矩阵 $h ^ { i j }$ 定义了靶空间上的一个有限维泊松括号. 在度量 $( g ^ { i j } )$ 非退化的假设下, 下述断言成立 (见 [7]).
+
+定理. 在关于度量 $( g ^ { i j } )$ 的平坦坐标 $\boldsymbol { u } ^ { 1 } , . . . , \boldsymbol { u } ^ { N }$ 下, 上述非齐次的一次泊松括号恰为关于某李代数 $\mathfrak { g }$ 的 (非齐次)Kac-Moody 括号 (见第 3 节例 $5 _ { , }$ ):
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} = \hat { g } ^ { i j } \delta ^ { \prime } ( x - y ) + [ c _ { k } ^ { i j } v ^ { k } + c _ { 0 } ^ { i j } ] \delta ( x - y ) ,
+$$
+
+其中 $c _ { k } ^ { i j }$ 为 $\mathfrak { g }$ 的结构常数, $\hat { g } ^ { i j }$ 与 $c _ { 0 } ^ { i j }$ 分别为 $\mathfrak { g }$ 的不变双线性型与 2-上链.
+
+例子 4. 格上的泊松括号与 Yang-Baxter 方程. 我们来看离散版本的微分几何泊松括号. 场 $u ^ { i }$ , $i = 1 . . . , N$ 定义在一维 格 (lattice) 上: $u ^ { i } = ( u _ { n } ^ { i } ) , n \in \mathbb { Z }$ (我们只考虑空间一维情形). $n _ { 0 }$ 次的微分几何泊松括号形如
+
+$$
+\begin{array} { l } { { \{ u _ { n } ^ { i } , u _ { m } ^ { j } \} = h _ { m - n } ^ { i j } ( u _ { n } , u _ { m } ) , } } \\ { { h _ { k } ^ { i j } = 0 , \quad \forall | k | > n _ { 0 } . } } \end{array}
+$$
+
+该括号的反对称性等价于 $h _ { - k } ^ { i j } ( u , v ) = - h _ { k } ^ { j i } ( v , u )$ . 在局部坐标变换
+
+$$
+u _ { n } ^ { i } \to u _ { n } ^ { i ^ { \prime } } = f ^ { i } ( u _ { n } ^ { 1 } , . . . , u _ { n } ^ { N } ) , \quad i = 1 , . . . , N , n \in \mathbb { Z }
+$$
+
+下, 矩阵 $h _ { k } ^ { i j } ( u , v )$ 满足变换关系
+
+$$
+h _ { k } ^ { i j } ( u , v )  h _ { k } ^ { i ^ { \prime } j ^ { \prime } } ( u ^ { \prime } , v ^ { \prime } ) = \frac { \partial f ^ { i } ( u ) } { \partial u ^ { p } } \frac { \partial f ^ { j } ( v ) } { \partial v ^ { q } } h _ { k } ^ { p q } ( u , v ) .
+$$
+
+若 $n _ { 0 } = 0$ , 则称该括号是超局部的 (也就是说, 它由靶空间上的有限维泊松括号$h _ { 0 } ^ { i j } ( u )$ 所确定). 否则, 我们仅考虑 $n _ { 0 } = 1$ 的情形. [这是因为, 若 $n _ { 0 } > 1$ , 则引入新的场变量 $v _ { n } ^ { \alpha }$ , $\alpha = 1 , . . . , n _ { 0 } N$ 使得
+
+$$
+v _ { n } ^ { i + p N } = u _ { n n _ { 0 } + p } ^ { i } , \quad i = 1 , . . . , N , \quad p = 0 , 1 , . . . , n _ { 0 } - 1 .
+$$
+
+在此变换下, 我们得到关于 $v _ { n } ^ { \alpha }$ 的一次微分几何括号. ]
+
+因此, 我们只考虑如下的一次泊松括号:
+
+$$
+\begin{array} { l } { { \{ u _ { n } ^ { i } , u _ { n } ^ { j } \} = h _ { 0 } ^ { i j } ( u _ { n } ) , \quad \{ u _ { n } ^ { i } , u _ { n + 1 } ^ { j } \} = h _ { 1 } ^ { i j } ( u _ { n } , u _ { n + 1 } ) , } } \\ { { \{ u _ { n } ^ { i } , u _ { m } ^ { j } \} = 0 \quad \# | n - m | > 1 . } } \end{array}
+$$
+
+如果张量 $h _ { 1 } ^ { i j } ( u , v )$ 非退化, 则 [5] 断言此泊松括号来自于某个哈密顿-李群 (见第 1 节).我们回忆: (连通且单连通的) 哈密顿-李群 $G$ 被其李双代数 $( L , c _ { \alpha \beta } ^ { \gamma } ; L ^ { * } , f _ { \gamma } ^ { \alpha \beta } )$ 所决定. 这里的 $L$ 为 $G$ 的李代数, 且 $c _ { \alpha \beta } ^ { \gamma }$ 为其结构常数; $L ^ { * }$ 为 $L$ 的对偶空间, 且具有与 $L$ 相容的李代数结构 $f _ { \gamma } ^ { \alpha \beta }$ .
+
+设反对称矩阵 $h ^ { \alpha \beta }$ 使得上链
+
+$$
+\overline { { { f } } } _ { \gamma } ^ { \alpha \beta } = f _ { \gamma } ^ { \alpha \beta } + c _ { \varepsilon \gamma } ^ { \alpha } h ^ { \varepsilon \beta } + c _ { \varepsilon \gamma } ^ { \beta } h ^ { \alpha \varepsilon }
+$$
+
+也使得 $L ^ { * }$ 为李代数 (该李代数结构自动地与 $L$ 相容). 我们要求下述关系成立:
+
+$$
+\begin{array} { r l } & { c _ { \alpha \beta } ^ { \mu } h ^ { \alpha \nu } h ^ { \beta \lambda } + h ^ { \mu \alpha } c _ { \alpha \beta } ^ { \nu } h ^ { \beta \lambda } + h ^ { \mu \alpha } h ^ { \nu \beta } c _ { \alpha \beta } ^ { \lambda } } \\ { = } & { f _ { \varepsilon } ^ { \mu \nu } h ^ { \varepsilon \lambda } + f _ { \varepsilon } ^ { \lambda \mu } h ^ { \varepsilon \nu } + f _ { \varepsilon } ^ { \nu \lambda } h ^ { \varepsilon \mu } . } \end{array}
+$$
+
+[回顾: 上式等号左边恰为李代数 $L$ 的关于“ $\cdot _ { r } .$ -矩阵” ${ \ " } h ^ { \alpha \beta }$ 的经典 Yang-Baxter 方程, 见第1 节.] 最后, 必存在下述李代数同态
+
+$$
+r : ( L ^ { * } , f _ { \gamma } ^ { \alpha \beta } )  ( L , c _ { \alpha \beta } ^ { \gamma } ) , \quad r = ( r ^ { \alpha \beta } ) ;
+$$
+
+共轭映射 $r _ { * } ^ { \alpha \beta } = r ^ { \beta \alpha }$ 必为李代数同态:
+
+$$
+r _ { * } : ( L ^ { * } , \overline { { { f } } } _ { \gamma } ^ { \alpha \beta } )  ( L , c _ { \alpha \beta } ^ { \gamma } ) .
+$$
+
+对于哈密顿-李群 $G$ , 如果存在满足上述性质的同态 $r$ 与 $( h = h ^ { \alpha \beta }$ ), 则称 $G$ 是容许的.
+
+定理. 容许的哈密顿-李群 $( G , r , h )$ 通过如下关系决定了一个格上的泊松括号: $u _ { n } \in$ $G , n \in \mathbb { Z }$ ,
+
+$$
+\begin{array} { r c l } { { \{ \varphi ( u _ { n } ) , \psi ( u _ { m } ) \} } } & { { = } } & { { 0 } } & { { \sharp \bigr | n - m | > 1 } } \\ { { \{ \varphi ( u _ { n } ) , \psi ( u _ { n + 1 } ) \} } } & { { = } } & { { r ^ { \alpha \beta } \partial _ { \alpha } \varphi ( u _ { n } ) \partial _ { \beta } ^ { \prime } \psi ( u _ { n + 1 } ) } } \end{array}
+$$
+
+其中 $\partial _ { \alpha } , \partial _ { \beta } ^ { \prime }$ 分别为 $G$ 的左, 右不变向量场,
+
+$$
+\{ \varphi ( u _ { n } ) , \psi ( u _ { n } ) \} = \eta ^ { \alpha \beta } ( u _ { n } ) \partial _ { \alpha } \varphi ( u _ { n } ) \partial _ { \beta } \psi ( u _ { n } ) ,
+$$
+
+其中
+
+$$
+\eta ^ { \alpha \beta } ( u ) = \eta _ { 0 } ^ { \alpha \beta } ( u ) + \mathrm { a d } _ { u ^ { - 1 } } h ^ { \alpha \beta }
+$$
+
+其中 $\eta _ { 0 } ^ { \alpha \beta }$ 由 $G$ 的哈密顿-李群结构确定 (见第 $\mathit { 1 }$ 节). 这里的 $\varphi , \psi$ 为 $G$ 上的任意光滑函数. 另一方面, 格上的所有的满足非退化条件 $\operatorname* { d e t } ( h _ { 1 } ^ { i j } ( u ) ) \neq 0$ 的一次微分几何泊松括号都可由此方法得到.
+
+[注记: 上述非退化条件等价于 $r = ( r ^ { \alpha \beta } )$ 的非退化性. 换句话说, $r$ 为李代数同构$L ^ { * } \to L$ . 此时所有的容许条件都可化为李代数 $L$ 与矩阵 $r = ( r ^ { \alpha \beta } )$ 的条件. ]
+
+三角哈密顿-李群 (见第 1 节) 的微分几何泊松括号是重要例子. 此时, 反对称矩阵$r ^ { \alpha \beta }$ 满足其李代数 $L$ 的经典 Yang-Baxter 方程. 于是上述定理给出的泊松括号为
+
+$$
+\{ \varphi ( u _ { n } ) , \psi ( u _ { n + 1 } ) \} = r ^ { \alpha \beta } \partial _ { \alpha } \varphi ( u _ { n } ) \partial _ { \beta } ^ { \prime } \psi ( u _ { n + 1 } ) ,
+$$
+
+$$
+\{ \varphi ( u _ { n } ) , \psi ( u _ { n } ) \} = - r ^ { \alpha \beta } [ \partial _ { \alpha } \varphi ( u _ { n } ) \partial _ { \beta } \psi ( u _ { n } ) + \partial _ { \alpha } ^ { \prime } \varphi ( u _ { n } ) \partial _ { \beta } ^ { \prime } \psi ( u _ { n } ) ] .
+$$
+
+该泊松括号非退化当且仅当矩阵 $r ^ { \alpha \beta }$ 非退化. 此时李代数 $L$ 是拟-Frobnious 的.
+
+例子. 对于最简单的二维非交换群 $G$ , 任取非退化矩阵作为 $r$ , 则有如下括号:
+
+$$
+h _ { 1 } ^ { i j } ( u , v ) = { \binom { \sigma y ^ { 2 } } { 0 } } ~ \frac { 0 } { 2 } \bigg ) ~ { \binom { a } { c } } ~ b \bigg ( \frac { 1 } { x ^ { \prime } } ~ \frac { 0 } { 2 } \bigg ) ~ ,
+$$
+
+$$
+\begin{array} { l } { { u = ( x , y ) , \quad v = ( x ^ { \prime } , y ^ { \prime } ) , \quad \sigma = \pm 1 , } } \\ { { \nonumber h _ { 0 } ^ { i j } ( u ) = - h _ { 1 } ^ { i j } ( u , u ) + h _ { 1 } ^ { j i } ( u , u ) . } } \end{array}
+$$
+
+若取 ${ \left( \begin{array} { l l } { a } & { b } \\ { c } & { d } \end{array} \right) } = { \left( \begin{array} { l l } { \sigma } & { 0 } \\ { 0 } & { 2 } \end{array} \right) }$ 则得到 Toda 格方程 [18,16] 的第二个哈密顿结构.
+
+[注记. 对于任意 $n _ { 0 }$ 次的微分几何泊松括号 $\{ u _ { n } ^ { i } , u _ { m } ^ { j } \} = h _ { m - n } ^ { i j } ( u _ { n } , u _ { m } )$ , 我们可以定义其关于参数 $\varepsilon$ 的 连续延伸 (continuous prolongation) :
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} _ { \varepsilon } = \sum _ { k = - n _ { 0 } } ^ { n _ { 0 } } h _ { k } ^ { i j } ( u ( x ) , u ( y ) ) \delta ( x - y + k \varepsilon ) .
+$$
+
+] 为定义格上的泊松括号的连续极限, 考虑如下形式展开
+
+$$
+\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} _ { \varepsilon } = \sum _ { s = 0 } ^ { \infty } \varepsilon ^ { s } \{ u ^ { i } ( x ) , u ^ { j } ( y ) \} _ { s } .
+$$
+
+则 $\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} _ { 0 }$ 是超局部泊松括号 (由靶空间上某有限维泊松括号所确定). 若 $\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} _ { 0 } =$ 0, 则 $\{ u ^ { i } ( x ) , u ^ { j } ( y ) \} _ { 1 }$ 为流体力学型泊松括号. 对于 (格上的) 一次泊松括号, 我们有
+
+$$
+\begin{array} { l } { { \{ u ^ { i } ( x ) , u ^ { j } ( y ) \} _ { 0 } = h ^ { i j } ( u ( x ) ) \delta ( x - y ) , } } \\ { { h ^ { i j } ( u ) = h _ { 0 } ^ { i j } ( u ) + h _ { 1 } ^ { i j } ( u , u ) - h _ { 1 } ^ { j i } ( u , u ) ; } } \\ { { \{ u ^ { i } ( x ) , u ^ { j } ( y ) \} _ { 1 } = g ^ { i j } ( u ( x ) ) \delta ^ { \prime } ( x - y ) + b _ { k } ^ { i j } ( u ( x ) ) u _ { x } ^ { k } \delta ( x - y ) , } } \\ { { g ^ { i j } ( u ) = h _ { 1 } ^ { i j } ( u , u ) + h _ { 1 } ^ { j i } ( u , u ) , } } \\ { { b _ { k } ^ { i j } ( u ) = \displaystyle \frac \partial { \partial v ^ { k } } ( h _ { 1 } ^ { i j } ( u , v ) + h _ { 1 } ^ { j i } ( v , u ) ) _ { v = u } . } } \end{array}
+$$
+
+在上例的二分量泊松括号中, $\{ , \} _ { 0 } \equiv 0$ , 从而其连续极限为流体力学型的.
+
+对于由经典 Yang-Baxter 方程的解 $r ^ { \alpha \beta }$ 定义的格上的泊松括号 (见前文), 我们得到相应李群上的一个新的泊松括号:
+
+$$
+\{ \varphi ( u ) , \psi ( u ) \} = r ^ { \alpha \beta } [ \partial _ { \alpha } \varphi \partial _ { \beta } ^ { \prime } \psi - \partial _ { \beta } \varphi \partial _ { \alpha } ^ { \prime } \psi - \partial _ { \alpha } \varphi \partial _ { \beta } \psi + \partial _ { \alpha } ^ { \prime } \varphi \partial _ { \beta } ^ { \prime } \psi ] ( u )
+$$
+
+另一个 (更简单的) 例子是差分版本的 KdV 方程
+
+$$
+{ \dot { c } } _ { n } = c _ { n } ( c _ { n + 1 } - c _ { n - 1 } )
+$$
+
+[所谓的 Volterra 格方程] . 相应的哈密顿结构为
+
+$$
+\{ c _ { n } , c _ { m } \} = c _ { n } c _ { m } ( \delta _ { m , n + 1 } - \delta _ { n , m + 1 } )
+$$
+
+[这里的 $\delta$ 为 Kronecker $\delta$ 记号] , 哈密顿量为 $H = \sum c _ { n }$ . 我们有 $h _ { 0 } ( u ) \equiv 0$ , $h _ { 1 } ( u , v ) =$ uv, 其连续极限为
+
+$$
+\{ c ( x ) , c ( y ) \} _ { \varepsilon } = c ( x ) c ( y ) \left[ 2 \varepsilon \delta ^ { \prime } ( x - y ) + { \frac { \varepsilon ^ { 3 } } { 3 } } \delta ^ { \prime \prime \prime } ( x - y ) + \cdot \cdot \cdot \right] .
+$$
+
+若变量代换 $c ( x ) = 1 - \frac { \varepsilon ^ { 2 } } { 3 } u ( x )$ , 则得到
+
+$$
+\frac { \varepsilon ^ { 3 } } { 9 } \{ u ( x ) , u ( y ) \} = 2 \delta ^ { \prime } ( x - y ) - \frac { \varepsilon ^ { 2 } } { 6 } \left[ - \frac { 1 } { 2 } \delta ^ { \prime \prime } ( x - y ) + ( u ( x ) + u ( y ) ) \delta ^ { \prime } ( x - y ) \right] + O ( \varepsilon ^ { 4 } ) .
+$$
+
+我们注意到在离散 KdV 方程的泊松括号中 (某种意义下) 隐藏着 Gardner-Zakharov-Faddeev 括号与 Magri 括号.
+
+# 第 2 章 可积系统理论基础
+
+# 2.1 流体力学型系统的可积性理论
+
+我们来探讨如何构造演化型 $( 1 + 1 )$ -哈密顿系统 $u _ { t } ^ { i } = \{ H , u ^ { i } ( x ) \}$ 的有限维不变流形. 这种不变流形有两种最简单的构造方式.
+
+1. 对任何交换流
+
+$$
+u _ { s } ^ { i } = K ^ { i } ( x , t , u , u ^ { \prime } , \ldots ) , \quad u _ { t s } ^ { i } = u _ { s t } ^ { i } ,
+$$
+
+$s \cdot$ -流的满足
+
+$$
+K ^ { i } ( x , t , u , u ^ { \prime } , . . . ) = 0 , \quad i = 1 , 2 , . . . , N
+$$
+
+的稳定点集 $M = M _ { K }$ 关于 $t { \cdot }$ -演化不变 [此系统甚至不必为哈密顿系统] .
+
+2. 对任意守恒律 $F = \int f ( u , u ^ { \prime } , \ldots ) \mathrm { d } x$ , 考虑此泛函的极值 (extrema) 点集
+
+$$
+N _ { F } : = \Big \{ u ( x ) \Big | \frac { \delta F } { \delta u ^ { i } ( x ) } = 0 \Big \} .
+$$
+
+第一种构造的主要例子是流体力学型系统的可积性理论. 若此交换流为关于哈密顿量 $F$ 的哈密顿系统, 则 $N _ { F } \subseteq M _ { k }$ . 而当泊松括号退化时, 此命题的逆命题不成立. 若泊松括号的零因子 (annihilator) 由局部泛函 $A _ { 1 } , . . . , A _ { s }$ 生成, 则任何哈密顿流$u _ { s } ^ { i } ( x ) = K ^ { i } ( u , u ^ { \prime } , \ldots ) = \{ F , u ^ { i } ( x ) \}$ 的稳定点集 $M _ { K }$ 可表示为 $M _ { K } = \bigcup _ { c } N _ { \hat { F } _ { c } }$ , $\hat { F } _ { c } =$ $F + c _ { 1 } A _ { 1 } + \cdot \cdot \cdot + c _ { s } A _ { s }$ , 其中 $\boldsymbol { c } = ( c _ { 1 } , . . . , c _ { s } )$ 为常值向量.
+
+从而, 即使对于哈密顿系统, 考虑与之交换的非哈密顿流有时也有用.
+
+下面考虑流体力学型哈密顿系统:
+
+$$
+\begin{array} { r l } & { u _ { t } ^ { i } = v _ { j } ^ { i } ( u ) u _ { x } ^ { j } = \{ H , u ^ { i } ( x ) \} , \quad H = \displaystyle \int h ( u ) \mathrm { d } x , } \\ & { \{ u ^ { i } ( x ) , u ^ { j } ( y ) \} = g ^ { i j } ( u ( x ) ) \delta ^ { \prime } ( x - y ) + b _ { k } ^ { i j } ( u ) u _ { x } ^ { k } \delta ( x - y ) . } \end{array}
+$$
+
+在考虑与此交换的另一个流体力学型系统:
+
+$$
+u _ { s } ^ { i } = w _ { j } ^ { i } ( u ) u _ { x } ^ { j } , \quad ( u _ { t } ^ { i } ) _ { s } = ( u _ { s } ^ { i } ) _ { t } .
+$$
+
+[可以证明, 对角的流体力学型哈密顿系统存在这样的交换流 (见 Novikov, Tsarev[26-28])] . 第二个流的稳定点集是平凡的 [只有常函数] . 但我们可考虑将此流与另一个与尺度变换 $( x , t ) \mapsto ( k x , k t )$ 有关的第三个流
+
+$$
+u _ { r } ^ { i } = x u _ { x } ^ { i } + t u _ { t } ^ { i } = ( x \delta _ { j } ^ { i } + t v _ { j } ^ { i } ( u ) ) u _ { x } ^ { j }
+$$
+
+的组合. 因此下述断言成立:
+
+引理 2.1. 由下式
+
+$$
+w _ { j } ^ { i } ( u ) = x \delta _ { j } ^ { i } + t v _ { j } ^ { i } ( u ) , \quad i , j = 1 , . . . , N
+$$
+
+确定的隐函数 $u ^ { i } = u ^ { i } ( x , t )$ 满足方程 (2.1).
+
+证明. 这是流 $u _ { s } ^ { i } - u _ { r } ^ { i }$ 的稳定点集.
+
+此系统的相容性是因为该系统的如下等价表示:
+
+$$
+w ^ { i } ( u ) = x + v ^ { i } ( u ) t , \quad i = 1 , . . . , N .
+$$
+
+其中 $w ^ { 1 } ( u ) , . . . , w ^ { N } ( u )$ 与 $v ^ { 1 } ( u ) , . . . , v ^ { N } ( u )$ 分别为矩阵 $( w _ { j } ^ { i } ( u ) )$ 与 $( v _ { j } ^ { i } ( u ) )$ 的特征值.
+
+现在, 我要将某些特定的流体力学型哈密顿系统定义为“可积的”(integrable). 这种系统应该存在形如 (2.1’) 的交换流. 此外, (2.1) 的任何解在局部上都应该能够通过(2.1’)(2.2) 求得. 还应当要求, 在 Liouville 定理的某种无穷维推广下此系统是完全可积的.
+
+这类特殊的流体力学型哈密顿系统正是可对角化的流体力学型哈密顿系统. 这是指, 在适当的局部坐标下, (2.1) 的系数矩阵 $( v _ { j } ^ { i } ( u ) )$ 为对角阵. 换句话说此系统的黎曼不变量 [见本节的附录 1] 存在. Novikov 认为如此的流体力学型系统是可积的; 他的学生Tsarev 在其博士论文当中给出了这种系统的可积性的证明.
+
+现在假定哈密顿系统 (2.1) 在局部坐标 $u ^ { 1 } , . . . , u ^ { N }$ 下是对角的:
+
+$$
+u _ { t } ^ { i } = v ^ { i } ( u ) u _ { x } ^ { i } , \quad i = 1 , . . . , N
+$$
+
+[本节不假定对重复指标自动求和] , 并且当 $i \neq j$ 时 $v ^ { i } \neq v ^ { j }$ .
+
+引理 2.2. 在此 $u ^ { i }$ -局部坐标下, 此流体力学型哈密顿系统的相应度量 $g ^ { i j } ( u )$ 也 是对角的:
+
+$$
+g ^ { i j } ( u ) = g ^ { i } ( u ) \delta ^ { i j } .
+$$
+
+证明. 由对称性条件 $g _ { i k } v ^ { k j } = g _ { j k } v _ { i } ^ { k }$ [见 1.4 节的某引理] 可知当 $i \neq j$ 时有
+
+$$
+g _ { i j } v ^ { j } = g _ { j i } v ^ { i } \Longrightarrow g _ { i j } = 0 .
+$$
+
+在微分几何的观点下, 零曲率的对角度量可被平坦空间 (配以欧氏度量或者不定度量) 中的 $N .$ -正交曲线坐标系所确定. [根据 E.Cartan [29] 的结果, 此坐标系局部上可由N(N − 1) 个二元函数所确定] . 反之, 任何正交曲线坐标系都定义了一族交换的对角的流体力学型哈密顿系统, 它们可由下述定理确定:
+
+定理 2.3. 设 $\Gamma _ { j k } ^ { i }$ 为平坦对角度量 (2.4) 的 Levi-Civita 联络的 Christoffel 符号, 则在此局部坐标下, 流体力学型哈密顿系统
+
+$$
+u _ { s } ^ { i } = w ^ { i } ( u ) u _ { x } ^ { i }
+$$
+
+的系数满足如下方程组:
+
+$$
+\partial _ { i } w ^ { k } = \Gamma _ { k i } ^ { k } ( w ^ { i } - w ^ { k } ) , \quad \left( \partial _ { i } = \frac { \partial } { \partial u ^ { i } } \right) , \quad i \neq k .
+$$
+
+反之, 方程组 (2.6) 的每一个解都确定了一个流体力学型哈密顿系统; 任意 $N$ 个单变量函数均确定了方程组 (2.6) 的一个解.
+
+这些哈密顿系统两两交换.
+
+证明. 对角系统 (2.5) 在由对角的平坦度量 (2.4) 所确定的泊松括号意义下是哈密顿系统, 当且仅当 [1.4 节介绍过的] 的下述对称性条件 (a)(b) 成立:
+
+$$
+\sum _ { k } g _ { i k } w _ { j } ^ { k } = \sum _ { k } g _ { j k } w _ { i } ^ { k }
+$$
+
+$$
+\nabla _ { i } w _ { j } ^ { k } = \nabla _ { j } w _ { i } ^ { k }
+$$
+
+其中 $g _ { i j } = g _ { i } \delta _ { i j }$ , $g _ { i } = \frac { 1 } { g ^ { i } } , w _ { j } ^ { i } = w ^ { i } \delta _ { j } ^ { i }$ . 对称性条件 (a) 是平凡成立的, 而条件 (b) 等价于(2.6). 系统 (2.5) 的哈密顿量 $F = \int f ( u ) \mathrm { d } x$ 可由下述方程确定:
+
+$$
+\nabla _ { i } ^ { 2 } f ( u ) + g _ { i } ( u ) w ^ { i } ( u ) = 0 , \quad i = 1 , . . . , N .
+$$
+
+下面证明超定的线性系统 (b) 是相容的. 此相容性条件为 $\partial _ { j } ( \partial _ { i } w ^ { k } ) = \partial _ { i } ( \partial _ { j } w ^ { k } )$ 对任意互不相同的指标 $i , j , k$ 成立; 显式地,
+
+$$
+\begin{array} { r c l } { { 0 } } & { { = } } & { { ( \Gamma _ { k i , j } ^ { k } - \Gamma _ { k i } ^ { k } \Gamma _ { i j } ^ { i } - \Gamma _ { k j } ^ { k } \Gamma _ { j i } ^ { j } + \Gamma _ { k j } ^ { k } \Gamma _ { k i } ^ { k } ) w ^ { i } } } \\ { { } } & { { } } & { { + ( \Gamma _ { k i } ^ { k } \Gamma _ { i j } ^ { i } - \Gamma _ { k i } ^ { k } \Gamma _ { k j } ^ { k } - \Gamma _ { k j , i } ^ { k } + \Gamma _ { k j } ^ { k } \Gamma _ { j i } ^ { j } ) w ^ { j } } } \\ { { } } & { { } } & { { + ( \Gamma _ { k j , i } ^ { k } - \Gamma _ { k i , j } ^ { k } ) w ^ { k } . } } \end{array}
+$$
+
+[这里的 $\Gamma _ { k i , j } ^ { k } \equiv \partial _ { j } \Gamma _ { k i } ^ { k }$ , 其余类似] . 由众所周知的公式
+
+$$
+\Gamma _ { k i } ^ { k } = \partial _ { i } \log \sqrt { g _ { k } } , \quad i \neq k
+$$
+
+可知上式右端 $w ^ { k }$ 的系数为零. 而 $w ^ { i }$ 与 $w ^ { j }$ 的系数分别等于曲率 $R _ { i j k } ^ { k }$ 与 $- R _ { j i k } ^ { k }$ . 因为此度量的曲率为零, 从而方程组 (2.6) 相容. 从而其解在局部上可被 $N$ 个一元函数所确定.
+
+最后, 我们证明所有的形如 (2.5) 的哈密顿流两两交换. 只需证明任意两个对角哈密顿流
+
+$$
+u _ { t } ^ { i } = v ^ { i } ( u ) u _ { x } ^ { i } , \quad u _ { s } ^ { i } = w ^ { i } ( u ) u _ { x } ^ { i }
+$$
+
+交换. 其交换性条件 $( u _ { t } ^ { i } ) _ { s } = ( u _ { s } ^ { i } ) _ { t }$ 等价于
+
+$$
+{ \frac { \partial _ { k } v ^ { i } } { v ^ { k } - v ^ { i } } } = { \frac { \partial _ { k } w ^ { i } } { w ^ { k } - w ^ { i } } } , \quad i \neq k .
+$$
+
+而系数 $v ^ { i }$ 与 $w ^ { i }$ 都满足 (2.6), 从而上式两端都等于 $\Gamma _ { i k } ^ { i }$ , 得证.
+
+注记. 容易证明任何与对角哈密顿系统 (2.3) 交换的流体力学型系统
+
+$$
+u _ { s } ^ { i } = \sum _ { j } w _ { j } ^ { i } ( u ) u _ { x } ^ { j }
+$$
+
+必为对角哈密顿系统. [其中 $\boldsymbol { v } ^ { 1 } , . . . , \boldsymbol { v } ^ { N }$ 两两互异] .
+
+因此对于对角的流体力学型系统 (2.3), 有如下 积分算法 (algorithm of integration)
+
+1. 求解满足线性系统
+
+$$
+\partial _ { k } w ^ { i } = { \frac { \partial _ { k } v ^ { i } } { v ^ { k } - v ^ { i } } } ( w ^ { k } - w ^ { i } ) , \quad i \neq k
+$$
+
+的函数 $w ^ { 1 } ( u ) , . . . , w ^ { N } ( u )$
+
+2. 对该系统的任何解 $w ^ { 1 } ( u ) , . . . , w ^ { N } ( u )$ , 隐函数方程组
+
+$$
+w ^ { i } ( u ) = v ^ { i } ( u ) t + x , \quad i = 1 , . . . , N
+$$
+
+确定了解 $u ( x , t )$ .
+
+可以证明 [28], 在满足 $u _ { x } ^ { i } ( x _ { 0 } , t _ { 0 } ) \neq 0$ , $i = 1 , . . . , N$ 的点 $( x _ { 0 } , t _ { 0 } )$ 附近, 方程组 (2.3)的任何解都可由上述算法得到.
+
+注记. 上述“积分算法”已被证明不止适用于对角的流体力学型哈密顿系统, 而且还适用于更广的一类对角的流体力学型系统. 这种更一般的对角的流体力学型系统由 Tsarev引入 [27,28], 他称此为流体力学型 半哈密顿系统 (semi-Hamiltonian system) . 其定义为: 对任意两两互异的指标 $i , j , k$ 成立
+
+$$
+\partial _ { i } \left( \frac { \partial _ { j } v ^ { k } } { v ^ { j } - v ^ { k } } \right) = \partial _ { j } \left( \frac { \partial _ { i } v ^ { k } } { v ^ { i } - v ^ { k } } \right)
+$$
+
+的对角的流体力学型系统. 对角的流体力学型哈密顿系统显然是半哈密顿的, 这是因为(2.6) 与 (2.7). 其逆命题一般不正确. 例如, 任何 2-分量的对角的流体力学型系统是半哈密顿的 [单分量的显然也是] . [顺便一提, 任何 2-分量的流体力学型系统都是可对
+
+角化的, 至少通过复数域上的坐标变换. 1] 对于半哈密顿系统, 也可以引入对角度量$g _ { i j } = g _ { i } ( u ) \delta _ { i j }$ . 在相差变换 $g _ { i } ( u )  g _ { i } ( u ) \varphi _ { i } ( u ^ { i } )$ 的意义下, 此对角度量可由方程组
+
+$$
+\partial _ { i } \log \sqrt { g _ { k } } = \frac { \partial _ { i } v ^ { k } } { v ^ { i } - v ^ { k } } , \quad i \neq k
+$$
+
+所确定. (2.10) 保证了此方程组的相容性. 该对角度量的曲率不一定为零, 但由 (2.10)可知该度量的曲率张量是对角的: 曲率张量的非零分量必形如 $R _ { i j i j }$ . 对这样的对角矩阵, 此定理的陈述依然正确.
+
+例子 1. 对于单分量情形
+
+$$
+u _ { t } = v ( u ) u _ { x } ,
+$$
+
+任何函数 $w ( u )$ 都确定了一个交换流
+
+$$
+u _ { s } = w ( u ) u _ { x } .
+$$
+
+因此对任意函数 $w ( u )$ , 由方程
+
+$$
+w ( u ) = x + v ( u ) t
+$$
+
+确定的隐函数 $u = u ( x , t )$ 都是 (2.12) 的解. 此公式是众所周知的.
+
+例子 2. 考虑 2-分量的对角的流体力学型系统
+
+$$
+\left\{ \begin{array} { l } { u _ { t } ^ { 1 } = v ^ { 1 } ( u ) u _ { x } ^ { 1 } } \\ { u _ { t } ^ { 2 } = v ^ { 2 } ( u ) u _ { x } ^ { 2 } } \end{array} \right. ~ .
+$$
+
+此时, 之前所述“积分算法”其实刚好是众所周知的“速端曲线法 (hodograph method)”. 经过 速端曲线变换 (hodograph transform) $( x , t )  ( u ^ { 1 } , u ^ { 2 } )$ 之后, 此方程变为
+
+$$
+\left. \begin{array} { l } { \partial _ { 2 } x + v ^ { 1 } ( u ) \partial _ { 2 } t = 0 } \\ { \partial _ { 1 } x + v ^ { 2 } ( u ) \partial _ { 1 } t = 0 } \end{array} \right\} , \quad x = x ( u ) , t = t ( u ) , \partial _ { 1 } = \frac { \partial } { \partial u ^ { 1 } } , \partial _ { 2 } = \frac { \partial } { \partial u ^ { 2 } } .
+$$
+
+1译者注: 我们总假定流体力学型系统 $u _ { t } ^ { i } = \sum _ { j } v _ { j } ^ { i } ( u ) u _ { x } ^ { j }$ 的系数矩阵 $( v _ { j } ^ { i } )$ 的 (复) 特征值两两互异.
+
+或者等价地,
+
+$$
+\begin{array} { l c l } { { \partial _ { 2 } \underbrace { \left( v ^ { 1 } t + x \right) } _ { w ^ { 1 } } } } & { { = } } & { { t \partial _ { 2 } v ^ { 1 } } } \\ { { } } & { { } } & { { } } \\ { { \partial _ { 1 } \underbrace { \left( v ^ { 2 } t + x \right) } _ { w ^ { 2 } } } } & { { = } } & { { t \partial _ { 1 } v ^ { 2 } . } } \end{array}
+$$
+
+由于 w − w v2 − v1 , 我们得到形如 (2.8) 的方程
+
+$$
+\frac { \partial _ { 2 } w ^ { 1 } } { w ^ { 2 } - w ^ { 1 } } = \frac { \partial _ { 2 } v ^ { 1 } } { v ^ { 2 } - v ^ { 1 } } \quad , \quad \frac { \partial _ { 1 } w ^ { 2 } } { w ^ { 1 } - w ^ { 2 } } = \frac { \partial _ { 1 } v ^ { 2 } } { v ^ { 1 } - v ^ { 2 } } .
+$$
+
+此过程的逆是平凡的.
+
+正由此例, 我们将流体力学型哈密顿 (或半哈密顿) 系统的“积分算法”(2.8)(2.9)称为 广义速端曲线变换 (generalized hodograph transform)
+
+例子 3. 理想层析 (chromatography) 方程. 它描述了 $N .$ -组分化合物在吸附剂中的渗流. 此方程形如
+
+$$
+\begin{array} { l } { { c u _ { x } ^ { i } + ( a ^ { i } ( u ) + u ^ { i } ) _ { t } = 0 , \quad i = 1 , . . . , N , } } \\ { { \displaystyle a ^ { i } ( u ) = \alpha _ { i } k _ { i } u ^ { i } / V , \quad V = 1 + \sum _ { s = 1 } ^ { N } k _ { s } u ^ { s } . } } \end{array}
+$$
+
+其中 $\alpha _ { i } , k _ { i } , c$ 为常数, $u ^ { i } , a ^ { i }$ 分别为第 $i$ 个未被吸收与被吸收组分的浓度. 方程组 (2.14)可通过变换
+
+$$
+u ^ { 1 } , . . . , u ^ { N } \mapsto r ^ { 1 } , . . . , r ^ { N }
+$$
+
+对角化 [31], 其中 $r ^ { i } = r ^ { i } ( u )$ 为方程
+
+$$
+\sum _ { i = 1 } ^ { N } { \frac { \alpha _ { j } k _ { j } ^ { 2 } u ^ { j } } { \alpha _ { j } k _ { j } - r } } = V
+$$
+
+的根. 在坐标 $r ^ { 1 } , . . . , r ^ { N }$ 下方程组 (2.14) 化为对角型 [32]:
+
+$$
+r _ { t } ^ { i } = v ^ { i } ( r ) r _ { x } ^ { i } , \quad v ^ { i } = r ^ { i } \prod _ { k = 1 } ^ { N } r ^ { k } , \quad i = 1 , . . . , N .
+$$
+
+此系统是半哈密顿的, 并且当 $N \geq 4$ 是不是哈密顿的. 方程组 (2.15) 的通解可见 [32],其形如 (2.9), 其中
+
+$$
+\begin{array} { r } { w ^ { i } ( r ) = v ^ { i } ( r ) \partial _ { i } \displaystyle \sum _ { k = 1 } ^ { N } \frac { A _ { k } ( r _ { k } ) } { \prod _ { m \neq k } ( r _ { m } - r _ { k } ) } , } \end{array}
+$$
+
+其中 $A _ { 1 } ( r _ { 1 } ) , . . . , A _ { N } ( r _ { N } )$ 为任意函数.
+
+我打算建立一些关于对角流体力学型哈密顿系统的守恒律的定理, 来结束对可积性理论的讨论. 回顾流体力学型泛函形如
+
+$$
+I = \int P ( u ) \mathrm { d } x .
+$$
+
+定理 2.4. (1) 对角的流体力学型哈密顿系统 (2.3) 具有无穷多族形如 (2.16) 的流体力学型守恒律; 且该守恒律的密度函数可由下述系统确定:
+
+$$
+\begin{array} { r } { \partial _ { i } \partial _ { j } P - \Gamma _ { i j } ^ { i } \partial _ { i } P - \Gamma _ { j i } ^ { j } \partial _ { j } P = 0 , \quad i \ne j } \\ { \left( \Gamma _ { p q } ^ { p } = \frac { \partial _ { q } v ^ { p } } { v ^ { q } - v ^ { p } } \right) . } \end{array}
+$$
+
+局部上它们被 $N$ 个任意的一元函数所决定.
+
+(2) 这些泛函是所有的与之交换的对角哈密顿系统 $( 2 . 5 ) ( 2 . 6 )$ 的公共的守恒律.
+
+(3) 这些守恒律的泊松括号两两为零.
+
+(4) 对于每个守恒律 (2.16), 相应的哈密顿系统 $u _ { s } ^ { i } ( x ) = \{ I , u ^ { i } ( x ) \}$ 是对角的.
+
+证明. 与定理 2.3 的证明类似.
+
+此定理的 (1)(2) 也适用于半哈密顿系统.
+
+这些两两交换 (即泊松括号为零) 的守恒律构成一个完备族, 这是指, 它们的斜梯
+
+度张成了其公共等值面的切空间. 更形式地讲 [28], 我们称这一族两两交换的守恒律$\{ I = \int P ( u ) \mathrm { d } x \}$ 在相空间中的点 $u _ { 0 } ( x ) = ( u _ { 0 } ^ { 1 } ( x ) , . . . , u _ { 0 } ^ { N } ( x ) )$ 处完备, 如果对任何变分$\delta u ^ { i } ( x )$ , 若对这一族守恒律之中的任何一个 $I$ 都有
+
+$$
+\delta I \equiv \int \partial _ { i } P ( u _ { 0 } ) \delta u ^ { i } ( x ) = 0 ,
+$$
+
+则在这一族守恒律中存在某个 $I _ { 1 } = \int P _ { 1 } ( u ) \mathrm { d } x$ 使得 $\delta u ^ { i }$ 是在点 $u _ { 0 } ( x )$ 处的相应的哈密顿向量场:
+
+$$
+\delta u ^ { i } ( x ) = \{ I _ { 1 } , u ^ { i } ( x ) \} | _ { u = u _ { 0 } } .
+$$
+
+对于 $| x | \to \infty$ 速降函数 $u ^ { i } ( x )$ 的相空间或者周期函数相空间的情形, [27] 证明了如此意义下的完备性. 其中我们假定函数 $u _ { 0 } ( x )$ 满足下述附加条件: (a) 函数 $u _ { 0 } ^ { i } ( x )$ 的任何值都不会被超过两个点取到 [对于周期函数的情形, 限制在一个周期内谈论] . (b) 函数 $u _ { 0 } ^ { i } ( x )$ 的任何临界点都非退化. 此完备性定理的证明见 [28].
+
+# 附录 1. 流体力学型系统的黎曼不变量
+
+考虑任意给定的流体力学型系统
+
+$$
+u _ { t } ^ { i } = v _ { j } ^ { i } ( u ) u _ { x } ^ { j } , \quad i = 1 , . . . , N
+$$
+
+[这里又重新假定对重复指标求和] . 假设此系统是严格双曲的 (strictly hyperbolic), 即矩阵 $( v _ { j } ^ { i } ( u ) )$ 的特征值 $v ^ { 1 } , . . . , v ^ { n }$ 是两两互异的实数. 那么是否可能找到新的局部坐标$r ^ { 1 } , . . . , r ^ { N }$ , $r ^ { i } = r ^ { i } ( u )$ 使得 (2.18) 在此坐标下是形如
+
+$$
+r ^ { i } ( t ) = v ^ { i } r _ { x } ^ { i } , \quad v ^ { i } = v ^ { i } ( r ) , i = 1 , . . . , N
+$$
+
+的对角系统? 如果可以, 那么函数 $r ^ { 1 } , . . . , r ^ { N }$ 称为 (2.18) 的 黎曼不变量 (Riemanninvariant) , 并称该方程组可对角化. 对于系数矩阵 $( v _ { j } ^ { i } ( u ) )$ 的特征值为互异复数的流体力学型系统, 我们也可在复坐标变换下谈论对角化.
+
+若 $N = 2$ , 则 (2.18) 必可对角化. 事实上, 取 余向量 (co-vector) $\boldsymbol { \omega } _ { i } ^ { ( 1 ) } , \boldsymbol { \omega } _ { i } ^ { ( 2 ) }$ 使得
+
+$$
+\omega _ { i } ^ { ( k ) } v _ { j } ^ { i } = v ^ { k } \omega _ { j } ^ { ( k ) } , \quad k = 1 , 2
+$$
+
+[即矩阵 $( v _ { j } ^ { i } )$ 的“左特征向量”] . 则可通过适当乘以函数系数, 使得 1-形式 $\omega _ { i } ^ { ( k ) } \mathrm { d } u ^ { i }$ 是闭形式. 从而局部地有
+
+$$
+\begin{array} { r } { \omega _ { i } ^ { ( k ) } \mathrm { d } u ^ { i } = \mathrm { d } r ^ { k } , \quad k = 1 , 2 . } \end{array}
+$$
+
+函数 $r ^ { i } ( u ) , r ^ { 2 } ( u )$ 即为我们所求的黎曼不变量.
+
+当 $N \geq 3$ 时, 流体力学型系统一般不可对角化. 为刻画将其对角化的障碍, 我们引入 Nijenhuis 张量 [33]. 回顾: 对任意 $( 1 , 1 )$ -型张量 $V = ( v _ { j } ^ { i } )$ , 相应的 Nijenhuis 张量 $N _ { i j } ^ { k }$ 为如下 $( 1 , 2 )$ -型张量:
+
+$$
+N _ { i j } ^ { k } = v _ { i } ^ { p } v _ { j , p } ^ { k } - v _ { j } ^ { p } v _ { i , p } ^ { k } + v _ { p } ^ { k } ( v _ { i , j } ^ { p } - v _ { j , i } ^ { p } ) .
+$$
+
+等价地, 对任意向量场 $a = ( a ^ { i } )$ , $b = ( b ^ { i } )$ , 向量场 $N ( a , b ) = ( N _ { i j } ^ { k } a ^ { i } b ^ { j } )$ 形如
+
+$$
+N ( a , b ) = [ V a , V b ] + V ^ { 2 } [ a , b ] - V [ a , V b ] - V [ V a , b ] .
+$$
+
+考虑另一个 $( 1 , 2 )$ -型张量
+
+$$
+\begin{array} { r } { K _ { i j } ^ { k } = v _ { s } ^ { k } ( v _ { p } ^ { s } N _ { i j } ^ { p } - N _ { i p } ^ { s } v _ { j } ^ { p } ) - ( v _ { p } ^ { k } N _ { s j } ^ { p } - N _ { s p } ^ { k } v _ { j } ^ { p } ) v _ { i } ^ { s } . } \end{array}
+$$
+
+相应的向量场 $K ( a , b ) = ( K _ { i j } ^ { k } a ^ { i } b ^ { j } )$ 形如
+
+$$
+K ( a , b ) = V ^ { 2 } N ( a , b ) - V N ( a , V b ) - V N ( V a , b ) + N ( V a , V b ) .
+$$
+
+性质. [34]. 方程组 (2.18) 可对角化当且仅当 (2.19) 中的张量 $( K _ { i j } ^ { k } ) \equiv 0$
+
+证明. 若 (2.18) 可对角化, 则 $K = 0$ . 由于 $K$ 为张量, 从而 $K = 0$ 为可对角化的必要条件. 2 我们来证明充分性. 设 $\lambda \neq \mu$ 为矩阵 $V$ 的两个特征值, 相应的特征向量分别为$a , b$ :
+
+$$
+V a = \lambda a , \quad V b = \mu b ,
+$$
+
+则有如下等式:
+
+$$
+N ( a , b ) \ = \ ( V - \lambda ) ( V - \mu ) [ a , b ] + ( \lambda - \mu ) ( \partial _ { b } \lambda \cdot a + \partial _ { a } \mu \cdot b ) ,
+$$
+
+$$
+{ \begin{array} { l l l } { K ( a , b ) } & { = } & { ( V - \lambda ) ( V - \mu ) N ( a , b ) = ( V - \lambda ) ^ { 2 } ( V - \mu ) ^ { 2 } [ a , b ] . } \end{array} }
+$$
+
+若 $K = 0$ , 则由 $K ( a , b ) = 0$ 可知存在函数 $\alpha , \beta$ 使得
+
+$$
+[ a , b ] = \alpha a + \beta b .
+$$
+
+设 $a _ { 1 } , . . . , a _ { N }$ 分别是 $V$ 的属于特征值 $\boldsymbol { v } ^ { 1 } , . . . , \boldsymbol { v } ^ { N }$ 的特征向量. 由 (2.20) 不妨设
+
+$$
+\left[ a _ { i } , a _ { j } \right] = { \alpha } _ { i j } a _ { i } - { \alpha } _ { j i } a _ { j } ,
+$$
+
+其中 $\alpha _ { i j } = \alpha _ { i j } ( u )$ 为函数. 我们企图将这些特征向量适当数乘使得新得到的 $e _ { i } : = c _ { i } a _ { i }$ 两两交换, $[ e _ { i } , e _ { j } ] = 0$ . 这样的系数函数 $c _ { i }$ 应满足方程组
+
+$$
+\partial _ { a _ { i } } c _ { j } + \alpha _ { i j } c _ { j } = 0 , \quad i \neq j .
+$$
+
+此方程组应当相容, 可以验证其相容性条件等价于李括号 (2.21) 的雅可比恒等式. 因此可取坐标系 $r _ { 1 } , . . . , r _ { N }$ 使得 $e _ { 1 } , . . . , e _ { N }$ 为该坐标系的坐标曲线的切向量. 此坐标 $r _ { 1 } , . . . , r _ { N }$ 正是我们所求黎曼不变量. □
+
+# 附录 2. 正交曲线坐标系与可积系统
+
+前文已说, 正交曲线坐标系确定了可积的流体力学型哈密顿系统. 为寻找这种坐标系, 我们需要求解非常复杂的非线性偏微分方程组
+
+$$
+R _ { i j k l } = 0 .
+$$
+
+这里的 $R _ { i j k l } = R _ { i j k l } ( h , { \frac { \partial h } { \partial u _ { i } } } , { \frac { \partial ^ { 2 } h } { \partial u _ { i } \partial u _ { j } } } )$ , $h = ( h _ { 1 } , . . . , h _ { N } ) = h ( u )$ , 是对角度量
+
+$$
+\mathrm { d } s ^ { 2 } = \sum _ { i = 1 } ^ { N } \varepsilon _ { i } h _ { i } ^ { 2 } ( u ) \mathrm { d } u _ { i } ^ { 2 } , \quad \varepsilon _ { i } = \pm 1
+$$
+
+的黎曼曲率张量. 系统(2.22),(2.23) 的解的自由度被 E.Cartan[29] 所求得 [正如我们之前所说, 上述系统的解可被任意 $N ( N + 1 ) / 2$ 个二元函数所确定] . 一般来说, 当 $N \geq 3$ 时方程组 (2.22),(2.23)不一定可积. 但存在一类特殊的对角度量使得该系统可积 [42].这一类特殊的对角度量由 Darboux[43] 提出, 被 Egoroff 所研究 [44]. Darboux 将这种正交曲线坐标系称为 Egoroff 坐标系. 对于度量(2.23), 如果它的 旋转系数 (rotationcoefficient)
+
+$$
+\gamma _ { i j } = \partial _ { j } h _ { i } / h _ { j } , \quad i \neq j
+$$
+
+[其中 $\partial _ { j } \equiv \frac { \partial } { \partial u _ { j } } ]$ 满足对称性条件
+
+$$
+\gamma _ { j i } = \varepsilon _ { i } \varepsilon _ { j } \gamma _ { i j } ,
+$$
+
+则称该度量为 Egoroff 度量 (Egoroff metric) . 它还有另一个等价定义: 存在势函数$V = V ( u )$ 使得该度量的对角元 $g _ { i i } : = \varepsilon _ { i } h _ { i } ^ { 2 }$ 满足
+
+$$
+g _ { i i } = \partial _ { i } V .
+$$
+
+性质. (见 [43]). Egroff 度量(2.23)平坦, 当且仅当旋转系数(2.24)满足下述偏微分 方程:
+
+$$
+\partial \gamma _ { i j } = 0 , \quad i \neq j , \quad \partial : = \sum _ { k = 1 } ^ { N } \partial _ { k } .
+$$
+
+其证明是直接的.
+
+性质. (见 [42], 也可见 $[ 4 5 ] )$ . 方程组(2.27),(2.28)是可积系统. 它可以表示为下述谱问题的相容性条件 [见后文 2.3 节] , 其中 $\lambda$ 为谱参数:
+
+$$
+\partial _ { j } \psi _ { i } = \gamma _ { i j } \psi _ { j } , \quad j \ne i
+$$
+
+$$
+\partial \psi _ { i } = \lambda \psi _ { i } , \quad i = 1 , . . . , N .
+$$
+
+为进一步诠释系统(2.27),(2.28)的结构, 我们将函数 $\gamma _ { i j } ( u )$ 限制在任一给定的平面$u _ { i } = a _ { i } x + b _ { i } t + u _ { i 0 } , i = 1 , . . . , N .$
+
+性质. 矩阵 $\Gamma = ( \gamma _ { i j } ( u ) )$ 在平面 $u _ { i } = a _ { i } x + b _ { i } t + u _ { i 0 }$ 上的限制满足下述非线性$( 1 + 1 )$ -系统:
+
+$$
+[ A , \Gamma _ { t } ] - [ B , \Gamma _ { x } ] = [ [ A , \Gamma ] , [ B , \Gamma ] ] ,
+$$
+
+其中 $A = \mathrm { d i a g } ( a _ { 1 } , . . . , a _ { N } )$ , $B = \mathrm { d i a g } ( b _ { 1 } , . . . , b _ { N } ) .$ .
+
+系统(2.30)恰为所谓“ $N .$ -波系统”( $N .$ -wave system) 的纯虚约化 (purely imaginaryreduction) [见 [17]] . 我们应注意矩阵 $\Gamma = ( \gamma _ { i j } )$ 具有对称:
+
+$$
+\Gamma ^ { T } = J \Gamma J , \quad J = \mathrm { d i a g } ( \varepsilon _ { 1 } , . . . , \varepsilon _ { N } ) .
+$$
+
+$\Gamma = ( \gamma _ { i j } )$ 关于变量 $u _ { 1 } , . . . , u _ { N }$ 的独立性由一族与(2.30)交换的流所确定 [这串流可见[46]] .
+
+注意此对角度量的 Lamé 系数 $h _ { 1 } ( u ) , . . . , h _ { N } ( u )$ 可由旋转系数 $\gamma _ { i j }$ 通过(2.29)所恢复:
+
+$$
+\partial _ { j } h _ { i } = \gamma _ { i j } h _ { j } , \quad j \neq i .
+$$
+
+此系统的解由任意 $N$ 个一元函数所确定. 对于某些合适的 $\gamma _ { i j } ( u )$ [例如, 当 $| u |  \infty$ 时速降] , 方程(2.31)的“好的”解可表示为谱问题 (2.29),(2.29’) 的本征函数的线性组合.
+
+注记 1. 也可对半哈密顿系统谈论上述. 相应对角度量的曲率张量满足如下对角性:
+
+$$
+( 1 - \delta _ { i k } \delta _ { j l } ) R _ { i j k l } = 0 , \quad i < j , \quad k < l .
+$$
+
+性质. 以下成立:
+
+(1). 若对角度量(2.23)的曲率满足对角性(2.32), 则其旋转系数 $\gamma _ { i j }$ 满足(2.27).
+
+(2). 此系统是可积的; 它可表示为线性问题(2.29)的相容性条件, 或者等价地,可表示为共轭系统
+
+$$
+\partial _ { j } \varphi _ { i } = \gamma _ { j i } \varphi _ { j } , \quad i \neq j
+$$
+
+的相容性条件.
+
+性质. (续).
+
+(3). 此度量的 Lamé 系数 $h _ { i } ( u )$ 可由旋转系数 $\gamma _ { i j } ( u )$ 通过方程(2.29) (或者(2.31)) 所恢复.
+
+(4). 交换的半哈密顿流 (2.3),(2.10) 的系数 $v ^ { i } ( u )$ 满足方程(2.29), 其中 $\psi _ { i } = $ $h _ { i } v ^ { i }$ , $i = 1 , . . . , N$ . 此系统的守恒律 (2.16) 的密度 $P ( u )$ 满足共轭系统(2.33), 其中$\partial _ { i } P = h _ { i } \varphi _ { i }$ .
+
+其证明是直接的. 若对角度量平坦, 则 (3)(4) 对哈密顿系统也成立.
+
+注记 2. 平坦 Egoroff 度量的平坦坐标 $x _ { 1 } , . . . , x _ { N }$ 可通过求解线性问题(2.33)得到. 确切地说, 设 $\varphi _ { i } ^ { 1 } , . . . , \varphi _ { i } ^ { N }$ 为方程组
+
+$$
+\begin{array} { r } { \partial _ { j } \varphi _ { i } = \gamma _ { j i } \varphi _ { i } , \quad i \neq j . } \\ { \partial \varphi _ { i } = 0 } \end{array}
+$$
+
+的一组基解, 再设函数 $x _ { 1 } ( u ) , . . . , x _ { N } ( u )$ 满足
+
+$$
+\begin{array} { r } { \partial _ { i } x _ { k } = h _ { i } \varphi _ { i } ^ { k } , \quad i , k = 1 , . . . , N . } \end{array}
+$$
+
+则度量(2.23)在坐标 $x _ { 1 } , . . . , x _ { N }$ 下为常值.
+
+我们看到, Egoroff 度量的几何问题都能“嵌入”到可积系统理论中. 它们可以通过适当的反散射变换来求解. 如此求解 [用到黎曼-希尔伯特问题的方法] 的例子可见 [42].
+
+例子. 我们具体求解一例 $N = 3$ , 符号 $( \varepsilon _ { 1 } , \varepsilon _ { 2 } , \varepsilon _ { 3 } ) = ( + , - , + )$ 的 Egoroff 度量. 首先我们断言方程(2.27),(2.28)的满足自相似性
+
+$$
+\gamma _ { i j } ( k u ) = k ^ { - 1 } \gamma _ { i j } ( u )
+$$
+
+的解可由下述常微分方程得到:
+
+$$
+\left. \begin{array} { r } { { ( z p _ { 1 } ) ^ { \prime } = - p _ { 2 } p _ { 3 } } } \\ { { p _ { 2 } ^ { \prime } = - p _ { 3 } p _ { 1 } } } \\ { { ( ( z - 1 ) p _ { 3 } ) ^ { \prime } = p _ { 1 } p _ { 2 } } } \end{array} \right\}
+$$
+
+其中 $z = ( u _ { 2 } - u _ { 3 } ) / ( u _ { 1 } - u _ { 3 } )$ ,
+
+$$
+\begin{array} { r l } & { \gamma _ { 2 3 } = p _ { 1 } ( z ) / ( u _ { 3 } - u _ { 1 } ) , \quad \gamma _ { 3 1 } = - p _ { 2 } ( z ) / ( u _ { 3 } - u _ { 1 } ) } \\ & { \gamma _ { 1 2 } = p _ { 3 } ( z ) / ( u _ { 3 } - u _ { 1 } ) . } \end{array}
+$$
+
+利用首次积分
+
+$$
+( z p _ { 1 } ) ^ { 2 } - p _ { 2 } ^ { 2 } + [ ( z - 1 ) p _ { 3 } ] ^ { 2 } = R ^ { 2 }
+$$
+
+可将(2.36)化为二阶常微分方程; 此二阶常微分方程可以化为 [与参数 $R$ 有关的] Painlevé-VI 方程 [47]. 方程(2.36)的一个非常特殊的显式解可见 [42]. 该解形如
+
+$$
+p _ { 1 } = h _ { 1 } / z \sqrt { 2 } , \quad p _ { 2 } = - h _ { 2 } \sqrt { 2 } , \quad p _ { 3 } = - h _ { 3 } / ( z - 1 ) \sqrt { 2 } ,
+$$
+
+且相应度量的 Lamé 系数满足
+
+$$
+\begin{array} { r l } & { h _ { 1 } = f ( z ) / \sqrt { 2 ( 1 - a z ) } , \quad h _ { 2 } = ( f ( z ) + z - 1 ) / \sqrt { 2 z ( 1 - z ) } , } \\ & { h _ { 3 } = ( f ( z ) - 1 ) / \sqrt { 2 z } , \quad f ( z ) = E ( \sqrt { z } ) / K ( \sqrt { z } ) , } \end{array}
+$$
+
+其中 $E , K$ 为完全椭圆积分. (2.38)中的常数 $R = \frac 1 2$ . 其对角度量的哈密顿系统为 KdV方程的椭圆余弦波的慢形变 (slow deformation) 的 Whitham 方程 [见本章后文] , 并且$u _ { 1 } , u _ { 2 } , u _ { 3 }$ 为该方程的黎曼不变量.
+
+$N > 3$ 的 Egoroff 度量的例子可见 [42].
+
+# 2.2 演化系统的不变环
+
+本节我们继续讨论空间一维, 平移不变的演化型偏微分方程组
+
+$$
+u _ { t } ^ { i } ( x ) = \{ H , u _ { x } ^ { i } \} , \quad i = 1 , . . . , N ,
+$$
+
+假定该方程有足够多的守恒律. 我们设这些守恒律形如
+
+$$
+F = \int f ( u , u ^ { \prime } , . . . , u ^ { ( n ) } ) \mathrm { d } x ,
+$$
+
+其中 [这些守恒律中至少有一个满足] $n > 0$ . 此外我们还假定(2.41)式右边的守恒律密度
+
+$f$ 是 $u , u ^ { \prime } , \ldots$ 的多项式 [或解析函数] . 上一节提到的泛函 $F$ 的驻点构成的有限维流形$N _ { F }$ 是 $t { \cdot }$ -演化不变的. $N _ { F }$ 当中的函数 $u ( x )$ 满足如下拉格朗日系统:
+
+$$
+{ \frac { \delta F } { \delta u ^ { i } ( x ) } } = 0 \Longleftrightarrow { \frac { \partial f } { \partial u ^ { i } } } - \left( { \frac { \partial f } { \partial u ^ { i ^ { \prime } } } } \right) ^ { \prime } + \cdot \cdot \cdot + ( - 1 ) ^ { n } \left( { \frac { \partial f } { \partial u ^ { i ( n ) } } } \right) ^ { ( n ) } = 0 .
+$$
+
+在拉格朗日量 $f ( u , u ^ { \prime } , . . . , u ^ { ( n ) } )$ 非退化的假设下, 流形 $N _ { F }$ 的维数是 $2 N n$
+
+有限维流形 $N _ { F }$ 在典范坐标
+
+$$
+q _ { j } ^ { i } = u ^ { i ( j - 1 ) } , \quad p _ { i } ^ { j } = \sum _ { k = 0 } ^ { n - j } ( - 1 ) ^ { k } \left( \frac { \partial f } { \partial u ^ { i ( j + k ) } } \right) ^ { ( k ) } ,
+$$
+
+$$
+i = 1 , . . . , N , \quad j = 1 , . . . , n , \quad u ^ { i ( j ) } \equiv \frac { \mathrm { d } ^ { j } u ^ { i } } { \mathrm { d } x ^ { j } }
+$$
+
+下有自然的辛结构:
+
+$$
+\{ p _ { i } ^ { j } , q _ { l } ^ { k } \} _ { \cal F } = \delta _ { i } ^ { k } \delta _ { l } ^ { j } , \quad \{ p , p \} _ { \cal F } = \{ q , q \} _ { \cal F } = 0 .
+$$
+
+[拉格朗日量 $f ( u , u ^ { \prime } , . . . , u ^ { ( n ) } )$ 称为非退化的, 如果(2.42)所确定的变换
+
+$$
+\left\{ u ^ { i ( j ) } \Big | 1 \leq i \leq N , 0 \leq j \leq 2 n - 1 \right\} \mapsto \left\{ q _ { j } ^ { i } , p _ { i } ^ { j } \Big | 1 \leq i \leq N , 1 \leq j \leq n \right\}
+$$
+
+可逆. ]
+
+$N _ { F }$ 上的空间平移变换 $u ^ { i } ( x )  u ^ { i } ( x + x _ { 0 } )$ 是哈密顿流, 相应的哈密顿量为
+
+$$
+P _ { F } = \sum p _ { i } ^ { j } u ^ { i ( j ) } - f = P _ { F } ( q , p )
+$$
+
+[注意我们假定拉格朗日量 $f$ 非退化] .
+
+这表明 $N _ { F }$ 的关于(2.41)的 $t { \cdot }$ -流也是哈密顿流 (Novikov, Bogoyavlensky [35]). 3
+
+引理. 若多项式 [或解析函数] $H _ { F }$ 由下式所确定:
+
+$$
+{ \frac { \delta F } { \delta u ^ { i } ( x ) } } u _ { t } ^ { i } \equiv { \frac { \delta F } { \delta u ^ { i } ( x ) } } \{ H , u ^ { i } ( x ) \} = - \partial _ { x } H _ { F }
+$$
+
+[这样的 $H _ { F }$ 存在, 因为 $\partial _ { t } F = \int \frac { \delta F } { \delta u ^ { i } ( x ) } u _ { t } ^ { i } ( y ) \mathrm { d } x \equiv 0 \jmath$ . 则 $H _ { F }$ 是 $N _ { F }$ 上的上述$t$ -流关于 $N _ { F }$ 的辛结构(2.42) 的哈密顿量.
+
+设 $G = \int g ( u , u ^ { \prime } , . . . ) \mathrm { d } x$ 为系统(2.41)的另一个局部守恒律, 并且 $\{ G , F \} = 0$ . 则流形 $N _ { F }$ 也关于下述哈密顿系统不变:
+
+$$
+u _ { r } ^ { i } ( x ) = \{ G , u ^ { i } ( x ) \} .
+$$
+
+根据上述引理, 此流在 $N _ { F }$ 上的限制是 $N _ { F }$ 上的关于哈密顿量 $G _ { F }$ 的哈密顿流, 其中 $G _ { F }$ 可通过类似(2.44)的方式定义:
+
+$$
+{ \frac { \delta F } { \delta u ^ { i } ( x ) } } u _ { r } ^ { i } = - \partial _ { x } P _ { F } .
+$$
+
+注意 $P _ { F }$ [见公式(2.43)] 可类似定义:
+
+$$
+{ \frac { \delta F } { \delta u ^ { i } ( x ) } } u _ { x } ^ { i } = - \partial _ { x } P _ { F } .
+$$
+
+引理. 若哈密顿量 $H , G$ 的泊松括号为 0, 则相应的 $H _ { F } , G _ { F }$ 在流形 $N _ { F }$ 上满足
+
+$$
+\{ G _ { F } , H _ { F } \} _ { F } = 0 .
+$$
+
+推论: $\{ H _ { F } , P _ { F } \} _ { F } = 0$ .
+
+上述两引理描述了在构造 $( 1 + 1 )$ -哈密顿系统的有限维不变流形中的无限维与有限维哈密顿理论之间的关系.
+
+现在假设系统(2.41)有足够多个两两交换的守恒律 $F _ { 0 } , F _ { 1 } , . . . , F _ { M }$ [不妨 $F _ { 0 } = H ]$ .
+
+对任意常数 $c _ { 0 } , c _ { 1 } , . . . , c _ { M }$ , 则有如下有限维不变流形
+
+$$
+N _ { c _ { 0 } , \dots , c _ { M } } = \bigg \{ u ( x ) \bigg | \frac { \delta } { \delta u ^ { i } ( x ) } \left[ \sum _ { \alpha = 0 } ^ { M } c _ { \alpha } F _ { \alpha } \right] \bigg \} .
+$$
+
+[常数 $c _ { 0 } , . . . , c _ { M }$ 可以适当地单位化, 比如不妨 $c _ { M } = 1 ]$ . 记 $N$ 为所有这些不变流形之并:
+
+$$
+N = \bigcup _ { c _ { 0 } , . . . , c _ { M } } N _ { c _ { 0 } , . . . , c _ { M } } .
+$$
+
+此流形也关于(2.41)的 $t { \cdot }$ -演化不变. 此时 $N$ 不一定是辛流形, 但依然可以保证是泊松流形: $N$ 上的泊松括号的零化子由常数 $c _ { 0 } , . . . , c _ { M }$ 生成. (2.46)将 $N$ 表示为辛叶的叶状结构.
+
+哈密顿流(2.41)在每个辛叶上的限制仍是哈密顿流, 相应的哈密顿量为
+
+$$
+H _ { c } = \sum _ { \alpha = 0 } ^ { M } c _ { \alpha } H _ { \alpha } , \quad \frac { \delta F _ { \alpha } } { \delta u ^ { i } ( x ) } u _ { t } ^ { i } = - \partial _ { x } H _ { \alpha } , \quad c = ( c _ { 0 } , c _ { 1 } , . . . , c _ { M } ) .
+$$
+
+此流的积分 (守恒律) 形如
+
+$$
+F _ { \alpha , c } = \sum _ { \beta = 0 } ^ { M } c _ { \beta } F _ { \alpha \beta } , \quad \frac { \delta F _ { \alpha } } { \delta u ^ { i } ( x ) } \{ F _ { \beta } , u ^ { i } ( x ) \} = - \partial _ { x } F _ { \alpha \beta } .
+$$
+
+$N$ 上的这些函数关于 $N$ 的泊松括号两两交换.
+
+记辛叶 $N _ { c _ { 0 } , \dots , c _ { M } }$ 的维数为 $2 m$ . 若系统(2.41)的守恒律充分多, 则其 $x \cdot$ -流在不变流形 $N$ 上的限制构成一组完备可积系统: 更具体地说, 我们需要让系统(2.41)具有至少 $m - 1$ 个两两交换的守恒律 $F _ { \alpha _ { 2 } } ~ = ~ H$ , $F _ { \alpha _ { 3 } } , . . . , F _ { \alpha _ { m } }$ 使得(2.43)(2.45)中的函数$P _ { c } ( q , p ) , F _ { \alpha _ { i } , c } ( q , p ) , i \ = \ 2 , . . . , m$ 在 $\boldsymbol { c } = ( c _ { 0 } , . . . , c _ { M } )$ 处无关. 若对给定的 $c$ , 它们公共的等值面
+
+$$
+P _ { c } ( q , p ) = f _ { 1 } , \quad F _ { \alpha _ { i } } ( q , p ) = f _ { i } , \quad i = 2 , . . . , m
+$$
+
+是紧致 [且连通] 的, 则它是环面. 因此演化系统(2.41)的相应的解是关于 $x , t$ 的周期或近似周期函数, 且形如
+
+$$
+u ( x , t ) = U ( k x + \omega t + \varphi ^ { 0 } ; c , f ) .
+$$
+
+这里的 $U = U ( \varphi ; c , f )$ , $\varphi = ( \varphi _ { 1 } , . . . , \varphi _ { m } )$ 关于每个分量 $\varphi _ { 1 } , . . . , \varphi _ { m }$ 都是 $2 \pi \cdot$ -周期的, 其中
+
+$\varphi _ { 1 } , . . . , \varphi _ { m }$ 是 $c = ( c _ { 0 } , . . . , c _ { M } )$ , $f = ( f _ { 1 } , . . . , f _ { m } )$ 的函数; $\varphi ^ { 0 } = ( \varphi _ { 1 } ^ { 0 } , . . . , \varphi _ { m } ^ { 0 } )$ 为任意常值向量. 波数向量 $k = ( k _ { 1 } , . . . , k _ { m } )$ 与频率向量 $\omega = ( \omega _ { 1 } , . . . , \omega _ { m } )$ 都是 $c , f$ 的函数:
+
+$$
+k = k ( c , f ) , \quad \omega = \omega ( c , f ) .
+$$
+
+可在环面(2.48)的某邻域定义作用量-角参数 $J _ { a } , \varphi _ { a } , a = 1 , . . . , m$ , 使得
+
+$$
+\begin{array} { l } { { P _ { c } = P _ { c } ( J _ { 1 } , . . . , J _ { m } ) , \quad F _ { \alpha _ { i } , c } = F _ { \alpha _ { i } , c } ( J _ { 1 } , . . . , J _ { M } ) , } } \\ { { \displaystyle k _ { a } = \frac { \partial P _ { c } } { \partial J _ { a } } , \quad \omega _ { a } = \frac { \partial H _ { c } } { \partial J _ { a } } , \quad a = 1 , . . . , m . } } \end{array}
+$$
+
+例子 1. 非线性 Klein-Gordon 方程. 考虑方程
+
+$$
+u _ { t t } - u _ { x x } + V ^ { \prime } ( u ) = 0 .
+$$
+
+这是关于 $u , \pi = u _ { t }$ 的哈密顿系统, 其泊松括号为
+
+$$
+\{ \pi ( x ) , u ( y ) \} = \delta ( x - y ) ,
+$$
+
+哈密顿量为
+
+$$
+H = \int \left[ \frac { 1 } { 2 } ( \pi ^ { 2 } + u _ { x } ^ { 2 } ) + V ( u ) \right] \mathrm { d } x .
+$$
+
+此系统有两个局部守恒律:
+
+$$
+\begin{array} { r c l } { F _ { 1 } } & { = } & { \displaystyle H ( \frac { \sf G E } { \sf E \underline { { { \boxplus } } } } ) , } \\ { F _ { 2 } } & { = } & { \displaystyle \int \pi u _ { x } { \mathrm d } x ( \vec { z } \mathcal { J } ) \frac { \sf E q } { \sf E } ) . } \end{array}
+$$
+
+考虑泛函 $F _ { 1 } + c F _ { 2 }$ 的驻点构成的二维流形 $N _ { c } ^ { 2 }$ :
+
+$$
+\delta ( F _ { 1 } + c F _ { 2 } ) = 0 \iff \pi + c u _ { x } = 0 , \quad - u _ { x x } + V ^ { \prime } ( u ) - c \pi _ { x } = 0 .
+$$
+
+该流形由单行波 $u = u ( x - c t )$ 构成. Legendre 变换(2.42)退化.
+
+尽管如此, 当 $c \neq \pm 1$ 时我们仍能够引入 $N _ { c } ^ { 2 }$ 上的典范坐标
+
+$$
+\begin{array} { r } { q = u , \quad p = u _ { x } + c \pi . } \end{array}
+$$
+
+系统(2.53)的哈密顿量形如
+
+$$
+P _ { c } = { \frac { p ^ { 2 } } { 2 ( 1 - c ^ { 2 } ) } } - V ( q ) .
+$$
+
+若势函数 $V ( q )$ 形如下图所述
+
+![](images/6b4292952f0d97bf828ffe5ca82b3ff85b29d4e23e73c2e3895b9b922f587be0.jpg)  
+图 2.1
+
+则适当选取 $E$ 可使得等值面
+
+$$
+P _ { c } + E = 0
+$$
+
+是紧致的 [闭曲线] . 此时相应的周期解
+
+$$
+q ( x , t ) = Q ( k x + \omega t + \varphi ^ { 0 } ) ,
+$$
+
+$$
+Q ( \varphi + 2 \pi ) = Q ( \varphi )
+$$
+
+形如
+
+$$
+\varphi = \sqrt { \omega ^ { 2 } - k ^ { 2 } } \int \frac { \mathrm { d } Q } { \sqrt { 2 ( E - V ( Q ) ) } } .
+$$
+
+其中频率 $\omega$ 与波数 $k$ 是关于 $c , E$ 的函数, 满足如下关系:
+
+$$
+\begin{array} { l } { { \omega = \kappa c , } } \\ { { 2 \pi = \sqrt { \omega ^ { 2 } - k ^ { 2 } } \oint \displaystyle \frac { \mathrm { d } Q } { \sqrt { 2 ( E - V ( Q ) ) } } \equiv 2 \sqrt { \omega ^ { 2 } - k ^ { 2 } } \displaystyle \int _ { q _ { \mathrm { m i n } } } ^ { q _ { \mathrm { m a x } } } \displaystyle \frac { \mathrm { d } Q } { \sqrt { 2 ( E - V ( Q ) ) } } , } } \end{array}
+$$
+
+上式中, 若 $| c | < 1$ , 则 $q _ { \mathrm { m i n } } = q _ { 1 }$ , $q _ { \mathrm { m a x } } = q _ { 2 }$ ; 当 $| c | > 1$ 时 $q _ { \mathrm { m i n } } = q _ { 2 }$ , $q _ { \mathrm { m a x } } = q _ { 3 }$ [见图2.1] .
+
+方便起见, 引入函数
+
+$$
+g ( E ) = { \frac { 1 } { 2 \pi } } \oint \sqrt { 2 ( E - V ( Q ) ) } \mathrm { d } Q .
+$$
+
+则有
+
+$$
+k = { \frac { 1 } { \sqrt { c ^ { 1 } - 1 } g _ { E } } } , \quad \omega = - k c .
+$$
+
+[与(2.55)的 $\varphi$ 相对应的] 作用量 $J$ 形如
+
+$$
+J = { \frac { 1 } { 2 \pi } } \oint p \mathrm { d } q = - { \sqrt { c ^ { 2 } - 1 } } g ( E ) .
+$$
+
+这些公式给出了系统(2.50)的由周期解构成的三维不变流形.
+
+例子 2. 广义 $K d V$ 方程. 考虑方程
+
+$$
+u _ { t } + V ^ { \prime \prime } ( u ) u _ { x } - u _ { x x x } = 0 ,
+$$
+
+其泊松括号为
+
+$$
+\{ u ( x ) , u ( y ) \} = \delta ^ { \prime } ( x - y ) ,
+$$
+
+相应的哈密顿量为
+
+$$
+H = \int \left[ { \frac { 1 } { 2 } } u _ { x } ^ { 2 } + V ( u ) \right] { \mathrm { d } } x .
+$$
+
+此系统具有以下三个守恒律:
+
+$$
+\begin{array} { r c l } { F _ { 2 } } & { = } & { \displaystyle H \left( \frac { \varkappa \Xi \Xi } { \sharp \Xi \Xi } \right) } \\ { F _ { 1 } } & { = } & { \displaystyle \int \frac { u ^ { 2 } } { 2 } \mathrm { d } x \left( \vec { \mathfrak { x } } { \mathfrak { J } } _ { \Xi } ^ { \boxplus } \right) } \\ { F _ { 0 } } & { = } & { \displaystyle \int u \mathrm { d } x \left( \breve { \mathfrak { x } } { \mathfrak { J } } _ { \Xi } ^ { \boxplus } \not \Sigma _ { \textsc { h } } ^ { \boxplus } \right) } \end{array}
+$$
+
+泛函
+
+$$
+F _ { c , d } = F _ { 2 } + c F _ { 1 } + d F _ { 0 }
+$$
+
+的驻点构成的二维流形形如
+
+$$
+- u _ { x x } + V ^ { \prime } ( u ) + c u + d = 0 .
+$$
+
+其中的函数只有单行波. (2.64)的解形如
+
+$$
+u ( x , t ) = U ( k x + \omega t + \varphi ^ { 0 } ) , \quad U ( \varphi + 2 \pi ) = U ( \varphi ) ,
+$$
+
+$$
+\begin{array} { l } { { \varphi } } \end{array} = \begin{array} { l } { { \displaystyle k \int \frac { \mathrm { d } U } { \sqrt { 2 ( V ( U ) + \frac { c } { 2 } U ^ { 2 } + d U + E ) } } , } } \\ { { \displaystyle k } } \end{array}
+$$
+
+其中
+
+$$
+g = g ( c , d , E ) = \frac { 1 } { 2 \pi } \oint \sqrt { 2 ( V ( U ) + \frac { c } { 2 } U ^ { 2 } + d U + E ) } \mathrm { d } U .
+$$
+
+其作用量-角参数为 $J , \varphi$ , 其中
+
+$$
+J = g / g _ { E } .
+$$
+
+在本例, 我们得到由周期解构成的四维不变流形 [一维不变环的三维族] .
+
+例子 3. 广义非线性薛定谔方程. 考虑方程
+
+$$
+i \psi _ { t } = - \psi _ { x x } + V ^ { \prime } ( | \psi | ^ { 2 } ) \psi .
+$$
+
+这是哈密顿系统, 其泊松括号为
+
+$$
+\{ \psi ( x ) , \psi ^ { * } ( y ) \} = i \delta ( x - y ) ,
+$$
+
+相应的哈密顿量为
+
+$$
+H = \int [ \psi _ { x } \psi _ { x } ^ { * } + V ( \psi \psi ^ { * } ) ] \mathrm { d } x .
+$$
+
+这里的 $\psi , \psi ^ { * }$ 应该被视为两个独立分量. [对于任意的“势函数 ${ } ^ { \mathfrak { N } } ]$ , 方程(2.67)还有另外两个守恒律
+
+$$
+F _ { 1 } = \int \psi \psi ^ { * } \mathrm { d } x , \quad F _ { 2 } = \int \frac { \psi ^ { * } \psi _ { x } - \psi \psi _ { x } ^ { * } } { 2 i } \mathrm { d } x .
+$$
+
+由泛函 $H + c _ { 1 } F _ { 1 } + c _ { 2 } F _ { 2 }$ 的驻点构成的四维流形 $N _ { c }$ 中的函数满足
+
+$$
+- \psi _ { x x } + V ^ { \prime } ( | \psi | ^ { 2 } ) \psi + c _ { 1 } \psi + \frac { c _ { 2 } } { i } \psi _ { x } = 0 .
+$$
+
+$N _ { c }$ 上的典范坐标为
+
+$$
+\psi , \quad p _ { \psi } = \psi _ { x } ^ { * } + \frac { c _ { 2 } } { 2 i } \psi ^ { * } , \quad \psi ^ { * } , \quad p _ { \psi ^ { * } } = \psi _ { x } - \frac { c _ { 2 } } { 2 i } \psi .
+$$
+
+方程(2.70)是流形 $N _ { c }$ 上的哈密顿系统, 其哈密顿量为
+
+$$
+P _ { c } = p _ { \psi } p _ { \psi } ^ { * } - V ( \psi \psi ^ { * } ) + \psi \psi ^ { * } \left( { \frac { c _ { 2 } ^ { 2 } } { 4 } } - c _ { 1 } \right) + { \frac { c _ { 2 } } { 2 i } } ( \psi p _ { \psi } - \psi ^ { * } p _ { \psi ^ { * } } ) .
+$$
+
+该系统具有额外的首次积分
+
+$$
+F _ { 1 c } = \frac { 1 } { i } ( \psi p _ { \psi } - \psi ^ { * } p _ { \psi ^ { * } } ) .
+$$
+
+于是我们得到自由度为 2 的可积系统. 为显式写出等值面
+
+$$
+P _ { c } = E , \quad F _ { 1 c } = - 2 f ,
+$$
+
+我们引入极坐标系
+
+$$
+\psi = r e ^ { i \varphi } , \quad \psi ^ { * } = r e ^ { - i \varphi } .
+$$
+
+则有
+
+$$
+\varphi _ { x } = \frac { f } { r ^ { 2 } } , \quad r _ { x } ^ { 2 } = E + V ( r ^ { 2 } ) + ( c _ { 1 } - c _ { 2 } ^ { 2 } ) r ^ { 2 } - \frac { f ^ { 2 } } { r ^ { 2 } } + 2 f c _ { 2 } .
+$$
+
+假设集合 $\Big \{ r \Big | \overline { { E } } + V ( r ^ { 2 } ) + c r ^ { 2 } - \frac { f ^ { 2 } } { r ^ { 2 } } \geq 0 \Big \}$ 具有紧连通分支 [其中 $c = c _ { 1 } - c _ { 2 } ^ { 2 }$ ,${ \overline { { E } } } = E + 2 f c _ { 2 } ]$ . 则相应的近似周期解
+
+$$
+\psi ( x , t ) = \Psi ( k _ { 1 } x + \omega _ { 1 } t + \tau _ { 1 } ^ { 0 } , k _ { 2 } x + \omega _ { 2 } t + \tau _ { 2 } ^ { 0 } ; c , \overline { { { E } } } , f )
+$$
+
+形如
+
+$$
+r = | \psi | = R ( k _ { 1 } x + \varphi _ { 1 } ^ { 0 } ) , \quad R ( \varphi _ { 1 } + 2 \pi ) = R ( \varphi _ { 1 } )
+$$
+
+$$
+\varphi _ { 1 } = k _ { 1 } \int \frac { \mathrm { d } R } { \sqrt { \overline { { E } } + V ( R ^ { 2 } ) + c R ^ { 2 } - \frac { f ^ { 2 } } { R ^ { 2 } } } } ,
+$$
+
+$$
+\begin{array} { r c l } { \varphi } & { = } & { \arg \psi = \displaystyle \frac { f } { k _ { 1 } } \Phi ( k _ { 1 } x + \varphi _ { 1 } ^ { 0 } ) + k _ { 2 } x + \omega _ { 2 } t , } \\ { \Phi ( \tau ) } & { = } & { \displaystyle \int \left[ \frac { 1 } { R ^ { 2 } ( \tau ) } - \frac { k _ { 2 } } { f } \right] \mathrm { d } \tau , } \\ { k _ { 1 } } & { = } & { \displaystyle 1 / g _ { E } , \quad \omega _ { 1 } = 0 , \quad k _ { 2 } = - g _ { f } - c _ { 2 } , \quad \omega _ { 2 } = c _ { 1 } , } \\ { g } & { = } & { \displaystyle g ( E , c , f ) = \frac { 1 } { 2 \pi } \oint \sqrt { E + V ( R ^ { 2 } ) + c R ^ { 2 } - \frac { f ^ { 2 } } { R ^ { 2 } } } \mathrm { d } R . } \end{array}
+$$
+
+在本例, 我们得到系统(2.67)的一个六维不变流形, 它被表示成二维不变环面的四维族. 作为基础练习, 请读者自行求解关于角参数 $\varphi _ { 1 } , \varphi _ { 2 }$ 的作用量 $J _ { 1 } , J _ { 2 }$ [这里的 $\varphi _ { 1 }$ 见(2.74), $\varphi _ { 2 } = \arg \psi - \frac { f } { k _ { 1 } } \Phi ( \varphi _ { 1 } )$
+
+# 2.3 交换表示, 守恒律与演化系统的哈密顿理论
+
+之前几节的例子都非常基本. 我们只考虑了这些演化系统的“显然的”守恒律 [例如能量, 动量...] . 确定相应的有限维不变流形的常微分方程是单自由度哈密顿系统 [或者可分离变量的二自由度系统] .
+
+于是, 关于演化方程的“可积性理论”的两个自然的问题如下:
+
+1. 寻找具有充分多“非平凡”守恒律的演化系统;2. 定义演化系统的有限维不变流形的完全可积常微分方程是否具有某些奇特的性质? 如何积分这种常微分方程, 并高效地寻找相应的作用量-角参数?
+
+众所周知, 孤子 (soliton) 理论中的演化系统 [比如 Korteweg-de Vires 方程] 具有无穷多守恒律. 对这个现象的最自然解释可见 Lax[37]. 他发现了 KdV 方程
+
+$$
+u _ { t } + 6 u u _ { x } - u _ { x x x } = 0
+$$
+
+的形如
+
+$$
+L _ { t } = [ A , L ]
+$$
+
+的 交换表示 (commutative representation) , 其中
+
+$$
+L = - \partial _ { x } ^ { 2 } + u , \quad A = 4 \partial _ { x } ^ { 3 } - 6 u \partial _ { x } - 3 u _ { x } , \quad \left[ A , L \right] = A L - L A .
+$$
+
+算子方程 $L _ { t } = [ A , L ]$ 等价于 KdV 方程. 于是 $L$ 的谱特征给出了 KdV 方程的守恒律.Shabat, Ibragimov, Mikhailov, Sokolov 等人 [38-40] 在可积偏微分方程的分类的研究中证明了, 在一些附加的假设下相反的陈述似乎也成立: 如果 $( 1 + 1 )$ -系统具有充分多的高阶守恒律, 则其存在一些特定类型的交换表示 [也就是说, 它是孤子理论中的可积系统]. 至少我们对某些演化系统证明了此结果 [作为分类定理的推论] . 于是, 对第一个问题的靠谱回答是: 具有充分多 [高阶] 守恒律的演化系统具有交换表示.
+
+因此从这一点出发, 我们只考虑具有交换表示的演化系统 [要把 KdV 方程作为主要例子牢记于心] . 我们也将看到, 交换表示也是回答第二个问题的关键. 在下一节我将解释为什么对于孤子理论中的可积系统, 求解不变环以及相应的作用量-角参数的代数几何方法为何非常有用. 而在本节, 我将回顾 KdV 方程的 [适当形式的] 守恒律的构造,以及 KdV 方程簇 (hierarchy) 及其哈密顿理论的构造.
+
+将交换表示(2.76)写成下述 [15] 形式会更方便:
+
+$$
+[ \partial _ { x } - U ( \lambda ) , \partial _ { t } - V ( \lambda ) ] = 0 \iff U _ { t } ( \lambda ) - V _ { x } ( \lambda ) + [ U ( \lambda ) , V ( \lambda ) ] = 0
+$$
+
+(“零曲率表示 (zero-curvature representation) ”). 这里的 ${ \mathcal { L } } = \partial _ { x } - U ( \lambda )$ 为薛定谔算子 $L - \lambda$ 的矩阵形式 [其中 $\lambda$ 为 谱参数 (spectral parameter) ] :
+
+$$
+\mathcal { L } = \partial _ { x } - U ( \lambda ) = \partial _ { x } - \left( \begin{array} { c c } { 0 } & { 1 } \\ { u - \lambda } & { 0 } \end{array} \right) ,
+$$
+
+$$
+[ \partial _ { x } - U ( \lambda ) ] \binom { \psi _ { 1 } } { \psi _ { 2 } } = 0 \Longleftrightarrow \psi _ { 1 } = \psi , \psi _ { 2 } = \psi ^ { \prime } , L \psi = \lambda \psi .
+$$
+
+并且矩阵 $V ( \lambda )$ 为方程(2.78a)的解空间上的 $A \cdot$ -算子的矩阵形式:
+
+$$
+V ( \lambda ) ( \begin{array} { c } { { \psi } } \\ { { \psi ^ { \prime } } } \end{array} ) = ( \begin{array} { c } { { A \psi } } \\ { { ( A \psi ) ^ { \prime } } } \end{array} ) \quad ( \begin{array} { c }  { \mathrm { m o d } [ \partial _ { x } - U ( \lambda ) ] ( \begin{array} { c } { { \psi } } \\ { { \psi ^ { \prime } } } \end{array} ) = 0 . ) } \end{array}
+$$
+
+
+<!-- chunk 0002: pages 71-128 -->
+由(2.76a)可得
+
+$$
+V ( \lambda ) = \binom { u ^ { \prime } } { u ^ { \prime \prime } - 2 ( u - \lambda ) ( u + 2 \lambda ) } \quad \begin{array} { c } { { - 2 ( u + 2 \lambda ) \nonumber } } \\ { { - u ^ { \prime } } } \end{array} .
+$$
+
+(2.77)中的谱参数 $\lambda$ 是一个新的独立变量 [从而(2.77)是关于 $\lambda$ 的恒等式] .
+
+事实上存在一族方程 [KdV 方程簇] , 使得它们都具有形如(2.77)的关于给定的算子${ \mathcal { L } } = \partial _ { x } - U ( \lambda )$ 的交换表示 [或者等价地, 存在关于给定算子 $L$ 的形如(2.76)的 Lax 形式. ] 我们将(2.76a)中的算子 $A$ 重新记作 $A _ { 1 }$ , 将(2.80)中的矩阵 $V ( \lambda )$ 重新记作 $V _ { 1 } ( \lambda )$ .固定 $U ( \lambda )$ , 假定 $V ( \lambda )$ 为关于 $\lambda$ 的多项式, 我们企图寻找形如(2.77)的全部方程:
+
+$$
+U _ { s } ( \lambda ) - V _ { x } ( \lambda ) + [ U ( \lambda ) , V ( \lambda ) ] = 0 .
+$$
+
+设
+
+$$
+V = \left( { a b \atop c d } \right) ,
+$$
+
+[其中 $a = a ( \lambda ) , b = b ( \lambda ) , c = c ( \lambda ) , d = d ( \lambda )$ 为多项式] . 不妨假定 $\mathrm { t r } V \equiv 0$ , 即 $d = - a$ .从而由(2.77a)可得
+
+$$
+\begin{array} { r } { \left( \begin{array} { c c } { 0 } & { 0 } \\ { u _ { s } } & { 0 } \end{array} \right) - \left( \begin{array} { c c } { a _ { x } } & { b _ { x } } \\ { c _ { x } } & { d _ { x } } \end{array} \right) + \left( \begin{array} { c c } { c - b ( u - \lambda ) } & { - 2 a } \\ { 2 a ( u - \lambda ) } & { - c + b ( u - \lambda ) } \end{array} \right) = 0 . } \end{array}
+$$
+
+因此 $a = - \frac { 1 } { 2 } b _ { x }$ $c = - \frac { 1 } { 2 } b _ { x x } + b ( u - \lambda )$ , 以及
+
+$$
+u _ { s } = c _ { x } - 2 a ( u - \lambda ) = - \frac { 1 } { 2 } b _ { x x x } + 2 b _ { x } ( u - \lambda ) + u _ { x } b .
+$$
+
+由于 $b = b ( \lambda )$ 为多项式
+
+$$
+b \equiv b _ { 0 } \lambda ^ { n } + \cdot \cdot \cdot + b _ { n } ,
+$$
+
+由(2.81)可得系数 $b _ { 0 } , b _ { 1 } , . . . , b _ { n }$ 的递推关系: $b _ { 0 }$ 为常数, 并且
+
+$$
+2 \partial _ { x } b _ { k + 1 } = M b _ { k } , \quad M = - \frac { 1 } { 2 } \partial _ { x } ^ { 3 } + 2 u \partial _ { x } + u _ { x } , \quad k = 0 , . . . , n - 1
+$$
+
+$$
+u _ { s } = M b _ { n } .
+$$
+
+引入“生成函数”
+
+$$
+v _ { \infty } ( \lambda ) = 1 + \frac { v _ { 1 } } { \lambda } + \frac { v _ { 2 } } { \lambda ^ { 2 } } + \cdot \cdot \cdot
+$$
+
+$[ v _ { \infty }$ 与 $x , t$ 有关] , 使得满足齐次方程
+
+$$
+- \frac { 1 } { 2 } v _ { \infty _ { x x x } } + 2 ( u - \lambda ) v _ { \infty _ { x } } + u _ { x } v _ { \infty } = 0 .
+$$
+
+等价地, 矩阵 $V _ { \infty } ( \lambda ) = \left( \begin{array} { c c } { { - \displaystyle \frac { 1 } { 2 } v _ { \infty _ { x } } } } & { { v _ { \infty } } } \\ { { - \displaystyle \frac { 1 } { 2 } v _ { \infty _ { x x } } + v _ { \infty } ( u - \lambda ) } } & { { \displaystyle \frac { 1 } { 2 } v _ { \infty _ { x } } } } \end{array} \right)$ 与算子 ${ \mathcal { L } } = \partial _ { x } - U ( \lambda )$ 交换.
+
+$$
+[ \mathcal { L } , V _ { \infty } ( \lambda ) ] = [ \partial _ { x } - U ( \lambda ) , V _ { \infty } ( \lambda ) ] = 0 .
+$$
+
+引理 2.5. 上述方程具有形如(2.84)的唯一解, 使得系数 $v _ { k }$ 是 $u , u ^ { \prime } , \ldots$ 的形如
+
+$$
+v _ { k } = v _ { k } ( u , u ^ { \prime } , . . . , u ^ { ( 2 k - 2 ) } )
+$$
+
+的多项式, 并且满足归一化条件
+
+$$
+v _ { k } ( 0 , 0 , . . . , 0 ) = 0 .
+$$
+
+例如, v1 = 2 , v $v _ { 2 } = \frac { 1 } { 8 } ( 3 u ^ { 2 } - u ^ { \prime \prime } ) .$ ,...
+
+证明. 行列式 $\operatorname* { d e t } V _ { \infty } ( \lambda )$ 与迹 $\mathrm { t r } V _ { \infty } ( \lambda )$ 是方程(2.85a)的首次积分. 我们考虑方程(2.85a)的满足下述归一化条件
+
+$$
+\mathrm { t r } V _ { \infty } ( \lambda ) = 0 , \quad \mathrm { d e t } V _ { \infty } ( \lambda ) = \lambda
+$$
+
+的解. 而矩阵 $V _ { \infty } ( \lambda )$ 形如
+
+$$
+V _ { \infty } ( \lambda ) = \left( \begin{array} { c c } { { - \displaystyle \frac { 1 } { 2 } v _ { \infty _ { x } } } } & { { v _ { \infty } } } \\ { { - \displaystyle \frac { 1 } { 2 } v _ { \infty _ { x x } } + v _ { \infty } ( u - \lambda ) } } & { { \displaystyle \frac { 1 } { 2 } v _ { \infty _ { x } } } } \end{array} \right)
+$$
+
+其中 $v _ { \infty } ( \lambda )$ 形如(2.84), 满足(2.85). 由 $\operatorname* { d e t } V _ { \infty } ( \lambda ) = \lambda$ 可得关于 $v _ { \infty } ( \lambda )$ 的如下非线性方程:
+
+$$
+\frac { 1 } { 2 } v _ { \infty } v _ { \infty _ { x x } } - \frac { 1 } { 4 } v _ { \infty _ { x } } ^ { 2 } - ( u - \lambda ) v _ { \infty } ^ { 2 } = \lambda .
+$$
+
+由此可得(2.84)中的系数的递推关系: $v _ { 0 } = 1$ , $v _ { 1 } = \frac { u } { 2 }$ 并且对于 $k \geq 1$ 有
+
+$$
+v _ { k + 1 } = \sum _ { i + j = k } \left( - \frac { 1 } { 4 } v _ { i } v _ { j } ^ { \prime \prime } + \frac { 1 } { 8 } v _ { i } ^ { \prime } v _ { j } ^ { \prime } + \frac { 1 } { 2 } u v _ { i } v _ { j } \right) - \frac { 1 } { 2 } \sum _ { i = 1 } ^ { k } v _ { i } v _ { k + 1 - i } .
+$$
+
+显然该递推关系的解 $v _ { 2 } , v _ { 3 } , \ldots$ 形如 (2.85b),(2.85c), 从而得证.
+
+任何满足(2.77a)并且 $\mathrm { t r } V = 0$ 的关于 $\lambda$ 的多项式矩阵 $V ( \lambda )$ 都形如
+
+$$
+V = \left( \begin{array} { c c } { { - \frac { 1 } { 2 } b _ { x } } } & { { b } } \\ { { - \frac { 1 } { 2 } b _ { x x } + b ( u - \lambda ) } } & { { \frac { 1 } { 2 } b _ { x } } } \end{array} \right) , \quad b = \sum _ { i = 1 } ^ { n } c _ { i } { \hat { v } } _ { n - i } ( \lambda ) ,
+$$
+
+$$
+\hat { v } ( \lambda ) = [ \lambda ^ { k } v _ { \infty } ( \lambda ) ] \quad ( \mod \lambda ^ { - 1 } ) ,
+$$
+
+$c _ { 0 } , . . . , c _ { n }$ 为常数. 从而“第 $n$ 阶 KdV 方程”形如
+
+$$
+u _ { s } = M \sum _ { i = 0 } ^ { n } c _ { n - i } v _ { i } ( u , u ^ { \prime } , . . . , u ^ { ( 2 i - 2 ) } ) \equiv 2 \partial _ { x } \sum _ { i = 0 } ^ { n } c _ { n - i } v _ { i + 1 } ( u , u ^ { \prime } , . . . , u ^ { ( 2 i ) } ) ,
+$$
+
+[算子 $M$ 的定义见(2.82)] .
+
+例如 $n = 0$ 时, $u _ { s } = c _ { 0 } u _ { x }$ ; $n = 1$ 时:
+
+$$
+u _ { s } = \frac { 1 } { 4 } c _ { 0 } ( 6 u u _ { x } - u _ { x x x } ) + c _ { 1 } u _ { x } .
+$$
+
+以下方程构成方程族(2.89) [KdV 方程簇] 的一组“基”:
+
+$$
+u _ { t _ { k } } = - 2 ^ { 2 k } M v _ { k } ( u , u ^ { \prime } , . . . , u ^ { ( 2 k - 2 ) } ) \equiv - 2 ^ { 2 k + 1 } \partial _ { x } v _ { k + 1 } ( u , u ^ { \prime } , . . . , u ^ { ( 2 k ) } ) ,
+$$
+
+$k = 0 , 1 , \ldots$ . 对于 $k = 0$ , 有 $u _ { t _ { 0 } } + u _ { x } = 0$ ; $k = 1$ 时得到 KdV 方程(2.75). 我们已经知道对任意 $k$ , 方程(2.90)具有 [形如(2.77a)的] 零曲率表示
+
+$$
+U _ { t _ { k } } ( \lambda ) - V _ { k _ { x } } ( \lambda ) + [ U ( \lambda ) , V _ { k } ( \lambda ) ] = 0
+$$
+
+或者
+
+$$
+\partial _ { t _ { k } } \mathcal { L } = [ V _ { k } ( \lambda ) , \mathcal { L } ] ,
+$$
+
+$( { \mathcal { L } } = \partial _ { x } - U ( \lambda ) )$ , 或者等价地, 有 Lax 表示
+
+$$
+L _ { t _ { k } } = [ A _ { k } , L ] .
+$$
+
+这里
+
+$$
+V _ { k } ( \lambda ) = - 2 ^ { 2 k } \left( \begin{array} { c c } { { - \frac { 1 } { 2 } \hat { v } _ { k _ { x } } ( \lambda ) } } & { { \hat { v } _ { k } ( \lambda ) } } \\ { { - \frac { 1 } { 2 } \hat { v } _ { k _ { x x } } ( \lambda ) + \hat { v } _ { k } ( \lambda ) ( u - \lambda ) } } & { { \frac { 1 } { 2 } \hat { v } _ { k _ { x } } ( \lambda ) \right) . } } \end{array}
+$$
+
+$2 k + 1$ 阶微分算子 $A _ { k }$ 可由 $V _ { k } ( \lambda )$ 与关系(2.79)唯一确定:
+
+$$
+A _ { k } = ( - 2 ) ^ { 2 k } \sum _ { i = 0 } ^ { k } \left( - { \frac { 1 } { 2 } } v _ { k - i } ^ { \prime } L ^ { i } + v _ { k - i } L ^ { i } \partial _ { x } \right) .
+$$
+
+我们来证明这些方程两两交换.
+
+引理 2.6.
+
+$$
+( u _ { t _ { k } } ) _ { t _ { l } } = ( u _ { t _ { l } } ) _ { t _ { k } } .
+$$
+
+证明. 由于 $[ \mathcal { L } , V _ { \infty } ] = 0$ , 从而有
+
+$$
+0 = [ \partial _ { t _ { k } } , C , V _ { \infty } ] + [ \mathscr { L } , \partial _ { t _ { k } } V _ { \infty } ] = [ [ V _ { k } , \mathscr { L } ] , V _ { \infty } ] + [ \mathscr { L } , \partial _ { t _ { k } } V _ { \infty } ] = [ \mathscr { L } , \partial _ { t _ { k } } V _ { \infty } - [ V _ { k } , V _ { \infty } ] ] .
+$$
+
+因此矩阵 $\tilde { V } _ { \infty } ( \lambda ) = \partial _ { t _ { k } } V _ { \infty } - [ V _ { k } , V _ { \infty } ]$ 满足(2.85). 归一化条件(2.85c)显然满足. 由于$V _ { k } = \lambda ^ { k } V _ { \infty } + { \cal O } ( \lambda ^ { - 1 } )$ , 从而 $[ V _ { k } , V _ { \infty } ] = O ( \lambda ^ { - 1 } )$ 以及 $\partial _ { t _ { k } } V _ { \infty } = O ( \lambda ^ { - 1 } )$ . 再由问题(2.85a)-(2.85c)的解的唯一性, 可得 $\tilde { V } _ { \infty } ( \lambda ) = 0$ , 即
+
+$$
+\partial _ { t _ { k } } V _ { \infty } = [ V _ { k } , V _ { \infty } ] , \quad k = 1 , 2 , \ldots
+$$
+
+由(2.96)易证交换性条件(2.95). 引理证毕.
+
+KdV 方程簇(2.90) 中的所有交换流都是哈密顿 [甚至是 双哈密顿 (bi-Hamiltonian)] 系统, 且具有公共的无穷守恒律. 为构造这些守恒律, 我们要更加深入理解算子 $L$ 的本征函数的性质.
+
+引理 2.7. 设算子 $L = - \partial _ { x } ^ { 2 } + u$ 的势函数 $u$ 与 $t _ { k }$ 有关, 且满足方程簇(2.90). 则两两交换的算子 $\mathcal { L }$ 与 $\partial _ { t _ { k } } - V _ { k } ( \lambda )$ 存在唯一的公共本征函数 $\vec { \psi } = \left( \begin{array} { l } { \psi } \\ { \psi ^ { \prime } } \end{array} \right) .$
+
+$$
+\mathcal { L } \vec { \psi } = 0 , \quad ( \partial _ { t _ { k } } - V _ { k } ( \lambda ) ) \vec { \psi } = 0 ,
+$$
+
+使得对数导数 $\partial _ { x } \log \psi$ 与 $\partial _ { t _ { k } } \log \psi$ 是如下的关于 $\sqrt { \lambda }$ 的形式幂级数:
+
+$$
+{ \frac { 1 } { i } } ( \log \psi ) _ { x } = { \sqrt { \lambda } } + \sum _ { j = 1 } ^ { \infty } { \frac { \chi _ { j } } { ( 2 { \sqrt { \lambda } } ) ^ { j } } } ,
+$$
+
+$$
+{ \frac { 1 } { i } } ( \log \psi ) _ { t _ { k } } = - 2 ^ { 2 k } ( \sqrt \lambda ) ^ { 2 k + 1 } + \sum _ { j = 0 } ^ { \infty } { \frac { \xi _ { k , j } } { ( 2 \sqrt \lambda ) ^ { j } } } .
+$$
+
+并且所有的系数 $\chi _ { j } , \xi _ { k , j }$ 都是 $u , u ^ { \prime } , \ldots$ 的多项式.
+
+证明. 记 $\chi = \frac { 1 } { i } ( \log \psi ) _ { x }$ , 则有 Riccati 方程 $i \chi ^ { \prime } - \chi ^ { 2 } - u + \lambda = 0$ . 易证该方程存在唯一 的形如(2.98)的解, 使得系数 $\chi _ { j }$ 为 $u , u ^ { \prime } , \ldots$ 的多项式, $\chi _ { j } = \chi _ { j } ( u , u ^ { \prime } , . . . , u ^ { ( j ) } )$ .
+
+对于由(2.97),(2.94)所得的 $\psi$ , 有
+
+$$
+\partial _ { t _ { k } } \psi = - 2 ^ { k } \left( - \frac { 1 } { 2 } \hat { v } _ { k } ^ { \prime } ( \lambda ) \psi + \hat { v } _ { k } ( \lambda ) \psi ^ { \prime } \right) .
+$$
+
+从而有
+
+$$
+\frac { 1 } { i } ( \log \psi ) _ { t _ { k } } = - 2 ^ { 2 k } \left( \frac { i } { 2 } \hat { v } _ { k } ^ { \prime } ( \lambda ) + \hat { v } _ { k } ( \lambda ) \chi ( \lambda ) \right) .
+$$
+
+这是形如(2.99)的关于 $\sqrt { \lambda }$ 的形式幂级数. 引理证毕.
+
+# 推论 2.8. 泛函
+
+$$
+\int \chi _ { j } ( u , u ^ { \prime } , . . . , u ^ { ( j ) } ) \mathrm { d } x
+$$
+
+是(2.90)的所有方程的公共的守恒律, 且相应的 流密度 (flux density) 为 $\xi _ { k , j }$ :
+
+$$
+\partial _ { t _ { k } } \chi _ { j } = \partial _ { x } \xi _ { k , j } .
+$$
+
+证明. 这由等式
+
+$$
+[ ( \log \psi ) _ { x } ] _ { t _ { k } } = [ ( \log \psi ) _ { t _ { k } } ] _ { x }
+$$
+
+易得.
+
+若 $\chi _ { R }$ 与 $\chi _ { I }$ 分别为 $\chi$ 的实部与虚部 $( \lambda > 0 )$ ), $\chi = \chi _ { R } + i \chi _ { I }$ , 则由 Riccati 方程可得
+
+$$
+\chi _ { I } = { \frac { 1 } { 2 } } { \frac { \chi _ { R } ^ { \prime } } { \chi _ { R } } } , \quad \operatorname { R e } \chi _ { 2 j } = 0 , \quad \operatorname { I m } \chi _ { 2 j + 1 } = 0 .
+$$
+
+从而 $j$ 为偶数时相应的守恒律 $\chi _ { j }$ 是平凡的; 而奇数项系数其实是 Kruskal 积分:
+
+$$
+I _ { m } = \int \chi _ { 2 m + 1 } ( u , u ^ { \prime } , . . . , u ^ { ( 2 m + 1 ) } ) \mathrm { d } x .
+$$
+
+其生成函数形如
+
+$$
+\sqrt { \lambda } + \sum \frac { I _ { m } } { ( 2 \sqrt { \lambda } ) ^ { 2 m + 1 } } = \int \chi _ { R } \mathrm { d } x \equiv \int \chi \mathrm { d } x \equiv \frac { 1 } { i } \int ( \log \psi ) _ { x } \mathrm { d } x .
+$$
+
+注记. 下述等式对形式幂级数(2.84)与(2.98)成立:
+
+$$
+\chi _ { R } ( \lambda ) \equiv \sqrt { \lambda } + \sum _ { m = 0 } ^ { \infty } \frac { \chi _ { 2 m + 1 } } { ( 2 \sqrt { \lambda } ) ^ { 2 m + 1 } } = \frac { \sqrt { \lambda } } { v _ { \infty } ( \lambda ) } .
+$$
+
+为证明方程(2.90)为哈密顿系统, 我们需要以下:
+
+引理 2.9. 下述等式成立:
+
+$$
+\frac { \delta } { \delta u } \int \chi \mathrm { d } x = - \frac { 1 } { 2 \chi _ { R } ( \lambda ) } = - \frac { 1 } { 2 \sqrt { \lambda } } v _ { \infty } ( \lambda ) .
+$$
+
+此式出现于 [3] [也可见 [8]] . 这里给出与之不同的证明. 然而这些证明在本质上都基于算子 $L$ 的谱理论. 此引理的证明留作本节附录.
+
+推论 2.10. 对任意 $k$ , 方程(2.90) 都是关于 Gardner-Zakharov-Faddeev 括号
+
+$$
+\{ u ( x ) , u ( y ) \} = \delta ^ { \prime } ( x - y )
+$$
+
+的哈密顿系统, 并且相应的哈密顿量为 2Ik+1,
+
+$$
+u _ { t _ { k } } = 2 \partial _ { x } \frac { \delta I _ { k + 1 } } { \delta u ( x ) } .
+$$
+
+此外, 该方程也是关于 Magri 括号
+
+$$
+\{ u ( x ) , u ( y ) \} _ { M } = - { \frac { 1 } { 2 } } \delta ^ { \prime \prime \prime } ( x - y ) + [ u ( x ) + u ( y ) ] \delta ^ { \prime } ( x - y )
+$$
+
+的哈密顿系统, 相应的哈密顿量为 $I _ { k }$ ,
+
+$$
+u _ { t _ { k } } = M \frac { \delta I _ { k } } { \delta u ( x ) } .
+$$
+
+证明. 由(2.106)可知 (2.84),(2.85) 中的系数 $v _ { m }$ 满足
+
+$$
+\frac { \delta } { \delta u ( x ) } I _ { m } = - 2 ^ { 2 m } v _ { m } , \quad m = 0 , 1 , \ldots
+$$
+
+由此易得方程(2.90)的上述双哈密顿结构.
+
+# 附录: 引理2.9的证明
+
+注意泛函 $I _ { k }$ 的密度是 $u , u ^ { \prime } , \ldots$ 的多项式, 由 $I _ { k }$ 的局部性可知变分导数 $\frac { \delta I _ { k } } { \delta u ( x ) }$ 与$u ( x )$ 具体所在的函数空间无关. 我们来证明光滑周期函数 $u ( x + T ) = u ( x )$ 情形. 我们将满足如下性质的函数 $\psi _ { \pm } = \psi _ { \pm } ( x , \lambda )$
+
+$$
+\begin{array} { l l } { { L \psi _ { \pm } ( x , \lambda ) = \lambda \psi _ { \pm } ( x , \lambda ) , } } & { { \psi _ { \pm } ( x + T , \lambda ) = e ^ { \pm i p ( \lambda ) T } \psi _ { \pm } ( x , \lambda ) , } } \\ { { { } } } & { { { } } } \\ { { \psi _ { \pm } ( x _ { 0 } , \lambda ) = 1 } } & { { } } \end{array}
+$$
+
+称为 Bloch-Floquet 本征函数 [其中给定常数 $x _ { 0 }$ 称为“泛点”(generic point)] . $p ( \lambda )$ 为[多值] 函数, 在固体物理中称为 拟矩 (quasimomentum) . 可以证明 [3], $\psi _ { \pm } ( x , \lambda )$ 可
+
+关于 $\lambda$ 解析延拓到适当的黎曼面上, 使得 $( \log \psi _ { \pm } ) _ { x }$ 可以展成形如(2.98)的形式幂级数,$\frac { 1 } { i } ( \log \psi _ { \pm } ) _ { x } = \pm ( \chi _ { R } \pm i \chi _ { I } )$ , $\chi = \chi ( x , \lambda )$ . 并且成立
+
+$$
+p ( \lambda ) = \frac { 1 } { T } \int _ { 0 } ^ { T } \chi \mathrm { d } x = \frac { 1 } { T } \int _ { 0 } ^ { T } \chi _ { R } \mathrm { d } x .
+$$
+
+因此在周期函数情形, Kruskal 积分的生成函数(2.104) 恰为拟矩 $p ( \lambda ) ( 2 . 1 1 1 )$ . 现在来证明公式(2.106). 考虑满足下式的函数 $\tilde { \psi } _ { + } , \psi _ { - }$ :
+
+$$
+\begin{array} { l l } { { [ - \partial _ { x } ^ { 2 } + \tilde { u } ] \tilde { \psi } _ { + } = \lambda \tilde { \psi } _ { + } , \ } } & { { \tilde { \psi } _ { + } ( x + T , \lambda ) = e ^ { i \tilde { p } T } \tilde { \psi } _ { + } ( x , \lambda ) , } } \\ { { \nonumber } } \\ { { [ - \partial _ { x } ^ { 2 } + u ] \psi _ { - } = \lambda \psi _ { - } , \ } } & { { \psi _ { - } ( x + T , \lambda ) = e ^ { - i p T } \psi _ { - } ( x , \lambda ) . } } \end{array}
+$$
+
+则有如下等式:
+
+$$
+\partial _ { x } [ \tilde { \psi } _ { + } ^ { \prime } \psi _ { - } - \tilde { \psi } _ { + } \psi _ { - } ^ { \prime } ] = \delta u \tilde { \psi } _ { + } \psi _ { - } , \quad \delta u = \tilde { u } - u .
+$$
+
+在一周期内积分, 可得 $\delta u$ 的线性近似
+
+$$
+i \delta p \cdot T \cdot 2 i \chi _ { R } ( x _ { 0 } , \lambda ) = \int _ { x _ { 0 } } ^ { x _ { 0 } + T } \psi _ { + } \psi _ { - } \delta u \mathrm { d } x .
+$$
+
+又因为 $( \log \psi _ { + } \psi _ { - } ) _ { x } = - 2 \chi _ { I } = - ( \log \chi _ { R } ) _ { x }$ , 从而
+
+$$
+\psi _ { + } \psi _ { - } = { \frac { \chi _ { R } ( x _ { 0 } \lambda ) } { \chi _ { R } ( x , \lambda ) } } .
+$$
+
+因此
+
+$$
+\delta p = - \frac { 1 } { 2 T } \int _ { x _ { 0 } } ^ { x _ { 0 } + T } \frac { \delta u ( x ) } { \chi _ { R } ( x , \lambda ) } \mathrm { d } x .
+$$
+
+完成证明.
+
+2.4 构造演化系统的不变环并寻找相应作用量-角参数的代数几何方法 (“有限空缺积分方法”)
+
+考虑 KdV 方程簇的任一串流的稳定点
+
+$$
+\partial _ { x } \sum _ { i = 0 } ^ { n } 2 ^ { 2 ( i + 1 ) } c _ { n - i } v _ { i + 1 } ( u , u ^ { \prime } , . . . , u ^ { ( 2 i ) } ) = 0 ,
+$$
+
+其中 $c _ { 0 } , c _ { 1 } , . . . , c _ { n }$ 为归一化的常数, 例如满足归一化条件 $c _ { 0 } = 1$ , 或者等价地, 新增常数$c _ { n + 1 }$ 使得
+
+$$
+\sum _ { i = - 1 } ^ { n } 2 ^ { 2 ( i + 1 ) } c _ { n - i } v _ { i + 1 } ( u , u ^ { \prime } , . . . , u ^ { ( 2 i ) } ) = 0 .
+$$
+
+记方程(2.114)的解集为 $N _ { c }$ , 其中 $c = ( c _ { 0 } , . . . , c _ { n + 1 } )$ [见 2.2 节] . 此集合恰为以下泛函的驻点集:
+
+$$
+I _ { c } = \sum _ { i = - 1 } ^ { n } c _ { n - i } I _ { i + 1 } , \quad N _ { c } = \Bigl \{ u ( x ) \Bigl | \frac { \delta I _ { c } } { \delta u ( x ) } = 0 \Bigr \} 
+$$
+
+[见上一节(2.109)式] . 我们可用 2.2 节的想法来证明方程 (2.114)是完备哈密顿系统. 但这里我们要用另一种方法来积分此方程. 其关键之处在于, 方程(2.113)等价于矩阵微分算子 ${ \mathcal { L } } ( \lambda ) = \partial _ { x } - U ( \lambda )$ 与关于 $\lambda$ 的多项式矩阵
+
+$$
+W ( \lambda ) = - \sum _ { i = 0 } ^ { n } c _ { n - i } V _ { i } ( \lambda )
+$$
+
+[此矩阵的左乘作用视为算子] 交换,
+
+$$
+[ { \mathcal { L } } ( \lambda ) , W ( \lambda ) ] = 0 .
+$$
+
+其中矩阵 $V _ { i } ( \lambda )$ 形如上一节的(2.94). (2.117)等价于
+
+$$
+\partial _ { x } W ( \lambda ) = [ U ( \lambda ) , W ( \lambda ) ] .
+$$
+
+另外一种等价写法是常微分算子 $L$ 与 $A$ 的交换性
+
+$$
+[ L , A ] = 0 ,
+$$
+
+其中
+
+$$
+A = \sum _ { i = 0 } ^ { n } c _ { n - i } A _ { i } ,
+$$
+
+算子 $A _ { i }$ 的定义见上一节(2.94a)式. 方程(2.117) [或者(2.118),(2.119)] 的解集 $\hat { N } _ { c }$ 形如
+
+$$
+\hat { N } _ { c } = \bigcup _ { c _ { n + 1 } } N _ { c } ,
+$$
+
+此集合关于 KdV 方程簇的任何流的演化不变 [每个 $N _ { c }$ 也是不变的] .
+
+由上一节(2.96)可知, 矩阵 $W ( \lambda )$ 也满足类似的关于 $t _ { k }$ 的演化方程 [对任意 $k ]$
+
+$$
+\partial _ { t _ { k } } W = [ V _ { k } , W ] .
+$$
+
+本节我们讲利用交换表示 (2.118),(2.122)来显式求解流形 $N _ { c }$ , 以及这些流形上的时间演化, 不变环. 简单起见, 我们只考虑关于第一个时间 $t = t _ { 1 }$ 的演化 [原始的 KdV 方程] .
+
+考虑下述两两交换的算子的公共本征向量 [矩阵 $V _ { 1 } ( \lambda )$ 形如上一节(2.80)式]
+
+$$
+\mathcal { L } = \partial _ { x } - U ( \lambda ) , \quad \mathcal { A } _ { 1 } = \partial _ { t } - V _ { 1 } ( \lambda ) , \quad W ( \lambda ) ,
+$$
+
+$$
+\mathcal { L } \vec { \psi } = 0 , \quad \mathcal { A } _ { 1 } \vec { \psi } = 0 , \quad W ( \lambda ) \vec { \psi } = i \mu \vec { \psi } .
+$$
+
+$\vec { \psi }$ 可被(2.123)式以及如下归一化条件完全确定:
+
+$$
+\psi | _ { \stackrel { x = x _ { 0 } } { t = t _ { 0 } } } = 1 , \quad \vec { \psi } = \binom { \psi } { \psi ^ { \prime } } .
+$$
+
+引理. 上述公共本征向量 $\vec { \psi }$ 是黎曼曲面
+
+$$
+\Gamma : \mathcal { R } ( \lambda , \mu ) \equiv \operatorname* { d e t } [ W ( \lambda ) - i \mu \cdot 1 ] \equiv \operatorname* { d e t } W ( \lambda ) - \mu ^ { 2 } = 0
+$$
+
+上的关于 $\lambda$ 的亚纯函数.
+
+证明. 设 $\vec { \psi _ { 1 } } = { \binom { c } { c ^ { \prime } } } , \vec { \psi _ { 2 } } = { \binom { s } { s ^ { \prime } } }$ 为方程 $\mathcal { L } \vec { \psi } = 0$ , $\overset { \vartriangle } { \boldsymbol { A } _ { 1 } \boldsymbol { \vec { \psi } } } = 0$ 的满足下述归一化条件
+
+$$
+\left( { \begin{array} { l l } { c } & { s } \\ { c ^ { \prime } } & { s ^ { \prime } } \end{array} } \right) { \bmod { \frac { \textstyle } { } } } = { \binom { 1 } { 0 } } \ 0
+$$
+
+的解. 则本征函数 $\vec { \psi }$ 形如
+
+$$
+\vec { \psi } = \binom { \psi } { \psi ^ { \prime } } = \xi _ { 1 } \binom { c } { c ^ { \prime } } + \xi _ { 2 } \binom { s } { s ^ { \prime } } ,
+$$
+
+其中 $\binom { \xi _ { 1 } } { \xi _ { 2 } }$ 为矩阵 $W = W ( \lambda ) \vert _ { \mathbf { \lambda } _ { t = t _ { 0 } } } ^ { x = x _ { 0 } }$ 的本征向量, $W \left( { \xi _ { 1 } \atop { \xi _ { 2 } } } \right) = i \mu \left( { \xi _ { 1 } \atop { \xi _ { 2 } } } \right)$ 函数 $c , s$ 关于$\lambda \in \mathbb { C }$ 解析, 并且 $\xi _ { 1 } = \xi _ { 1 } ( \lambda ) \equiv 1$ , $\xi _ { 2 } = \xi _ { 2 } ( \lambda )$ 为黎曼曲面(2.125)上的代数函数.
+
+我在 2.2 节提到, $x \cdot$ -演化方程与 $t { \cdot }$ -演化方程在有限维流形(2.115)上交换. 易知 $x \cdot$ -与$t \cdot$ -方程具有 Lax 表示
+
+$$
+\frac { \mathrm { d } W ( \lambda ) } { \mathrm { d } x } = [ U ( \lambda ) , W ( \lambda ) ] ,
+$$
+
+$$
+\frac { \mathrm { d } W ( \lambda ) } { \mathrm { d } t } = [ V _ { 1 } ( \lambda ) , W ( \lambda ) ] .
+$$
+
+特征多项式 $\operatorname* { d e t } ( W ( \lambda ) - i \mu \cdot 1 ) = \mathcal { R } ( \lambda , \mu )$ 为关于 $u , u ^ { \prime } , . . . , u ^ { ( n + 1 ) }$ , $c _ { 0 } , . . . , c _ { n + 1 }$ 的多项式.
+
+这给出了交换流(2.126),(2.127)的在 $( 3 n + 1 )$ 维相空间 $N$ 上的公共的运动常数族.黎曼曲面(2.125)将这族运动积分参数化. 它的方程形如
+
+$$
+\begin{array} { r } { \mathcal { R } ( \lambda , \mu ) \equiv \mu ^ { 2 } - R _ { 2 n + 1 } ( \lambda ) = 0 , \quad \mathrm { d e g } R _ { 2 n + 1 } = 2 n + 1 } \end{array}
+$$
+
+$$
+R _ { 2 n + 1 } ( \lambda ) = \overbrace { \frac { \mathrm { H } } { \mathrm { H } } } ^ { 2 k + 1 } \overbrace { \frac { \mathrm { H } } { \mathrm { H } } } ^ { 2 k + 1 } \times \prod _ { \alpha = 0 } ^ { 2 k + 1 } ( \lambda - r _ { \alpha } ) = \operatorname* { d e t } W .
+$$
+
+$r _ { 1 } , . . . , r _ { 2 n + 1 }$ 给出了 (2.126),(2.127)的一族守恒律 [从而也是 KdV 方程在 $N _ { c }$ 上的限制的守恒律] .
+
+由于
+
+$$
+W = \left( \begin{array} { c c } { { - \frac { 1 } { 2 } w _ { x } } } & { { w } } \\ { { - \frac { 1 } { 2 } w _ { x x } + w ( u - \lambda ) } } & { { \frac { 1 } { 2 } w _ { x } } } \end{array} \right) , \quad w = \sum _ { i = 0 } ^ { n } w _ { i } \lambda ^ { n - i } \equiv w ( x , t , \lambda ) ,
+$$
+
+$$
+w _ { i } = - \sum _ { j } 2 ^ { 2 j } c _ { n - j } v _ { j + i - n }
+$$
+
+[回顾 $v _ { 0 } = 1$ , 且 $k > 0$ 时 $v _ { k } = v _ { k } ( u , u ^ { \prime } , . . . , u ^ { ( 2 k - 2 ) } ) \ ]$ , 从而我们得到公共本征函数
+
+$\vec { \psi } = \binom { \psi } { \psi ^ { \prime } }$ 的显式表达式:
+
+$$
+\psi = c + \frac { i \mu + \frac { 1 } { 2 } w _ { x } ( x _ { 0 } , t _ { 0 } , \lambda ) } { w ( x _ { 0 } , t _ { 0 } , \lambda ) } s , \quad W \left( { \begin{array} { l } { \psi } \\ { \psi ^ { \prime } } \end{array} } \right) = i \mu \left( { \begin{array} { l } { \psi } \\ { \psi ^ { \prime } } \end{array} } \right) ,
+$$
+
+$$
+\mu = \sqrt { \operatorname* { d e t } W }
+$$
+
+$[ \psi$ 的归一化条件为(2.124)] .
+
+因此我们有
+
+$$
+\frac { \psi ^ { \prime } } { \psi } \bigg | _ { \stackrel { x = x _ { 0 } } { t = t _ { 0 } } } = \frac { i \mu + \frac { 1 } { 2 } w _ { x } ( x _ { 0 } , t _ { 0 } , \lambda ) } { w ( x _ { 0 } , t _ { 0 } , \lambda ) } .
+$$
+
+推论 2.11.
+
+$$
+\frac { \psi ^ { \prime } } { \psi } \equiv \frac { i \mu + \frac { 1 } { 2 } w _ { x } ( x , t , \lambda ) } { w ( x , t , \lambda ) } ,
+$$
+
+$$
+\frac { \psi _ { t } } { \psi } = u _ { x } - 2 ( u + 2 \lambda ) \frac { i \mu + \frac { 1 } { 2 } w _ { x } ( x , t , \lambda ) } { w ( x , t , \lambda ) } = \frac { 1 } { 2 } \frac { w _ { t } } { w } - \frac { 2 i \mu ( \mu + 2 \lambda ) } { w } ,
+$$
+
+$u = u ( x , t )$
+
+推论 2.12. 设 $\psi _ { \pm } = c + \frac { \pm i \mu + \frac { 1 } { 2 } w _ { x } ( x _ { 0 } , t _ { 0 } , \lambda ) } { w ( x _ { 0 } , t _ { 0 } , \lambda ) } s$ 为 2-值函数 $\psi$ 的两个分支. 则有
+
+$$
+\psi _ { + } \psi _ { - } = \frac { w ( x , t , \lambda ) } { w ( x _ { 0 } , t _ { 0 } , \lambda ) } .
+$$
+
+证明. 由(2.131),(2.132) 可得 [见上一节(2.112)式] :
+
+$$
+( \log \psi _ { + } \psi _ { - } ) ^ { \prime } = \frac { w _ { x } ( x , t , \lambda ) } { w ( x , t , \lambda ) } = [ \log w ( x , t , \lambda ) ] ^ { \prime } ,
+$$
+
+$$
+( \log \psi _ { + } \psi _ { - } ) _ { t } = 2 u _ { x } - 2 ( u + 2 \lambda ) \frac { w _ { x } } { w } = [ \log w ( x , t , \lambda ) ] _ { t } .
+$$
+
+又由于(2.124), 从而积分后可得(2.133).
+
+$2 n { + 1 }$ 定理 2.13. 亏格为 $n$ 的黎曼曲面 $\Gamma : \mu ^ { 2 } = \prod _ { \alpha = 1 } \left( \lambda - r _ { \alpha } \right)$ 上的关于 $\lambda$ 的亚纯函数$\psi = \psi ( x , x _ { 0 } , t _ { 0 } , \lambda )$ 具有以下 $n$ 个极点:
+
+$$
+P _ { 1 } = ( \gamma _ { 1 } ( x _ { 0 } , t _ { 0 } ) , \pm ) , . . . , P _ { n } = ( \gamma _ { n } ( x _ { 0 } , t _ { 0 } ) , \pm ) , \quad w ( x , t , \gamma _ { i } ( x , t ) ) \equiv 0 ,
+$$
+
+[符号“ $\cdot _ { + } ,$ ,“−”表示 $\Gamma$ 的不同叶 $\jmath$ , 并且在无穷远点 $\lambda = \infty$ 处有如下指数渐近:
+
+$$
+\psi ( x , x _ { 0 } , t _ { 0 } , \lambda ) = e ^ { i k ( x - x _ { 0 } ) - 4 i k ^ { 3 } ( t - t _ { 0 } ) } ( 1 + O ( k ^ { - 1 } ) ) , \quad k = \sqrt { \lambda } .
+$$
+
+证明. 由(2.130)可知函数 $\psi$ 的极点只能位于多项式 $w ( x _ { 0 } , t _ { 0 } , \lambda )$ 的根. 然而由(2.133)可知在每个这样的根处都是单极点. 因此该函数恰有 $n$ 个极点, 并且形如(2.134).
+
+而由(2.131),(2.132) 可得指数渐近(2.135). 证毕.
+
+亏格为 $n$ 的黎曼曲面上的具有上述解析性质的函数 $\psi$ 称为 Baker-Akhiezer 函数.若算子 $L$ [或者 $\mathcal { L } ( \lambda ) ]$ 的本征函数为 [关于 $\lambda$ 的] Baker-Akhiezer 函数, 则此算子称为有限空缺算子 (finite-gap operator) [下文将解释其背后动机] . 使得本征函数为亚纯函数的黎曼曲面 $\Gamma$ 称为该有限 gap 算子的 谱曲线 (spectral curve) . Baker-Akhiezer函数 $\psi$ 可由其极点 $P _ { 1 } , . . . , P _ { n }$ 唯一确定. 作为推论, 可以证明关于 KdV 方程的相应解的下述公式 [例如, 见 [11]] :
+
+$$
+u ( x , t ) = - 2 \partial _ { x } ^ { 2 } \log \theta ( k x + \omega t + \tau \vert B ) + c .
+$$
+
+其中 $\theta \ : = \ : \theta ( \tau | B )$ , $\tau = ( \tau _ { 1 } , . . . , \tau _ { n } )$ , $B = B ( r _ { 1 } , . . . , r _ { 2 n + 1 } )$ 为 $n \times n$ 矩阵, 为黎曼曲面$2 n { + 1 }$   
+$\Gamma : \mu ^ { 2 } = \prod _ { \alpha = 1 } \left( \lambda - r _ { \alpha } \right)$ 的黎曼 $\theta \cdot$ -函数:
+
+$$
+\theta ( \tau | B ) = \sum _ { m _ { 1 } , \ldots , m _ { n } } \exp \left( - \frac { 1 } { 2 } \sum B _ { i j } m _ { i } m _ { j } + i \sum m _ { j } \tau _ { j } \right) ,
+$$
+
+$$
+i B _ { i j } = \oint _ { \beta _ { j } } \Omega _ { i } , \quad i , j = 1 , . . . , n .
+$$
+
+此函数关于 $\tau _ { 1 } , . . . , \tau _ { n }$ 是 $2 \pi$ -周期的. 这里的 $\alpha _ { 1 } , . . . , \alpha _ { n }$ , $\beta _ { 1 } , . . . , \beta _ { n }$ 为黎曼曲面 $\Gamma$ 上适当
+
+选取的闭链 (cycle) 构成的典范基, $\Omega _ { 1 } , . . . , \Omega _ { n }$ 为相应的全纯微分形式构成的基,
+
+$$
+\int _ { \alpha _ { i } } \Omega _ { j } = 2 \pi \delta _ { i j } , \quad \Omega _ { j } = \sum _ { q = 1 } ^ { n } c _ { j q } \frac { \lambda ^ { q - 1 } \mathrm { d } \lambda } { \sqrt { R _ { 2 n + 1 } ( \lambda ) } } .
+$$
+
+波数向量 $k = ( k _ { 1 } , . . . , k _ { n } )$ 与频率向量 $\omega = ( \omega _ { 1 } , . . . , \omega _ { n } )$ 是一些亚纯 Abel 微分的周期:
+
+$$
+\mathrm { d } p ( \lambda ) = \frac { P ( \lambda ) } { 2 \sqrt { R _ { 2 n + 1 } ( \lambda ) } } \mathrm { d } \lambda , \quad P ( \lambda ) = \lambda ^ { n } + a _ { 1 } \lambda ^ { n - 1 } + \cdot \cdot \cdot + a _ { n }
+$$
+
+$$
+\oint _ { \alpha _ { j } } \mathrm { d } p ( \lambda ) = 0 , \quad j = 1 , . . . , n \Rightarrow a _ { s } = a _ { s } ( r _ { 1 } , . . . , r _ { 2 n + 1 } ) , \quad s = 1 , . . . , n ;
+$$
+
+$$
+k _ { j } = \oint _ { \beta _ { j } } \mathrm { d } \boldsymbol { p } ( \lambda ) = k _ { j } ( r _ { 1 } , . . . , r _ { 2 n + 1 } ) , \quad j = 1 , . . . , n .
+$$
+
+$$
+\mathrm { d } q ( \lambda ) = - \frac { 6 \lambda ^ { n + 1 } + Q ( \lambda ) } { \sqrt { R _ { 2 n + 1 } ( \lambda ) } } \mathrm { d } \lambda ,
+$$
+
+$$
+Q ( \lambda ) = b _ { 0 } \lambda ^ { n } + b _ { 1 } \lambda ^ { n - 1 } + \cdots + b _ { n } , \quad b _ { 0 } = - 3 \sum _ { \alpha = 1 } ^ { 2 k + 1 } r _ { \alpha } ,
+$$
+
+$$
+\oint _ { \alpha _ { j } } \mathrm { d } q ( \lambda ) = 0 , \quad b _ { j } = b _ { j } ( r _ { 1 } , . . . , r _ { 2 n + 1 } ) ,
+$$
+
+$$
+\omega _ { j } = \oint _ { \beta _ { j } } \mathrm { d } q ( \lambda ) = \omega _ { j } \big ( r _ { 1 } , . . . , r _ { 2 n + 1 } \big ) , \quad j = 1 , . . . , n .
+$$
+
+最后还有,
+
+$$
+c = \sum r _ { \alpha } - 2 \sum _ { j = 1 } ^ { n } \oint _ { \alpha _ { j } } ^ { n } \lambda \Omega _ { j } = c ( r _ { 1 } , . . . , r _ { 2 n + 1 } ) .
+$$
+
+由形如(2.136)的显式表达式可知, 复化后的不变环 [即, 等值面
+
+$$
+\boldsymbol { r } _ { 1 } = \frac { \nu _ { \mathrm { H } ^ { \prime } } } { \hbar } \frac { \mathrm { H } } { 3 \mathcal { K } } , \quad \boldsymbol { r } _ { 2 } = \frac { \nu _ { \mathrm { H } ^ { \prime } } } { \hbar } \frac { \mathrm { H } } { 3 \mathcal { K } } , \cdot \cdot \cdot \boldsymbol { r } _ { 2 n + 1 } = \frac { \nu _ { \mathrm { H } ^ { \prime } } } { \hbar } \frac { \mathrm { H } } { 3 }
+$$
+
+] 为 [复化的] 阿贝尔簇 (Abelian variety) . 在此情形, 这个环面恰好是黎曼曲面 $\Gamma$ 的雅可比簇 (Jacobi variety) :
+
+$$
+J ( \Gamma ) = \mathbb { C } ^ { n } / { \Bigl \{ } 2 \pi M + i B N { \Bigl | } M , N \in \mathbb { Z } ^ { n } { \Bigr \} } .
+$$
+
+因此 KdV 方程的任何形如(2.136)的解可解析延拓为关于复变量 $x , t$ 的亚纯函数. 事实上这是非线性方程的可积性理论的“Kovalevskaja-Painleve-测试”的基本想法.
+
+在 Liouville 环面紧致的情况下, 为描述我们的不变流形上的“光滑”区域, 我们回顾在此区域中的解 $\boldsymbol { u } ( \boldsymbol { x } , t )$ 是关于 $x , t$ 的周期或近似周期函数. 于是对数导数 $\psi _ { x } / \psi$ (2.131)与 $\psi _ { t } / \psi ( 2 . 1 3 2 )$ 也是关于 $x , t$ 的周期或近似周期函数 [且具有相同的周期群] . 因此我们得到
+
+推论 2.14. 对于周期情形 $u ( x + T _ { x } , t ) = u ( x , t )$ , $u ( x , t + T _ { t } ) = u ( x , t )$ , 则公共本征函数 $\psi ( 2 . 1 2 3 )$ 是 Bloch-Floquet 函数 [见上一节附录]
+
+$$
+\begin{array} { r c l } { { \psi _ { \pm } ( x + T _ { x } , t , \lambda ) } } & { { = } } & { { e ^ { \pm i p ( \lambda ) T _ { x } } \psi _ { \pm } ( x , t , \lambda ) } } \\ { { } } & { { } } & { { } } \\ { { \psi _ { \pm } ( x , t + T _ { t } , \lambda ) } } & { { = } } & { { e ^ { \pm i q ( \lambda ) T _ { t } } \psi _ { \pm } ( x , t , \lambda ) . } } \end{array}
+$$
+
+这里的 $p = p ( \lambda )$ 称为“拟动量”, $q = q ( \lambda )$ 称为“拟能量”.
+
+对于任意光滑周期或近似周期解 $u ( x , t )$ , 函数 $p ( \lambda ) , q ( \lambda )$ 定义为如下的平均值:
+
+$$
+p ( \lambda ) = \frac { 1 } { i } \overline { { ( \log \psi ) _ { x } } } , \quad q ( \lambda ) = \frac { 1 } { i } \overline { { ( \log \psi ) _ { t } } } .
+$$
+
+这里的
+
+$$
+{ \overline { { f ( x ) } } } = \operatorname* { l i m } _ { L \to \infty } { \frac { 1 } { 2 L } } \int _ { - L } ^ { L } f ( x ) \mathrm { d } x , \quad { \overline { { f ( t ) } } } = \operatorname* { l i m } _ { L \to \infty } { \frac { 1 } { 2 L } } \int _ { - L } ^ { L } f ( t ) \mathrm { d } t .
+$$
+
+于是函数 $p ( \lambda ) , q ( \lambda )$ 为黎曼曲面 $\Gamma$ 上的阿贝尔积分. 事实上它们关于 $\lambda$ 的微分恰好是关于适当的基 $\alpha _ { i } , \beta _ { i }$ 的之前定义的 [见(2.139),(2.140)] $\mathrm { d } p ( \lambda ) , \mathrm { d } q ( \lambda ) .$
+
+在分支点 $\lambda = r _ { 1 } , . . . , \lambda = r _ { 2 n + 1 }$ 处成立 $\psi _ { + } = \psi _ { - }$ . 因此在 $x \cdot$ -周期情形, 这些点是问题 $L \psi = \lambda \psi$ , $L = - \partial _ { x } ^ { 2 } + u$ 的周期谱. 因此这些 $r _ { 1 } , . . . , r _ { 2 n + 1 }$ 为实数 [且互不相同] . 不妨$r _ { 1 } < r _ { 2 } < \cdot \cdot \cdot < r _ { 2 n + 1 }$ . 于是算子 $L$ 的周期系数的 Bloch 谱形如
+
+$$
+[ r _ { 1 } , r _ { 2 } ] , [ r _ { 3 } , r _ { 4 } ] , \ldots , [ r _ { 2 n + 1 } , \infty ] .
+$$
+
+于是该有限空缺算子只有有限多个“空缺”[即 $[ r _ { 2 } , r _ { 3 } ] , . . . , [ r _ { 2 n } , r _ { 2 n + 1 } ]$ 这 $n$ 个空缺] . [这也是我们叫它“有限空缺算子”的原因] .
+
+可以证明 [3], 点 $\gamma _ { 1 } , . . . , \gamma _ { n }$ 位于这些空缺:
+
+$$
+\gamma _ { i } \in [ r _ { 2 i } , r _ { 2 i + 1 } ] , \quad i = 1 , . . . , n .
+$$
+
+取黎曼曲面 $\Gamma$ 上的闭链的一组典范基 $\alpha _ { 1 } , . . . , \alpha _ { n } , \beta _ { 1 } , . . . , \beta _ { n }$ , 使得闭链 $\alpha _ { i }$ 为两份第$i$ 个空缺 $[ r _ { 2 i } , r _ { 2 i + 1 } ]$ 的粘合. 选取 $\alpha _ { 1 } , . . . , \alpha _ { n }$ 的定向, 使得曲面 $\Gamma$ 沿着算子 $L$ 的谱割开后, 闭链 $\alpha _ { 1 } , . . . , \alpha _ { n }$ 在 $\mu < 0$ 的分支的部分取关于 $\lambda$ 增长的定向, 其中实数 $\lambda \gg 1$ . Γ的典范基中的 $\beta _ { 1 } , . . . , \beta _ { n }$ 的选取不唯一, 其不唯一性并不会影响后面的讨论. 取定这组闭链构成的基, 则得到由周期(2.137a)的实矩阵 $( B _ { i j } )$ . 相应的实 Liouville 环面恰为由$\tau = ( \tau _ { 1 } , . . . , \tau _ { n } ) , 0 \leq \tau _ { j } \leq 2 \pi$ 构成的集合; 相应的函数 $u$ 由(2.136)给出. 波数 $k _ { j }$ , 频率 $\omega _ { j }$ 以及平均值 $c$ [见(2.139)-(2.141)] 也是实数.
+
+现在我们可以证明, 对于这组基, 由(2.139),(2.140)所确定的阿贝尔积分 $p ( \lambda ) , q ( \lambda )$ 恰为(2.143)的拟动量, 拟能量.
+
+引理. 有限空缺算子的拟动量 $p ( \lambda )$ 以及拟能量 $q ( \lambda )$ (2.143)恰为黎曼曲面 $\Gamma$ [谱曲线] 的形如 (2.139),(2.140)的关于上述基的归一化条件的阿贝尔积分.
+
+证明. 由上一节引理2.9可知
+
+$$
+\frac { \mathrm { d } p } { \mathrm { d } \lambda } \equiv \frac { \mathrm { d } } { \mathrm { d } \lambda } \frac { 1 } { T _ { x } } \int _ { 0 } ^ { T _ { x } } \chi \mathrm { d } x = \frac { 1 } { 2 T _ { x } } \int _ { 0 } ^ { T _ { x } } \frac { \mathrm { d } x } { \chi _ { R } } .
+$$
+
+然而 $\chi _ { R } = \mu / w$ . 因此
+
+$$
+\frac { \mathrm { d } p } { \mathrm { d } \lambda } = \frac { P ( \lambda ) } { 2 \sqrt { R _ { 2 n + 1 } ( \lambda ) } } .
+$$
+
+其中 $\sqrt { R _ { 2 n + 1 } ( \lambda ) } = \mu$
+
+$$
+P ( \lambda ) = \sum _ { i } \lambda ^ { n - i } \frac { 1 } { T _ { x } } \int _ { 0 } ^ { T _ { x } } w _ { i } ( x ) \mathrm { d } x .
+$$
+
+为得到关于 $\mathrm { d } q / \mathrm { d } \lambda$ 的类似公式, 我们要用等式
+
+$$
+\partial _ { t } ( \psi _ { + } ^ { \prime } \psi _ { - } - \psi _ { + } \psi _ { - } ^ { \prime } ) = \Delta c \psi _ { + } \psi _ { - } - \Delta b \psi _ { + } ^ { \prime } \psi _ { - } ^ { \prime } - \Delta a ( \psi _ { + } ^ { \prime } \psi _ { - } + \psi _ { + } \psi _ { - } ^ { \prime } )
+$$
+
+其中
+
+$$
+\partial _ { t } \left( \begin{array} { l } { { \psi _ { \pm } } } \\ { { \psi _ { \pm } ^ { \prime } } } \end{array} \right) = \left( \begin{array} { l l } { { a _ { \pm } } } & { { b _ { \pm } } } \\ { { c _ { \pm } } } & { { d _ { \pm } } } \end{array} \right) \left( \begin{array} { l } { { \psi _ { \pm } } } \\ { { \psi _ { \pm } ^ { \prime } } } \end{array} \right) ,
+$$
+
+$$
+\Delta a = a _ { + } - a _ { - } , \quad \Delta b = b _ { + } - b _ { - } , \quad \Delta c = c _ { + } - c _ { - } ,
+$$
+
+将此式用于 $\psi _ { - } = \psi _ { - } ( x , t , \lambda )$ 的情形, 有
+
+$$
+\begin{array} { l } { { \psi _ { - } ( x , t + T _ { t } , \lambda ) = \exp ( - i q ( \lambda ) T _ { t } ) \psi _ { - } ( x , t , \lambda ) ; \quad \psi _ { + } = \psi _ { + } ( x , t , \lambda + \Delta \lambda ) , } } \\ { { \psi _ { + } ( x , t + T _ { t } , \lambda + \Delta \lambda ) = \exp ( i q ( \lambda + \Delta \lambda ) T _ { t } ) \psi _ { + } ( x , t , \lambda + \Delta \lambda ) , } } \\ { { \quad \left( \begin{array} { c c } { { a _ { - } } } & { { b _ { - } } } \\ { { c _ { - } } } & { { - a _ { - } } } \end{array} \right) = \left( \begin{array} { c c } { { u ^ { \prime } } } & { { - 2 ( u + 2 \lambda ) } } \\ { { u ^ { \prime \prime } - 2 ( u - \lambda ) ( u + 2 \lambda ) } } & { { - u ^ { \prime } } } \end{array} \right) } } \end{array}
+$$
+
+[见上一节(2.80)式] , 而矩阵 $\left( \begin{array} { c c } { { a _ { + } } } & { { b _ { + } } } \\ { { c _ { + } } } & { { - a _ { + } } } \end{array} \right)$ 具有与其相同的形式, 只需把 $\lambda$ 换成 $\lambda + \Delta \lambda$
+
+将上述等式作关于 $t$ 的沿一周期 $T _ { t }$ 的积分, 经计算可得
+
+$$
+\frac { \mathrm { d } q } { \mathrm { d } \lambda } = - \frac { 6 \lambda ^ { n + 1 } + Q ( \lambda ) } { \sqrt { R _ { 2 n + 1 } ( \lambda ) } } ,
+$$
+
+其中
+
+$$
+6 \lambda ^ { n + 1 } + Q ( \lambda ) = \frac { 1 } { T _ { t } } \int _ { 0 } ^ { T _ { t } } [ 3 ( 2 \lambda - u ) w + w _ { x x } ] \mathrm { d } t .
+$$
+
+[对于拟周期情形, 可在公式(2.147), (2.149)当中使用形如(2.143)的平均化方法. ] 由(2.146),(2.148)可知 $p ( \lambda ) , q ( \lambda )$ 为黎曼曲面 $\Gamma$ 上形如(2.139),(2.140) 的阿贝尔积分. 我们只需证明归一化条件 $\oint _ { \alpha _ { j } } \mathrm { d } p = 0$ , $\oint _ { \alpha _ { j } } \mathrm { d } q = 0$ , $j = 1 , . . . , n$ . 为证明它, 我们注意在周期情形$\exp i p ( \lambda ) T _ { x }$ , $\exp i q ( \lambda ) T _ { t }$ 是关于 $\lambda$ 的单值函数 [因此, 是 $\Gamma$ 上的单值函数] . 因此 $\Gamma$ 上的阿贝尔微分 $\mathrm { d } p , \mathrm { d } q$ 的周期一定分别是 $2 \pi / T _ { x }$ , $2 \pi / T _ { t }$ 的整数倍. 对于拟周期情形, 这些周期仍然是实数. 但是下述微分
+
+$$
+\mathrm { d } p = \frac { P ( \lambda ) \mathrm { d } \lambda } { 2 \sqrt { R _ { 2 n + 1 } ( \lambda ) } } , \quad \mathrm { d } q = - \frac { 6 \lambda ^ { n + 1 } + Q ( \lambda ) } { \sqrt { R _ { 2 n + 1 } ( \lambda ) } } \mathrm { d } \lambda
+$$
+
+在前文所述的闭链 $\alpha _ { j }$ 上的周期是纯虚数, 这是因为(2.147), (2.149)中的多项式 $P ( \lambda ) , Q ( \lambda )$ 是实系数的. 因此这些 $\alpha _ { j }$ -周期为零. 证毕. □
+
+函数 $k _ { 1 } ( r ) , . . . , k _ { n } ( r )$ 显然是 Gardner-Zakharov-Faddeev 泊松括号的零因子 [因为其倒数 $2 \pi / k _ { i } ( r )$ 为周期] . 因此函数 $c ( r ) = \overline { { u } }$ 也是此泊松括号的零因子. KdV 方程在关于这些零因子的等值面
+
+上的限制是 $n$ 自由度的完备可积哈密顿系统. 变量 $\tau _ { 1 } , . . . , \tau _ { n }$ 为相应的角参数. 而变量$\gamma _ { 1 } , . . . , \gamma _ { n }$ 给出了积分 $r _ { 1 } , . . . , r _ { 2 n + 1 }$ 的等值面上的另一组坐标系. $\tau _ { 1 } , . . . , \tau _ { n }$ 可由 $\gamma _ { 1 } , . . . , \gamma _ { n }$ 通过如下阿贝尔变换得到:
+
+$$
+\tau _ { j } = \frac { 1 } { i } \left\{ \sum _ { k = 1 } ^ { n } \int _ { P _ { 0 } } ^ { P _ { k } = ( \gamma _ { k } , \pm ) } \Omega _ { j } + { \mathcal K } _ { j } \right\} , \quad j = 1 , . . . , n ,
+$$
+
+其中 $\kappa _ { j }$ 为黎曼常数 [41],
+
+$$
+\mathcal { K } _ { j } = \frac { 2 \pi i - B _ { j j } } { 2 } + \frac { 1 } { 2 \pi i } \sum _ { k \neq j } \oint _ { \alpha _ { k } } \left( \Omega _ { k } ( P ) \int _ { P _ { 0 } } ^ { P } \Omega _ { j } \right) ,
+$$
+
+$P _ { 0 }$ 为黎曼曲面 $\Gamma$ 上的任意的点.
+
+寻找作用量 $J _ { 1 } , . . . , J _ { n }$ 的关键是如下断言 (Flaschka, McLaughlin[21]):
+
+定理 2.15. 下式成立:
+
+$$
+\{ \gamma _ { i } , \gamma _ { j } \} = \{ p ( \gamma _ { i } ) , p ( \gamma _ { j } ) \} = \{ r _ { \alpha } , r _ { \beta } \} = 0 ,
+$$
+
+$$
+\{ p ( \gamma _ { i } ) , \gamma _ { j } \} = \delta _ { i j } .
+$$
+
+其中 $\{ , \}$ 为 Gardner-Zakharov-Feddeev 泊松括号, $p = p ( \lambda )$ 为(2.143)的拟动量.
+
+注意到点 $\gamma _ { k }$ 恰好在闭链 $\alpha _ { k }$ 上, $k = 1 , . . . , n$ . 于是由此定理立刻得到, 作用量$J _ { 1 } , . . . , J _ { n }$ 可通过下述公式来计算:
+
+$$
+J _ { k } = \frac { 1 } { 2 \pi } \oint _ { \alpha _ { k } } p ( \gamma ) \mathrm { d } \gamma , \quad k = 1 , . . . , n .
+$$
+
+此公式是非常一般的解析泊松括号 (Novikov, Veselov[1]) 的构造的一个特例. 我将给出“KdV 型”[或者“有限空缺型”] 相空间情形下的解析泊松括号的一般概念. 在此情形, 相空间 $P$ 中的一个点可以由参数 $r _ { 1 } , . . . , r _ { 2 n + 1 } , \gamma _ { 1 } , . . . , \gamma _ { n }$ 所唯一确定. 这里的$r _ { 1 } , . . . , r _ { 2 n + 1 }$ 为亏格 $n$ 的黎曼曲面上的参数 [在我们的例子中是分支点] , $\gamma _ { 1 } , . . . , \gamma _ { n }$ 为 $\Gamma$ 上的点. 取定一族函数 $x _ { 0 } ( r ) , . . . , x _ { n } ( r )$ 作为解析泊松括号的零因子的一组生成元. 于是相空间上的解析泊松括号被 $\Gamma$ [或它的某个覆盖空间] 上的取定的亚纯 1-形式 $Q ( \lambda , r ) \mathrm { d } \lambda$ 所确定, 其中 $Q ( \lambda , r ) \mathrm { d } \lambda$ 与黎曼曲面 $\Gamma$ 有关 [即与 $r$ 有关] , 满足
+
+1. 对于关于零因子 $x _ { 0 } ( r ) , . . . , x _ { n } ( r )$ 的等值面上的任何曲线 $r _ { \alpha } = r _ { \alpha } ( s )$ ,
+
+$$
+\frac { \partial } { \partial s } [ Q ( \gamma , r ( s ) \mathrm { d } \gamma ) ] _ { x _ { \alpha } ( r ( s ) ) = \sqrt { \sharp ^ { * } } \sharp \zeta } , \quad \alpha = 0 , 1 , . . . , n
+$$
+
+为 $\Gamma$ 上的全纯微分.
+
+2. 泊松括号满足以下:
+
+$$
+\begin{array} { l } { { \{ \gamma _ { i } , \gamma _ { j } \} = \{ Q ( \gamma _ { i } ) , Q ( \gamma _ { j } ) \} = \{ r _ { \alpha } , r _ { \beta } \} = 0 , } } \\ { { \{ Q ( \gamma _ { i } ) , \gamma _ { j } \} = \delta _ { i j } . } } \end{array}
+$$
+
+[某种意义下的“分离变量”] .
+
+于是 [在 $Q$ 取实值且 1-形式 $Q ( \lambda , r ) \mathrm { d } \lambda$ 的导函数(2.155)线性无关的假设下] 可以证明对于 $\gamma$ 上的适当的闭链 $a _ { 1 } , . . . , a _ { n }$ , 作用量可由下式计算:
+
+$$
+J _ { k } = \frac { 1 } { 2 \pi } \oint _ { a _ { k } } Q ( \gamma ) \mathrm { d } \gamma , \quad k = 1 , . . . , n .
+$$
+
+而角参数 $\tau _ { 1 } , . . . , \tau _ { n }$ 可由阿贝尔变换(2.151)得到. [其证明见 [2]] . 对于 Gardner-Zakharov-Faddeev 泊松括号, 微分形式 $Q \mathrm { d } \lambda$ 为 $p ( \lambda ) \mathrm { d } \lambda$ [见(2.153)] . 对于 Magri 括号[见上一节] , 微分形式 $Q \mathrm { d } \lambda$ 为 $p ( \lambda ) \mathrm { d } \lambda / \lambda$ . 解析泊松括号的其他例子可见 [1],[2],[7],[14].
+
+例子. KdV 方程的 单波 (simple wave) 形如
+
+$$
+u = 2 \wp ( x - c t - x _ { 0 } - \omega ^ { \prime } ) + { \frac { c } { 6 } } ,
+$$
+
+其中任取相位 $x _ { 0 }$ 与速度 $c$ . 这里的 $\wp = \wp ( z | g _ { 2 } , g _ { 3 } )$ 为 Weierstrass 椭圆函数 [可见 [48]], 它满足方程
+
+$$
+\wp ^ { \prime } ^ { 2 } = 4 \wp ^ { 3 } - g _ { 2 } \wp - g _ { 3 } .
+$$
+
+其中参数 $g _ { 2 } , g _ { 3 }$ 为实数, 且满足
+
+$$
+g _ { 2 } ^ { 3 } - 2 7 g _ { 3 } ^ { 2 } > 0 ,
+$$
+
+即多项式 $4 x ^ { 3 } - g _ { 2 } x - g _ { 3 }$ 具有三个互异的实根. 把这三个实根记作 $e _ { 1 } , e _ { 2 } , e _ { 3 }$ ,
+
+$$
+4 e _ { \alpha } ^ { 3 } - g _ { 2 } e _ { \alpha } - g _ { 3 } = 0 , \quad \alpha = 1 , 2 , 3 ,
+$$
+
+$$
+e _ { 3 } < e _ { 2 } < e _ { 1 } .
+$$
+
+关于复变量 $z$ 的函数 $\wp ( z )$ 具有两个实线性无关的周期 $2 \omega , 2 \omega ^ { \prime }$ ,
+
+$$
+\begin{array} { l } { \omega = \displaystyle \int _ { e _ { 3 } } ^ { e _ { 2 } } \frac { \mathrm { d } z } { \sqrt { 4 z ^ { 3 } - g _ { 2 } z - g _ { 3 } } } , \quad \mathrm { I m } \omega = 0 , \quad \omega > 0 , } \\ { \omega ^ { \prime } = \displaystyle \int _ { e _ { 1 } } ^ { e _ { 2 } } \frac { \mathrm { d } z } { \sqrt { 4 z ^ { 3 } - g _ { 2 } z - g _ { 3 } } } , \quad \mathrm { R e } \omega ^ { \prime } = 0 , \quad \frac { 1 } { i } \omega ^ { \prime } > 0 . } \end{array}
+$$
+
+解(2.158)也可用其它类型的椭圆函数 [例如椭圆余弦函数 $\mathrm { c n } ]$ ; 从而它有时也叫做 椭圆余弦波 (cnoidal wave) .
+
+我们有
+
+$$
+2 e _ { 3 } + \frac { c } { 6 } \leq u \leq 2 e _ { 2 } + \frac { c } { 6 } .
+$$
+
+若 $e _ { 2 } \ \to \ e _ { 3 }$ , 则解(2.158)趋于常值 $\frac { c } { 6 } - e _ { 1 } = \frac { c } { 6 } + 2 e _ { 3 }$ . 若 $e _ { 2 } \ \to \ e _ { 1 }$ , $c = - 1 2 e _ { 1 }$ , 则解(2.158)变为孤子.
+
+需要求解的方程 $- c u ^ { \prime } + 6 u u ^ { \prime } - u ^ { \prime \prime \prime } = 0$ 可表示为 Lax 形式 (2.126), 其中
+
+$$
+W ( \lambda ) = \left( \begin{array} { c c } { { u ^ { \prime } } } & { { - 2 ( u + 2 \lambda ) } } \\ { { u ^ { \prime \prime } - 2 ( u - \lambda ) ( u + 2 \lambda ) } } & { { - u ^ { \prime } } } \end{array} \right) + c \left( \begin{array} { c c } { { 0 } } & { { 1 } } \\ { { u - \lambda } } & { { 0 } } \end{array} \right)
+$$
+
+[见上一节(2.80)式] . 于是解(2.158)的谱曲线形如
+
+$$
+\begin{array} { l } { { \mu ^ { 2 } = \operatorname* { d e t } W ( \lambda ) = 1 6 \lambda ^ { 3 } - 8 c \lambda ^ { 2 } + 4 \lambda \left( u ^ { \prime \prime } - 3 u ^ { 2 } + c u + \frac { c ^ { 2 } } { 4 } \right) } } \\ { { \phantom { \mu ^ { 2 } = \operatorname* { d e t } W ( \lambda ) = 1 6 \lambda ^ { 3 } - 8 c u ^ { 2 } + ( 2 u - c ) ( u ^ { \prime \prime } - 2 u ^ { 2 } + c u ) } } } \\ { { \phantom { \mu ^ { 2 } = \operatorname* { d e t } W ( \lambda ) = 1 6 \lambda ^ { 3 } - 9 c \lambda ^ { 2 } + 4 \lambda \left( u ^ { \prime \prime } - 3 u ^ { 2 } + c u - \frac { c ^ { 2 } } { 4 } \right) } . } } \end{array}
+$$
+
+该曲线的分支点 $r _ { 1 } , r _ { 2 } , r _ { 3 }$ 形如
+
+$$
+r _ { \alpha } = \frac { c } { 6 } - e _ { \alpha } , \quad \alpha = 1 , 2 , 3 , \quad r _ { 1 } < r _ { 2 } < r _ { 3 } .
+$$
+
+考虑此曲线的椭圆单值化
+
+$$
+\lambda = \frac { c } { 6 } - \wp ( z ) , \quad \mu = 2 i \wp ^ { \prime } ( z )
+$$
+
+是方便的, 其中 $\wp$ 依然是之前的椭圆函数 $\wp ( z | g _ { 2 } , g _ { 3 } )$ . 线段 $[ \omega , \omega ^ { \prime } + \omega ]$ 与 $[ \omega ^ { \prime } , 0 ]$ 为算子$L = - \partial _ { x } ^ { 2 } + u$ 的谱构成的区域, 其中 $u$ 形如(2.158); 而线段 $( \omega + \omega ^ { \prime } , \omega ^ { \prime } )$ 为其谱的空缺.相应的拟动量, 拟能量 (2.139), (2.140)的阿贝尔微分 $\mathrm { d } p , \mathrm { d } q$ 由下式给出:
+
+$$
+\begin{array} { r c l } { { \displaystyle \mathrm { d } { \boldsymbol { p } } } } & { { = } } & { { i \left[ \wp ( z ) + \displaystyle \frac { \eta } { \omega } \right] \mathrm { d } z , } } \\ { { \mathrm { d } { \boldsymbol { q } } } } & { { = } } & { { i \left[ 1 2 \wp ^ { 2 } ( z ) - c \wp ( z ) - g _ { 2 } - c \displaystyle \frac { \eta } { \omega } \right] \mathrm { d } z , } } \end{array}
+$$
+
+$$
+\int _ { \omega ^ { \prime } } ^ { \omega + \omega ^ { \prime } } \mathrm { d } p = \int _ { \omega ^ { \prime } } ^ { \omega + \omega ^ { \prime } } \mathrm { d } q = 0 .
+$$
+
+这里的 $\eta = - \int _ { \omega ^ { \prime } } ^ { \omega + \omega ^ { \prime } } \wp ( z ) \mathrm { d } z .$ .
+
+我们将在第三章使用此公式.
+
+# 第 3 章 场论哈密顿系统的慢摄动与平均化方法
+
+# 3.1 演化系统在不变环上的泊松括号的平均化
+
+Poincaré-Bogoliubov 平均化方法是非线性力学里面众所周知的有效方法. 此方法可用于描述非摄动情形下具有一族不变环的动力系统的摄动解的行为. 其中“平均化方程”描述了这族不变环的某邻域中的点沿着这族不变环的参数空间的缓慢移动.
+
+对于场论版本的平均化方法, 我们研究如下演化系统
+
+$$
+w _ { t } = K ( w , w ^ { \prime } , . . . , w ^ { ( m ) } ) , \quad w = ( w ^ { a } ( x , t ) )
+$$
+
+[我们只考虑空间 1 维情形] , 并假定该系统具有形如
+
+$$
+w ( x , t ) = \Phi ( k x + \omega t + \tau ^ { 0 } ; u ^ { 1 } , . . . , u ^ { N } )
+$$
+
+的一族关于 $x , t$ 的周期或近似周期解 [“ $\cdot _ { n } .$ -相解”, 或者“孤子格族”] . 这里的 $u \ =$ $( u ^ { 1 } , . . . , u ^ { N } )$ 为这族解的参数, [向量值] 函数 $\Phi ( \tau , u )$ , $\tau = ( \tau _ { 1 } , . . . , \tau _ { n } )$ 关于每个 $\tau _ { j }$ 都是周期 $2 \pi$ 的; 波数向量 $\boldsymbol { k } = ( k _ { 1 } , . . . , k _ { n } )$ 与频率向量 $\omega = ( \omega _ { 1 } , . . . , \omega _ { n } )$ 被参数 $u$ 唯一决定: $k = k ( u )$ , $\omega = \omega ( u )$ ; 相位 $\tau ^ { 0 } = ( \tau _ { 1 } ^ { 0 } , . . . , \tau _ { n } ^ { 0 } )$ 为任意向量.
+
+[这里应该注意, 线性演化系统的 单相解 (one-phase solution)
+
+$$
+w ( x , t ) = u e ^ { i ( k x + \omega t ) }
+$$
+
+当中的 $k , \omega$ 与振幅 $u$ 无关, 而被某些色散关系 $f ( k , \omega ) = 0$ 所约束. 其 多相解 (mut-liphase solution) 形如单相解的线性组合
+
+$$
+w ( x , t ) = \sum _ { j = 1 } ^ { n } u ^ { j } e ^ { i ( k _ { j } x + \omega _ { j } t ) } , \quad f ( k _ { j } , \omega _ { j } ) = 0 .
+$$
+
+而在非线性情形中有两个重要的特性. 其一是: 色散关系形如 $k = k ( u )$ , $\omega = \omega ( u )$ (即波数, 频率与某种版本的振幅之间的联系). 其二是: 多相解是单相解的非线性叠加 (事实上这种非线性叠加只出现于可积演化系统) ] .
+
+在最简单版本的摄动理论中, 我们不摄动演化系统, 仅摄动初始条件. 我们要求解系统(3.1)的渐近解, 使得此解关于自然小参数 $\varepsilon$ 的一阶近似的领头项为(3.2), 其中 $\varepsilon$ 为时空尺度的“快”与“慢”之比. 此时, 参数 $\boldsymbol { u } ^ { 1 } , . . . , \boldsymbol { u } ^ { N }$ 不再是常数, 而是关于 $x , t$ 缓慢变化的函数:
+
+$$
+u ^ { i } = u ^ { i } ( \varepsilon x , \varepsilon t ) .
+$$
+
+于是参数 $u ^ { 1 } ( X , T ) , . . . , u ^ { N } ( X , T )$ , $X = \varepsilon x$ , $T = \varepsilon t$ 满足流体力学型系统
+
+$$
+u _ { T } ^ { i } = v _ { j } ^ { i } ( u ) u _ { X } ^ { j } , \quad i = 1 , . . . , N ,
+$$
+
+[此系统称为“慢调制方程 (equation of slow modulation) ”, 也叫做“惠特姆平均化方程(Whitham averaged equation) ”, 或者叫做“孤子格的流体力学型方程”] . 其系数矩阵$( v _ { j } ^ { i } ( u ) )$ 与系统(3.1)与解族(3.2)有关. 我们将证明 (Dubrovin, Novikov[10]), 对于哈密顿系统(3.1), 其平均化系统(3.3)也具有哈密顿结构; 并且“平均化泊松括号”是流体力学型的. 从而平均化系统(3.3)也继承了系统(3.1)的可积性.
+
+首先我要说一下“平均化”的一些想法, 即如何由(3.1), (3.2)得到(3.3). 我们来寻找方程(3.1)的形如
+
+$$
+w ( x , t ) = w _ { 0 } ( x , t ) + \varepsilon w _ { 1 } ( x , t ) + \cdot \cdot \cdot
+$$
+
+的关于 $\varepsilon \to 0$ 的 [形式] 渐近解, 其中
+
+$$
+w _ { 0 } ( x , t ) = \Phi ( \varepsilon ^ { - 1 } S ( X , T ) ; u ( X , T ) ) , \quad X = \varepsilon x , \quad T = \varepsilon t ,
+$$
+
+$S = ( S _ { 1 } , . . . , S _ { n } )$ ; 以及
+
+$$
+w _ { k } ( x , t ) = \Phi _ { k } ( \varepsilon ^ { - 1 } S ( X , T ) ; X , T ) ,
+$$
+
+其中函数 $\Phi _ { k } ( \tau ; X , T )$ 关于每个 $\tau _ { j }$ 都是 $2 \pi \cdot$ -周期的, $\tau = ( \tau _ { 1 } , . . . , \tau _ { n } )$ . 将(3.4)代入(3.1), 考虑 $\varepsilon$ 的零阶近似, 得到
+
+$$
+S _ { X } = k ( u ( X , T ) ) , \quad S _ { T } = \omega ( u ( X , T ) ) .
+$$
+
+[此方程等价于 $\varepsilon \to 0$ 时 (3.5)的领头项在区域 $| x | < \varepsilon ^ { - 1 } , | t | < \varepsilon ^ { - 1 }$ 当中收敛于解(3.2) ] .
+
+考虑下一阶近似, 我们得到如下线性系统:
+
+$$
+\mathcal { L } \Phi _ { k } = F _ { k } , \quad k = 1 , 2 , \ldots
+$$
+
+[此处 $\Phi _ { k } = \Phi _ { k } ( \tau ; X , T ) ]$ , $\mathcal { L }$ 为系统(3.1)在“点”(3.2)的“线性化”. 确切地说, 在 $\mathcal { L }$ 中我们记 $( k , \partial _ { \tau } ) = k _ { 1 } \partial _ { \tau _ { 1 } } + \cdot \cdot \cdot + k _ { n } \partial _ { \tau _ { n } }$ 而不是 $x \cdot$ -导数; 记 $( \omega , \partial _ { \tau } ) = \omega _ { 1 } \partial _ { \tau _ { 1 } } + \cdot \cdot \cdot + \omega _ { n } \partial _ { \tau _ { n } }$ 而不是 $t \mathrm { - }$ -导数. 从而算子
+
+$$
+\mathcal { L } = ( \omega , \partial _ { \tau } ) - \frac { \partial K } { \partial w } - \frac { \partial K } { \partial w _ { x } } ( k , \partial _ { \tau } ) - \cdot \cdot \cdot
+$$
+
+作用于 $L _ { 2 } ( T ^ { n } )$ . 它与慢参数 $X = \varepsilon x , T = \varepsilon t$ 有关. 等号右边的 $F _ { k }$ 是关于 $u ^ { 1 } , . . . , u ^ { N }$ ,$w _ { 0 } , . . . , w _ { k - 1 }$ 及其关于 $X , T$ 的导数的函数. 由(3.6)可得相容性关系
+
+$$
+k _ { T } = \omega _ { X } .
+$$
+
+平均化方程的另一部分则是(3.7)的第一个方程 [即 $k = 1 ]$ 在 $L _ { 2 } ( T ^ { n } )$ 的可解性条件, 它形如
+
+$$
+\ker \mathcal { L } ^ { \ast } \bot F _ { 1 }
+$$
+
+$[ \mathcal { L } ^ { * }$ 是算子 $\mathcal { L }$ 的伴随] .
+
+易知上述正交性条件以及相容性条件(3.8) 构成的方程组形如(3.3).
+
+得到平均化方程(3.3)的更方便的方法由 Whitham[37] 提出 [但它纯粹是启发性的想法] . 我们假设演化系统(3.1)具有 $N$ 个局部守恒律
+
+$$
+I _ { j } = \int P _ { j } ( w , w ^ { \prime } , w ^ { \prime \prime } , . . . ) \mathrm { d } x , \quad j = 1 , . . . , N .
+$$
+
+设 $Q _ { j } = Q _ { j } ( w , w ^ { \prime } , \ldots )$ 为相应的流密度:
+
+$$
+\frac { \partial P _ { j } } { \partial t } = \frac { \partial Q _ { j } } { \partial x } , \quad j = 1 , . . . , N .
+$$
+
+定义平均化函数
+
+$$
+\begin{array} { r c l } { \overline { { P } } _ { j } } & { = } & { \overline { { P } } _ { j } ( \boldsymbol { u } ) = ( 2 \pi ) ^ { - n } \displaystyle \int P _ { j } ( \Phi ( \tau ; \boldsymbol { u } ) , \ldots ) \mathrm { d } ^ { n } \tau = I _ { j } , } \end{array}
+$$
+
+$$
+\overline { { { Q } } } _ { j } = \overline { { { Q } } } _ { j } ( u ) = ( 2 \pi ) ^ { - n } \int Q _ { j } ( \Phi ( \tau ; u ) , \ldots ) \mathrm { d } ^ { n } \tau .
+$$
+
+则平均化系统形如
+
+$$
+\frac { \partial \overline { { { P } } } _ { j } ( u ) } { \partial T } = \frac { \partial \overline { { { Q } } } _ { j } ( u ) } { \partial X } , \quad j = 1 , . . . , N .
+$$
+
+如果 $\operatorname* { d e t } ( \partial \overline { { P } } _ { j } ( u ) / \partial u ^ { i } ) \neq 0$ , 则此系统具有(3.3)的形式.
+
+“证明”. 将守恒律
+
+$$
+\partial _ { t } P ( w ( x ) , w _ { x } ( x ) , . . . ) = \partial _ { x } Q ( w ( x ) , w _ { x } ( x ) , . . . )
+$$
+
+中的 $w ( x , t )$ 换成 $w _ { 0 } ( x , X , t , T ) + \varepsilon w _ { 1 } ( x , X , t , T ) + \cdot \cdot \cdot$ ; 并且同时把 $\partial _ { x }$ 换成 $\partial _ { x } + \varepsilon \partial _ { X }$ ,把 $\partial _ { t }$ 换成 $\partial _ { t } + \varepsilon \partial _ { T }$ . 这样会得到
+
+$$
+\begin{array} { r l } & { \partial _ { t } P ( w _ { 0 } + \varepsilon w _ { 1 } , . . . ) + \varepsilon \partial _ { T } P ( w _ { 0 } , w _ { 0 _ { x } } , . . . ) } \\ { = } & { \partial _ { x } Q ( w _ { 0 } + \varepsilon w _ { 1 } , . . . ) + \varepsilon \partial _ { X } Q ( w _ { 0 } , . . . ) + O ( \varepsilon ^ { 2 } ) . } \end{array}
+$$
+
+现在我们对此等式采取平均化的操作. 由于对任意的 [属于我们讨论的函数类的] 函数 $f$ 都有 ${ \overline { { \partial _ { x } f } } } = { \overline { { \partial _ { t } f } } }$ , 从而除以 $\varepsilon$ , 再令 $\varepsilon \to 0$ 得到
+
+$$
+\partial _ { T } \overline { { { P } } } = \partial _ { X } \overline { { { Q } } } .
+$$
+
+我要继续去定义“平均化哈密顿理论 (averaged Hamiltonian formalism) ”. 假设演化系统(3.1)是哈密顿场论系统, 具有如下的局部泊松括号
+
+$$
+\{ w ^ { a } ( x ) , w ^ { b } ( y ) \} = \sum _ { k } A _ { k } ^ { a b } ( w ( x ) , w ^ { \prime } ( x ) , . . . ) \delta ^ { ( k ) } ( x - y ) ,
+$$
+
+相应的哈密顿量为
+
+$$
+H [ w ] = \int h ( w , w ^ { \prime } , \ldots ) \mathrm { d } x .
+$$
+
+我们还假设系统(3.1)的守恒律(3.9)两两交换, 即 $\{ I _ { i } , I _ { j } \} = 0$ .
+
+在不变环面(3.2)的参数空间中的适当选取的特殊坐标 $u ^ { 1 } , . . . , u ^ { N }$ 下, 泊松括号(3.12)关
+
+于解(3.2)的平均化具有最简单的形式. 该特殊坐标正是守恒量 $I _ { 1 } , . . . , I _ { N }$ :
+
+$$
+u ^ { j } = I _ { j } [ \Phi ] , \quad j = 1 , . . . , N .
+$$
+
+平均化泊松括号 $\{ , \}$ 平均 是场 $u ^ { 1 } ( X ) , . . . , u ^ { N } ( X )$ 的相空间上的流体力学型泊松括号:
+
+$$
+\{ u ^ { i } ( X ) , u ^ { j } ( Y ) \} _ { \# \# \mathcal { H } } = g ^ { i j } ( u ( X ) ) \delta ^ { \prime } ( X - Y ) + b _ { k } ^ { i j } ( u ) u _ { X } ^ { k } \delta ( X - Y ) .
+$$
+
+为给出显式公式, 考虑泛函 $I _ { 1 } , . . . , I _ { N }$ 的密度之间的泊松括号:
+
+$$
+\{ P _ { i } ( w ( x ) , . . . ) , P _ { j } ( w ( y ) , . . . ) \} = \sum { B } _ { k } ^ { i j } ( w ( x ) , w ^ { \prime } ( x ) , . . . ) \delta ^ { ( k ) } ( x - y )
+$$
+
+[上述求和是有限求和] . 由交换性 $\{ I _ { i } , I _ { j } \} = 0$ 可得
+
+$$
+\int B _ { 0 } ^ { i j } \mathrm { d } x \equiv 0 \Longleftrightarrow B _ { 0 } ^ { i j } = \partial _ { x } Q ^ { i j } ( w ( x ) , \ldots ) .
+$$
+
+我们记
+
+$$
+g ^ { i j } ( u ) = \overline { { B _ { 1 } ^ { i j } } } ,
+$$
+
+$$
+b _ { k } ^ { i j } ( u ) = \frac { \partial } { \partial u ^ { k } } \overline { { Q ^ { i j } } }
+$$
+
+[即在环面(3.2)的平均值] .
+
+定理 3.1. 上述公式确定了流体力学型泊松括号(3.13). 平均化系统(3.11)是关于泊松括号(3.13)的哈密顿系统, 相应的哈密顿量为
+
+$$
+H _ { \Phi \Psi } = \int { \overline { { h ( \Phi , \ldots ) } } } \mathrm { d } X = \int H [ \Phi ] \mathrm { d } X .
+$$
+
+证明. 首先断言(3.13)-(3.16a)的确定义了一个泊松括号. 为此我们在场 $w ^ { a } ( x , X )$ 的空间中引入泊松括号, 此泊松括号由(3.12)通过如下替换所得到:
+
+$$
+\begin{array} { r c l } { { w ( x ) } } & { { \mapsto } } & { { w ( x , X ) } } \\ { { } } & { { } } & { { } } \\ { { \partial _ { x } } } & { { \mapsto } } & { { \partial _ { x } + \varepsilon \partial _ { X } } } \\ { { } } & { { } } & { { } } \\ { { \delta ( x - y ) } } & { { \mapsto } } & { { \delta ( x - y ) \delta ( X - Y ) . } } \end{array}
+$$
+
+换句话说
+
+$$
+\begin{array} { r l } { { } } & { { \{ w ^ { a } ( x , X ) , w ^ { b } ( y , Y ) \} _ { \varepsilon } } } \\ { { } } & { { = \displaystyle \sum _ { X } A _ { k } ^ { a b } ( w ( x , X ) , w _ { x } ( x , X ) + \varepsilon w _ { X } ( x , X ) , . . . ) } } \\ { { } } & { { ~ \times \left[ \delta ^ { ( k ) } ( x - y ) \delta ( X - Y ) + \varepsilon k \delta ^ { ( k - 1 ) } ( x - y ) \delta ^ { \prime } ( X - Y ) \right. } } \\ { { } } & { { \quad + \left. \cdot \cdot + \varepsilon ^ { k } \delta ( x - y ) \delta ^ { ( k ) } ( X - Y ) \right] . } } \end{array}
+$$
+
+上式定义了泊松括号, 因为它是由下述泊松括号 [泊松括号(3.13)的“无限直和”]
+
+$$
+\{ w ^ { a } ( x , X ) , w ^ { b } ( y , Y ) \} _ { 0 } = \sum A _ { k } ^ { a b } ( w ( x , X ) , w _ { x } ( x , X ) , . . . ) \delta ^ { ( k ) } ( x - y ) \delta ( X - Y )
+$$
+
+作线性变量替换 $( x , X ) \mapsto ( x , \varepsilon x + X )$ 所得.
+
+考虑守恒律密度的泊松括号, 我们有
+
+$$
+\begin{array} { l } { { \{ P _ { i } ( w ( x , X ) , w _ { x } ( x , X ) + \varepsilon w _ { X } ( x , X ) , \ldots ) , P _ { j } ( w ( y , Y ) , w _ { y } ( y , Y ) + \varepsilon w _ { Y } ( y , Y ) , \ldots ) \} _ { \varepsilon } } } \\ { { = \sum B _ { k } ^ { i j } ( w ( x , X ) , w _ { x } ( x , X ) , \ldots ) \delta ^ { ( k ) } ( x - y ) \delta ( X - Y ) } } \\ { { \quad \quad + \varepsilon \left[ \displaystyle \sum _ { k } \tilde { B } _ { k } ^ { i j } ( w , w _ { x } , w _ { X } , \ldots ) \delta ^ { ( k ) } ( x - y ) \delta ( X - Y ) \right. } } \\ { { \quad \quad \left. + \displaystyle \sum _ { k \geq 1 } k B _ { k } ^ { i j } ( w , w _ { x } , \ldots ) \delta ^ { ( k - 1 ) } ( x - y ) \delta ^ { \prime } ( X - Y ) \right] + O ( \varepsilon ^ { 2 } ) } } \end{array}
+$$
+
+其中 $\tilde { B } _ { k } ^ { i j } = \frac { \partial B _ { k } ^ { i j } } { \partial w _ { x } } w _ { X } + 2 \frac { \partial B _ { k } ^ { i j } } { \partial w _ { x x } } w _ { X X } + \cdots , k = 0 , 1 , \ldots .$ 关键在于如下观察:
+
+$$
+\tilde { B } _ { 0 } ^ { i j } = \partial _ { X } Q ^ { i j } ( w , w _ { x } , w _ { x x } , \ldots ) .
+$$
+
+这可由(3.15)得到. 因此, 对(3.19)关于 $x , y$ 作“平均化”之后我们得到
+
+$$
+\{ u ^ { i } ( X ) , u ^ { j } ( Y ) \} _ { \varepsilon } = \varepsilon \left[ \partial _ { X } \overline { { Q ^ { i j } } } \delta ( X - Y ) + \overline { { B } } _ { 1 } ^ { i j } ( w , w _ { x } , . . . ) \delta ^ { \prime } ( X - Y ) \right] + O ( \varepsilon ^ { 2 } ) .
+$$
+
+我们可以将等式右边除以 $\varepsilon$ , 这不会影响 $\varepsilon$ 的零阶项的雅可比恒等式. 取极限 $\varepsilon \to 0$ , 则得到的正是(3.13). 因此(3.13)为泊松括号.
+
+然后易证系统(3.11)是关于泊松括号(3.13) 与哈密顿量(3.17)的哈密顿系统.
+
+例子 1. 考虑非线性 Klein-Gordon 方程
+
+$$
+q _ { t t } - q _ { x x } + V ^ { \prime } ( q ) = 0 .
+$$
+
+这是关于 $q , p = q _ { t }$ 的哈密顿系统, 其泊松括号为
+
+$$
+\{ p ( x ) , q ( y ) \} = \delta ( x - y ) ,
+$$
+
+哈密顿量为
+
+$$
+H = \int \frac { 1 } { 2 } ( p ^ { 2 } + q _ { x } ^ { 2 } + V ( q ) ) \mathrm { d } x .
+$$
+
+该系统具有如下两个守恒律:
+
+$$
+\begin{array} { r c l } { { I _ { 1 } } } & { { = } } & { { \displaystyle H = \int P _ { 1 } \mathrm { d } x \quad \left( \overbrace { \mathbb { H } \mathbb { E } } ^ { \mathrm { \large \sf \boxplus } \mathbb { E } } \right) } } \\ { { } } & { { } } & { { } } \\ { { I _ { 2 } } } & { { = } } & { { \displaystyle \int p q _ { x } \mathrm { d } x = \int P _ { 2 } \mathrm { d } x \quad \left( \overrightarrow { { \sf z } } { \sf J } _ { \mathbb { E } } ^ { \boxagger } , \ \mathbb { H } \large \underline { { { z } } } \underline { { { \sf \bf \ S } } } { \sf \Sigma } | \mathbb { \bar { H } } \large \underline { { { y } } } + \overbrace { { \sf t } } \underline { { { \bf \ S } } } { \bf \Sigma } { \bf \Sigma } | \large \underline { { { \Sigma } } } { \bf \Sigma } { \bf \Sigma } \right) \underline { { { \varSigma } } } { \bf \Sigma } { \bf \Sigma } \mathbb { H } \bar { \Sigma } \mathbb { \Sigma } \large ) . } } \end{array}
+$$
+
+(3.20)的单相周期解 [见 2.2 节例 1] 形如
+
+$$
+\begin{array} { r l } & { q ( \boldsymbol { x } , t ) = Q ( \boldsymbol { k } \boldsymbol { x } + \omega t + \tau ^ { 0 } ) , \quad Q ( \tau + 2 \pi ) = Q ( \tau ) , } \\ & { ( \omega ^ { 2 } - \boldsymbol { k } ^ { 2 } ) ^ { 1 / 2 } \mathrm { d } Q = [ 2 ( E - V ( Q ) ) ] ^ { 1 / 2 } \mathrm { d } \tau . } \end{array}
+$$
+
+非线性色散关系形如
+
+$$
+( \omega ^ { 2 } - k ^ { 2 } ) ^ { 1 / 2 } \oint \frac { \mathrm { d } Q } { \sqrt { 2 ( E - V ( Q ) ) } } = 2 \pi .
+$$
+
+其中
+
+$$
+\begin{array} { r c l } { { \{ P _ { 1 } ( x ) , P _ { 1 } ( y ) \} } } & { { = } } & { { \{ P _ { 2 } ( x ) , P _ { 2 } ( y ) \} = ( q ^ { \prime } p ) ^ { \prime } \delta ( x - y ) + 2 q ^ { \prime } p \delta ^ { \prime } ( x - y ) , } } \\ { { \{ P _ { 1 } ( x ) , P _ { 2 } ( y ) \} } } & { { = } } & { { ( p ^ { 2 } + q ^ { \prime 2 } ) \delta ^ { \prime } ( x - y ) + [ ( p ^ { 2 } + q ^ { \prime 2 } ) / 2 + V ( q ) ] ^ { \prime } \delta ( x - y ) , } } \\ { { \{ P _ { 2 } ( x ) , P _ { 1 } ( y ) \} } } & { { = } } & { { ( p ^ { 2 } + q ^ { \prime 2 } ) \delta ^ { \prime } ( x - y ) + [ ( p ^ { 2 } + q ^ { \prime 2 } ) / 2 - V ( q ) ] ^ { \prime } \delta ( x - y ) . } } \end{array}
+$$
+
+[这里的 $p = p ( x )$ , $q = q ( x ) ]$ . 因此平均化泊松括号具有 Liouville 形式
+
+$$
+g ^ { i j } = \gamma ^ { i j } + \gamma ^ { j i } , b _ { k } ^ { i j } = \frac { \partial \gamma ^ { i j } } { \partial u ^ { k } } ,
+$$
+
+$$
+( \gamma ^ { i j } ) = { \binom { u ^ { 2 } } { u ^ { 1 } - 2 \Delta } } \ u ^ { 1 } ) , \quad \Delta = \Delta ( u ^ { 1 } , u ^ { 2 } ) = { \overline { { V ( Q ) } } } .
+$$
+
+平均化方程具有相对论流体力学方程的形式
+
+$$
+\frac { \partial T ^ { i j } } { \partial X ^ { j } } = 0 .
+$$
+
+其能-动量张量 $T ^ { i j }$ 可通过对 Klein-Gordon 场 $q$ 的能-动量张量 $t ^ { i j }$ 作平均化得到:
+
+$$
+T ^ { i j } = \overline { { { t ^ { i j } } } } , \quad ( t ^ { i j } ) = \left( \begin{array} { l l } { { P _ { 1 } } } & { { - P _ { 2 } } } \\ { { - P _ { 2 } } } & { { P _ { 1 } - 2 V } } \end{array} \right) = \left( \begin{array} { l l } { { E + k ^ { 2 } F F _ { E } } } & { { - \omega F F _ { E } } } \\ { { - \omega k F F _ { E } } } & { { F F _ { E } ^ { - 1 } - E + k ^ { 2 } F F _ { E } } } \end{array} \right) ,
+$$
+
+其中 $F ( E ) = \frac { 1 } { 2 \pi } \oint [ 2 ( E - V ( Q ) ) ] ^ { 1 / 2 } \mathrm { d } Q .$
+
+此张量可通过洛伦兹变换对角化: 当 $\omega ^ { 2 } - k ^ { 2 } > 0$ 时取 $( \omega , \boldsymbol { k } ) \to ( \omega ^ { \prime } , 0 )$ , $\omega ^ { 2 } - k ^ { 2 } = { \omega } ^ { \prime } { } ^ { 2 }$ ;当 $\omega ^ { 2 } - \boldsymbol { k } ^ { 2 } < 0$ 时取 $( \omega , \boldsymbol { k } ) \to ( 0 , \boldsymbol { k } ^ { \prime } )$ , $\omega ^ { 2 } - k ^ { 2 } = - k ^ { \prime } ^ { 2 }$ . 态方程 [当 $\omega ^ { 2 } - \boldsymbol { k } ^ { 2 } > 0$ 时] 可表示为下述参数形式
+
+$$
+\begin{array} { r } { \mathcal { E } = E , \quad \mathcal { P } = F ( E ) F _ { E } ^ { - 1 } ( E ) - E . } \end{array}
+$$
+
+[利用 Hayes[28] 的早期结果] 可以证明, 将平坦度量(3.22)化为常数的平坦坐标为 $k , J$ ,这里的 $J$ 时三维不变流形(3.21),(3.21a) 上的哈密顿系统(3.20)的角参数:
+
+$$
+J = { \frac { 1 } { 2 \pi } } \oint p \mathrm { d } q .
+$$
+
+在此坐标下, 泊松括号(3.22)形如
+
+$$
+\{ k ( X ) , J ( Y ) \} _ { \# \# \sharp } = \delta ^ { \prime } ( X - Y ) ,
+$$
+
+并且其余泊松括号都为零. 该度量的正负惯性指数为 $( 1 , 1 )$ .
+
+例子 2. “摄动 KdV 方程”[见 2.2 节例子 2]
+
+$$
+w _ { t } = - \partial _ { x } \frac { \delta H } { \delta w ( x ) } = - \partial _ { x } V ^ { \prime } ( w ) + w _ { x x x } , \quad H = \int \left[ \frac { w _ { x } ^ { 2 } } { 2 } + V ( w ) \right] \mathrm { d } x
+$$
+
+关于 Gardner-Zakharov-Feddeev 泊松括号
+
+$$
+\{ w ( x ) , w ( y ) \} = \delta ^ { \prime } ( x - y )
+$$
+
+构成哈密顿系统. 此系统有如下三个两两交换的守恒律
+
+$$
+\begin{array} { r c l } { { I _ { 0 } } } & { { = } } & { { \displaystyle \int w \mathrm { d } x \quad \big ( \dot { \forall } \dot { \mathbb { H } } _ { \Sigma } ^ { \sharp } \dddot { \mathbb { H } } _ { \Sigma } ^ { \sharp } \bigstar \underline { { { \Theta } } } _ { \sharp } ^ { \sharp } \big ) \sharp \ddot { \mathbb { H } } \mp \big < \big < \mathcal { k } \mp \big > } } \\ { { I _ { 1 } } } & { { = } } & { { \displaystyle \int \frac { w ^ { 2 } } { 2 } \mathrm { d } x \quad \big ( \vec { z } \big ) _ { \underline { { { \Xi } } } \underline { { { \Psi } } } } ^ { \underline { { { \Xi } } } } \big ) } } \\ { { I _ { 2 } } } & { { = } } & { { \displaystyle H \quad \big ( \dot { \mathbb { H } } _ { \Sigma } ^ { \underline { { { \Xi } } } \underline { { { \Xi } } } } \big ) . } } \end{array}
+$$
+
+方程(3.23)的单相解构成三维族, 形如
+
+$$
+\begin{array} { r c l } { { w ( x , t ) } } & { { = } } & { { \Phi ( k x + \omega t ) , \quad \Phi ( \tau + 2 \pi ) = \Phi ( \tau ) , } } \\ { { } } & { { } } & { { k \mathrm { d } \Phi } } \\ { { k \mathrm { d } \Phi } } & { { = } } & { { \sqrt { 2 V ( \Phi ) + \displaystyle \frac { \omega } { k } \Phi ^ { 2 } + a \Phi + b } \mathrm { d } \tau . } } \end{array}
+$$
+
+其中参数 $k , \omega , a , b$ 满足约束关系 [色散关系]
+
+$$
+k \oint \frac { \mathrm { d } \Phi } { \sqrt { 2 V ( \Phi ) + c \Phi ^ { 2 } + a \Phi + b } } = 2 \pi ,
+$$
+
+[这里的 $c = \omega / k ]$ . 在坐标 $u ^ { 0 } = I _ { 0 } , u ^ { 1 } = I _ { 1 } , u ^ { 2 } = I _ { 2 }$ 下, 平均化泊松括号为下述Liouville 形式:
+
+$$
+( \gamma ^ { i j } ) = \left( \begin{array} { c c c } { { \displaystyle \frac { 1 } { 2 } } } & { { u ^ { 0 } } } & { { - c u ^ { 0 } - a } } \\ { { 0 } } & { { u ^ { 1 } } } & { { - c u ^ { 1 } - b } } \\ { { 0 } } & { { u ^ { 2 } } } & { { - c u ^ { 2 } - b c + \displaystyle \frac { a ^ { 2 } } { 2 } \right) , } } \end{array}
+$$
+
+$a = a ( u ) , b = b ( u ) , c = c ( u ) .$ .
+
+我们应当注意到变量
+
+$$
+p _ { + } = \frac { \overline { { { w ^ { 2 } } } } } { 2 } = u ^ { 1 } , \quad p _ { - } = \frac { \overline { { { ( w - \overline { { { w } } } ) ^ { 2 } } } } } { 2 } = u ^ { 1 } - \frac { 1 } { 2 } ( u ^ { 0 } ) ^ { 2 }
+$$
+
+是交换的:
+
+$$
+\{ p _ { + } ( X ) , p _ { - } ( Y ) \} _ { \mp \pm 5 } \equiv 0 ,
+$$
+
+并且这两这当中的每一个都定义了直线上的向量场的一个子代数:
+
+$$
+\{ p _ { \pm } ( X ) , p _ { \pm } ( Y ) \} _ { \mp \sharp : \sharp } = [ p _ { \pm } ( X ) + p _ { \pm } ( Y ) ] \delta ^ { \prime } ( X - Y ) .
+$$
+
+换句话说, 在平均化 KdV 方程中, 每一个变量都可以看作流体两个分量中的一个的动量.
+
+此时, 平坦坐标为 $k$ (波数), $J$ (角参数) 与 $u ^ { 0 } = \overline { { w } } ($ (零化子). 此坐标下的常值度量矩阵为
+
+$$
+( \tilde { g } ^ { i j } ) = \left( \begin{array} { l l l } { { 0 } } & { { 1 } } & { { 0 } } \\ { { 1 } } & { { 0 } } & { { 0 } } \\ { { 0 } } & { { 0 } } & { { 1 } } \end{array} \right) .
+$$
+
+例子 3. 当 $V = w ^ { 3 }$ 时 [此时就是通常的 KdV 方程] , 此方程还具有 Magri 泊松括号
+
+$$
+\{ w ( x ) , w ( y ) \} _ { M } = - \frac { 1 } { 2 } \delta ^ { \prime \prime \prime } ( x - y ) + ( w ( x ) + w ( y ) ) \delta ^ { \prime } ( x - y ) .
+$$
+
+相应的哈密顿量为
+
+$$
+H _ { M } = \int w ^ { 2 } \mathrm { d } x .
+$$
+
+这也给出 KdV 方程关于单相解的平均化方程的新的流体力学型泊松括号. 在上例的Liouville 坐标 $u ^ { 0 } , u ^ { 1 } , u ^ { 2 }$ 下 [这里 $u ^ { 0 }$ 为动量, $2 u ^ { 1 } = H _ { M } ]$ , 我们得到平均化泊松括号的下述公式
+
+$$
+\gamma _ { M } ^ { i j } ( u ) = \left( \begin{array} { c c c } { { 2 u ^ { 0 } } } & { { - c u ^ { 0 } - \frac { a } { 2 } } } & { { 1 0 u ^ { 2 } } } \\ { { } } & { { - c u ^ { 1 } + 2 b } } & { { \frac { 5 } { 3 } \left( - c u ^ { 2 } - b c + \frac { a ^ { 2 } } { 4 } \right) } } \\ { { } } & { { } } & { { } } \\ { { 2 u ^ { 2 } } } & { { - c u ^ { 2 } - b c + \frac { a ^ { 2 } } { 4 } } } & { { - ( c ^ { 2 } - a ) u ^ { 2 } + 2 b c ^ { 2 } - c \frac { a ^ { 2 } } { 4 } + a b } } \end{array} \right) .
+$$
+
+我们也可以对 Magri 泊松括号作关于 $n \cdot$ -相解的平均化.
+
+对于广义非线性薛定谔方程 (简称 NLS 方程) [见 2.2 节例子 3] , 利用 [37] 中的“平均化拉格朗日理论”(averaged Lagrangean formalism) 可得其平均化系统 [16]. 而我们现在的方法不能用于此例: 不变环面的四维族, 但此 NLS 方程不可积, 只有三个守恒律. 由于平均化系统是拉格朗日系统, 它可以转化为哈密顿形式, 而不去研究 NLS 方程原来的哈密顿形式.
+
+KdV 方程关于多相解 $[ n$ -相解] 的平均化可以写成下述优美的形式 (Flaschka, For-est, McLaughlin[24]).
+
+定理 3.2.
+
+$$
+\begin{array} { r } { \partial _ { T } \mathrm { d } p = \partial _ { X } \mathrm { d } q . } \end{array}
+$$
+
+其中 $\mathrm { d } p$ , dq 为拟动量, 拟能量的微分:
+
+$$
+\mathrm { d } p = { \frac { \mathrm { d } p } { \mathrm { d } \lambda } } \mathrm { d } \lambda , \quad \mathrm { d } q = { \frac { \mathrm { d } q } { \mathrm { d } \lambda } } \mathrm { d } \lambda ,
+$$
+
+$$
+p = \frac { 1 } { i } \overline { { ( \log \psi ) _ { x } } } , \quad q = \frac { 1 } { i } \overline { { ( \log \psi ) _ { t } } }
+$$
+
+[见上一节] , 它们是下述黎曼曲面
+
+$$
+\mu ^ { 2 } = \prod _ { i = 1 } ^ { 2 n + 1 } ( \lambda - r _ { i } ) \equiv R _ { 2 n + 1 } ( \lambda )
+$$
+
+上的阿贝尔微分, 其极点位于无穷远点 $\lambda = \infty$ ,
+
+$$
+\begin{array} { r c l } { { \mathrm { d } p } } & { { = } } & { { \displaystyle \frac { P ( \lambda ) \mathrm { d } \lambda } { 2 \sqrt { R _ { 2 n + 1 } ( \lambda ) } } = \frac { \mathrm { d } \lambda } { 2 \sqrt { \lambda } } + O ( 1 ) = \mathrm { d } k + O ( 1 ) , \quad k = \sqrt \lambda } } \\ { { } } & { { } } & { { P = P ( \lambda | r _ { 1 } , . . . , r _ { 2 n + 1 } ) } } \\ { { \mathrm { d } q } } & { { = } } & { { \displaystyle - \frac { 6 \lambda ^ { n + 1 } + Q ( \lambda ) } { \sqrt { R _ { 2 n + 1 } ( \lambda ) } } \mathrm { d } \lambda = - 6 \sqrt \lambda \mathrm { d } \lambda + O ( 1 ) = 4 \mathrm { d } ( k ^ { 3 } ) + O ( 1 ) , } } \\ { { } } & { { } } & { { Q = Q ( \lambda | r _ { 1 } , . . . , r _ { 2 n + 1 } ) , } } \end{array}
+$$
+
+且有零 $a \mathrm { . }$ -周期.
+
+(3.24)的证明: 类似于(3.11)那样对守恒律
+
+$$
+[ ( \log \psi ) _ { x } ] _ { t } = [ ( \log \psi ) _ { t } ] _ { x }
+$$
+
+作平均化, 可得
+
+$$
+\partial _ { T } \overline { { ( \log \psi ) _ { x } } } = \partial _ { X } \overline { { ( \log \psi ) _ { t } } } ,
+$$
+
+即
+
+$$
+\partial _ { T } p ( \lambda ) = \partial _ { X } q ( \lambda ) .
+$$
+
+对 $\lambda$ 求导可得(3.24).
+
+推论. 分支点 $r _ { 1 } , . . . , r _ { 2 n + 1 }$ 是平均化 $K d V$ 系统的黎曼不变量. 也就是说该平均化系统在此坐标下是对角的:
+
+$$
+\partial _ { T } r _ { i } = v _ { i } ( r _ { 1 } , . . . , r _ { 2 n + 1 } ) \partial _ { X } r _ { i } , \quad i = 1 , . . . , 2 n + 1 .
+$$
+
+证明. 将(3.24)两边乘以 $( \lambda - r _ { i } ) ^ { 3 / 2 }$ , 再取极限 $\lambda \to r _ { i }$ 即可得到(3.26), 其中
+
+$$
+v _ { i } = \left. { \frac { \operatorname { d } q ( \lambda ) } { \operatorname { d } p ( \lambda ) } } \right| _ { \lambda = r _ { i } } = - 2 { \frac { 6 r _ { i } ^ { n + 1 } + Q ( \lambda = r _ { i } ) } { P ( \lambda = r _ { i } ) } } .
+$$
+
+推论. 平均化 $K d V$ 方程是可积的流体力学型系统.
+
+注记. 回顾 [见 2.1 节] 平均化系统(3.26)的哈密顿理论(3.13) 当中的度量 $g _ { i j }$ 在坐标$r _ { 1 } , . . . , r _ { 2 n + 1 }$ 下是对角的. 此度量的可表示为 [38]:
+
+$$
+g _ { i i } = \mathrm { R e s } _ { \lambda = r _ { i } } \left[ \frac { \mathrm { d } p } { \mathrm { d } \lambda } \right] ^ { 2 } \mathrm { d } \lambda , \quad i = 1 , . . . , 2 n + 1 .
+$$
+
+由此公式容易看出该度量的符号为 $( + , - , + , . . . , - , + )$ . 我们还可以证明 [38] 该平坦对角度量是 Egoroff 度量 [见 2.1 节附录 2] , 相应的势函数为 $u ^ { 0 } = \int w \mathrm { d } x = \dot { u } ^ { 0 } ( { \boldsymbol { r } } _ { 1 } , . . . , { \boldsymbol { r } } _ { 2 n + 1 } )$ ,$g _ { i i } = \partial _ { i } u _ { 0 }$ . $n = 1$ 时, 由(3.28)可直接得到方程(2.36)的解(2.40).
+
+求解方程(3.24)的代数几何方法由 Krichever 所发现. 现在我们给出此方法的概要.
+
+设 $\Gamma = \Gamma ( X , T )$ 是(3.25)中的关于 $X , T$ 的黎曼曲面. 设 $\mathrm { d } s = \mathrm { d } s ( \lambda )$ 为任意取定的$\Gamma$ 上的分片全纯微分, 使得它与 $X , T$ 的奇性无关 [例如在某些固定的点处为极点, 或者在某些曲线上跳跃] 并且具有零 $a \cdot$ -周期.
+
+定理 3.3. (Krichever[11]). 若关于 $X , T$ 的黎曼曲面 $\Gamma$ 满足
+
+$$
+[ X \mathrm { d } p ( \lambda ) + T \mathrm { d } q ( \lambda ) - \mathrm { d } s ( \lambda ) ] _ { \lambda = r _ { i } } \equiv 0 , \quad i = 1 , . . . , 2 n + 1 ,
+$$
+
+则其分支点 $r _ { 1 } , . . . , r _ { 2 n + 1 }$ 满足平均化 $K d V$ 方程(3.26).
+
+证明. 考虑微分形式
+
+$$
+\Omega = X \mathrm { d } p + T \mathrm { d } q - \mathrm { d } s
+$$
+
+及其关于时间, 空间的导数
+
+$$
+\begin{array} { r c l } { \Omega _ { T } } & { = } & { \mathrm { d } q + ( X \partial _ { T } \mathrm { d } p + T \partial _ { T } \mathrm { d } q - \partial _ { T } \mathrm { d } s ) } \\ { \Omega _ { X } } & { = } & { \mathrm { d } p + ( X \partial _ { X } \mathrm { d } p + T \partial _ { x } \mathrm { d } q - \partial _ { X } \mathrm { d } s ) . } \end{array}
+$$
+
+注意微分形式 $\mathrm { d } p$ , dq, ds 的导数的奇性相互抵消, 这是因为它们关于 $X , T$ 为常数.由(3.29)可知在分支点 $r \ = \ \lambda _ { i }$ 处的奇性也被抵消. 因此上述公式的括号内的部分为Γ 上的全纯微分. 它们的 $a \cdot$ -周期恒为零, 因此它们也恒为零 [这是关于黎曼曲面上的全纯微分的著名结果] . 因此我们得到
+
+$$
+\Omega _ { T } = \mathrm { d } q , \quad \Omega _ { x } = \mathrm { d } p .
+$$
+
+此方程组的相容性条件恰为平均化方程
+
+$$
+\begin{array} { r } { \partial _ { T } \mathrm { d } p = \partial _ { X } \mathrm { d } q . } \end{array}
+$$
+
+利用此构造可以得到色散版本的冲击波的 Gurevich-Pitayevskii 问题的恰当的解析公式 [17]. 为此我们需要取 $\mathrm { d } s ( \lambda )$ 为以无穷远点为极点的亚纯微分, 且在 $\lambda = \infty$ 附近形
+
+如
+
+$$
+\mathrm { d } s ( \lambda ) = \stackrel { \ J \psi } { \nabla \cdot } \frac { \ast \chi } { \mathcal { k } \mathcal { U } } \times \mathrm { d } \lambda ^ { \frac { 7 } { 2 } } + O ( 1 )
+$$
+
+下一节我们详细考虑此例.
+
+# 3.2 应用: KdV 理论中某步骤的分解; 色散版本的冲击波. Gurevich-Pitaevskii 问题的解析解
+
+在本节, 我们把 KdV 方程写作
+
+$$
+u _ { t } + u u _ { x } + u _ { x x x } = 0 .
+$$
+
+这种在物理文献上更标准的写法可由之前版本通过变量替换 $u  - \frac { 1 } { 6 } u$ u, t → −t 得到.
+
+我们来考虑两个色散流体力学的问题, 分别是 Gurevich 和 Pitaevskii [见 [4],[5], 也可见书 [39] 的第 4 章 $\ S 4 ]$ .
+
+问题 1. KdV 方程的带状初值条件的分解. 如果 KdV 方程的解的初值条件形如下图,则解在 $t \gg 1$ 时的渐近行为如何?
+
+![](images/3d5bfd144dad259e1375f27841966661e2aa0c4ee9abf7e85e68c2970aaa47ce.jpg)  
+图 3.1
+
+问题 2. 色散版本的冲击波. 求 KdV 方程在初值 $u ( x )$ 满足
+
+$$
+x = u t - u ^ { 3 } , \quad | x | \to \infty
+$$
+
+的情况下, 解在 $t \gg 1$ 时的渐近行为. 问题 2 的物理背景如下. 我们假设色散项 $u _ { x x x }$ 初始时充分小, 不影响系统演化, 于是该系统可由截断方程
+
+$$
+u _ { t } + u u _ { x } = 0
+$$
+
+近似描述. 此方程的通解形如 $x = u t + f ( u )$ [可见 2.1 节] , 其中 $f ( u )$ 为在某时刻$t \ : = \ : 0$ “倒塌”(topple over) 的任意函数. 即当 $t  0 ^ { - }$ 时, 在某一点 $x \ = \ x _ { 0 }$ 成立$u _ { x }  \infty$ . 一般情况下, 在“倒塌点” $( t = 0 , x = x _ { 0 } = 0 )$ 附近的解可由方程 (3.31)来近似 $( t < 0 )$ . 在此邻域内, KdV 方程的色散项 $u _ { x x x }$ 不可被无视. 考虑到这一项, 方程的解在点 $( 0 , 0 )$ 的一个小邻域内会发生剧烈变化: KdV 理论里不存在“倒塌”, 会出现震荡区 (oscillatory zone). Gurevich 和 Pitaevskii 在小邻域 $\Delta ( t )$ 中用单相 Whitham 方程[见上一节的(3.26), $n = 1 ]$ 来近似描述它; 在此小邻域之外, 震荡区变成方程(3.31)的一个小的解; 色散项在震荡区之外可以无视. 从而, 问题 2 描述了 $x , t$ 的局部情况. 与 $x , t$ 中整体渐近性良好的尺度 [比如问题 1] 相比, 在这个小区域中 Gurevich-Pitaevskii 区域建立在 $x , t$ 的尺度必须较小. 因此问题 2 描述了一种普遍的局部情况, 称为色散版本的冲击波. 在局部上, 这种近似的应用并不是完全规则的, 因为感兴趣的区域只包含有限数量的振荡, 并且这种近似结构将只在有限时间内可见 (中间时间渐近性). 问题 2 出现的“大的” $t$ 要远小于问题 1 中出现的时间.
+
+我们首先给出 $n = 1$ 时 Whitham 方程的显式表达. 由上一节(3.26),(3.27) 以及更早的(2.164),(2.165), 我们有
+
+$$
+r _ { i _ { t } } + v _ { i } ( r ) r _ { i _ { x } } = 0 , \quad i = 1 , 2 , 3 ,
+$$
+
+$$
+r _ { 1 } \le r _ { 2 } \le r _ { 3 }
+$$
+
+$$
+v _ { i } ( r ) = \frac { 1 2 r _ { i } ^ { 2 } - 6 \sigma _ { 1 } r _ { i } - \frac { 2 } { 3 } \sigma _ { 1 } ^ { 2 } + 4 \sigma _ { 2 } - 2 \sigma _ { 1 } \frac { \eta } { \omega } } { 6 ( \frac { \eta } { \omega } - r _ { i } ) } , i = 1 , 2 , 3 ,
+$$
+
+$\frac { \eta } { \omega } = \frac { \eta } { \omega } ( g _ { 2 } , g _ { 3 } )$ [见 2.4 节最末] ,
+
+$$
+g _ { 2 } = \frac { 4 \sigma _ { 1 } ^ { 2 } } { 3 } - 4 \sigma _ { 2 } , \quad g _ { 3 } = - 4 \sigma _ { 3 } - \frac { 8 } { 2 7 } \sigma _ { 1 } ^ { 3 } + \frac { 4 } { 3 } \sigma _ { 1 } \sigma _ { 2 } ,
+$$
+
+$$
+\sigma _ { 1 } = r _ { 1 } + r _ { 2 } + r _ { 3 } , \quad \sigma _ { 2 } = r _ { 1 } r _ { 2 } + r _ { 1 } r _ { 3 } + r _ { 2 } r _ { 3 } , \quad \sigma _ { 3 } = r _ { 1 } r _ { 2 } r _ { 3 } .
+$$
+
+可以证明 $v _ { 1 } < v _ { 2 } < v _ { 3 }$ . 我们也指出, 在一个震荡周期内的平均值 $\overline { { u } }$ 为
+
+$$
+\overline { { { u } } } = c + 1 2 \frac { \eta } { \omega } , c = - 2 ( r _ { 1 } + r _ { 2 } + r _ { 3 } ) .
+$$
+
+速度 $v _ { i } ( r )$ 为齐次函数,
+
+$$
+v _ { i } ( k r ) = k v _ { i } ( r ) .
+$$
+
+因此对任意指数 $\gamma$ , 系统(3.33)存在形如
+
+$$
+r _ { i } ( x , t ) = t ^ { \gamma } R _ { i } ( x t ^ { - 1 - \gamma } )
+$$
+
+的自相似解. [4,5] 的想法是用这些解来描述问题 1,2 中 $t \gg 1$ 时振荡区内的渐近状态,因为它们在震荡区外是 [局部] 自相似的.
+
+问题 1. 在此我们必须取 $\gamma ~ = ~ 0$ . 若初始条件形如图 3.1, 并且 $\operatorname* { l i m } _ { x \to - \infty } u ( x ) \ = \ 1 \qquad $ ,$\operatorname* { l i m } _ { x \to \infty } u ( x ) = 0$ , 则方程 (3.33)有如下解
+
+$$
+r _ { 1 } \equiv 0 , \quad r _ { 3 } \equiv 1 , \quad v _ { 2 } ( 0 , r _ { 2 } , 1 ) = \frac { x } { t } .
+$$
+
+震荡区间 $\Delta = [ \tau ^ { - } , \tau ^ { + } ]$ 如下图:
+
+![](images/b10fce0a31a39a2c30629f138a982b5f738267f911d354378d243aab76c567ee.jpg)  
+图 3.2
+
+平均值函数 $\overline { { u } }$ 的图像类似于通常的冲击波 [见下图] .
+
+![](images/5ffd28ebbf4dd729e42f30f9cddb36d6696a2606dff1e5def04511c6d957b5be.jpg)  
+图 3.3
+
+这种渐近行为的严格证明问题被 [40] 用反散射变换研究.
+
+问题 2. 此时情况更加复杂. 为正确匹配边值条件(3.31), 我们要考虑(3.33)的关于指标$\gamma = \frac 1 2$ 的自相似解
+
+$$
+r _ { i } ( x , t ) = t ^ { 1 / 2 } R _ { i } ( x t ^ { - 3 / 2 } ) .
+$$
+
+在区间 $\Delta = [ x ^ { - } , x ^ { + } ]$ 的边界, 函数 $\boldsymbol { r } ( \boldsymbol { x } , t )$ 连续 [甚至光滑] :
+
+$$
+r ( x , t ) = \{ r _ { 1 } ( x , t ) , r _ { 2 } ( x , t ) , r _ { 3 } ( x , t ) \}
+$$
+
+[3-值函数] ,
+
+$$
+\begin{array} { c c } { { r ^ { - } \equiv r _ { 3 } ( x ^ { - } ) = u ( x ^ { - } ) , } } & { { r _ { 2 } ^ { - } = r _ { 1 } ^ { - } , } } \\ { { \nonumber r ^ { + } \equiv r _ { 3 } ( x ^ { + } ) = u ( x ^ { + } ) , } } & { { r _ { 2 } ^ { + } = r _ { 3 } ^ { + } . } } \end{array}
+$$
+
+问题 1,2 的震荡区域都覆盖“零-相”(zero-phase)Whitham 方程的两个特解之间的整个区域: 在左端点 $x ^ { - }$ 必有 $r _ { 2 } = r _ { 1 }$ [即, KdV 方程的单相解变成常值] , 而在右端点 $x ^ { + }$ 必有 $r _ { 2 } = r _ { 3 }$ , 即, KdV 方程的单相解变成孤子 [相差常数意义下] . 震荡区间 $\Delta = [ \tau ^ { - } , \tau ^ { + } ]$ 关于不变量 $\tau$ 为常量 [问题 1 当中 $\tau = x / t$ , 问题 2 当中 $\tau = x t ^ { - 3 / 2 } ]$ . 全体多值图像必定是 $C ^ { 1 }$ -光滑的, 且包含震荡区域的边界. 在 [4,5] 可找到这样的解的近似. 现在我们由[17] 给出这种解的解析表达式.
+
+现在考虑椭圆谱曲线 [见 2.4 节] 上的阿贝尔微分 ds 如下:
+
+$$
+\mathrm { d } s = \alpha \frac { \lambda ^ { 4 } + \alpha _ { 1 } \lambda ^ { 3 } + a _ { 2 } \lambda ^ { 2 } + a _ { 3 } \lambda + a _ { 4 } } { \sqrt { R _ { 3 } ( \lambda ) } } \mathrm { d } \lambda ,
+$$
+
+$$
+R _ { 3 } ( \lambda ) = \prod _ { i = 1 } ^ { 3 } ( \lambda - r _ { i } ) .
+$$
+
+系数 $a _ { 1 } , a _ { 2 } , a _ { 3 }$ 由如下渐近关系
+
+$$
+\mathrm { d } s = \alpha ( \lambda ^ { 5 / 2 } + O ( \lambda ^ { - 3 / 2 } ) ) \mathrm { d } \lambda , \quad \lambda \to \infty
+$$
+
+所确定, 系数 $a _ { 4 }$ 使得成立如下归一化条件:
+
+$$
+\int _ { r _ { 2 } } ^ { r _ { 3 } } \mathrm { d } s = 0 .
+$$
+
+稍后再去确定系数 $\alpha$ . 于是我们有
+
+$$
+a _ { 1 } = - \frac { \sigma _ { 1 } } { 2 } , \quad a _ { 2 } = \frac { \sigma _ { 2 } } { 2 } - \frac { \sigma _ { 1 } ^ { 2 } } { 8 } , \quad a _ { 3 } = - \frac { \sigma _ { 3 } } { 2 } + \frac { \sigma _ { 1 } \sigma _ { 2 } } { 4 } - \frac { \sigma _ { 1 } ^ { 3 } } { 8 } ,
+$$
+
+其中 $\sigma _ { 1 } , \sigma _ { 2 } , \sigma _ { 3 }$ 为初等对称多项式(3.35a).
+
+我们考虑 Whitham 方程(3.33)的关于 ds 的形如形如上一节(3.29)的解 $r _ { i } ( x , t )$ :
+
+$$
+[ x \mathrm { d } p + t \mathrm { d } q - \alpha \mathrm { d } s ] _ { \lambda = r _ { i } } = 0 , \quad i = 1 , 2 , 3 .
+$$
+
+它可以重写为
+
+$$
+x + v _ { i } ( r ) t - \alpha w _ { i } ( r ) = 0 , \quad i = 1 , 2 , 3 ,
+$$
+
+其中函数 $w _ { i } ( r )$ 满足如下公式 [17]:
+
+$$
+w _ { i } ( r ) = \left[ \frac { \mathrm { d } s } { \mathrm { d } p } \right] _ { \lambda = r _ { i } } = ( 3 v _ { i } - \sigma _ { 1 } ) f _ { i } ( r ) + f ( r ) , \quad i = 1 , 2 , 3 ,
+$$
+
+$$
+f ( r ) = 5 \sigma _ { 1 } ^ { 3 } - 1 2 \sigma _ { 1 } \sigma _ { 2 } + \sigma _ { 3 } , \quad f _ { i } ( r ) = \frac { \partial f } { \partial r _ { i } } .
+$$
+
+易知对任意 $\alpha$ , 方程(3.45)的解都是关于指数 $\gamma = \frac 1 2$ 的自相似解.
+
+定理. [17]. 方程组(3.45)在区域 $\tau ^ { - } < \tau < \tau ^ { + }$ 非退化, 其中 $\tau = x t ^ { - 3 / 2 }$ , 并且定义了 Whitham 方程(3.33)的一个光滑 [甚至解析] 解. 若 $\alpha = \frac { 1 } { 3 }$ , 则它关于$\tau ^ { - } = - \sqrt { 2 } , \tau ^ { + } = \sqrt { 1 0 } / 2 7$ 满足边值条件(3.40).
+
+数值模拟 [1] [也可见 [13]] 表明, 在奇异边附近具有上述特殊渐近性质的多值函数的演化是局部良好定义的. 若初始条件 $C ^ { 1 }$ -接近于上述解, 则此演化在无限时间内都有定义, 且相应的解渐近收敛于 Gurevich-Pitaevskii 解. 文献 [2] [也可见 [13]] 研究了非零粘性 (non-zero viscosity) 的情形.
+
+# 3.3 有限空缺势的平均化方法与半经典量子化. Painlevé-I 方程的渐近积分
+
+正如第2.3,2.4节所述, 关于常微分算子的交换性方程
+
+$$
+[ L , A ] = 0
+$$
+
+在某种意义下是有限空缺积分理论的中心方程. 我们先回到最简单的例子
+
+$$
+L = - \partial _ { x } ^ { 2 } + u , \quad A = 4 \partial _ { x } ^ { 3 } - 6 u \partial _ { x } - u _ { x } .
+$$
+
+此时方程(3.47)形如
+
+$$
+6 u u _ { x } - u _ { x x x } = 0 .
+$$
+
+等价地, 方程(3.49)可表示为 Lax 形式
+
+$$
+V _ { x } ( \lambda ) = [ U ( \lambda ) , V ( \lambda ) ] ,
+$$
+
+其中
+
+$$
+U ( \lambda ) = \binom { 0 } { u - \lambda } \ 1 \atop \int \ d u , \lambda \atop 0 \ d u , \lambda \atop \frac { d } { d u - \lambda } \ 1 \atop 0 \ d u , \lambda \atop \frac { d } { d u - \lambda } \ 1 \atop 0 \ d u .
+$$
+
+$$
+V ( \lambda ) = \left( \begin{array} { c c } { { - \displaystyle \frac { u ^ { \prime } } { 2 } } } & { { 2 \lambda + u } } \\ { { - \displaystyle \frac { u ^ { \prime \prime } } { 2 } + ( u - \lambda ) ( 2 \lambda + u ) } } & { { \displaystyle \frac { u ^ { \prime } } { 2 } \quad } } \end{array} \right) .
+$$
+
+由(3.49)可知 [关于 $\lambda$ 的] 多项式
+
+$$
+\operatorname* { d e t } V ( \lambda ) = 4 \lambda ^ { 3 } - ( 3 u ^ { 2 } - u ^ { \prime \prime } ) \lambda - \frac { 1 } { 4 } ( { u ^ { \prime } } ^ { 2 } + 4 u ^ { 3 } - 2 u u ^ { \prime \prime } )
+$$
+
+系数为常数; 它们定义了谱曲线 $\Gamma$
+
+$$
+\begin{array} { l } { { \mu ^ { 2 } = \operatorname * { d e t } V ( \lambda ) \equiv 4 \lambda ^ { 3 } - g _ { 2 } \lambda - g _ { 3 } } } \\ { { g _ { 2 } = 3 u ^ { 2 } - u ^ { \prime \prime } , \quad g _ { 3 } = \displaystyle \frac { 1 } { 4 } ( u ^ { \prime 2 } + 4 u ^ { 3 } - 2 u u ^ { \prime \prime } ) . } } \end{array}
+$$
+
+方程(3.49)的解形如
+
+$$
+u ( x ) = 2 \wp ( x - x _ { 0 } | g _ { 2 } , g _ { 3 } )
+$$
+
+[在黎曼曲面(3.54)中的多项式 $\operatorname* { d e t } V ( \lambda )$ 有实根的情况下, 为得到实的光滑解, 作虚部平移 $x _ { 0 } \mapsto x _ { 0 } + \omega ^ { \prime }$ 是必要的, 见第2.4节] . 对于 KdV 方程簇的更一般的算子 $A$ , 或者等价地, 关于 $\lambda$ 的多项式矩阵 $V ( \lambda )$ [见2.3节] , 交换性方程(3.47) [或者(3.50)] 仍然可积, 谱曲线 $\mu ^ { 2 } = \operatorname* { d e t } V ( \lambda )$ 与 $x$ 无关; 只是公式(3.56)变得更加复杂 [见2.4节] . 我们在此指出,交换算子 $L , A$ 满足代数方程
+
+$$
+R ( L , A ) = 0 ,
+$$
+
+其中
+
+$$
+R ( \lambda , \mu ) \equiv \mu ^ { 2 } - \operatorname * { d e t } V ( \lambda ) = 0
+$$
+
+为谱曲线方程 [证明可见 [41]] . 换句话说, $L , A$ 为谱曲线上的坐标.
+
+现在我们开始 量子化 (quantization) . 即, 把交换性条件 $[ L , A ] = 0$ 改为关于同样的算子 $L , A$ 的“量子化”条件
+
+$$
+[ L , A ] = \varepsilon \cdot 1
+$$
+
+[1 为恒等算子, $\varepsilon$ 为参数] . 在我们的例子中, 我们得到 $6 u u ^ { \prime } - u ^ { \prime \prime \prime } = \varepsilon$ , 或者
+
+$$
+3 u ^ { 2 } - u ^ { \prime \prime } = \varepsilon x
+$$
+
+[Painlevé-I 方程] . 从而, $L , A$ 为“量子化谱曲线” $\hat { \Gamma }$ 上的非交换坐标. 我们将证明 [43]在半经典逼近下, $\hat { \Gamma }$ 可被描述为经典谱曲线 $\Gamma$ 的某个特殊的可积形变.
+
+在量子化之前, 我要说几句量子化问题的背后动机. 考虑 $n \times n$ 厄密随机矩阵模型
+
+(Hermitean random matrix model) 的 配分函数 (partition function)
+
+$$
+Z _ { n } = \int \mathrm { d } \Phi \exp [ - \beta \mathrm { t r } U ( \Phi ) ] .
+$$
+
+此积分区域为所有 $n \times n$ 厄密矩阵 $\Phi ^ { * } = \Phi$ 构成的空间 [ $\mathrm { d } \Phi$ 为该空间的体积元] ,
+
+$$
+U ( \lambda ) = \sum _ { j } g _ { j } \lambda ^ { 2 j }
+$$
+
+为多项式. 最近,[44] 表明此随机矩阵模型在非摄动弦理论 (nonperturbative string the-ory) 与 2D-引力当中极其重要.
+
+事实上, 那个配分函数是某个差分版本的 Painlevé-I 方程的 $\tau { } _ { \cdot }$ -函数. 对于首个非平凡例子 $U ( \lambda ) = \frac { 1 } { 2 } \lambda ^ { 2 } + g \lambda ^ { 4 }$ , 相应的差分方程形如 [45]
+
+$$
+\frac { \eta } { \beta } = c _ { n } + 4 g c _ { n } ( c _ { n + 1 } + c _ { n } + c _ { n - 1 } ) , \quad c _ { n } = \frac { Z _ { n + 1 } Z _ { n - 1 } } { Z _ { n } ^ { 2 } } ,
+$$
+
+$$
+\iff \quad [ L ^ { \mathrm { d i s c r } } , A ^ { \mathrm { d i s c r } } ] = \varepsilon \cdot 1 , \quad \varepsilon = \beta ^ { - 1 } .
+$$
+
+这里的 $L ^ { \mathrm { d i s c r } }$ , $A ^ { \mathrm { d i s c r } }$ 为差分算子:
+
+$$
+L _ { n m } ^ { \mathrm { d i s c r } } = c _ { n } ^ { 1 / 2 } \delta _ { n + 1 , m } + c _ { m } ^ { 1 / 2 } \delta _ { m + 1 , n }
+$$
+
+[正是离散 KdV 方程簇的 $L .$ -算子, 差分版本的薛定谔算子] ; 而 $A ^ { \mathrm { d i s c r } }$ 为离散 KdV 方程簇的算子:
+
+$$
+\begin{array} { r c l } { { { \cal A } _ { n m } ^ { \mathrm { d i s c r } } } } & { { = } } & { { 2 g \{ c _ { n } ^ { 1 / 2 } ( c _ { n - 1 } + c _ { n } + c _ { n + 1 } ) \delta _ { n + 1 , m } - c _ { m } ^ { 1 / 2 } ( c _ { m - 1 } + c _ { m } + c _ { m + 1 } ) \delta _ { m + 1 , n } } }  \\ { { } } & { { } } & { { + ( c _ { n } c _ { n + 1 } c _ { n + 2 } ) ^ { 1 / 2 } \delta _ { n + 3 , m } - ( c _ { m } c _ { m + 1 } c _ { m + 2 } ) ^ { 1 / 2 } \delta _ { m + 3 , n } \} } } \\ { { } } & { { } } & { { + { \displaystyle \frac { 1 } { 2 } } ( c _ { n } ^ { 1 / 2 } \delta _ { n + 1 , m } - c _ { m } ^ { 1 / 2 } \delta _ { m + 1 , n } ) . } } \end{array}
+$$
+
+可以证明 [44], 对 $u ( \log Z ) _ { x x }$ 取适当的连续极限
+
+$$
+Z _ { n } \mapsto Z ( x )
+$$
+
+之后, 可得到(3.59). 而在此我们只考虑连续情形.
+
+[46] 研究了 Painlevé-I 方程的实解 [定义在半直线 $x > x _ { 0 } ]$ 的定性性质. 可以证明, 实解可分为两族: 类型 I 与类型 II. 类型 I 当中的解是光滑的: 它们沿着抛物线$u = - \sqrt { \frac { \varepsilon x } { 3 } }$ 震荡, 且振幅衰减. 类型 II 当中的解是奇异的, 某种意义下当 $x \to + \infty$ 时[在奇点外] 渐近于 $\sqrt { \frac { \varepsilon x } { 3 } }$ 此外, 还有临界解 (separatrix solution) [称为“类型 III”] , 渐近于 $\sqrt { \frac { \varepsilon x } { 3 } }$ 这些解的性质的大致描述见下图. 而我们这里只考虑类型 I 的解.
+
+![](images/7f649803919b061c8323ebb724b1035614eeb8ea20d1579c731b09d6b6edb701.jpg)  
+图 11.1
+
+我们的想法 [43] 是用平均化方法, 考虑项 $\varepsilon x$ 的小扰动, 得到 Painlevé-I 方程 [简称P-I] 的渐近解. 这个想法至少在 $x \ll \infty$ 时看起来可行. 交换表示(3.58)对实现这个想法十分重要.
+
+首先观察到(3.58)可以写成下述线性问题
+
+$$
+L \psi = \lambda \psi , \quad A \psi = \varepsilon \partial _ { \lambda } \psi
+$$
+
+的相容性条件. 等价地,
+
+$$
+\partial _ { \lambda } \vec { \psi } = U ( \lambda ) \vec { \psi } , \quad \varepsilon \partial _ { \lambda } \vec { \psi } = V ( \lambda ) \vec { \psi } ,
+$$
+
+或者
+
+$$
+[ \partial _ { x } - U ( \lambda ) , \varepsilon \partial _ { \lambda } - V ( \lambda ) ] = 0 \iff \varepsilon U ( \lambda ) - V _ { x } + [ U , V ] = 0 .
+$$
+
+根据以下断言, 关于谱曲线 $\Gamma$ 的 $x$ 的慢摄动的平均化系统是可积的.
+
+引理. (见 [11]). 量子化交换方程 $[ L , A ] = \varepsilon \cdot 1$ 的平均化方程可表示为
+
+$$
+{ \frac { \mathrm { d } \mu } { \mathrm { d } X } } = { \frac { 1 } { 2 } } { \frac { \mathrm { d } p } { \mathrm { d } \lambda } }
+$$
+
+$[ X = \varepsilon x ]$ . 这里的 $\mu = { \sqrt { \operatorname* { d e t } V ( \lambda ) } }$ , $p = p ( \lambda )$ 为谱曲线 $\mu ^ { 2 } = \operatorname* { d e t } V$ 的拟动量.
+
+点评. 在我们的例子中, 我们要寻找如下 P-I 方程的渐近解:
+
+$$
+u ( x ) = u ^ { ( 0 ) } ( x ) + \varepsilon u ^ { ( 1 ) } ( x ) + \cdot \cdot \cdot ,
+$$
+
+$$
+u ^ { ( 0 ) } = 2 \wp \left( { \frac { \omega } { \pi } } { \frac { S ( X ) } { \varepsilon } } + \omega ^ { \prime } ; g _ { 2 } ( X ) , g _ { 3 } ( X ) \right) ,
+$$
+
+$$
+{ \frac { \mathrm { d } S } { \mathrm { d } X } } = { \frac { \pi } { \omega } } .
+$$
+
+这里 $\mu = \sqrt { 4 \lambda ^ { 3 } - g _ { 2 } \lambda - g _ { 3 } }$ [对于类型 I 的解, 方程 $4 \lambda ^ { 3 } - g _ { 2 } \lambda - g _ { 3 } = 0$ 的根都是实根] , $p = p ( \lambda | g _ { 2 } , g _ { 3 } )$ 为某个椭圆积分 [见第2.4节末尾] . 从而我们由(3.66)得到 $g _ { 2 } , g _ { 3 }$ 关于 $X = \varepsilon x$ 的相关性. 这个形变 $\mu ^ { 2 } = 4 \lambda ^ { 3 } - g _ { 2 } ( X ) \lambda - g _ { 3 } ( X )$ 称为 平均化量子曲线(averaged quantum curve) .
+
+证明. (1). 首先证明以下等式:
+
+引入矩阵 $V ( \lambda )$ 的左, 右特征向量 $\langle \mu | , | \mu \rangle$ :
+
+$$
+V | \mu \rangle = \mu | \mu \rangle , \quad \langle \mu | V = \mu \langle \mu |
+$$
+
+$| \mu \rangle = { \binom { b } { \mu - a } } , \langle \mu | = ( c , \mu - a ) \operatorname { ] }$
+
+$$
+\mu _ { x } = \frac { \langle \mu \vert V _ { x } \vert \mu \rangle } { \langle \mu \vert \mu \rangle }
+$$
+
+[摄动理论的标准公式] .
+
+$$
+\mu _ { x } = \varepsilon \frac { \langle \mu | U _ { \lambda } | \mu \rangle } { \langle \mu | \mu \rangle } + \underbrace { \langle \mu | [ U , V ] | \mu \rangle } _ { = 0 } = \varepsilon \frac { \langle \mu | \begin{array} { l l } { 0 } & { 0 } \\ { 1 } & { 0 } \end{array} } { \langle \mu | \mu \rangle } = \varepsilon \frac { b } { 2 \mu } .
+$$
+
+(2). 将 $\mu _ { x } = \varepsilon { \frac { b } { 2 \mu } }$ 关于震荡作平均化, 有
+
+$$
+\frac { \mathrm { d } \mu } { \mathrm { d } X } = \frac { \bar { b } } { 2 \mu } .
+$$
+
+但因为2.4的公式(2.145), 有
+
+从而引理得证.
+
+$$
+{ \frac { \bar { b } } { \mu } } = { \frac { \mathrm { d } p } { \mathrm { d } \lambda } } .
+$$
+
+我们只考虑椭圆情形.
+
+推论 3.4. 平均化系统的动量
+
+$$
+c = \oint _ { a } \mu \mathrm { d } \lambda = c ( g _ { 2 } , g _ { 3 } )
+$$
+
+为常数.
+
+其中 $a$ 为谱的空缺 $( e _ { 2 } , e _ { 1 } )$ [见2.4节末] 上的闭链. 我们已有 $\oint _ { a } \mathrm { d } p = 0$ .
+
+证明. ${ \frac { { \mathrm { d } } c } { { \mathrm { d } } X } } = { \frac { 1 } { 2 } } { \frac { \mathrm { d } } { { \mathrm { d } } X } } \oint _ { a } { \mathrm { d } } p = 0 .$
+
+推论 3.5.
+
+$$
+S = 2 \oint _ { b } \mu \mathrm { d } \lambda + S _ { 0 }
+$$
+
+为(3.69)的解. 这里的 $S _ { 0 }$ 为任意常数, 闭链 $b$ 在椭圆曲线上与 $a$ 共轭.
+
+证明. 由公式 $\oint _ { b } \mathrm { d } p = { \frac { \pi } { \omega } }$ 可得. [见2.4节公式(2.139)] .
+
+从(3.70), (3.71)出发, 经计算可得渐近解(3.67)的领头项为
+
+$$
+u ^ { 0 } ( x ) = 2 \wp \left( \frac { 4 } { 5 } \frac { g _ { 2 } } { \varepsilon } - \frac { 2 c \omega ^ { \prime } } { i \pi \varepsilon } + \frac { \omega } { \pi \varepsilon } S _ { 0 } + \omega ^ { \prime } \Big | g _ { 2 } , g _ { 3 } \right) ,
+$$
+
+$$
+g _ { 2 } = \varepsilon x ,
+$$
+
+并且函数 $g _ { 3 } = g _ { 3 } ( \varepsilon x , c )$ 由下式决定:
+
+$$
+3 g _ { 3 } = 2 g _ { 2 } \frac { \eta } { \omega } - \frac { 5 c } { 2 \omega }
+$$
+
+$[ \eta = \eta ( g _ { 2 } , g _ { 3 } ) , \omega = \omega ( g _ { 2 } , g _ { 3 } ) ] \ , c , S _ { 0 } \ \dot { \mathcal { I } }$ 为任意常数.
+
+类型 II 的解也有类似公式.
+
+最让人惊讶的是, 这个渐近公式不仅对于有限的 $x$ , 在 $\varepsilon \to 0$ 时是好的, 而且对 $x$ 在$x \to \infty$ 时也是好的. 为此, 注意到当 $x \to \infty$ 时 $e _ { 3 } - e _ { 2 } \to 0$ . 此时求解方程(3.72b)可得
+
+$$
+e _ { 1 } \approx \sqrt { \frac { X } { 3 } } , e _ { 2 , 3 } \approx - \sqrt { \frac { X } { 1 2 } } \pm \sqrt { \frac { c } { \pi } } ( 1 2 X ) ^ { - 1 / 8 } ( X = \varepsilon x ) .
+$$
+
+因此,
+
+$$
+u ^ { ( } 0 ) \approx - \sqrt { \frac { X } { 3 } } - 2 \sqrt { \frac { c } { \pi } } ( 1 2 X ) ^ { - 1 / 8 } \cos \left[ \frac { 4 \sqrt [ 4 ] { 1 2 } } { 5 \varepsilon } X ^ { 5 / 4 } - \frac { 5 c } { 4 \pi \varepsilon } \log X + \frac { \tilde { S } _ { 0 } } { \varepsilon } \right] ,
+$$
+
+其中 $\tilde { S } _ { 0 }$ 为某个新的常数. 此公式恰为 P-I 方程的恰当解的渐近公式 [47].
+
+对于 $L = - \partial _ { x } ^ { 2 } + u$ , $A$ 为 KdV 方程簇中的任一算子, 平均化之后的量子化方程(3.58)是可积的 [利用(3.66)] . 更一般的常微分算子的平均化量子化方程的可积性的证明可见 [48].
+
+# 参考文献
+
+# 泊松括号的几何
+
+1. Balinskij, A.A. and Novikov, S.P.,(1985) Poisson brackets of hydrodynamics type, Frobenius algebras and Lie algebras, Sov. Math. Dokl. 32, 228-231.   
+2. Grinberg, N.I., Poisson brackets of the hydrodynamic type with degenerate metric, Russian Math. Surveys 40:4, 231-232.   
+3. Drinfel’d, V.G.,(1983) Hamiltonian structures on Lie Groups, Lie algebras and the geometrical meaning of the classical Yang-Baxter equations, Sov. Math. Dokl. 27, 68-71.   
+4. Drinfel’d, V.G.,(1986) Quantum groups, J. Sov. Math. 41(1988), 898-915.   
+5. Dubrovin, B.A.,(1989) Differential-geometrical Poisson brackets on a lattice, Funct. Anal. Appl. 23, 131-133.   
+6. Dubrovin, B.A. and Novikov S.P.,(1983) The Hamiltonian formalism of one-dimensional systems of the hydrodynamic type and the Bogoliubov-Whitham averaging method, Sov. Math. Dokl. 27, 665-669.   
+7. Dubrovin, B.A., and Novikov, S.P., (1984) On Poisson brackets of the hydrodynamic type, Sov. Math. Dokl. 30(1984), 651-654.   
+8. Dubrovin, B.A., Novikov, S.P., Fomenko, A.T., (1984-1990) Modern Geometry. Parts I-III, Springer-Verlag, N.Y.   
+9. Mokhov, O.I., (1988) Poisson brackets of the Dubrovin-Novikov type (DN-brackets), Funct. Anal. Appl. 22, 336-338.   
+10. Novikov, S.P., (1982) Hamiltonian formalism and the multivalued analogue of Morse’s theory, Russian Math. Surveys 37:5, 1-56.   
+11. Novikov, S.P., (1985) Geometry of conservative systems of the hydrodynamic type. The method of averaging for field-theory systems, Russian Math. Surveys 40:4, 85-98.   
+12. Pavlov, M.V., (1987) Hamiltonian formalism of weakly nonlinear equations of hydrodynamics, Theoret. and Math. Phys. 73, 1242-1245.   
+13. Polyak, M.V., (1987) One-dimensional Hamiltonian systems of the hydrodynamic type with an explicit dependence on the spatial variable, Russian Math. Surveys 42:3, 229-230.   
+14. Potiomin, G.V., (1986) On Poisson brackets of differential-geometric type, Sov. Math. Dokl. 33, 30-33.   
+15. Tsarev, S.P., (1989) The Hamilton property of stationary and inverse equation of condensed matter mechanics and mathematical physics, Math. Notes 46:1, 569-573.   
+16. Tsarev, S.P., (1989) Liouville Poisson brackets and one-dimensional Hamiltonian systems of the hydrodynamics type which arise in the Bogolubov-Whitham theory of averaging, Russian Math. Surveys 39:6, 227-228.   
+17. Tsarev, S.P., (1985) Poisson brackets and one-dimensional Hamiltonian systems of the hydrodynamic type, Sov. Math. Dokl. 34 (1987), 534-537.   
+18. Astashov, A.M. and Vinogradov, A.M., (1986) On the structure of Hamiltonian operators in field theory, J. Geom. Phys. 3, 263-287.   
+19. Zel’manov, E.I., (1987) On a class of local translationally invariant Lie algebras, Sov. Math. Dokl. 35, 216-218.   
+20. Gelfand, I.M. and Dorfman, I.A., (1981) Hamiltonian operators and finite-dimensional Lie algebras, Funct. Anal. Appel. 15, 173-187.   
+21. Gelfand, I.M. and Dorfman, I.A., (1979) Hamiltonian operators and related algebraic structures, Funct. Anal. Appl. 13, 246-262.   
+22. Voroyev, Yu.M. and Karasev, M.V., (1968) Poisson manifolds and Schouten brackets, Funct. Anal. Appl. 22 (1988), 1-9.   
+23. Dzyaloshinskii, I.E. and Volovik, G.E., (1980) Poisson brackets in condensed matter physics, Ann. of Phys. 125, 67-97.   
+24. Faddeev, L.D., Takhtajan, L.A., (1986) Hamiltonian Methods in the Theory of Solitons, Springer-Verlag, Berlin, Heidelberg, New York, Tokyo.   
+25. Jimbo, M., (1985) A q-difference analogue of $\mathcal { U } ( { \mathfrak { g } } )$ and the Yang-Baxter equations, Lett. Math. Phys. 10, 63-69.   
+26. Arnold, V.I., (1974) Mathematical Methods of Classical Mechanics, Graduate Texts in Mathematics 60, Springer, New York-Berlin-Heidelberg.   
+27. Novikov, S.P. (Ed.), (1980) The Theory of Soltons: the Inverse Problem Method, Nauka, Moscow. Translation: Plenum Press, N.Y., 1984.   
+28. Veselov, P.A. and Takhtadjan, L.A., (1984) The integrability of Novikov’s equations for the principal chiral fields with a multi-valued Lagrangian, Sov. Phys. Dokl. 29, 994-996.   
+29. Magri, F., (1978) A simple model of the integrable Hamiltonian system, J. Math. Phys. 19:5, 1156-1162.   
+30. Dubrovin, B.A. and Novikov, S.P., (1989) Hydrodynamics of weakly deformed soliton lattices. Differential geometry and Hamiltonian theory, Russian Math. Surveys 44:6, 35-124.
+
+# 可积系统
+
+1. Veselov, A.P. and Novikov, S.P., (1982) On Poisson brackets compatible with algebraic geometry and the KdV dynamics on the set of finite-zone potentials, Sov. Math. Dokl. 26, 357-362.   
+2. Veselov, A.P. and Novikov, S.P., (1984) Poisson brackets and complex tori, Proc. Stekolv Inst. Math. 165, 52-65.   
+3. Dubrovin, B.A., (1975) Periodic problem for the Korteweg-de Vries equation in the class of finite-zone potentials, Funct. Anal. Appl. 9, 215-223.   
+4. Dubrovin, B.A., (1981) Theta functions and nonlinear equations, Russian Math. Surveys 36:2, 11-92.   
+5. Dubrovin, B.A., Krichever, I.M. and Novikov, S.P., (1985) Integrable system. I. Encyclopaedia of mathematical Sciences, vol.4, 173-280. Springer-Verlag, Berlin - Heidelberg - New York - London - Paris - Tokyo - Hong Kong.   
+6. Dubrovin, B.A., Matveev, V.B. and Novikov, S.P., (1976) Non-linear equations of Kortewegde Vries type, finite-zone linear operators, and Abelian varieties, Russian Math. Surveys 31:1, 55-136.   
+7. Dubrovin, B.A. and Novikov, S.P., (1982) Algebraic-geometric Poisson brackets for real finite-zone solutions of the Sine-Grodon and of the nonlinear Schrödinger equations, Sov. Math. Dokl. 26, 760-765.   
+8. Dubrovin, B.A. and Novikov, S.P., (1974) Periodic and conditionally periodic analogs of the mani-soliton solutions of the Korteweg-de Vries equation, Sov. Phys. JETP 40, 1058-1063.   
+9. Zakharov, V.E., (1980) Berney equations and the quasi-classical approximation in the inverse problem method, Funct. Anal. Appl. 14, 89-98.   
+10. Zakharov, V.E. and Faddeev, L.D., (1971) The Korteweg-de Vries equation is a completely integrable Hamiltonian system, Ibid. 5, 280-287.   
+11. Its, A.R. and Matveev, V.B., (1975) Hill operators with a finite-band spectrum and multisoliton solutions of the Korteweg-de Vries equations, Theor. and Math. Phys. 23, 343-355.   
+12. Krechever, I.M., (1977) Integration of non-linear equations by the methods of algebraic geometry, Funct. Anal. Appl. 11, 12-26.   
+13. Kuperschmidt, B.A. and Manin, Yu.I., (1977) Equations of long waves with a free boundary. I. Conservation laws and solutions, Ibid. 11, 188-197.   
+14. Kuperschmidt, B.A. and Manin, Yu.I., (1978) Equations of long waves with a free boundary. II. Hamiltonian structures and higher order equations, Ibid. 12, 20-29.   
+15. Novikov, S.P., (1974) A periodic problem for the Korteweg-de Vries equation. I. Ibidem 8, 236-240.   
+16. Takhtadjan, L.A. and Faddeev, L.D. See ref.24 to Part I.   
+17. Novikov, S.P., (Ed.). See ref.27 to Part I.   
+18. Adler, M., (1979) On a trace functional for formal pseudodifferential operators and the sympletic structure of the Korteweg-de Vries type equations, Invent. Math. 50, 219-248.   
+19. Benney, D.J., (1973) Some properties of long non-linear waves, Stud. Appl. Math. 52, 45-50.   
+20. Dubrovin, B.A., Krichever, I.M. and Novikov, S.P., (1982) Topological and algebraic geometry methods in contemporary mathematical physics. II, Sov. Sci. Rev.: Math. Phys. Rev. 3, 1-150.   
+21. Flaschka, H. and McLaughlin, D.W., (1976) Canonically conjugate variables for the Korteweg-de Vries equation and the Toda lattice with periodic boundary conditions, Progr. Theor. Phys. 55, 438-456.   
+22. Gardner, G.S., (1971) Korteweg-de Vries equation and generalizations. IV, J. Math. Phys. 12, 1548-1551.   
+23. Gibbons, J., (1981) Collisionless Boltzmann equations and integrable moment equations, Physica 3D, 503-511.   
+24. Lax, P.D., (1974) Periodic solutions of the KdV-equation. Lectures in Appl. Math., vol.15, Amer. Math. Soc., Providence, R.I., 85-86.   
+25. Belokolos, E.D., Bobenko, A.I., Matveev, V.B. and Enol’skii., V.Z., (1986) Algebraicgeometric principles of superposition of finite-zone solutions of integrable non-linear equations, Russian Math. Surveys 41:2, 1-49.   
+26. Novikov, S.P., (1985) See ref.11 to Part I.   
+27. Tsarev, S.P., (1985) See ref.17 to Part I.   
+28. Tsarev, S.P., (1990) Geometry of Hamiltonian systems of hydrodynamic type. Generalized hodograph method, Soviet Math. Izvestija 54:5.   
+29. Cartan, E., (1945) Les systèmes différentielles extérieures et leurs applications géomètriques, Hermann, Paris.   
+30. Dubrovin, B.A. and Novikov, S.P. (1989) See ref.30 to Part I.   
+31. Rozhdestvenskii, B.L. and Yanenko, N.N., (1978) Systems of quasilinear equations and their applications in gas dynamics, 2nd ed., Nauka, Moscow. (In Russian)   
+32. Pavlov, M.V., (1987) Hamiltonian formalism of electrophoresis equations. Integrable equations of hydrodynamics. London Inst. Preprint 87-17, Moscow.   
+33. Nijenhuis, A., (1951) On $X _ { n - 1 }$ forming sets of eigenvectors, Indag Math. 13, 200-212.   
+34. Haantjes, J., (1954) On $X _ { m }$ -forming sets of eigenvectors, Indag. Math. 17, 158-162.   
+35. Bogoyavlenskii, O.I. and Novikov, S.P., (1976) The relationship between the Hamiltonian formalisms of stationary and nonstationary problems, Funct. Anal. Appl. 10 (1976), 8-11.   
+36. Mokhov, O.I., (1987) On the Hamiltonian property of an arbitrary evolution system on the set of stationary points of its integral, Math. USSR Izvestiya 31:3, 657-664.   
+37. Lax, P.D., (1974) Periodic solutions of the KdV equations, Non-linear Wave Motion (A.C. Newell editor). Lectures in Appl. Math., vol.15, Amer. Math. Soc., Providence, R.I., 85-96.   
+38. Mihkailov, A.V., Shabat, A.B. and Yamilov, R.I., (1987) The symmetry approach to the classification of non-linear equations. Complete lists of integrable systems, Russian Math. Surveys 42:4, 1-63.   
+39. Ibragimov, N.K., (1985) Transformation groups applied to mathematical physics. Reidel, Dordrecht.   
+40. Sokolov, V.V., (1988) On the symmetries of evolution equations, Russian Math. Surveys 43:5, 165-204.   
+41. Fay, J.,(1973) Theta functions on Riemann surfaces. Lecture Notes in Math. 352, Springer-Verlag, N.Y.   
+42. Dubrovin, B.A., (1990) The differential geometry of strongly integrable systems of the hydrodynamic type, Funct. Anal. Appl. 24.   
+43. Darboux, G., (1910) Leçons sur les systèmes orthogonaux et les coordonnées curvilignes. Paris.   
+44. Egoroff, D.F., (1901) Selected papers in differential geometry, Nauka, Moscow, 1970. (In Russian).   
+45. Dubrovin, B.A., (1977) Completely integrable Hamiltonian systems associated with matrix operators and Abelian varieties, Funct. Anal. Appl. 11, 265-277.   
+46. Dubrovin, B.A., (1983) Matrix finite-gap operators, J. Soviet Math. 28 (1985), 20-50.   
+47. Fokas, A.S., Leo, R.A., Martina, L. and Soliani, G. (1986), Phys. Lett. 115A, 329-332.   
+48. Bateman, H. and Erdélyi, (1955) Higher transcendental functions, vol.3, McGraw-Hill, New York - Toronto - London.
+
+# 哈密顿系统的慢摄动与平均化方法
+
+1. Avilov, V.V. and Novikov, S.P., (1987) Evolution of the Whitham zone in KdV theory, Sov. Phys. Dokl. 32, 366-368.   
+2. Avilov, V.V., Krichever, I.M. and Novikov, S.P., (1987) Evolution of the Whitham zone in the Korteweg-de Vries theory, Sov. Phys. Dokl. 32, 564-566.   
+3. Vereshchagin, V.L., (1988) Hamiltonian structure of averaged difference schemes. Math. Notes 44, 798-805.   
+4. Gurevich, A.V. and Pitaevskii, L.P., (1973) Non-stationary structure of a collisionless shock wave, Sov. Phys. JETP 38, 291-297.   
+5. Gurevich, A.V. and Pitaevskii, L.P., (1987) Averaged description of waves in the Kortewegde Vries-Burgers equation, Ibidem, 93, 871-880.   
+6. Gurevich, A.V. and Pitaevskii, L.P., (1973) Decay of initial discontinuity in the Kortewegde Vries equation, JETP Letters 17, 193-195.   
+7. Dobrokhotov, S. Yu., (1988) Resonance correction to the adiabatically perturbed finite-zone almost periodic solution of the Korteweg-de Vries equation. Math. Notes 44:3, 656-668.   
+8. Dobrokhotov, S. Yu., (1988) Resonances in the asymptotics of solution of the Cauchy problem for the Schrödinger equation with a rapidly oscillating finite-zone potential. Math. Notes 44, 656-668. 9. Dobrokhotov, S. Yu. and Maslov, V.P., (1980) Finite-gap almost periodic solutions in WKB-approximations, J. Sov. Math. 16, 1433-1487.   
+10. Dubrovin, B.A. and Novikov, S.P. (1983). See ref.6 to Part I.   
+11. Krichever, I.M., (1988) The method of averaging for two-dimensional “integrable" equations, Funct. Anal. Appl. 22, 200-213.   
+12. Krichever, I.M., (1989) Spectral theory of two-dimensional periodic operators and its applications, Russian Math. Surveys 44, 145-225.   
+13. Dubrovin, B.A. and Novikov, S.P. (1989). See ref.30 to Part I.   
+14. Maslov, V.P., (1969) Transition as $h  0$ of the Heisenberg equation to the equation of dynamics of an ideal monoatomic gas and the quantization of relativistic hydrodynamics, Theor. and Math. Phys. 1. 378-384.   
+15. Novikov, S.P., (1985). See ref.11 to Part I.   
+16. Pavlov, M.V., (1987) The non-linear Schrödinger equation and the Bogolyubov-Whitham averaging method, Theor. and Math. Phys. 71, 584-588.   
+17. Potiomin, G.V., (1988) Algebraic-geometric construction of self-similar solutions of the Whitham equations, Russian Math. Surveys 43:5, 252-253.   
+18. Whitham, G.B., (1974) Linear and Nonlinear Waves. Wiley Interscience, New York - London - Sydney.   
+19. Ablowitz, M.J. and Benney, D.J., (1970) The evolution of multiphase modes for non-linear dispersive waves, Stud. Appl. Math. 49, 225-238.   
+20. Bikbaev, R.F. and Novokshenov, V.Yu., (1988) Self-similar solutions of the Whitham equations and the KdV equation with finite-gap boundary conditions. Proc. III Inter. Workshop, vol.I, Kiev 1988, 32-35.   
+21. Chierchia, L., Ercolani N. and McLaughlin D.W. (1987), On the weak limit of rapidly oscillating waves, Duke Math. J. 55, 759-764.   
+22. Dobrokhotov, S. Yu. and Maslov, V.P., (1982) Multiphase asymptotics of non-linear partial differential equations with a small parameter, Sov. Sci. Rev.: Math. Phy. Rev. 3, 221-311.   
+23. Ercolani, N., Forest, M.G., McLaughlin, D.W. and Montgomery, R., (1987) Hamiltonian structure of the modulation equations of a Sine-Gordon wavetrain, Duke Math. J. 55, 949-983.   
+24. Flaschka, H., Forest, M.G. and McLaughlin, D.W., (1980) Multiphase averaging and the inverse spectral solution of the Korteweg-de Vries equation, Comm. Pure Appl. Math. 33, 739-784.   
+25. Forest, M.G. and McLaughlin, D.W., (1984) Modulations of perturbed KdV wavefronts, SIAM J. Appl. Math. 44, 278-300.   
+26. Forest, M.G. and McLaughlin, D.W., (1983) Modulation of Sinh and Sine-Gordon wavetrains, Stud. Appl. Math. 68, 11-59.   
+27. Goodman, J. and Lax, P.D., (1988) On dispersive difference schemes, Comm. Pure Appl. Math. 41, 591-613.   
+28. Hayes, W.D., (1973) Group velocity and non-linear dispersive wave propagation, Proc. Royal Soc. London A332, 199-221.   
+29. Lax. P.D., (1986) On dispersive difference schemes, Physica 18D, 250-254.   
+30. Lax, P.D., (1988) Oscillatory solutions of partial differential and difference equations. (In: Mathematics Applied to Since, Acad. Press, N.Y., 155-170).   
+31. Lax, P.D., (1983) The small dispersion limit of the Korteweg-de Vries equation. II, III, Comm. Pure Appl. Math. 36, 253-290.   
+32. Lax, P.D. and Levermore, C.D., (1983) The small dispersion limit of the Korteweg-de Vries equation. II, III, Comm. Pure Appl. Math. 36, 571-593, 809-830.   
+33. Luke, J.L., (1966) A perturbation method for non-linear dispersive wave problems, Proc, Royal Soc. London A 292, 403-412.   
+34. Venakides, S., (1987) The zero-dispersion limit of the periodic KdV equation, Trans. Amer. Math. Soc. 301, 189-226.   
+35. Venakides, S., (1985) The zero-dispersion limit of the KdV equation with non-trivial reflection coefficient, Comm. Pure Appl. Math. 38, 125-155.   
+36. Whitham, G.B., (1965) A general approach to linear and non-linear dispersive waves using a Lagrangian, J. Fluid Mech. 22, 273-283.   
+37. Whitham, G.B., (1965) Non-linear dispersive waves, Proc. Royal Soc. London A139, 283-291.   
+38. Dubrovin, B.A., (1990) See ref.42 to Part II.   
+39. Novikov, S.P., (Ed.). See ref.27 to Part I.   
+40. Bikbaev, R.F. and Novokshenov, V. Yu. Math. USSR Izvestija.   
+41. Dubrovin, B.A., Krichever, I.M. and Novikov, S.P. (1985). See ref.5 to Part II.   
+42. Novikov, S.P. (1990), Progress Theor. Phys. Suppl. 102.   
+43. Dubrovin, B.A. and Novikov, S.P., (1990) Ibidem, Appendix to ref.42.   
+44. Brezin, E. and Kazakov, V.A., (1990), Phys. Lett. 236B, 144; Douglas, M. and Shenkar, S. (1989), Strings in Less than One Dimension, Rutgers preprint RU-89-34; Gross, D. and Migdal, A.A. (1990), Phys. Rev. Lett. 64, 127.   
+45. Fokas, A.S., Its, A.R. and Kitaev, A.V., (1990) Isomonodromic approach in 2D quantum gravity, Russian Math. Surveys 45:6.   
+46. Holmes, Ph. and Spence, D. (1984), On a Painlevé-type boundary-value problem, Quart. J. Mech. and Appl. Math. 37:4, 525-538.   
+47. Krichever, I.M., (1990), On Heisenberg relation for ordinary differential operators. Preprint. Zürich.
+
+# 名词英汉对照
+
+Abelian variety 阿贝尔簇, 79  
+action-angle variable 作用量-角参数, iv  
+algorithm of integration 积分算法, 45  
+annihilator 零化子, 2  
+averaged Hamiltonian formalism 平均化  
+哈密顿理论, 90  
+averaged quantum curve 平均化量子曲  
+线, 109  
+averaging method 平均化方法, 15  
+bi-Hamiltonian 双哈密顿, 69  
+chiral field 手性场, 22  
+cnoidal wave 椭圆余弦波, 85  
+co-associative 余结合, 8  
+co-vector 余向量, 49  
+coboundary 上边缘, 11  
+commutative representation 交换表示,  
+65  
+complete integrability 完全可积性, 13  
+consetvation law 守恒律, 3  
+continuous prolongation 连续延伸, 39  
+distribution 广义函数, 17  
+Egoroff metric Egoroff 度量, 52  
+equation of slow modulation 慢调制方  
+程, 88  
+finite-gap operator 有限空缺算子, 78  
+flux density 流密度, 70  
+foliation 叶状结构, 2
+
+generalized hodograph transform 广义 速端曲线变换, 47
+
+Hamiltonian 哈密顿量, 2  
+Hamiltonian formalism 哈密顿理论, 1  
+Hamiltonian system 哈密顿系统, 2  
+Hamiltonian-Lie group 哈密顿-李群, 8  
+Hermitean random matrix model 厄密随机矩阵模型, 107  
+hierarchy 方程簇, 65  
+hodograph method 速端曲线法, 46  
+hodograph transform 速端曲线变换, 46  
+invariant tori 不变环, iv  
+inverse scattering method 反散射方法,23
+
+Jacobi identity 雅可比恒等式, 1   
+Jacobi variety 雅可比簇, 79   
+lattice 格, 36   
+Leibnitz rule 莱布尼茨法则, 1   
+level surface 等值面, 13   
+Lie bi-algebra 李双代数, 10   
+Lie-Poisson bracket 李-泊松括号, 5   
+local field-theoretic functional 局部场论   
+泛函, 18   
+local field-theoretic Poisson bracket 局   
+部场论泊松括号, 19   
+loop algebra 圈代数, 23   
+loop group 圈群, 23   
+mutliphase solution 多相解, 87   
+one-phase solution 单相解, 87   
+partition function 配分函数, 107   
+perturbation theory 摄动理论, 15   
+phase space 相空间, 1   
+Poisson bracket 泊松括号, 1   
+Poisson symmetry 泊松对称, 3
+
+zero-curvature representation 零曲率表示, 65
+
+quantization 量子化, 106  
+quantum group 量子群, 10  
+quasi-triangular Hopf algebra 拟三角  
+Hopf 代数, 12  
+quasimomentum 拟矩, 72  
+Riemann invariant 黎曼不变量, 49  
+rotation coefficient 旋转系数, 52  
+Schouten bracket Schouten 括号, 2  
+semi-Hamiltonian system 半哈密顿系  
+统, 45  
+simple wave 单波, 84  
+skew gradient 斜梯度, 3  
+soliton 孤子, 64  
+spectral curve 谱曲线, 78  
+spectral parameter 谱参数, 65  
+symmetry 对称, 3  
+symplectic leaf 辛叶, 2  
+symplectic manifold 辛流形, 2  
+symplectic structure 辛结构, 2  
+ultralocal Poisson bracket 超局部泊松  
+括号, 21  
+Whitham averaged equation 惠特姆平  
+均化方程, 88

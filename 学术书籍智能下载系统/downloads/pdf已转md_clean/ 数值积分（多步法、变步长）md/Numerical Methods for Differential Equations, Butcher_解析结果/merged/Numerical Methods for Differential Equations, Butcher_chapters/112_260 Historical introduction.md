@@ -1,0 +1,5 @@
+# 260 Historical introduction
+
+The idea of combining the ideas behind Runge–Kutta methods with those behind linear multistep methods dates from the period 1960–1970. One approach is to make use of stage derivatives computed in one or more previous steps in the computation of the approximation at the end of a current step. Methods based on this idea are referred to as pseudo Runge–Kutta methods. The earliest work on these methods is that of Byrne and Lambert (1966).
+
+Another type of generalization of existing methods was proposed in three independent publications (Gragg and Stetter, 1964; Butcher, 1965; Gear, 1965). The most commonly used name for these is that introduced by Gear, ‘hybrid methods’, although we use here the name ‘modified multistep methods’ introduced by Butcher. A consideration of these various generalizations has led to the construction of comprehensive theories. We consider one of the earliest of these formulations in this section, and refer to the wide class of multivalue–multistage methods as ‘general linear methods’.

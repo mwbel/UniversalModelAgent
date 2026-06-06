@@ -20,6 +20,16 @@ from backend.config import SETTINGS
 from backend.rag_catalog import DEFAULT_RAG_STRATEGIES, build_strategy_catalog
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
+UNIVMODEL_DIR = ROOT_DIR.parent
+PLANET_MOTION_DIR = UNIVMODEL_DIR / "行星运动模型"
+PLANET_MOTION_KB_ID = "planet-motion"
+PLANET_MOTION_DOCS = [
+    "行星运动数值分析作业.md",
+    "README.md",
+    "README_DE_MODEL.md",
+    "DE模型实现说明.md",
+    "数值积分与插值详解.md",
+]
 LOCAL_RAG_DIR = ROOT_DIR / ".local_rag"
 LOCAL_RAG_DB_PATH = LOCAL_RAG_DIR / "store.json"
 TOKEN_PATTERN = re.compile(r"[\u4e00-\u9fff]|[A-Za-z0-9_]+")
@@ -180,6 +190,25 @@ def _json_dump(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def _build_document_record(doc_id: str, filename: str, text: str, metadata: dict[str, Any] | None = None) -> dict[str, Any]:
+    chunks = _split_text(text)
+    return {
+        "doc_id": doc_id,
+        "filename": filename,
+        "title": filename,
+        "metadata": metadata or {},
+        "chunks": [
+            {
+                "chunk_id": f"{doc_id}-chunk-{index + 1}",
+                "chunk_index": index,
+                "content": chunk,
+                "tokens": _tokenize(chunk),
+            }
+            for index, chunk in enumerate(chunks)
+        ],
+    }
+
+
 @dataclass(slots=True)
 class RetrievalItem:
     doc_id: str
@@ -201,6 +230,8 @@ class RagClient:
         _json_dump(LOCAL_RAG_DB_PATH, payload)
 
     def _get_kb(self, kb_id: str) -> dict[str, Any] | None:
+        if kb_id == PLANET_MOTION_KB_ID:
+            self.ensure_builtin_knowledge_bases()
         store = self._load_store()
         return (store.get("knowledge_bases") or {}).get(kb_id)
 
@@ -285,6 +316,51 @@ class RagClient:
                 )
             )
         return citations
+
+    def ensure_builtin_knowledge_bases(self) -> None:
+        source_files = [PLANET_MOTION_DIR / filename for filename in PLANET_MOTION_DOCS]
+        existing_files = [path for path in source_files if path.exists()]
+        if not existing_files:
+            return
+
+        signature = {
+            str(path): {
+                "mtime": path.stat().st_mtime,
+                "size": path.stat().st_size,
+            }
+            for path in existing_files
+        }
+        store = self._load_store()
+        knowledge_bases = store.setdefault("knowledge_bases", {})
+        kb = knowledge_bases.get(PLANET_MOTION_KB_ID)
+        if kb and (kb.get("metadata") or {}).get("signature") == signature:
+            return
+
+        documents: list[dict[str, Any]] = []
+        for index, path in enumerate(existing_files, start=1):
+            text = path.read_text(encoding="utf-8", errors="ignore")
+            document = _build_document_record(
+                doc_id=f"builtin-planet-motion-{index}",
+                filename=path.name,
+                text=text,
+                metadata={
+                    "builtin": True,
+                    "source_path": str(path),
+                },
+            )
+            if document.get("chunks"):
+                documents.append(document)
+
+        knowledge_bases[PLANET_MOTION_KB_ID] = {
+            "documents": documents,
+            "updated_at": time.time(),
+            "metadata": {
+                "builtin": True,
+                "source_dir": str(PLANET_MOTION_DIR),
+                "signature": signature,
+            },
+        }
+        self._save_store(store)
 
     def _generate_answer(
         self,
@@ -373,6 +449,8 @@ class RagClient:
         strategy = (variant or SETTINGS.default_rag_strategy or "naive").strip() or "naive"
         normalized_strategy = strategy.lower().replace("-", "_")
         kb_name = kb_id or SETTINGS.default_kb_id
+        if kb_name == PLANET_MOTION_KB_ID:
+            self.ensure_builtin_knowledge_bases()
         kb, documents = self._kb_items(kb_name)
         if not kb or not documents:
             return {
@@ -382,6 +460,56 @@ class RagClient:
                 "answer": "",
                 "citations": [],
                 "contexts": [],
+            }
+
+        retrieval = self.retrieve_contexts(
+            question=question,
+            variant=normalized_strategy,
+            kb_id=kb_name,
+            limit=6,
+            started=started,
+        )
+        contexts = retrieval["contexts"]
+        citations = retrieval["citations"]
+        answer, usage = self._generate_answer(question, contexts, history)
+
+        return {
+            "ok": bool(answer),
+            "answer": answer,
+            "citations": citations,
+            "contexts": contexts,
+            "strategy": normalized_strategy,
+            "resolvedStrategy": normalized_strategy,
+            "latencyMs": round((perf_counter() - started) * 1000, 2),
+            "tokenUsage": usage,
+            "raw": retrieval["raw"],
+        }
+
+    def retrieve_contexts(
+        self,
+        question: str,
+        variant: str | None = None,
+        kb_id: str | None = None,
+        limit: int = 6,
+        started: float | None = None,
+    ) -> dict[str, Any]:
+        started_at = started or perf_counter()
+        strategy = (variant or SETTINGS.default_rag_strategy or "naive").strip() or "naive"
+        normalized_strategy = strategy.lower().replace("-", "_")
+        kb_name = kb_id or SETTINGS.default_kb_id
+        if kb_name == PLANET_MOTION_KB_ID:
+            self.ensure_builtin_knowledge_bases()
+        kb, documents = self._kb_items(kb_name)
+        if not kb or not documents:
+            return {
+                "ok": False,
+                "error": f"本地知识库 `{kb_name}` 还没有文档，请先上传文件。",
+                "citations": [],
+                "contexts": [],
+                "strategy": normalized_strategy,
+                "resolvedStrategy": normalized_strategy,
+                "latencyMs": round((perf_counter() - started_at) * 1000, 2),
+                "raw": None,
             }
 
         query_tokens = _tokenize(question)
@@ -408,19 +536,15 @@ class RagClient:
                 )
 
         retrieved.sort(key=lambda item: item.score, reverse=True)
-        contexts = self._build_contexts(kb_name, documents, retrieved, normalized_strategy)
+        contexts = self._build_contexts(kb_name, documents, retrieved[:limit], normalized_strategy)
         citations = self._build_citations(contexts)
-        answer, usage = self._generate_answer(question, contexts, history)
-
         return {
-            "ok": bool(answer),
-            "answer": answer,
+            "ok": bool(contexts),
             "citations": citations,
             "contexts": contexts,
             "strategy": normalized_strategy,
             "resolvedStrategy": normalized_strategy,
-            "latencyMs": round((perf_counter() - started) * 1000, 2),
-            "tokenUsage": usage,
+            "latencyMs": round((perf_counter() - started_at) * 1000, 2),
             "raw": {
                 "kb_id": kb_name,
                 "retrieved": [
@@ -451,6 +575,7 @@ class RagClient:
         return {"ok": True, "error": None, "items": items}
 
     def get_knowledge_bases(self) -> dict[str, Any]:
+        self.ensure_builtin_knowledge_bases()
         store = self._load_store()
         knowledge_bases = store.get("knowledge_bases") or {}
         items = []
@@ -482,20 +607,7 @@ class RagClient:
             documents = kb.setdefault("documents", [])
 
             doc_id = f"doc-{len(documents) + 1}"
-            document_record = {
-                "doc_id": doc_id,
-                "filename": filename,
-                "title": filename,
-                "chunks": [
-                    {
-                        "chunk_id": f"{doc_id}-chunk-{index + 1}",
-                        "chunk_index": index,
-                        "content": chunk,
-                        "tokens": _tokenize(chunk),
-                    }
-                    for index, chunk in enumerate(chunks)
-                ],
-            }
+            document_record = _build_document_record(doc_id=doc_id, filename=filename, text=text)
             documents.append(document_record)
             kb["updated_at"] = time.time()
             self._save_store(store)

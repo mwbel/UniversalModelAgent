@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -9,15 +10,78 @@ from backend.visualization_catalog import VISUALIZATION_CAPABILITIES, Visualizat
 VISUALIZATION_INTENT_MARKERS = (
     "可视化",
     "展示",
+    "绘制",
     "画",
     "图",
+    "图示",
+    "示意图",
+    "示意",
     "演示",
     "模拟",
+    "动画",
+    "交互",
+    "看图",
+    "出图",
+    "做图",
     "visualize",
+    "visualization",
+    "visualisation",
     "show me",
     "diagram",
     "demo",
+    "draw",
+    "illustrate",
+    "animation",
+    "interactive",
 )
+
+BODY_ALIASES = {
+    "水星": "mercury",
+    "mercury": "mercury",
+    "金星": "venus",
+    "venus": "venus",
+    "地球": "earth",
+    "earth": "earth",
+    "火星": "mars",
+    "mars": "mars",
+    "木星": "jupiter",
+    "jupiter": "jupiter",
+    "土星": "saturn",
+    "saturn": "saturn",
+    "天王星": "uranus",
+    "uranus": "uranus",
+    "海王星": "neptune",
+    "neptune": "neptune",
+    "月球": "moon",
+    "月亮": "moon",
+    "moon": "moon",
+}
+
+
+def has_explicit_visualization_intent(question: str) -> bool:
+    lowered = question.lower()
+    return any(marker in lowered for marker in VISUALIZATION_INTENT_MARKERS)
+
+
+def _extract_bodies(question: str) -> list[str]:
+    lowered = question.lower()
+    bodies: list[str] = []
+    for alias, body in BODY_ALIASES.items():
+        if alias.lower() in lowered or alias in question:
+            bodies.append(body)
+    return list(dict.fromkeys(bodies))
+
+
+def _extract_date(question: str) -> str | None:
+    iso_match = re.search(r"(\d{4})[-/.](\d{1,2})(?:[-/.](\d{1,2}))?", question)
+    if iso_match:
+        year, month, day = iso_match.groups()
+        return f"{int(year):04d}-{int(month):02d}-{int(day or '1'):02d}"
+    cn_match = re.search(r"(\d{4})\s*年(?:\s*(\d{1,2})\s*月)?(?:\s*(\d{1,2})\s*[日号])?", question)
+    if cn_match:
+        year, month, day = cn_match.groups()
+        return f"{int(year):04d}-{int(month or '1'):02d}-{int(day or '1'):02d}"
+    return None
 
 
 @dataclass(slots=True)
@@ -27,7 +91,7 @@ class VisualizationMatch:
     reasons: list[str]
     concepts: list[dict[str, object]]
 
-    def public_dict(self) -> dict[str, Any]:
+    def public_dict(self, question: str = "") -> dict[str, Any]:
         payload = self.capability.public_dict()
         payload["matchScore"] = round(self.score, 3)
         payload["matchReasons"] = self.reasons
@@ -35,6 +99,14 @@ class VisualizationMatch:
         payload["renderMode"] = "a2ui-compatible-inline"
         payload["generatorType"] = self.capability.implementation_kind
         payload["a2uiInstruction"] = self.capability.a2ui_instruction()
+        if payload["a2uiInstruction"].get("componentId") == "astronomy-core.ephemeris-comparison":
+            initial_props = payload["a2uiInstruction"].setdefault("initialProps", {})
+            bodies = _extract_bodies(question)
+            date = _extract_date(question)
+            if bodies:
+                initial_props["bodies"] = bodies
+            if date:
+                initial_props["date"] = date
         payload["embedUrl"] = (
             f"./interactive-visualizations/index.html?page={payload['pageId']}&embed=1"
         )
@@ -47,6 +119,9 @@ class VisualizationPlanner:
         self.capabilities = VISUALIZATION_CAPABILITIES
 
     def plan(self, question: str, answer: str = "", max_items: int = 2) -> list[dict[str, Any]]:
+        if not has_explicit_visualization_intent(question):
+            return []
+
         concepts = QUESTION_UNDERSTANDING.analyze(question=question, answer=answer)
 
         matches: list[VisualizationMatch] = []
@@ -64,7 +139,9 @@ class VisualizationPlanner:
 
         matches.sort(key=lambda item: (item.score, item.capability.priority), reverse=True)
         if matches:
-            return [match.public_dict() for match in matches[:max_items]]
+            if len(matches) > 1 and matches[0].score >= matches[1].score + 1.0:
+                return [matches[0].public_dict(question)]
+            return [match.public_dict(question) for match in matches[:max_items]]
 
         if self._wants_visualization(question):
             return [self._generic_visualization(question)]
@@ -93,8 +170,7 @@ class VisualizationPlanner:
         return score, reasons, matched_concepts
 
     def _wants_visualization(self, question: str) -> bool:
-        lowered = question.lower()
-        return any(marker in lowered for marker in VISUALIZATION_INTENT_MARKERS)
+        return has_explicit_visualization_intent(question)
 
     def _generic_visualization(self, question: str) -> dict[str, Any]:
         title = "通用概念探索面板"

@@ -15,6 +15,8 @@ export type ChatResponse = {
   answer: string
   service?: string
   strategy?: string
+  autoRagUsed?: boolean
+  computedEphemeris?: Record<string, unknown> | null
   citations?: Array<{ title: string; snippet: string; url?: string }>
   contexts?: Array<{ content: string; score?: number; source?: string; metadata?: Record<string, unknown> }>
   recommendedVisualizations?: VisualizationInstruction[]
@@ -78,6 +80,7 @@ export async function askQuestion(payload: {
   history: Array<{ role: string; content: string }>
   ragVariant: string | null
   kbId: string | null
+  useRag: boolean
 }) {
   return readJson<ChatResponse>('/api/chat', {
     method: 'POST',

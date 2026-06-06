@@ -10,6 +10,7 @@ from urllib.parse import parse_qs, urlparse
 from backend.catalog import VISUALIZATIONS
 from backend.config import SETTINGS
 from backend.services.chat_service import CHAT_SERVICE
+from backend.services.ephemeris_compare import compare_ephemeris
 from backend.services.mineru_client import MINERU_CLIENT
 from backend.services.rag_client import RAG_CLIENT
 from backend.services.visualization_planner import VISUALIZATION_PLANNER
@@ -58,6 +59,18 @@ class AppHandler(BaseHTTPRequestHandler):
         if parsed.path == "/api/rag/kbs":
             self._send_json(RAG_CLIENT.get_knowledge_bases())
             return
+        if parsed.path == "/api/ephemeris/compare":
+            include_orbits = ((query.get("includeOrbits") or ["0"])[0]).lower() in {"1", "true", "yes"}
+            self._send_json(
+                compare_ephemeris(
+                    date=(query.get("date") or [None])[0],
+                    bodies=(query.get("bodies") or [None])[0],
+                    tolerance=(query.get("tolerance") or [None])[0],
+                    tolerance_unit=(query.get("toleranceUnit") or [None])[0],
+                    include_orbits=include_orbits,
+                )
+            )
+            return
         self._serve_static(parsed.path)
 
     def do_POST(self) -> None:  # noqa: N802
@@ -75,6 +88,7 @@ class AppHandler(BaseHTTPRequestHandler):
                 history=payload.get("history", []),
                 variant=payload.get("ragVariant"),
                 kb_id=payload.get("kbId"),
+                use_rag=bool(payload.get("useRag")),
             )
             self._send_json(result)
             return

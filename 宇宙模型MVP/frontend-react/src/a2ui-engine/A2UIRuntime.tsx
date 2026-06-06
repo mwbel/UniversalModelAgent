@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode } from 'react'
-import { EclipseGeometry, EclipticLunarPath } from '../astronomy-components'
+import { EclipseGeometry, EclipticLunarPath, EphemerisComparison } from '../astronomy-components'
 import { GenericVisualization } from './GenericVisualization'
 
 type A2UIComponentNode = {
@@ -22,6 +22,7 @@ const registry = new Map<string, ComponentType<RegistryComponentProps>>()
 
 registry.set('astronomy-core.ecliptic-lunar-path', EclipticLunarPath)
 registry.set('astronomy-core.eclipse-geometry', EclipseGeometry)
+registry.set('astronomy-core.ephemeris-comparison', EphemerisComparison)
 
 function getComponentType(node: A2UIComponentNode): [string, Record<string, unknown>] | null {
   const [name, props] = Object.entries(node.component)[0] ?? []

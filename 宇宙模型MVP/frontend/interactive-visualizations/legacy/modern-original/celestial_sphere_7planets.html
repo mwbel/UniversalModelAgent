@@ -154,9 +154,53 @@
             color: #666;
             pointer-events: none;
         }
+        body.embed-mode .back-link {
+            display: none;
+        }
+        body.embed-mode .sidebar {
+            width: 270px;
+            padding: 16px;
+        }
+        body.embed-mode .sidebar h2 {
+            font-size: 1rem;
+            margin-bottom: 14px;
+        }
+        body.embed-mode .control-group {
+            margin-bottom: 14px;
+        }
+        @media (max-width: 760px) {
+            body {
+                display: block;
+                overflow: auto;
+            }
+            .sidebar {
+                width: auto;
+                border-right: 0;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .main-content {
+                height: 620px;
+            }
+            body.embed-mode {
+                display: flex;
+                overflow: hidden;
+            }
+            body.embed-mode .sidebar {
+                display: none;
+            }
+            body.embed-mode .main-content {
+                width: 100vw;
+                height: 100vh;
+            }
+        }
     </style>
 </head>
 <body>
+<script>
+    if (new URLSearchParams(window.location.search).get('embed') === '1') {
+        document.body.classList.add('embed-mode');
+    }
+</script>
 
 <div class="sidebar">
     <h2>控制面板</h2>
@@ -322,6 +366,26 @@
     let autoRotateInterval = null;
     let currentCameraEye = { x: 1.5, y: 1.5, z: 0.5 };
     let cameraAngle = 0;
+    const pageParams = new URLSearchParams(window.location.search);
+
+    function getParamNumber(name, fallback) {
+        const value = parseFloat(pageParams.get(name) || '');
+        return Number.isFinite(value) ? value : fallback;
+    }
+
+    function setSignedCoordinate(value, valueInputId, hemisphereInputId) {
+        const valueInput = document.getElementById(valueInputId);
+        const hemisphereInput = document.getElementById(hemisphereInputId);
+        if (!valueInput || !hemisphereInput || !Number.isFinite(value)) return;
+        valueInput.value = Math.abs(value).toFixed(2);
+        hemisphereInput.value = value >= 0 ? '1' : '-1';
+    }
+
+    function getParamBoolean(name, fallback) {
+        const value = pageParams.get(name);
+        if (value === null) return fallback;
+        return ['1', 'true', 'yes', 'on'].includes(value.toLowerCase());
+    }
 
     // Helper: Spherical (Az/Alt) to Cartesian (x,y,z)
     // Az: 0=North, 90=East. Alt: 0=Horizon, 90=Zenith.
@@ -342,8 +406,17 @@
     // Initialize UI
     function initUI() {
         const now = new Date();
-        document.getElementById('date').value = now.toISOString().split('T')[0];
-        document.getElementById('time').value = now.toTimeString().split(' ')[0];
+        document.getElementById('date').value = pageParams.get('date') || now.toISOString().split('T')[0];
+        document.getElementById('time').value = pageParams.get('time') || now.toTimeString().split(' ')[0];
+        setSignedCoordinate(getParamNumber('lat', 31.23), 'lat', 'latHemisphere');
+        setSignedCoordinate(getParamNumber('lon', 121.47), 'lon', 'lonHemisphere');
+        const altitudeParam = getParamNumber('altitude', NaN);
+        if (Number.isFinite(altitudeParam)) {
+            document.getElementById('altitude').value = String(altitudeParam);
+        }
+        document.getElementById('showTrails').checked = getParamBoolean('showTrails', true);
+        document.getElementById('showGrid').checked = getParamBoolean('showHorizonGrid', true);
+        document.getElementById('showEquatorial').checked = getParamBoolean('showEquatorialGrid', true);
         
         // Populate Country Dropdown
         const countrySelect = document.getElementById('countrySelect');

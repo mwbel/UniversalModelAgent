@@ -12,6 +12,8 @@ from backend.config import SETTINGS
 from backend.services.chat_service import CHAT_SERVICE
 from backend.services.ephemeris_compare import compare_ephemeris
 from backend.services.mineru_client import MINERU_CLIENT
+from backend.services.markdown_library import MARKDOWN_LIBRARY
+from backend.services.ocr_correction import OCR_CORRECTION_SERVICE
 from backend.services.rag_client import RAG_CLIENT
 from backend.services.visualization_planner import VISUALIZATION_PLANNER
 
@@ -45,6 +47,18 @@ class AppHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/config":
             self._send_json(SETTINGS.public_dict())
+            return
+        if parsed.path == "/api/library/config":
+            self._send_json({"ok": True, **MARKDOWN_LIBRARY.config()})
+            return
+        if parsed.path == "/api/library/categories":
+            self._send_json(MARKDOWN_LIBRARY.list_categories())
+            return
+        if parsed.path == "/api/library/documents":
+            category = (query.get("category") or [None])[0]
+            limit = int((query.get("limit") or ["200"])[0])
+            offset = int((query.get("offset") or ["0"])[0])
+            self._send_json(MARKDOWN_LIBRARY.list_documents(category=category, limit=limit, offset=offset))
             return
         if parsed.path == "/api/visualizations":
             self._send_json({"items": VISUALIZATIONS})
@@ -94,6 +108,50 @@ class AppHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/ocr/convert":
             self._send_json(MINERU_CLIENT.convert_markdown(payload))
+            return
+        if parsed.path == "/api/ocr/correct":
+            self._send_json(OCR_CORRECTION_SERVICE.correct_markdown(payload))
+            return
+        if parsed.path == "/api/ocr/convert-and-correct":
+            self._send_json(OCR_CORRECTION_SERVICE.convert_and_correct(payload))
+            return
+        if parsed.path == "/api/library/ingest":
+            try:
+                documents = MARKDOWN_LIBRARY.read_documents(
+                    category=payload.get("category"),
+                    document_ids=payload.get("documentIds") if isinstance(payload.get("documentIds"), list) else None,
+                    relative_paths=payload.get("relativePaths") if isinstance(payload.get("relativePaths"), list) else None,
+                    limit=int(payload["limit"]) if payload.get("limit") else None,
+                )
+            except ValueError as error:
+                self._send_json({"ok": False, "error": str(error)})
+                return
+            if payload.get("dryRun"):
+                self._send_json(
+                    {
+                        "ok": True,
+                        "dryRun": True,
+                        "kbId": payload.get("kbId") or SETTINGS.default_kb_id,
+                        "documents": len(documents),
+                        "items": [
+                            {
+                                "id": item.get("id"),
+                                "filename": item.get("filename"),
+                                "metadata": item.get("metadata"),
+                                "chars": len(str(item.get("text") or "")),
+                            }
+                            for item in documents[:20]
+                        ],
+                    }
+                )
+                return
+            self._send_json(
+                RAG_CLIENT.ingest_markdown_documents(
+                    kb_id=str(payload.get("kbId") or SETTINGS.default_kb_id),
+                    documents=documents,
+                    replace=payload.get("replace", True) is not False,
+                )
+            )
             return
         self._send_json({"ok": False, "error": "Not found"}, status=HTTPStatus.NOT_FOUND)
 

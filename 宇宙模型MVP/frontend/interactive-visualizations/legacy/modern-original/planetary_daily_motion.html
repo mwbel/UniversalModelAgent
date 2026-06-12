@@ -83,7 +83,7 @@
           3D 天球视角（太阳、月亮、七大行星周日视运动）
           <span id="overlay3d" style="margin-left:12px;">时间：--:--</span>
         </div>
-        <a class="btn" target="_blank" href="./celestial_sphere_model_plotly.html">新窗口打开</a>
+        <a class="btn" target="_blank" href="./celestial_sphere_7planets.html">新窗口打开</a>
       </div>
     </div>
   </section>
@@ -130,11 +130,14 @@
       const tzNum = -new Date().getTimezoneOffset()/60;
       const tz = String(tzNum);
       const {h,m} = parseTime();
-      const date = document.querySelector('#dateContainer input[type="date"]')?.value || '';
+      const y = document.querySelector('#dateContainer select:nth-of-type(1)')?.value;
+      const mo = document.querySelector('#dateContainer select:nth-of-type(2)')?.value;
+      const d = document.querySelector('#dateContainer select:nth-of-type(3)')?.value;
+      const date = y && mo && d ? `${y}-${pad2(mo)}-${pad2(d)}` : '';
       const lat = document.querySelector('#locationContainer input[name="latitude"]')?.value || '31.23';
       const lon = document.querySelector('#locationContainer input[name="longitude"]')?.value || '121.47';
-      const qs = new URLSearchParams({ lat, lon, tz, date, time: `${pad2(h)}:${pad2(m)}` , cb: String(Date.now())});
-      const iframeUrl = `./celestial_sphere_model_plotly.html?${qs.toString()}`;
+      const qs = new URLSearchParams({ embed: '1', lat, lon, tz, date, time: `${pad2(h)}:${pad2(m)}` , cb: String(Date.now())});
+      const iframeUrl = `./celestial_sphere_7planets.html?${qs.toString()}`;
       celestial3dContainer.innerHTML = `<iframe id="celestial3d" src="${iframeUrl}" frameborder="0" scrolling="no" style="width:100%;height:100%;"></iframe>`;
       const overlay = document.getElementById('overlay3d');
       if (overlay) {
@@ -152,6 +155,8 @@
 
     // 手动刷新 3D 图（重新加载 iframe）
     refresh3dBtn.addEventListener('click', sync3d);
+    document.getElementById('locationContainer')?.addEventListener('location-change', sync3d);
+    document.getElementById('dateContainer')?.addEventListener('date-change', sync3d);
     // 页面初始化时加载一次 3D 天球
     sync3d();
   </script>

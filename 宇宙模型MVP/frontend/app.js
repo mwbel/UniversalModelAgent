@@ -328,7 +328,7 @@ function renderVisualizationCards(items) {
   return items
     .map(
       (item) => `
-        <details class="inline-viz-card">
+        <details class="inline-viz-card" open>
           <summary class="inline-viz-summary">
             <span class="inline-viz-kicker">交互式可视化</span>
             <span class="inline-viz-title">${escapeHtml(item.title)}</span>

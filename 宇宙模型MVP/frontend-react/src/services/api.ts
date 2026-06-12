@@ -34,12 +34,20 @@ export type VisualizationInstruction = {
   id: string
   title: string
   description: string
+  pageId?: string
+  embedUrl?: string
+  galleryUrl?: string
+  implementationKind?: string
   componentId?: string
   intentType?: string
   a2uiInstruction?: {
     componentId: string
     intentType: string
     initialProps: Record<string, unknown>
+    fallback?: {
+      renderMode?: string
+      pageId?: string
+    }
   }
 }
 

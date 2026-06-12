@@ -33,13 +33,63 @@ PLANET_MOTION_DOCS = [
 LOCAL_RAG_DIR = ROOT_DIR / ".local_rag"
 LOCAL_RAG_DB_PATH = LOCAL_RAG_DIR / "store.json"
 TOKEN_PATTERN = re.compile(r"[\u4e00-\u9fff]|[A-Za-z0-9_]+")
+LATIN_TERM_PATTERN = re.compile(r"[A-Za-z][A-Za-z0-9_]{1,}|\d{2,}")
+CHINESE_SEQUENCE_PATTERN = re.compile(r"[\u4e00-\u9fff]{2,}")
 CHUNK_SIZE = 520
 CHUNK_OVERLAP = 120
 PARENT_WINDOW = 3
+AUTO_RAG_MIN_SCORE = 0.12
+AUTO_RAG_STOP_TERMS = {
+    "什么",
+    "为什么",
+    "怎么",
+    "如何",
+    "是否",
+    "请问",
+    "这个",
+    "那个",
+    "一个",
+    "一下",
+    "可以",
+    "进行",
+    "解释",
+    "介绍",
+    "说明",
+    "问题",
+    "内容",
+    "你好",
+}
 
 
 def _tokenize(text: str) -> list[str]:
     return [item.group(0).lower() for item in TOKEN_PATTERN.finditer(text or "")]
+
+
+def _auto_rag_terms(question: str) -> list[str]:
+    terms: set[str] = set()
+    lowered = question.lower()
+    for match in LATIN_TERM_PATTERN.finditer(lowered):
+        value = match.group(0).strip()
+        if value and value not in AUTO_RAG_STOP_TERMS:
+            terms.add(value)
+    for match in CHINESE_SEQUENCE_PATTERN.finditer(question):
+        sequence = match.group(0)
+        if sequence in AUTO_RAG_STOP_TERMS:
+            continue
+        max_len = min(6, len(sequence))
+        for size in range(2, max_len + 1):
+            for start in range(0, len(sequence) - size + 1):
+                term = sequence[start : start + size]
+                if term not in AUTO_RAG_STOP_TERMS:
+                    terms.add(term)
+    return sorted(terms, key=lambda item: (-len(item), item))
+
+
+def _has_auto_rag_evidence(question_terms: list[str], context: dict[str, Any]) -> bool:
+    content = str(context.get("content") or "").lower()
+    source = str(context.get("source") or "").lower()
+    haystack = f"{source}\n{content}"
+    return any(term.lower() in haystack for term in question_terms)
 
 
 def _safe_excerpt(text: str, limit: int = 220) -> str:
@@ -485,6 +535,91 @@ class RagClient:
             "raw": retrieval["raw"],
         }
 
+    def ask_auto(
+        self,
+        question: str,
+        history: list[dict[str, Any]],
+        variant: str | None = None,
+        preferred_kb_id: str | None = None,
+    ) -> dict[str, Any]:
+        started = perf_counter()
+        self.ensure_builtin_knowledge_bases()
+        store = self._load_store()
+        knowledge_bases = store.get("knowledge_bases") or {}
+        if not knowledge_bases:
+            return {
+                "ok": False,
+                "error": "本地知识库还没有文档。",
+                "answer": "",
+                "citations": [],
+                "contexts": [],
+                "strategy": (variant or SETTINGS.default_rag_strategy or "hybrid").lower().replace("-", "_"),
+                "resolvedStrategy": None,
+                "latencyMs": round((perf_counter() - started) * 1000, 2),
+                "raw": None,
+            }
+
+        question_terms = _auto_rag_terms(question)
+        if not question_terms:
+            return {
+                "ok": False,
+                "error": "问题中没有足够明确的本地检索关键词。",
+                "answer": "",
+                "citations": [],
+                "contexts": [],
+                "strategy": (variant or SETTINGS.default_rag_strategy or "hybrid").lower().replace("-", "_"),
+                "resolvedStrategy": None,
+                "latencyMs": round((perf_counter() - started) * 1000, 2),
+                "raw": None,
+            }
+
+        kb_ids = list(knowledge_bases.keys())
+        if preferred_kb_id and preferred_kb_id in knowledge_bases:
+            kb_ids = [preferred_kb_id, *[kb_id for kb_id in kb_ids if kb_id != preferred_kb_id]]
+
+        all_contexts: list[dict[str, Any]] = []
+        raw_retrieved: list[dict[str, Any]] = []
+        normalized_strategy = (variant or "hybrid").strip().lower().replace("-", "_") or "hybrid"
+        for kb_id in kb_ids:
+            retrieval = self.retrieve_contexts(
+                question=question,
+                variant=normalized_strategy,
+                kb_id=kb_id,
+                limit=4,
+                started=started,
+            )
+            for context in retrieval.get("contexts") or []:
+                score = _coerce_number(context.get("score")) or 0
+                if score < AUTO_RAG_MIN_SCORE:
+                    continue
+                if not _has_auto_rag_evidence(question_terms, context):
+                    continue
+                all_contexts.append(context)
+            raw = retrieval.get("raw") or {}
+            for item in raw.get("retrieved") or []:
+                raw_retrieved.append({"kb_id": kb_id, **item})
+
+        all_contexts.sort(key=lambda item: float(item.get("score") or 0), reverse=True)
+        contexts = all_contexts[:6]
+        citations = self._build_citations(contexts)
+        answer, usage = self._generate_answer(question, contexts, history)
+
+        return {
+            "ok": bool(answer and contexts),
+            "answer": answer,
+            "citations": citations,
+            "contexts": contexts,
+            "strategy": normalized_strategy,
+            "resolvedStrategy": "auto_local_first",
+            "latencyMs": round((perf_counter() - started) * 1000, 2),
+            "tokenUsage": usage,
+            "raw": {
+                "kb_ids": kb_ids,
+                "question_terms": question_terms[:20],
+                "retrieved": raw_retrieved[:12],
+            },
+        }
+
     def retrieve_contexts(
         self,
         question: str,
@@ -592,6 +727,67 @@ class RagClient:
             )
         items.sort(key=lambda item: item["kb_id"])
         return {"ok": True, "error": None, "items": items}
+
+    def ingest_markdown_documents(
+        self,
+        kb_id: str,
+        documents: list[dict[str, Any]],
+        replace: bool = True,
+    ) -> dict[str, Any]:
+        if not kb_id.strip():
+            return {"ok": False, "error": "kb_id 不能为空。"}
+        if not documents:
+            return {"ok": False, "error": "没有可摄入的 Markdown 文档。"}
+
+        store = self._load_store()
+        knowledge_bases = store.setdefault("knowledge_bases", {})
+        if replace:
+            kb = {"documents": []}
+            knowledge_bases[kb_id] = kb
+        else:
+            kb = knowledge_bases.setdefault(kb_id, {"documents": []})
+
+        indexed_documents = kb.setdefault("documents", [])
+        start_index = len(indexed_documents)
+        added = 0
+        skipped = 0
+        chunk_count = 0
+
+        for index, item in enumerate(documents, start=start_index + 1):
+            text = str(item.get("text") or "")
+            if not text.strip():
+                skipped += 1
+                continue
+            filename = str(item.get("filename") or item.get("title") or f"document-{index}.md")
+            doc_id = str(item.get("id") or f"doc-{index}")
+            document_record = _build_document_record(
+                doc_id=doc_id,
+                filename=filename,
+                text=text,
+                metadata=item.get("metadata") if isinstance(item.get("metadata"), dict) else {},
+            )
+            if not document_record.get("chunks"):
+                skipped += 1
+                continue
+            indexed_documents.append(document_record)
+            added += 1
+            chunk_count += len(document_record.get("chunks") or [])
+
+        kb["updated_at"] = time.time()
+        kb["metadata"] = {
+            **(kb.get("metadata") or {}),
+            "last_ingest_source": "markdown_library",
+            "replace": replace,
+        }
+        self._save_store(store)
+        return {
+            "ok": added > 0,
+            "kbId": kb_id,
+            "documents": added,
+            "skipped": skipped,
+            "chunks": chunk_count,
+            "indexedChunks": {strategy["id"]: chunk_count for strategy in DEFAULT_RAG_STRATEGIES},
+        }
 
     def upload_document(self, body: bytes, content_type: str) -> dict[str, Any]:
         try:

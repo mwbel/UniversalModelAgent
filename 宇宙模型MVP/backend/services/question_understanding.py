@@ -52,6 +52,24 @@ class QuestionUnderstandingService:
                 ["逆行", "视运动", "retrograde", "apparent motion"],
             ),
             (
+                "geocentric_daily_motion",
+                "地心天球周日视运动",
+                [
+                    "周日视运动",
+                    "日周运动",
+                    "地心模型",
+                    "地心天球",
+                    "天球",
+                    "七政",
+                    "七大行星",
+                    "恒星背景",
+                    "diurnal motion",
+                    "geocentric",
+                    "celestial sphere",
+                    "daily apparent motion",
+                ],
+            ),
+            (
                 "kepler_third_law",
                 "开普勒第三定律",
                 [
@@ -113,6 +131,19 @@ class QuestionUnderstandingService:
             if concept_id == "retrograde_motion":
                 if ("为什么" in text or "how" in text or "why" in text) and evidence:
                     confidence += 0.3
+                if "逆行" not in text and "retrograde" not in text:
+                    confidence *= 0.35
+
+            if concept_id == "geocentric_daily_motion":
+                if ("地心" in text or "geocentric" in text) and evidence:
+                    confidence += 1.8
+                    evidence.append("地心参考系")
+                if ("周日" in text or "日周" in text or "diurnal" in text or "daily apparent" in text) and evidence:
+                    confidence += 2.2
+                    evidence.append("周日视运动")
+                if ("3d" in text or "三维" in text or "可视化" in text or "演示" in text) and evidence:
+                    confidence += 0.8
+                    evidence.append("3D可视化意图")
 
             if concept_id == "ecliptic_lunar_path":
                 if ("可视化" in text or "展示" in text or "关系" in text) and evidence:

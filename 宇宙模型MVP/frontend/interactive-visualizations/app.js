@@ -75,6 +75,21 @@ const legacyPages = [
     ],
   },
   {
+    id: "geocentric-daily-motion-3d",
+    badge: "现代天文学",
+    title: "地心天球周日视运动 3D",
+    summary: "以观测者为中心展示太阳、月亮和行星在一天内的升落轨迹、地平圈与天球经纬网。",
+    src: "./legacy/modern-original/celestial_sphere_7planets.html?embed=1",
+    source: "AlVisualization / astronomy / celestial_sphere_7planets",
+    category: "地心天球 3D",
+    stack: "Astronomy Engine + Plotly 3D + 地平坐标转换",
+    notes: [
+      "可设置观测地点、日期和时间，观察不同纬度下的周日视运动轨迹。",
+      "实线表示地平线上可见路径，淡化轨迹表示地平线下路径。",
+      "支持太阳、月亮、水星、金星、火星、木星、土星、天王星和海王星。",
+    ],
+  },
+  {
     id: "solar-system-compare-streamlit",
     badge: "现代天文学",
     title: "🪐 太阳系行星运动对照",

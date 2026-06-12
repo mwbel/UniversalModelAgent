@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 import { A2UISurface, applyA2UILine, createEmptySurface } from './a2ui-engine/A2UIRuntime'
 import { buildA2UILines } from './a2ui-engine/buildA2UILines'
+import { FloatingAssistant, type FloatingAssistantMessage } from './components'
 import {
   askQuestion,
   fetchHealth,
@@ -40,7 +41,7 @@ function buildRuntimeStages(useRag: boolean, question: string): OrchestrationSte
   return [
     { id: 'intent', label: '确定任务意图', status: 'pending' },
     ...(wantsCalculation ? [{ id: 'calculation', label: 'Python 数值计算', status: 'pending' } as OrchestrationStep] : []),
-    ...(useRag || wantsCalculation ? [{ id: 'retrieval', label: '检索本地知识库', status: 'pending' } as OrchestrationStep] : []),
+    { id: 'retrieval', label: useRag ? '检索选定知识库' : '优先检索本地资料', status: 'pending' },
     ...(wantsVisual ? [{ id: 'visualizer', label: '匹配 A2UI 能力', status: 'pending' } as OrchestrationStep] : []),
     { id: 'generation', label: '生成文字解释', status: 'pending' },
     ...(wantsVisual ? [{ id: 'validation', label: '校验并交给前端渲染', status: 'pending' } as OrchestrationStep] : []),
@@ -91,6 +92,114 @@ function stageLabel(status: OrchestrationStep['status']) {
   if (status === 'running') return '进行中'
   if (status === 'skipped') return '跳过'
   return '等待'
+}
+
+function renderInlineMarkdown(text: string) {
+  const nodes: ReactNode[] = []
+  const tokenPattern = /(\${1,2}[^$]+\${1,2}|\*\*[^*]+\*\*|`[^`]+`)/g
+  let cursor = 0
+  let match: RegExpExecArray | null
+
+  while ((match = tokenPattern.exec(text))) {
+    if (match.index > cursor) nodes.push(text.slice(cursor, match.index))
+    const token = match[0]
+    const key = `${match.index}-${token}`
+
+    if (token.startsWith('**') && token.endsWith('**')) {
+      nodes.push(<strong key={key}>{token.slice(2, -2)}</strong>)
+    } else if (token.startsWith('`') && token.endsWith('`')) {
+      nodes.push(<code key={key}>{token.slice(1, -1)}</code>)
+    } else {
+      nodes.push(
+        <span className="markdown-math" key={key}>
+          {token.replace(/^\${1,2}|\${1,2}$/g, '')}
+        </span>,
+      )
+    }
+
+    cursor = match.index + token.length
+  }
+
+  if (cursor < text.length) nodes.push(text.slice(cursor))
+  return nodes
+}
+
+function MarkdownExcerpt({ content }: { content: string }) {
+  const blocks = content
+    .replace(/\r\n/g, '\n')
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+
+  if (!blocks.length) return <p className="markdown-muted">暂无正文片段。</p>
+
+  const renderedBlocks: ReactNode[] = []
+  let fencedCode: string[] = []
+
+  const flushCode = (key: string) => {
+    if (!fencedCode.length) return
+    renderedBlocks.push(<pre key={key}>{fencedCode.join('\n')}</pre>)
+    fencedCode = []
+  }
+
+  blocks.forEach((line, index) => {
+    const key = `${index}-${line.slice(0, 24)}`
+
+    if (line.startsWith('```')) {
+      const rest = line.replace(/^```[a-zA-Z0-9_-]*/, '').trim()
+      if (fencedCode.length) {
+        if (rest) fencedCode.push(rest)
+        flushCode(key)
+      } else if (rest) {
+        fencedCode = [rest]
+      } else {
+        fencedCode = ['']
+      }
+      return
+    }
+
+    if (fencedCode.length) {
+      fencedCode.push(line)
+      return
+    }
+
+    const heading = line.match(/^(#{1,6})\s+(.+)$/)
+    if (heading) {
+      const level = Math.min(heading[1].length, 3)
+      renderedBlocks.push(
+        <p className={`markdown-heading level-${level}`} key={key}>
+          {renderInlineMarkdown(heading[2])}
+        </p>,
+      )
+      return
+    }
+
+    if (/^[-*_]{3,}$/.test(line)) {
+      renderedBlocks.push(<hr key={key} />)
+      return
+    }
+
+    const listItem = line.match(/^([-*+]|\d+[.)])\s+(.+)$/)
+    if (listItem) {
+      renderedBlocks.push(
+        <p className="markdown-list-item" key={key}>
+          <span>{listItem[1]}</span>
+          <span>{renderInlineMarkdown(listItem[2])}</span>
+        </p>,
+      )
+      return
+    }
+
+    renderedBlocks.push(<p key={key}>{renderInlineMarkdown(line)}</p>)
+  })
+
+  flushCode('final-code-block')
+
+  return (
+    <div className="markdown-excerpt">
+      {renderedBlocks}
+    </div>
+  )
 }
 
 function PipelineStatus({
@@ -307,6 +416,19 @@ function WorkspaceApp({ isGallery }: { isGallery: boolean }) {
     }
   }
 
+  async function askFloatingAssistant(question: string, floatingHistory: FloatingAssistantMessage[]) {
+    const response = await askQuestion({
+      question,
+      history: floatingHistory
+        .filter((message) => message.role === 'user' || message.role === 'assistant')
+        .map((message) => ({ role: message.role, content: message.content })),
+      ragVariant: selectedStrategy,
+      kbId: useRag ? selectedKb : null,
+      useRag,
+    })
+    return response.answer || '没有生成回答。'
+  }
+
   if (isGallery) {
     return (
       <main className="gallery-page">
@@ -345,7 +467,7 @@ function WorkspaceApp({ isGallery }: { isGallery: boolean }) {
         </div>
         <div className="top-status">
           <span>{health}</span>
-          <span>{useRag ? selectedStrategy : 'no RAG'}</span>
+          <span>{useRag ? selectedStrategy : 'local-first'}</span>
         </div>
       </header>
 
@@ -393,7 +515,7 @@ function WorkspaceApp({ isGallery }: { isGallery: boolean }) {
                 </option>
               ))}
             </select>
-            <p className="muted">{useRag ? currentStrategy?.summary : '默认不检索知识库；行星运动模型问题会自动检索 planet-motion。'}</p>
+            <p className="muted">{useRag ? currentStrategy?.summary : '默认优先检索本地项目资料；没有可靠命中时再走普通 LLM。'}</p>
           </section>
         </aside>
 
@@ -483,7 +605,7 @@ function WorkspaceApp({ isGallery }: { isGallery: boolean }) {
                 <div className="evidence" key={`${context.source}-${index}`}>
                   <strong>{context.source || `上下文 ${index + 1}`}</strong>
                   <span>score {typeof context.score === 'number' ? context.score.toFixed(3) : '-'}</span>
-                  <p>{context.content}</p>
+                  <MarkdownExcerpt content={context.content} />
                 </div>
               ))
             ) : (
@@ -492,6 +614,13 @@ function WorkspaceApp({ isGallery }: { isGallery: boolean }) {
           </section>
         </aside>
       </div>
+      <FloatingAssistant
+        title="宇宙模型助手"
+        subtitle={health === 'Online' ? '在线，可以随时提问' : '服务连接中'}
+        placeholder="问我一个天文或模型问题"
+        disabled={health !== 'Online'}
+        onAsk={askFloatingAssistant}
+      />
     </div>
   )
 }

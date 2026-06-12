@@ -12,6 +12,8 @@ function isNumber(value: unknown): value is number {
 export function GenericVisualization({ componentId, node }: GenericVisualizationProps) {
   const title = typeof node.title === 'string' ? node.title : componentId
   const description = typeof node.description === 'string' ? node.description : '该能力还没有专用组件，先以参数化面板展示。'
+  const embedUrl = typeof node.embedUrl === 'string' ? node.embedUrl : ''
+  const galleryUrl = typeof node.galleryUrl === 'string' ? node.galleryUrl : ''
   const numericEntries = Object.entries(node).filter(([, value]) => isNumber(value))
   const booleanEntries = Object.entries(node).filter(([, value]) => typeof value === 'boolean')
   const [values, setValues] = useState<Record<string, number>>(
@@ -20,6 +22,28 @@ export function GenericVisualization({ componentId, node }: GenericVisualization
   const [toggles, setToggles] = useState<Record<string, boolean>>(
     () => Object.fromEntries(booleanEntries.map(([key, value]) => [key, Boolean(value)])),
   )
+
+  if (embedUrl) {
+    return (
+      <div className="generic-viz legacy-viz">
+        <header>
+          <div>
+            <p className="astro-kicker">A2UI embedded page</p>
+            <h3>{title}</h3>
+          </div>
+          {galleryUrl ? (
+            <a href={galleryUrl} rel="noreferrer" target="_blank">
+              新窗口打开
+            </a>
+          ) : (
+            <code>{componentId}</code>
+          )}
+        </header>
+        {description ? <p>{description}</p> : null}
+        <iframe src={embedUrl} title={title} loading="lazy" />
+      </div>
+    )
+  }
 
   return (
     <div className="generic-viz">

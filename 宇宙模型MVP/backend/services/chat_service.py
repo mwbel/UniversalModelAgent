@@ -373,22 +373,22 @@ class ChatService:
 
             rag_result = {"ok": False, "answer": "", "citations": [], "contexts": [], "raw": None}
             auto_rag_used = False
-            if is_planet_motion:
-                if computed_ephemeris:
-                    rag_result = RAG_CLIENT.retrieve_contexts(
-                        question=question,
-                        variant="hybrid",
-                        kb_id=PLANET_MOTION_KB_ID,
-                    )
-                    auto_rag_used = bool(rag_result.get("contexts"))
-                else:
-                    rag_result = RAG_CLIENT.ask(
-                        question=question,
-                        history=history,
-                        variant="hybrid",
-                        kb_id=PLANET_MOTION_KB_ID,
-                    )
-                    auto_rag_used = not _is_bad_rag_result(rag_result)
+            if computed_ephemeris:
+                rag_result = RAG_CLIENT.ask_auto(
+                    question=question,
+                    history=history,
+                    variant="hybrid",
+                    preferred_kb_id=PLANET_MOTION_KB_ID if is_planet_motion else None,
+                )
+                auto_rag_used = bool(rag_result.get("contexts"))
+            else:
+                rag_result = RAG_CLIENT.ask_auto(
+                    question=question,
+                    history=history,
+                    variant="hybrid",
+                    preferred_kb_id=PLANET_MOTION_KB_ID if is_planet_motion else None,
+                )
+                auto_rag_used = not _is_bad_rag_result(rag_result)
 
             if computed_ephemeris:
                 answer = _build_computed_answer(question, computed_ephemeris, rag_result.get("contexts") or [])
@@ -446,7 +446,30 @@ class ChatService:
                 "raw": rag_result["raw"],
             }
 
-        answer = _fallback_answer(question)
+        auto_rag_result = RAG_CLIENT.ask_auto(question=question, history=history, variant="hybrid")
+        if not _is_bad_rag_result(auto_rag_result):
+            visualizations = _recommend_visualizations(question, auto_rag_result["answer"])
+            return {
+                "answer": auto_rag_result["answer"],
+                "citations": auto_rag_result["citations"],
+                "contexts": auto_rag_result["contexts"],
+                "recommendedVisualizations": visualizations,
+                "orchestration": _orchestration_steps(
+                    question=question,
+                    rag_result=auto_rag_result,
+                    visualizations=visualizations,
+                    service="knowledge",
+                ),
+                "service": "knowledge",
+                "strategy": auto_rag_result.get("strategy") or "hybrid",
+                "resolvedStrategy": auto_rag_result.get("resolvedStrategy"),
+                "latencyMs": auto_rag_result.get("latencyMs"),
+                "tokenUsage": auto_rag_result.get("tokenUsage"),
+                "autoRagUsed": True,
+                "raw": auto_rag_result.get("raw"),
+            }
+
+        answer, usage = _generate_direct_answer(question, history)
         visualizations = _recommend_visualizations(question, answer)
         return {
             "answer": answer,
@@ -459,9 +482,10 @@ class ChatService:
                 visualizations=visualizations,
                 service="assistant",
             ),
-            "service": "assistant",
+            "service": "llm",
             "strategy": variant,
             "autoRagUsed": False,
+            "tokenUsage": usage,
             "raw": rag_result.get("raw"),
         }
 

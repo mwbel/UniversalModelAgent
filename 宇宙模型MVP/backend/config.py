@@ -16,6 +16,16 @@ def _parse_rag_variants(value: str) -> list[str]:
     return [item.strip() for item in value.split(",") if item.strip()]
 
 
+def _parse_model_list(value: str) -> list[str]:
+    value = value.strip()
+    if not value:
+        return []
+    if value.startswith("["):
+        parsed = json.loads(value)
+        return [str(item) for item in parsed if str(item).strip()]
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 UNIVMODEL_DIR = os.path.abspath(os.path.join(ROOT_DIR, ".."))
 DEFAULT_MARKDOWN_LIBRARY_DIR = os.path.join(
@@ -23,6 +33,26 @@ DEFAULT_MARKDOWN_LIBRARY_DIR = os.path.join(
     "RAG",
     "宇宙模型资料202605-仅留md 和图片",
 )
+
+
+def _load_local_env() -> None:
+    env_path = os.path.join(ROOT_DIR, ".env")
+    if not os.path.exists(env_path):
+        return
+
+    with open(env_path, "r", encoding="utf-8") as env_file:
+        for raw_line in env_file:
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            if key:
+                os.environ.setdefault(key, value)
+
+
+_load_local_env()
 
 
 @dataclass(slots=True)
@@ -43,6 +73,11 @@ class Settings:
     llm_base_url: str = os.getenv("LLM_BASE_URL", "").rstrip("/")
     llm_api_key: str = os.getenv("LLM_API_KEY", "")
     llm_model: str = os.getenv("LLM_MODEL", "")
+    model_tester_base_url: str = os.getenv("MODEL_TESTER_BASE_URL", os.getenv("LLM_BASE_URL", "")).rstrip("/")
+    model_tester_api_key: str = os.getenv("MODEL_TESTER_API_KEY", os.getenv("LLM_API_KEY", ""))
+    model_tester_models_path: str = os.getenv("MODEL_TESTER_MODELS_PATH", "/v1/models")
+    model_tester_chat_path: str = os.getenv("MODEL_TESTER_CHAT_PATH", "/v1/chat/completions")
+    model_tester_models: list[str] = None  # type: ignore[assignment]
     ocr_correction_provider: str = os.getenv("OCR_CORRECTION_PROVIDER", "openai-compatible")
     ocr_correction_base_url: str = os.getenv("OCR_CORRECTION_BASE_URL", os.getenv("LLM_BASE_URL", "")).rstrip("/")
     ocr_correction_api_key: str = os.getenv("OCR_CORRECTION_API_KEY", os.getenv("LLM_API_KEY", ""))
@@ -55,6 +90,22 @@ class Settings:
     def __post_init__(self) -> None:
         if self.rag_variants is None:
             self.rag_variants = _parse_rag_variants(os.getenv("RAG_VARIANTS", ""))
+        if self.model_tester_models is None:
+            self.model_tester_models = _parse_model_list(
+                os.getenv(
+                    "MODEL_TESTER_MODELS",
+                    (
+                        "qwen3.6-27b:latest,"
+                        "batiai/qwen3.6-27b:q4,"
+                        "medgemma:1.5-4b,"
+                        "gemma4:e4b,"
+                        "gemma2:27b,"
+                        "qwen2.5:14b,"
+                        "nomic-embed-text:latest,"
+                        "llama3:latest"
+                    ),
+                )
+            )
 
     def public_dict(self) -> dict[str, Any]:
         return {

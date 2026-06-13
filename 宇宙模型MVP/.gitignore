@@ -9,6 +9,8 @@ backend/.runtime/
 frontend/.runtime/
 
 # Parent repo ignores `*.html`; we need these legacy/demo pages tracked for Epic F.
+!frontend/index.html
+!frontend/model-tester.html
 !frontend/interactive-visualizations/**/*.html
 !frontend/interactive-visualizations/**/*.css
 !frontend/interactive-visualizations/**/*.js

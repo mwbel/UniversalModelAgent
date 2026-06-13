@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宇宙模型智能体</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="brand">
+          <div class="brand-mark">◎</div>
+          <div>
+            <p class="brand-kicker">Universe Model Agent</p>
+            <h1>宇宙模型智能体</h1>
+          </div>
+        </div>
+        <button id="newChatButton" class="sidebar-button" type="button">+ 新对话</button>
+      </div>
+
+      <section class="sidebar-section">
+        <div class="sidebar-section-head">
+          <span>聊天记录</span>
+          <span id="conversationCount" class="sidebar-count">0</span>
+        </div>
+        <div id="sessionList" class="session-list"></div>
+      </section>
+
+      <section class="sidebar-section">
+        <div class="sidebar-section-head">
+          <span>RAG 知识库</span>
+          <span id="kbCount" class="sidebar-count">0</span>
+        </div>
+        <input id="ragFileInput" type="file" class="hidden-input" accept=".pdf,.txt,.md,.docx">
+        <button id="pickFileButton" class="sidebar-button" type="button">选择本地文档</button>
+        <div id="selectedFileName" class="sidebar-hint">未选择文件</div>
+        <input id="kbIdInput" class="sidebar-input" type="text" placeholder="知识库 ID，例如 tibetan-astro">
+        <button id="uploadFileButton" class="sidebar-button sidebar-button-primary" type="button">上传到本地 RAG</button>
+        <select id="kbSelect" class="sidebar-select"></select>
+        <div id="uploadStatus" class="sidebar-hint"></div>
+      </section>
+
+      <section class="sidebar-section">
+        <div class="sidebar-section-head">
+          <span>RAG 方案</span>
+          <span id="strategyCount" class="sidebar-count">0</span>
+        </div>
+        <select id="strategySelect" class="sidebar-select"></select>
+        <div id="strategySummary" class="sidebar-hint">正在加载方案说明...</div>
+      </section>
+
+      <section class="sidebar-section sidebar-links">
+        <a class="sidebar-link" href="./model-tester.html" target="_blank" rel="noreferrer">打开模型测试台</a>
+        <a class="sidebar-link" href="./interactive-visualizations/index.html" target="_blank" rel="noreferrer">打开可视化展厅</a>
+        <a class="sidebar-link" href="http://127.0.0.1:8503" target="_blank" rel="noreferrer">行星运动对照页</a>
+      </section>
+
+      <section class="sidebar-footer">
+        <div class="service-chip">
+          <span>后端</span>
+          <strong id="healthBadge">Checking</strong>
+        </div>
+        <div class="service-chip">
+          <span>知识引擎</span>
+          <strong id="knowledgeStatus">Ready</strong>
+        </div>
+        <div class="theme-switch" role="group" aria-label="主题切换">
+          <button id="dayThemeButton" class="theme-button is-active" type="button" aria-label="白天主题" title="白天主题">☀️</button>
+          <button id="nightThemeButton" class="theme-button" type="button" aria-label="黑夜主题" title="黑夜主题">🌙</button>
+        </div>
+      </section>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div>
+          <p class="topbar-kicker">Astronomy Chat</p>
+          <h2 id="chatTitle">新对话</h2>
+        </div>
+        <div class="topbar-meta">
+          <span id="requestState" class="request-state">Ready</span>
+          <span id="knowledgeEngineStatus" class="status-inline">已连接</span>
+        </div>
+      </header>
+
+      <section id="emptyState" class="empty-state">
+        <div class="empty-card">
+          <p class="empty-kicker">交互式问答</p>
+          <h3>把问题直接变成解释和可视化</h3>
+          <p>输入一个天文学问题，系统会先理解主题，再匹配对应的交互式可视化能力。</p>
+          <div class="examples">
+            <button class="example-chip" data-question="为什么会发生月食？">为什么会发生月食？</button>
+            <button class="example-chip" data-question="开普勒三大定律如何理解？">开普勒三大定律如何理解？</button>
+            <button class="example-chip" data-question="What causes retrograde motion?">What causes retrograde motion?</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="messages" class="messages"></section>
+
+      <form id="chatForm" class="composer">
+        <div class="composer-toolbar">
+          <div class="strategy-pill">
+            <span class="strategy-pill-label">当前 RAG</span>
+            <strong id="activeStrategyLabel">未选择</strong>
+          </div>
+          <div id="activeStrategyWorkflow" class="request-state">workflow: -</div>
+        </div>
+        <div class="composer-shell">
+          <textarea id="questionInput" rows="1" placeholder="输入你的问题，例如：为什么行星会逆行？"></textarea>
+          <button type="submit" class="send-button">发送</button>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

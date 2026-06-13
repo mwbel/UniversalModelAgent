@@ -111,10 +111,12 @@ class VisualizationMatch:
                 initial_props["bodies"] = bodies
             if date:
                 initial_props["date"] = date
-        payload["embedUrl"] = (
-            f"./interactive-visualizations/index.html?page={payload['pageId']}&embed=1"
-        )
-        payload["galleryUrl"] = f"./interactive-visualizations/index.html?page={payload['pageId']}"
+        if not payload.get("embedUrl"):
+            payload["embedUrl"] = (
+                f"./interactive-visualizations/index.html?page={payload['pageId']}&embed=1"
+            )
+        if not payload.get("galleryUrl"):
+            payload["galleryUrl"] = f"./interactive-visualizations/index.html?page={payload['pageId']}"
         return payload
 
 

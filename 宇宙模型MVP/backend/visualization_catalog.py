@@ -28,6 +28,8 @@ class VisualizationCapability:
     default_props: dict[str, Any] = field(default_factory=dict)
     interaction_events: list[str] = field(default_factory=list)
     feedback_contract: dict[str, Any] = field(default_factory=dict)
+    embed_url: str = ""
+    gallery_url: str = ""
 
     def public_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -42,6 +44,8 @@ class VisualizationCapability:
         payload["defaultProps"] = payload.pop("default_props")
         payload["interactionEvents"] = payload.pop("interaction_events")
         payload["feedbackContract"] = payload.pop("feedback_contract")
+        payload["embedUrl"] = payload.pop("embed_url")
+        payload["galleryUrl"] = payload.pop("gallery_url")
         payload["a2ui"] = self.a2ui_instruction()
         return payload
 
@@ -60,6 +64,8 @@ class VisualizationCapability:
             "fallback": {
                 "renderMode": "iframe",
                 "pageId": self.page_id,
+                "embedUrl": self.embed_url,
+                "galleryUrl": self.gallery_url,
             },
         }
 
@@ -353,6 +359,64 @@ VISUALIZATION_CAPABILITIES: list[VisualizationCapability] = [
             "eventPayload": "component returns selected body and camera mode",
             "agentUse": "explain orbital hierarchy from the user's selected body",
         },
+    ),
+    VisualizationCapability(
+        id="de440-body-position-calculator",
+        title="DE440 天体位置计算器",
+        description="基于 DE440 的天体位置交互计算页面，可设置时间、观测坐标，并查看地球、天空和太阳系视图。",
+        page_id="external-de440-body-position-calculator",
+        concepts=["ephemeris_compare", "solar_system_structure"],
+        keywords=[
+            "DE440",
+            "天体位置",
+            "天体位置计算器",
+            "星历计算",
+            "地平坐标",
+            "黄道坐标",
+            "太阳系",
+            "three.js",
+            "3d",
+        ],
+        tags=["DE440", "天体位置", "地平坐标", "黄道坐标", "3D"],
+        a2ui_hint=(
+            "当用户希望打开 DE440 天体位置计算器、查看观测点对应的太阳月亮和行星数据、"
+            "或需要 3D 地球/天空/太阳系联动页面时调用。"
+        ),
+        expresses=[
+            "指定时间和观测地点下的天体方位角、高度角与距离",
+            "太阳、月球和行星在 3D 地球/天空/太阳系视图中的交互展示",
+            "DE440 星历结果与藏历十二宫字段的综合展示",
+        ],
+        educational_use="适合放在天文学展示厅中作为高精度星历计算与空间观察的交互入口。",
+        cannot_express=[
+            "离线状态下的完整远端页面服务",
+            "A2UI 原生组件级交互状态回传",
+        ],
+        implementation_kind="external_embedded_page",
+        source_entry="http://101.37.20.202:8787",
+        trigger_patterns=["DE440 天体位置计算器", "天体位置计算器", "DE440", "星历计算", "地平坐标", "黄道坐标"],
+        priority=90,
+        component_id="astronomy-core.de440-body-position-calculator",
+        intent_type="ephemeris_position_calculation",
+        props_schema={
+            "dateTime": {"type": "string"},
+            "latitude": {"type": "number", "minimum": -90, "maximum": 90},
+            "longitude": {"type": "number", "minimum": -180, "maximum": 180},
+            "viewMode": {"type": "string", "enum": ["globe", "sky", "solar"]},
+        },
+        default_props={
+            "dateTime": "now",
+            "latitude": 31.2397,
+            "longitude": 121.4998,
+            "viewMode": "globe",
+        },
+        interaction_events=["timeChanged", "observerChanged", "viewModeChanged", "bodyExpanded"],
+        feedback_contract={
+            "eventPayload": "external page owns interaction state; future bridge can return time, observer, view mode, and selected body",
+            "agentUse": "connect selected observer/time/body values to DE440 ephemeris interpretation",
+        },
+        embed_url="http://101.37.20.202:8787",
+        gallery_url="http://101.37.20.202:8787",
     ),
     VisualizationCapability(
         id="solar-system-compare",

@@ -13,6 +13,7 @@ from backend.services.chat_service import CHAT_SERVICE
 from backend.services.ephemeris_compare import compare_ephemeris
 from backend.services.mineru_client import MINERU_CLIENT
 from backend.services.markdown_library import MARKDOWN_LIBRARY
+from backend.services.model_tester import MODEL_TESTER_SERVICE
 from backend.services.ocr_correction import OCR_CORRECTION_SERVICE
 from backend.services.rag_client import RAG_CLIENT
 from backend.services.visualization_planner import VISUALIZATION_PLANNER
@@ -24,10 +25,16 @@ FRONTEND_DIR = ROOT_DIR / "frontend"
 class AppHandler(BaseHTTPRequestHandler):
     server_version = "UniverseModelHTTP/0.1"
 
+    def do_OPTIONS(self) -> None:  # noqa: N802
+        self.send_response(HTTPStatus.NO_CONTENT)
+        self._send_cors_headers()
+        self.end_headers()
+
     def do_HEAD(self) -> None:  # noqa: N802
         parsed = urlparse(self.path)
         if parsed.path.startswith("/api/"):
           self.send_response(HTTPStatus.OK)
+          self._send_cors_headers()
           self.end_headers()
           return
         self._serve_static(parsed.path, head_only=True)
@@ -47,6 +54,9 @@ class AppHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/config":
             self._send_json(SETTINGS.public_dict())
+            return
+        if parsed.path == "/api/model-tester/config":
+            self._send_json(MODEL_TESTER_SERVICE.config())
             return
         if parsed.path == "/api/library/config":
             self._send_json({"ok": True, **MARKDOWN_LIBRARY.config()})
@@ -105,6 +115,15 @@ class AppHandler(BaseHTTPRequestHandler):
                 use_rag=bool(payload.get("useRag")),
             )
             self._send_json(result)
+            return
+        if parsed.path == "/api/model-tester/models":
+            self._send_json(MODEL_TESTER_SERVICE.list_models(payload))
+            return
+        if parsed.path == "/api/model-tester/upload":
+            self._send_json(MODEL_TESTER_SERVICE.upload_attachment(payload))
+            return
+        if parsed.path == "/api/model-tester/chat":
+            self._send_json(MODEL_TESTER_SERVICE.chat(payload))
             return
         if parsed.path == "/api/ocr/convert":
             self._send_json(MINERU_CLIENT.convert_markdown(payload))
@@ -175,9 +194,14 @@ class AppHandler(BaseHTTPRequestHandler):
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
-        self.send_header("Access-Control-Allow-Origin", "*")
+        self._send_cors_headers()
         self.end_headers()
         self.wfile.write(body)
+
+    def _send_cors_headers(self) -> None:
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, HEAD, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
     def _serve_static(self, path: str, head_only: bool = False) -> None:
         relative_path = "index.html" if path in {"", "/"} else path.lstrip("/")

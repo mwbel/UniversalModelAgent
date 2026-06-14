@@ -7,6 +7,8 @@ __pycache__/
 .env.local
 backend/.runtime/
 frontend/.runtime/
+frontend/runtime-config.js
+.run-logs/
 
 # Parent repo ignores `*.html`; we need these legacy/demo pages tracked for Epic F.
 !frontend/index.html

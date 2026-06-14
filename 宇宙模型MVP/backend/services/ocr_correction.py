@@ -196,6 +196,34 @@ def _parse_data_url(data_url: str) -> tuple[str, str] | None:
     return match.group(1), match.group(2)
 
 
+def _normalize_provider(provider: str) -> str:
+    normalized = provider.strip().lower()
+    aliases = {
+        "yunwu": "yunwu-openai",
+        "yunwu-gpt55": "yunwu-openai",
+        "yunwu-openai": "yunwu-openai",
+        "openai": "openai-compatible",
+        "openai-compatible": "openai-compatible",
+        "gemini": "gemini",
+    }
+    return aliases.get(normalized, normalized or "openai-compatible")
+
+
+def _resolve_openai_compatible_config(payload: dict[str, Any], provider: str) -> tuple[str, str, str, str]:
+    if provider == "yunwu-openai":
+        base_url = str(payload.get("baseUrl") or SETTINGS.yunwu_api_base_url or SETTINGS.ocr_correction_base_url).rstrip("/")
+        api_key = str(payload.get("apiKey") or SETTINGS.yunwu_api_key or SETTINGS.ocr_correction_api_key)
+        model = str(payload.get("model") or SETTINGS.yunwu_gpt55_model or SETTINGS.ocr_correction_model)
+        path = str(payload.get("path") or SETTINGS.yunwu_chat_path or SETTINGS.ocr_correction_path)
+        return base_url, api_key, model, path
+
+    base_url = str(payload.get("baseUrl") or SETTINGS.ocr_correction_base_url).rstrip("/")
+    api_key = str(payload.get("apiKey") or SETTINGS.ocr_correction_api_key)
+    model = str(payload.get("model") or SETTINGS.ocr_correction_model)
+    path = str(payload.get("path") or SETTINGS.ocr_correction_path)
+    return base_url, api_key, model, path
+
+
 class OcrCorrectionService:
     def correct_markdown(self, payload: dict[str, Any]) -> dict[str, Any]:
         markdown = str(payload.get("markdown") or "")
@@ -282,17 +310,16 @@ class OcrCorrectionService:
         return correction_result
 
     def _is_configured(self, payload: dict[str, Any]) -> bool:
-        provider = str(payload.get("provider") or SETTINGS.ocr_correction_provider)
+        provider = _normalize_provider(str(payload.get("provider") or SETTINGS.ocr_correction_provider))
         if provider == "gemini":
             return bool(payload.get("apiKey") or SETTINGS.ocr_correction_api_key) and bool(
                 payload.get("model") or SETTINGS.ocr_correction_model
             )
-        return bool(payload.get("baseUrl") or SETTINGS.ocr_correction_base_url) and bool(
-            payload.get("apiKey") or SETTINGS.ocr_correction_api_key
-        ) and bool(payload.get("model") or SETTINGS.ocr_correction_model)
+        base_url, api_key, model, _ = _resolve_openai_compatible_config(payload, provider)
+        return bool(base_url) and bool(api_key) and bool(model)
 
     def _correct_candidate(self, candidate: OcrCorrectionCandidate, image: str | None, payload: dict[str, Any]) -> str:
-        provider = str(payload.get("provider") or SETTINGS.ocr_correction_provider).lower()
+        provider = _normalize_provider(str(payload.get("provider") or SETTINGS.ocr_correction_provider))
         if provider == "gemini":
             return self._correct_with_gemini(candidate, image, payload)
         return self._correct_with_openai_compatible(candidate, image, payload)
@@ -303,11 +330,11 @@ class OcrCorrectionService:
         image: str | None,
         payload: dict[str, Any],
     ) -> str:
-        base_url = str(payload.get("baseUrl") or SETTINGS.ocr_correction_base_url).rstrip("/")
-        path = str(payload.get("path") or SETTINGS.ocr_correction_path)
+        provider = _normalize_provider(str(payload.get("provider") or SETTINGS.ocr_correction_provider))
+        base_url, api_key, model, path = _resolve_openai_compatible_config(payload, provider)
         url = f"{base_url}{path if path.startswith('/') else '/' + path}"
         request_payload = {
-            "model": str(payload.get("model") or SETTINGS.ocr_correction_model),
+            "model": model,
             "temperature": 0,
             "max_tokens": int(payload.get("maxOutputTokens") or SETTINGS.ocr_correction_max_output_tokens),
             "messages": [
@@ -315,7 +342,7 @@ class OcrCorrectionService:
                 {"role": "user", "content": self._openai_user_content(candidate, image)},
             ],
         }
-        data = self._post_json(url, request_payload, str(payload.get("apiKey") or SETTINGS.ocr_correction_api_key))
+        data = self._post_json(url, request_payload, api_key)
         content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
         return _strip_markdown_fence(str(content))
 

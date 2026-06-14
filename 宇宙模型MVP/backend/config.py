@@ -78,6 +78,13 @@ class Settings:
     model_tester_models_path: str = os.getenv("MODEL_TESTER_MODELS_PATH", "/v1/models")
     model_tester_chat_path: str = os.getenv("MODEL_TESTER_CHAT_PATH", "/v1/chat/completions")
     model_tester_models: list[str] = None  # type: ignore[assignment]
+    gemini_base_url: str = os.getenv("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com").rstrip("/")
+    gemini_api_keys: list[str] = None  # type: ignore[assignment]
+    gemini_models: list[str] = None  # type: ignore[assignment]
+    yunwu_api_base_url: str = os.getenv("YUNWU_API_BASE_URL", "").rstrip("/")
+    yunwu_api_key: str = os.getenv("YUNWU_API_KEY", "")
+    yunwu_gpt55_model: str = os.getenv("YUNWU_GPT55_MODEL", "gpt-5.5")
+    yunwu_chat_path: str = os.getenv("YUNWU_CHAT_PATH", "/v1/chat/completions")
     ocr_correction_provider: str = os.getenv("OCR_CORRECTION_PROVIDER", "openai-compatible")
     ocr_correction_base_url: str = os.getenv("OCR_CORRECTION_BASE_URL", os.getenv("LLM_BASE_URL", "")).rstrip("/")
     ocr_correction_api_key: str = os.getenv("OCR_CORRECTION_API_KEY", os.getenv("LLM_API_KEY", ""))
@@ -106,6 +113,15 @@ class Settings:
                     ),
                 )
             )
+        if self.gemini_api_keys is None:
+            self.gemini_api_keys = _parse_model_list(os.getenv("GEMINI_API_KEYS", ""))
+        if self.gemini_models is None:
+            self.gemini_models = _parse_model_list(
+                os.getenv(
+                    "GEMINI_MODELS",
+                    "gemini-2.0-flash,gemini-1.5-flash,gemini-1.5-pro",
+                )
+            )
 
     def public_dict(self) -> dict[str, Any]:
         return {
@@ -118,7 +134,10 @@ class Settings:
             "defaultKbId": self.default_kb_id,
             "uploadTimeoutSeconds": self.upload_timeout_seconds,
             "llmConfigured": bool(self.llm_base_url and self.llm_model),
+            "geminiConfigured": bool(self.gemini_api_keys),
+            "yunwuConfigured": bool(self.yunwu_api_base_url and self.yunwu_api_key),
             "ocrCorrectionConfigured": bool(self.ocr_correction_api_key and self.ocr_correction_model),
+            "ocrCorrectionProvider": self.ocr_correction_provider,
         }
 
 

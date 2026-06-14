@@ -34,16 +34,60 @@ python3 -m backend.server
 
 - `http://127.0.0.1:8787/`
 
+如果你当前使用的是静态前端 `frontend/`，推荐直接使用下面这套脚本。它会自动避开已占用端口，并把实际后端地址写入前端运行时配置，不需要再手改 JS：
+
+```bash
+cd "/Users/Min369/Documents/同步空间/Manju/AIProjects/UnivModel/宇宙模型MVP"
+./start_static_stack.sh
+```
+
+如果想分别启动，也可以：
+
+```bash
+./start_backend.sh
+./start_frontend.sh
+```
+
+脚本会把实际地址和端口写到：
+
+- `.run-logs/backend.env`
+- `.run-logs/frontend.env`
+
+其中最常用的是：
+
+- `BACKEND_URL`
+- `BACKEND_PORT`
+- `FRONTEND_URL`
+- `FRONTEND_PORT`
+
 如果要同时启动后端和 React 前端：
 
 ```bash
 cd "/Users/Min369/Documents/同步空间/Manju/AIProjects/UnivModel/宇宙模型MVP" && ./start_all.sh
 ```
 
-脚本会同时拉起：
+脚本会优先使用默认端口，并在端口被其他进程占用时自动顺延寻找可用端口：
 
 - 后端：`http://127.0.0.1:8787/`
 - 前端：`http://127.0.0.1:5173/`
+- OCR 校正测试台：`http://127.0.0.1:5173/?ocr=1`
+
+如果端口发生变化，以脚本输出的实际地址为准；同时也会写入：
+
+- `.run-logs/backend.env`
+- `.run-logs/frontend.env`
+
+手动指定端口：
+
+```bash
+APP_PORT=8800 FRONTEND_PORT=5200 ./start_all.sh
+```
+
+如果希望端口被占用时直接失败，而不是自动换端口：
+
+```bash
+STRICT_PORTS=1 ./start_all.sh
+```
 
 如果启动失败，脚本会把最近日志打印出来，同时把完整日志写到：
 
@@ -54,13 +98,21 @@ cd "/Users/Min369/Documents/同步空间/Manju/AIProjects/UnivModel/宇宙模型
 
 - `APP_HOST`
 - `APP_PORT`
+- `FRONTEND_HOST`
+- `FRONTEND_PORT`
+- `PORT_SEARCH_LIMIT`：默认 `80`，表示端口被占用时向后搜索的范围
+- `STRICT_PORTS`：设为 `1` 时禁用自动换端口
 - `MINERU_BASE_URL`：MinerU 服务地址，默认 `https://mineryou.cpolar.top`
 - `MINERU_CONVERT_PATH`：MinerU 转换接口路径，默认 `/api/convert`
 - `MARKDOWN_LIBRARY_DIR`：已转换 Markdown 资料库根目录，默认 `/Users/Min369/Documents/同步空间/Manju/AIProjects/UnivModel/RAG/宇宙模型资料202605-仅留md 和图片`
 - `RAG_CHAT_PATH`
 - `RAG_VARIANTS`
 - `REQUEST_TIMEOUT_SECONDS`
-- `OCR_CORRECTION_PROVIDER`：`openai-compatible` 或 `gemini`
+- `YUNWU_API_BASE_URL`：云雾 API 地址
+- `YUNWU_API_KEY`：云雾 API 密钥
+- `YUNWU_GPT55_MODEL`：云雾侧使用的 GPT 5.5 模型名，默认 `gpt-5.5`
+- `YUNWU_CHAT_PATH`：云雾 OpenAI-compatible chat 路径，默认 `/v1/chat/completions`
+- `OCR_CORRECTION_PROVIDER`：`openai-compatible`、`yunwu-openai` 或 `gemini`
 - `OCR_CORRECTION_BASE_URL`：校正模型 API 地址；默认复用 `LLM_BASE_URL`
 - `OCR_CORRECTION_API_KEY`：校正模型密钥；默认复用 `LLM_API_KEY`
 - `OCR_CORRECTION_MODEL`：校正模型名；默认复用 `LLM_MODEL`
@@ -205,6 +257,33 @@ export OCR_CORRECTION_API_KEY="..."
 export OCR_CORRECTION_MODEL="..."
 ```
 
+如果使用云雾 API 调用 GPT 5.5 做 OCR 校正：
+
+```bash
+export OCR_CORRECTION_PROVIDER=yunwu-openai
+export YUNWU_API_BASE_URL="https://<your-yunwu-endpoint>"
+export YUNWU_API_KEY="..."
+export YUNWU_GPT55_MODEL="gpt-5.5"
+export YUNWU_CHAT_PATH="/v1/chat/completions"
+```
+
+也可以在请求体里显式指定：
+
+```bash
+curl -s "http://127.0.0.1:8787/api/ocr/correct" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "provider": "yunwu-openai",
+    "markdown": "| 变量 | 公式 |\n|---|---|\n| w | $2 7$ |",
+    "pageImages": [
+      {
+        "pageNumber": 1,
+        "image": "data:image/png;base64,..."
+      }
+    ]
+  }'
+```
+
 ## 当前说明
 
 当前 RAG 已改为本地内置模式，不再依赖外部 cpolar manyRAG 服务。接下来可以继续逐条完成 issue 列表里的：
@@ -215,6 +294,36 @@ export OCR_CORRECTION_MODEL="..."
 4. 问答与可视化联动增强
 
 当前前端已支持在侧边栏切换上述 3 种 RAG 方案；上传文档后会直接写入本地知识库，再由当前 Python 服务完成检索与问答。
+
+## 模型测试台
+
+启动后可访问：
+
+- `http://127.0.0.1:8787/model-tester.html`
+
+这个页面用于测试 OpenAI-compatible 模型服务，支持从下拉框选择模型、刷新模型列表、填写 Base URL、临时输入 API key、设置 `temperature` 和 `max_tokens`，并查看延迟、token 用量和原始响应。
+
+推荐用环境变量配置默认服务，避免把密钥写进前端文件：
+
+```bash
+export MODEL_TESTER_BASE_URL="https://api.example.com"
+export MODEL_TESTER_API_KEY="..."
+export MODEL_TESTER_MODELS_PATH="/v1/models"
+export MODEL_TESTER_CHAT_PATH="/v1/chat/completions"
+```
+
+如果模型服务没有开放模型列表接口，页面会使用内置默认列表：
+
+```text
+qwen3.6-27b:latest
+batiai/qwen3.6-27b:q4
+medgemma:1.5-4b
+gemma4:e4b
+gemma2:27b
+qwen2.5:14b
+nomic-embed-text:latest
+llama3:latest
+```
 
 交互式可视化生成遵循 `edu-viz-core-main` 的 A2UI 思路：先在 `backend/visualization_catalog.py` 声明 capability，再由 `backend/services/visualization_planner.py` 输出 A2UI-compatible render instruction。当前前端仍保留 iframe fallback，但返回结构已经包含 `componentId`、`initialProps`、`propsSchema`、`events` 和 `feedbackContract`，方便后续替换为真正的 A2UI renderer。
 

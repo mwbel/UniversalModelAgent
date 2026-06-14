@@ -1,3 +1,5 @@
+const RUNTIME_CONFIG = window.__UMA_RUNTIME_CONFIG__ || {};
+
 const state = {
   ragStrategies: [],
   knowledgeBases: [],
@@ -10,7 +12,9 @@ const state = {
 };
 
 const API_BASE =
-  window.location.protocol === "file:" ? "http://127.0.0.1:8787" : "";
+  RUNTIME_CONFIG.apiBaseUrl ||
+  RUNTIME_CONFIG.backendUrl ||
+  (window.location.protocol === "file:" ? "http://127.0.0.1:8787" : "");
 
 function apiUrl(path) {
   return `${API_BASE}${path}`;

@@ -4,11 +4,16 @@ import { buildA2UILines } from './a2ui-engine/buildA2UILines'
 import { FloatingAssistant, type FloatingAssistantMessage } from './components'
 import {
   askQuestion,
+  fetchAppConfig,
   fetchHealth,
   fetchKnowledgeBases,
   fetchStrategies,
+  fetchVisualizations,
+  runOcrCorrection,
   uploadDocument,
+  type AppConfig,
   type KnowledgeBase,
+  type OcrCorrectionResult,
   type OrchestrationStep,
   type RagStrategy,
   type VisualizationInstruction,
@@ -24,6 +29,15 @@ const starterQuestions = [
 const visualIntentMarkers = ['可视化', '展示', '绘制', '画', '图', '图示', '示意图', '演示', '模拟', '动画', '交互', 'visualize', 'show me', 'diagram', 'demo']
 const planetComputeMarkers = ['vsop', 'de440', '星历', '行星位置', '精度', '误差', '坐标', '速度']
 const visualizationStoragePrefix = 'universe-model-viz:'
+const ocrWorkbenchSample = `| 变量 | 公式 |
+|---|---|
+| w | $2 7$ |
+
+算法 1
+if x > 0
+  return y 2
+else
+  return 0`
 
 function hasExplicitVisualizationIntent(text: string) {
   const lowered = text.toLowerCase()
@@ -55,6 +69,44 @@ function suggestKbId(filename: string): string {
 }
 
 function buildSurfaceFromVisualizations(items: VisualizationInstruction[]) {
+  const renderableItems = items.filter((item) => item.a2uiInstruction?.componentId)
+  if (renderableItems.length > 1) {
+    const components = [
+      {
+        id: 'gallery-root',
+        component: {
+          Column: {
+            children: { explicitList: renderableItems.map((item) => `viz-${item.id}`) },
+          },
+        },
+      },
+      ...renderableItems.map((item) => {
+        const instruction = item.a2uiInstruction!
+        return {
+          id: `viz-${item.id}`,
+          component: {
+            [instruction.componentId]: {
+              ...(instruction.initialProps ?? {}),
+              title: item.title,
+              description: item.description,
+              componentId: instruction.componentId,
+              intentType: instruction.intentType,
+              pageId: item.pageId,
+              embedUrl: item.embedUrl || instruction.fallback?.embedUrl,
+              galleryUrl: item.galleryUrl || instruction.fallback?.galleryUrl,
+              implementationKind: item.implementationKind,
+              fallback: instruction.fallback,
+            },
+          },
+        }
+      }),
+    ]
+    return applyA2UILine(
+      applyA2UILine(createEmptySurface(), JSON.stringify({ surfaceUpdate: { surfaceId: 'main', components } })),
+      JSON.stringify({ beginRendering: { surfaceId: 'main', root: 'gallery-root' } }),
+    )
+  }
+
   let surface = createEmptySurface()
   const lines = items.flatMap((item) => buildA2UILines(item))
   for (const line of lines) {
@@ -77,6 +129,22 @@ function buildVisualizationWindowUrl(id: string) {
   return url.toString()
 }
 
+function buildGalleryPageUrl() {
+  const url = new URL(window.location.href)
+  url.search = ''
+  url.hash = ''
+  url.searchParams.set('gallery', '1')
+  return url.toString()
+}
+
+function buildOcrWorkbenchUrl() {
+  const url = new URL(window.location.href)
+  url.search = ''
+  url.hash = ''
+  url.searchParams.set('ocr', '1')
+  return url.toString()
+}
+
 function loadVisualizationFromWindow(id: string): VisualizationInstruction | null {
   const raw = window.localStorage.getItem(`${visualizationStoragePrefix}${id}`)
   if (!raw) return null
@@ -92,6 +160,25 @@ function stageLabel(status: OrchestrationStep['status']) {
   if (status === 'running') return '进行中'
   if (status === 'skipped') return '跳过'
   return '等待'
+}
+
+function formatJson(value: unknown) {
+  return JSON.stringify(value, null, 2)
+}
+
+function truncateText(value: string, limit = 220) {
+  const compact = value.trim()
+  if (compact.length <= limit) return compact
+  return `${compact.slice(0, limit - 3)}...`
+}
+
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result || ''))
+    reader.onerror = () => reject(reader.error || new Error('读取图片失败'))
+    reader.readAsDataURL(file)
+  })
 }
 
 function renderInlineMarkdown(text: string) {
@@ -291,7 +378,260 @@ function StandaloneVisualizationPage({ item }: { item: VisualizationInstruction 
   )
 }
 
+function OcrWorkbenchPage() {
+  const galleryHref = buildGalleryPageUrl()
+  const appHref = new URL(window.location.href)
+  appHref.search = ''
+  appHref.hash = ''
+
+  const [config, setConfig] = useState<AppConfig | null>(null)
+  const [provider, setProvider] = useState('yunwu-openai')
+  const [markdown, setMarkdown] = useState(ocrWorkbenchSample)
+  const [dryRun, setDryRun] = useState(true)
+  const [maxCandidates, setMaxCandidates] = useState(8)
+  const [imageName, setImageName] = useState('')
+  const [imageDataUrl, setImageDataUrl] = useState('')
+  const [pageNumber, setPageNumber] = useState('1')
+  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState('正在读取当前配置...')
+  const [result, setResult] = useState<OcrCorrectionResult | null>(null)
+
+  useEffect(() => {
+    fetchAppConfig()
+      .then((nextConfig) => {
+        setConfig(nextConfig)
+        setProvider(nextConfig.ocrCorrectionProvider || (nextConfig.yunwuConfigured ? 'yunwu-openai' : 'openai-compatible'))
+        setStatus(nextConfig.ocrCorrectionConfigured ? '配置已加载，可以开始测试。' : 'OCR 校正模型尚未配置，请先检查 .env。')
+      })
+      .catch((error) => setStatus(error instanceof Error ? error.message : String(error)))
+  }, [])
+
+  async function handleImagePick(file: File | null) {
+    if (!file) return
+    const dataUrl = await readFileAsDataUrl(file)
+    setImageName(file.name)
+    setImageDataUrl(dataUrl)
+    setStatus(`已载入页图：${file.name}`)
+  }
+
+  async function submitCorrection(nextDryRun: boolean) {
+    if (!markdown.trim() || loading) return
+    setLoading(true)
+    setResult(null)
+    setStatus(nextDryRun ? '正在预演高风险块筛选...' : '正在调用 OCR 校正模型...')
+    try {
+      const response = await runOcrCorrection({
+        provider,
+        markdown,
+        dryRun: nextDryRun,
+        maxCandidates,
+        pageImages: imageDataUrl
+          ? [
+              {
+                pageNumber: pageNumber.trim() ? Number(pageNumber) : undefined,
+                image: imageDataUrl,
+              },
+            ]
+          : undefined,
+      })
+      setResult(response)
+      if (!response.ok) {
+        setStatus(response.error || '请求失败')
+      } else if (nextDryRun) {
+        setStatus(`预演完成，共筛出 ${response.candidates?.length ?? 0} 个候选块。`)
+      } else {
+        setStatus(
+          `校正完成：${response.corrections?.length ?? 0} 个块已处理，${response.errors?.length ?? 0} 个块失败。`,
+        )
+      }
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : String(error))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <main className="ocr-page">
+      <section className="ocr-page-shell">
+        <header className="standalone-viz-head">
+          <div>
+            <p className="eyebrow">OCR Workbench</p>
+            <h1>MinerU 高风险块校正测试台</h1>
+          </div>
+          <div className="top-actions">
+            <a className="top-link" href={appHref.toString()}>
+              返回工作台
+            </a>
+            <a className="top-link" href={galleryHref}>
+              展示厅
+            </a>
+          </div>
+        </header>
+
+        <section className="ocr-grid">
+          <div className="ocr-card">
+            <div className="section-head">
+              <span>请求设置</span>
+              <b>{dryRun ? '预演' : '实跑'}</b>
+            </div>
+            <div className="ocr-config-row">
+              <label>
+                <span>Provider</span>
+                <select className="field" value={provider} onChange={(event) => setProvider(event.target.value)}>
+                  <option value="yunwu-openai">yunwu-openai / GPT 5.5</option>
+                  <option value="openai-compatible">openai-compatible</option>
+                  <option value="gemini">gemini</option>
+                </select>
+              </label>
+              <label>
+                <span>Max Candidates</span>
+                <input
+                  className="field"
+                  type="number"
+                  min="1"
+                  max="50"
+                  value={maxCandidates}
+                  onChange={(event) => setMaxCandidates(Number(event.target.value || 1))}
+                />
+              </label>
+            </div>
+            <label className="rag-toggle">
+              <input type="checkbox" checked={dryRun} onChange={(event) => setDryRun(event.target.checked)} />
+              <span>仅预演筛块，不调用模型</span>
+            </label>
+            <p className="muted">
+              当前配置：{config?.ocrCorrectionConfigured ? 'OCR 校正已配置' : 'OCR 校正未配置'} /{' '}
+              {config?.yunwuConfigured ? '云雾已配置' : '云雾未配置'}
+            </p>
+          </div>
+
+          <div className="ocr-card">
+            <div className="section-head">
+              <span>页图输入</span>
+              <b>{imageName ? '1' : '0'}</b>
+            </div>
+            <label className="file-pick ocr-file-pick">
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                onChange={(event) => void handleImagePick(event.target.files?.[0] ?? null)}
+              />
+              <span>{imageName || '选择页图用于多模态校正'}</span>
+            </label>
+            <label>
+              <span className="ocr-label">Page Number</span>
+              <input className="field" value={pageNumber} onChange={(event) => setPageNumber(event.target.value)} />
+            </label>
+            {imageDataUrl ? <img alt="OCR page preview" className="ocr-image-preview" src={imageDataUrl} /> : null}
+          </div>
+        </section>
+
+        <section className="ocr-grid single">
+          <div className="ocr-card">
+            <div className="section-head">
+              <span>Markdown 输入</span>
+              <b>{markdown.length}</b>
+            </div>
+            <textarea
+              className="ocr-textarea"
+              value={markdown}
+              onChange={(event) => setMarkdown(event.target.value)}
+              placeholder="粘贴 MinerU 输出的 Markdown"
+            />
+            <div className="ocr-action-row">
+              <button type="button" onClick={() => setMarkdown(ocrWorkbenchSample)} disabled={loading}>
+                载入示例
+              </button>
+              <button type="button" onClick={() => void submitCorrection(true)} disabled={loading || !markdown.trim()}>
+                Dry Run
+              </button>
+              <button type="button" onClick={() => void submitCorrection(false)} disabled={loading || !markdown.trim()}>
+                {loading ? '处理中...' : '运行校正'}
+              </button>
+            </div>
+            <p className="status-line">{status}</p>
+          </div>
+        </section>
+
+        <section className="ocr-results">
+          <div className="ocr-card">
+            <div className="section-head">
+              <span>候选块</span>
+              <b>{result?.candidates?.length ?? 0}</b>
+            </div>
+            {result?.candidates?.length ? (
+              <div className="ocr-candidate-list">
+                {result.candidates.map((candidate) => (
+                  <article className="ocr-candidate" key={`${candidate.block_index}-${candidate.start}`}>
+                    <div className="ocr-candidate-meta">
+                      <strong>块 {candidate.block_index}</strong>
+                      <span>score {candidate.score}</span>
+                      <span>page {candidate.page_number ?? '-'}</span>
+                    </div>
+                    <p>{candidate.reasons.join(' / ')}</p>
+                    <pre>{truncateText(candidate.text, 360)}</pre>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="muted">还没有候选块结果。</p>
+            )}
+          </div>
+
+          <div className="ocr-card">
+            <div className="section-head">
+              <span>校正结果</span>
+              <b>{result?.corrections?.length ?? 0}</b>
+            </div>
+            {result?.corrections?.length ? (
+              <div className="ocr-candidate-list">
+                {result.corrections.map((item) => (
+                  <article className="ocr-candidate" key={`${item.block_index}-${item.corrected.length}`}>
+                    <div className="ocr-candidate-meta">
+                      <strong>块 {item.block_index}</strong>
+                      <span>{item.changed ? '已修改' : '未修改'}</span>
+                    </div>
+                    <p>{item.reasons.join(' / ')}</p>
+                    <pre>{truncateText(item.corrected, 360)}</pre>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="muted">还没有校正结果。</p>
+            )}
+          </div>
+        </section>
+
+        <section className="ocr-grid single">
+          <div className="ocr-card">
+            <div className="section-head">
+              <span>合并后的 Markdown</span>
+              <b>{result?.correctedMarkdown?.length ?? 0}</b>
+            </div>
+            <textarea className="ocr-textarea result" readOnly value={result?.correctedMarkdown || ''} />
+            {result?.errors?.length ? (
+              <details className="ocr-raw-panel">
+                <summary>查看错误</summary>
+                <pre>{formatJson(result.errors)}</pre>
+              </details>
+            ) : null}
+            {result ? (
+              <details className="ocr-raw-panel">
+                <summary>查看完整响应 JSON</summary>
+                <pre>{formatJson(result)}</pre>
+              </details>
+            ) : null}
+          </div>
+        </section>
+      </section>
+    </main>
+  )
+}
+
 function WorkspaceApp({ isGallery }: { isGallery: boolean }) {
+  const galleryHref = buildGalleryPageUrl()
+  const ocrHref = buildOcrWorkbenchUrl()
   const [health, setHealth] = useState<string>('Checking')
   const [strategies, setStrategies] = useState<RagStrategy[]>([])
   const [kbs, setKbs] = useState<KnowledgeBase[]>([])
@@ -306,6 +646,8 @@ function WorkspaceApp({ isGallery }: { isGallery: boolean }) {
   const [loadingStages, setLoadingStages] = useState<OrchestrationStep[]>(buildRuntimeStages(false, ''))
   const [evidenceOpen, setEvidenceOpen] = useState(false)
   const [status, setStatus] = useState('')
+  const [galleryItems, setGalleryItems] = useState<VisualizationInstruction[]>([])
+  const [galleryStatus, setGalleryStatus] = useState('正在加载展示厅...')
   const composerFileInputRef = useRef<HTMLInputElement | null>(null)
 
   const currentStrategy = strategies.find((item) => item.id === selectedStrategy)
@@ -327,6 +669,16 @@ function WorkspaceApp({ isGallery }: { isGallery: boolean }) {
   useEffect(() => {
     refresh().catch((error) => setStatus(error instanceof Error ? error.message : String(error)))
   }, [])
+
+  useEffect(() => {
+    if (!isGallery) return
+    fetchVisualizations()
+      .then((result) => {
+        setGalleryItems(result.items)
+        setGalleryStatus(result.items.length ? '' : '暂无可视化条目。')
+      })
+      .catch((error) => setGalleryStatus(error instanceof Error ? error.message : String(error)))
+  }, [isGallery])
 
   useEffect(() => {
     if (!isLoading) {
@@ -434,25 +786,11 @@ function WorkspaceApp({ isGallery }: { isGallery: boolean }) {
       <main className="gallery-page">
         <section className="gallery-copy">
           <p className="eyebrow">A2UI Gallery</p>
-          <h1>天文 A2UI 组件预览</h1>
+          <h1>天文学展示厅</h1>
+          <p>集中预览已注册的天文学交互组件、嵌入页面和外部计算器。</p>
         </section>
-        <A2UISurface
-          surface={buildSurfaceFromVisualizations([
-            {
-              id: 'ephemeris-comparison',
-              title: '太阳系行星运动 VSOP / DE440 对照',
-              description: '',
-              a2uiInstruction: {
-                componentId: 'astronomy-core.ephemeris-comparison',
-                intentType: 'model_comparison',
-                initialProps: {
-                  bodies: ['earth', 'mars'],
-                  date: '2050-01-01',
-                },
-              },
-            },
-          ])}
-        />
+        {galleryStatus ? <p className="muted">{galleryStatus}</p> : null}
+        {galleryItems.length ? <A2UISurface surface={buildSurfaceFromVisualizations(galleryItems)} /> : null}
       </main>
     )
   }
@@ -465,9 +803,15 @@ function WorkspaceApp({ isGallery }: { isGallery: boolean }) {
           <p className="eyebrow">Universe Model Agent</p>
           <strong>宇宙模型智能体</strong>
         </div>
-        <div className="top-status">
+        <div className="top-actions">
           <span>{health}</span>
           <span>{useRag ? selectedStrategy : 'local-first'}</span>
+          <a className="top-link" href={galleryHref}>
+            天文学展示厅
+          </a>
+          <a className="top-link" href={ocrHref}>
+            OCR 测试台
+          </a>
         </div>
       </header>
 
@@ -525,6 +869,22 @@ function WorkspaceApp({ isGallery }: { isGallery: boolean }) {
               <section className="welcome-panel">
                 <p className="eyebrow">Astronomy Chat</p>
                 <h1>用真实 A2UI 组件解释宇宙模型</h1>
+                <a className="gallery-entry-card" href={galleryHref}>
+                  <div>
+                    <p className="eyebrow">Gallery</p>
+                    <strong>进入天文学展示厅</strong>
+                    <span>查看 3D 天球、DE440 计算器、食相演示与更多交互页面。</span>
+                  </div>
+                  <b>进入</b>
+                </a>
+                <a className="gallery-entry-card" href={ocrHref}>
+                  <div>
+                    <p className="eyebrow">OCR</p>
+                    <strong>进入 OCR 校正测试台</strong>
+                    <span>直接测试 MinerU 高风险块筛选、云雾 GPT 5.5 校正和结果合并。</span>
+                  </div>
+                  <b>进入</b>
+                </a>
                 <div className="starter-row">
                   {starterQuestions.map((question) => (
                     <button key={question} onClick={() => void sendQuestion(question)}>
@@ -630,6 +990,9 @@ export function App() {
   const visualizationId = searchParams.get('viz')
   if (visualizationId) {
     return <StandaloneVisualizationPage item={loadVisualizationFromWindow(visualizationId)} />
+  }
+  if (searchParams.get('ocr') === '1') {
+    return <OcrWorkbenchPage />
   }
   return <WorkspaceApp isGallery={searchParams.get('gallery') === '1'} />
 }

@@ -71,6 +71,18 @@ export OCR_CORRECTION_API_KEY="..."
 export OCR_CORRECTION_MODEL="gemini-..."
 ```
 
+如果希望直接通过云雾 API 调用 GPT 5.5 做高风险块识别与校正：
+
+```bash
+export OCR_CORRECTION_PROVIDER="yunwu-openai"
+export YUNWU_API_BASE_URL="https://<your-yunwu-endpoint>"
+export YUNWU_API_KEY="..."
+export YUNWU_GPT55_MODEL="gpt-5.5"
+export YUNWU_CHAT_PATH="/v1/chat/completions"
+```
+
+在实现上，`yunwu-openai` 会走和 `openai-compatible` 相同的多模态请求结构，但优先读取 `YUNWU_*` 这组配置。
+
 ## 核心流程
 
 ### 1. MinerU 粗识别
@@ -267,6 +279,16 @@ MinerU 输出的 Markdown 只保留了线性文本，但很多错误恰恰来自
 ```
 
 所以不是我们想把逻辑写复杂，而是两家模型接口协议本来就不一样。
+
+### `yunwu-openai`
+
+这一路在协议上仍然按 OpenAI-compatible 处理，也就是说：
+
+- 接口仍走 chat completions
+- 图片仍放在 `image_url`
+- 只是默认模型配置来自 `YUNWU_API_BASE_URL`、`YUNWU_API_KEY` 和 `YUNWU_GPT55_MODEL`
+
+这样可以把“云雾 API 调 GPT 5.5”作为单独能力接入，同时不破坏原有通用 OpenAI-compatible 逻辑。
 
 ## 模型收到的内容
 

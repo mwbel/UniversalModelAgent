@@ -16,6 +16,12 @@
       </div>
 
       <section class="control-group">
+        <label>服务通道</label>
+        <div id="servicePresetBar" class="service-preset-bar"></div>
+        <p id="servicePresetHint" class="field-note">选择一个后端服务预设。</p>
+      </section>
+
+      <section class="control-group">
         <label for="baseUrlInput">Base URL</label>
         <input id="baseUrlInput" type="url" placeholder="https://api.example.com">
       </section>
@@ -76,7 +82,7 @@
     <main class="chat-panel">
       <header class="chat-header">
         <div>
-          <p>OpenAI-compatible</p>
+          <p id="activeServiceLabel">OpenAI-compatible</p>
           <h2 id="activeModelTitle">选择模型后开始测试</h2>
         </div>
         <span id="requestBadge" class="request-badge">Ready</span>
@@ -156,6 +162,7 @@
     </aside>
   </div>
 
+  <script src="./runtime-config.js"></script>
   <script src="./model-tester.js"></script>
 </body>
 </html>

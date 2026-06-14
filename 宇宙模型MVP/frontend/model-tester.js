@@ -1,7 +1,11 @@
+const RUNTIME_CONFIG = window.__UMA_RUNTIME_CONFIG__ || {};
+
 const API_BASE =
-  window.location.protocol === "file:" || window.location.port !== "8787"
+  RUNTIME_CONFIG.apiBaseUrl ||
+  RUNTIME_CONFIG.backendUrl ||
+  (window.location.protocol === "file:" || window.location.port !== "8787"
     ? "http://127.0.0.1:8787"
-    : "";
+    : "");
 
 const DEFAULT_SYSTEM_PROMPT = "你是一个严谨、直接的中文助手。回答时优先给出结论，再补充必要解释。";
 const MAX_ATTACHMENT_BYTES = 4 * 1024 * 1024;
@@ -57,8 +61,10 @@ const MODEL_HINTS = {
 const state = {
   messages: [],
   defaultModels: [],
+  servicePresets: [],
   attachments: [],
   activeModel: "",
+  activeProviderPreset: "openai-compatible",
   selectedModels: [],
   activePromptPresetId: "rigorous",
   imageSelectionAutoApplied: false,
@@ -73,12 +79,40 @@ function apiUrl(path) {
   return `${API_BASE}${path}`;
 }
 
+function getServicePreset(presetId = state.activeProviderPreset) {
+  return state.servicePresets.find((item) => item.id === presetId) || null;
+}
+
+function saveManualConnectionState() {
+  localStorage.setItem("modelTester.manual.baseUrl", els.baseUrlInput.value.trim());
+  localStorage.setItem("modelTester.manual.modelsPath", els.modelsPathInput.value.trim());
+  localStorage.setItem("modelTester.manual.chatPath", els.chatPathInput.value.trim());
+}
+
+function restoreManualConnectionState(config = null) {
+  const baseUrl = localStorage.getItem("modelTester.manual.baseUrl");
+  const modelsPath = localStorage.getItem("modelTester.manual.modelsPath");
+  const chatPath = localStorage.getItem("modelTester.manual.chatPath");
+  els.baseUrlInput.value = baseUrl || els.baseUrlInput.value || config?.baseUrl || "";
+  els.modelsPathInput.value = modelsPath || els.modelsPathInput.value || config?.modelsPath || "/models";
+  els.chatPathInput.value = chatPath || els.chatPathInput.value || config?.chatPath || "/chat/completions";
+}
+
+function setConnectionFieldMode(readOnly) {
+  els.baseUrlInput.readOnly = readOnly;
+  els.modelsPathInput.readOnly = readOnly;
+  els.chatPathInput.readOnly = readOnly;
+}
+
 function bindElements() {
   [
     "baseUrlInput",
     "apiKeyInput",
     "toggleKeyButton",
     "keyStatus",
+    "activeServiceLabel",
+    "servicePresetBar",
+    "servicePresetHint",
     "modelSelect",
     "refreshModelsButton",
     "modelStatus",
@@ -212,6 +246,7 @@ function bindEvents() {
 }
 
 function restoreLocalState() {
+  state.activeProviderPreset = localStorage.getItem("modelTester.providerPreset") || "openai-compatible";
   els.baseUrlInput.value = localStorage.getItem("modelTester.baseUrl") || "";
   els.modelsPathInput.value = localStorage.getItem("modelTester.modelsPath") || "/models";
   els.chatPathInput.value = localStorage.getItem("modelTester.chatPath") || "/chat/completions";
@@ -236,23 +271,101 @@ async function loadConfig() {
   try {
     const response = await fetch(apiUrl("/api/model-tester/config"));
     const config = await response.json();
-    if (!els.baseUrlInput.value && config.baseUrl) {
-      els.baseUrlInput.value = config.baseUrl;
-    }
-    if (config.baseUrl && els.baseUrlInput.value.trim() === config.baseUrl && config.modelsPath) {
-      els.modelsPathInput.value = config.modelsPath;
-    }
-    if (config.baseUrl && els.baseUrlInput.value.trim() === config.baseUrl && config.chatPath) {
-      els.chatPathInput.value = config.chatPath;
+    state.servicePresets = Array.isArray(config.presets) ? config.presets : [];
+    if (!state.servicePresets.length) {
+      state.servicePresets = [
+        {
+          id: "openai-compatible",
+          label: "OpenAI-compatible",
+          description: "兼容 OpenAI 的模型服务",
+          baseUrl: config.baseUrl || "",
+          modelsPath: config.modelsPath || "/models",
+          chatPath: config.chatPath || "/chat/completions",
+          defaultModels: Array.isArray(config.defaultModels) ? config.defaultModels : [],
+          configured: Boolean(config.baseUrl),
+          usesEnvKey: false,
+          keyStatusLabel: config.hasApiKey ? "使用后端环境变量 key" : "未配置默认 API key",
+        },
+      ];
     }
     state.defaultModels = Array.isArray(config.defaultModels) ? config.defaultModels : [];
     state.hasBackendKey = Boolean(config.hasApiKey);
+    renderServicePresets();
+    applyServicePreset(state.activeProviderPreset, config, false);
     updateKeyStatus();
-    renderModelOptions(state.defaultModels);
-    await refreshModels({ forceRemote: Boolean(els.baseUrlInput.value.trim()) });
+    await refreshModels({ forceRemote: true });
   } catch (error) {
     setModelStatus(`配置加载失败：${error.message}`, true);
     renderModelOptions(state.defaultModels);
+  }
+}
+
+function renderServicePresets() {
+  els.servicePresetBar.innerHTML = "";
+  state.servicePresets.forEach((preset) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "service-chip-button";
+    button.textContent = preset.label;
+    button.classList.toggle("is-active", preset.id === state.activeProviderPreset);
+    button.classList.toggle("is-disabled", !preset.configured);
+    button.addEventListener("click", () => {
+      applyServicePreset(preset.id, null, true);
+    });
+    els.servicePresetBar.append(button);
+  });
+}
+
+function applyServicePreset(presetId, config = null, shouldRefresh = true) {
+  const previousPreset = state.activeProviderPreset;
+  if (previousPreset === "openai-compatible" && presetId !== "openai-compatible") {
+    saveManualConnectionState();
+  }
+
+  const preset = getServicePreset(presetId) || getServicePreset("openai-compatible");
+  state.activeProviderPreset = preset?.id || "openai-compatible";
+  localStorage.setItem("modelTester.providerPreset", state.activeProviderPreset);
+  renderServicePresets();
+
+  const activePreset = getServicePreset(state.activeProviderPreset);
+  if (!activePreset) {
+    return;
+  }
+
+  els.activeServiceLabel.textContent = activePreset.label;
+  els.servicePresetHint.textContent = activePreset.description || "选择一个后端服务预设。";
+  els.servicePresetHint.className = `field-note ${activePreset.configured ? "is-ok" : ""}`.trim();
+
+  if (activePreset.id === "openai-compatible") {
+    restoreManualConnectionState(config);
+    setConnectionFieldMode(false);
+    els.apiKeyInput.disabled = false;
+    els.toggleKeyButton.disabled = false;
+    els.apiKeyInput.placeholder = "使用后端环境变量或临时输入";
+    state.hasBackendKey = Boolean(config?.hasApiKey);
+  } else {
+    els.baseUrlInput.value = activePreset.baseUrl || "";
+    els.modelsPathInput.value = activePreset.modelsPath || "";
+    els.chatPathInput.value = activePreset.chatPath || "";
+    els.apiKeyInput.value = "";
+    sessionStorage.removeItem("modelTester.apiKey");
+    setConnectionFieldMode(true);
+    els.apiKeyInput.disabled = true;
+    els.toggleKeyButton.disabled = true;
+    els.apiKeyInput.type = "password";
+    els.apiKeyInput.placeholder = "当前服务通道仅使用后端环境变量";
+    state.hasBackendKey = false;
+  }
+
+  updateKeyVisibilityButton(false);
+  updateKeyStatus();
+  state.defaultModels = Array.isArray(activePreset.defaultModels) ? activePreset.defaultModels : [];
+  state.selectedModels = [];
+  renderModelOptions(state.defaultModels);
+  updateRequestSettingsSummary();
+
+  if (shouldRefresh) {
+    refreshModels({ forceRemote: true });
   }
 }
 
@@ -328,6 +441,7 @@ function renderModelOptions(models) {
   }
   syncModelSelectionStrategy(items);
   renderModelChecklist(items);
+  updateCompareButtonLabel();
   updateActiveModelTitle();
   if (!els.modelStatus.classList.contains("is-error")) {
     setModelStatus(`当前模型：${state.activeModel}`, false);
@@ -336,6 +450,7 @@ function renderModelOptions(models) {
 
 function buildConnectionPayload() {
   return {
+    providerPreset: state.activeProviderPreset,
     baseUrl: els.baseUrlInput.value.trim(),
     apiKey: els.apiKeyInput.value.trim(),
     modelsPath: els.modelsPathInput.value.trim() || "/models",
@@ -345,6 +460,11 @@ function buildConnectionPayload() {
 
 function getSelectedModels() {
   return state.selectedModels.filter(Boolean);
+}
+
+function updateCompareButtonLabel() {
+  const count = getSelectedModels().length;
+  els.compareButton.textContent = count ? `对比 ${count}` : "对比";
 }
 
 function getAllModels() {
@@ -362,6 +482,9 @@ function getModelHintType(model) {
   if (!lowered) {
     return "text_only";
   }
+  if (lowered.includes("gemini")) {
+    return "vision_verified";
+  }
   if (lowered.includes("medgemma")) {
     return "vision_verified";
   }
@@ -377,7 +500,7 @@ function getModelHintType(model) {
   if (lowered.includes("embed")) {
     return "embedding";
   }
-  if (lowered.includes("gemma4") || lowered.includes("qwen3.6")) {
+  if (lowered.includes("gemma4") || lowered.includes("qwen3.6") || lowered.includes("gpt-5.5")) {
     return "vision_possible";
   }
   return "text_only";
@@ -439,6 +562,8 @@ function renderModelChecklist(models) {
       } else {
         state.selectedModels = state.selectedModels.filter((item) => item !== model);
       }
+      updateCompareButtonLabel();
+      updateModelChecklistHint(models);
     });
 
     const content = document.createElement("div");
@@ -470,6 +595,7 @@ function handleSelectAllModels() {
   state.selectedModels = getAllModels();
   state.imageSelectionAutoApplied = false;
   renderModelChecklist(getAllModels());
+  updateCompareButtonLabel();
 }
 
 function updateModelChecklistHint(models = getAllModels()) {
@@ -905,8 +1031,44 @@ function bubble(content, isError = false) {
     node.style.borderColor = "#ffc9b8";
     node.style.background = "#fff7f3";
   }
-  node.textContent = content;
+  node.textContent = normalizeAnswerForDisplay(content);
   return node;
+}
+
+function normalizeAnswerForDisplay(content) {
+  return normalizeMathMarkdown(stripMarkdownFence(String(content || "")));
+}
+
+function stripMarkdownFence(text) {
+  const stripped = text.trim();
+  const match = stripped.match(/^```(?:markdown|md)?\s*([\s\S]*?)\s*```$/i);
+  return match ? match[1].trim() : text;
+}
+
+function normalizeMathMarkdown(text) {
+  const inlineMathPattern = /\b([A-Za-z]\s*=\s*[-+A-Za-z0-9.]+(?:\^[A-Za-z0-9()+-]+)?)/g;
+  return text
+    .split("\n")
+    .map((line) => {
+      if (!line.includes("|")) {
+        return line.replace(inlineMathPattern, wrapInlineMath);
+      }
+      return line
+        .split("|")
+        .map((cell) => {
+          const trimmed = cell.trim();
+          if (!trimmed || /^:?-{3,}:?$/.test(trimmed)) {
+            return cell;
+          }
+          return cell.replace(trimmed, trimmed.replace(inlineMathPattern, wrapInlineMath));
+        })
+        .join("|");
+    })
+    .join("\n");
+}
+
+function wrapInlineMath(match) {
+  return match.includes("$") ? match : `$${match}$`;
 }
 
 async function handleAttachmentFiles(fileList) {
@@ -1094,6 +1256,12 @@ function setModelStatus(message, isError) {
 }
 
 function updateKeyStatus() {
+  const preset = getServicePreset();
+  if (preset?.usesEnvKey) {
+    els.keyStatus.textContent = preset.keyStatusLabel || "使用后端环境变量 key";
+    els.keyStatus.className = preset.configured ? "field-note is-ok" : "field-note";
+    return;
+  }
   const hasInputKey = Boolean(els.apiKeyInput.value.trim());
   if (hasInputKey) {
     els.keyStatus.textContent = "使用页面临时 key";
@@ -1129,7 +1297,9 @@ function updateRequestSettingsSummary() {
   const maxTokens = els.maxTokensInput.value.trim() || "auto";
   const hasSystemPrompt = Boolean(els.systemPromptInput.value.trim());
   const roleLabel = els.promptPresetStatus.textContent || "自定义";
-  els.requestSettingsSummary.textContent = `Temperature ${temperature} · Max ${maxTokens} · 角色 ${roleLabel} · System prompt ${hasSystemPrompt ? "已启用" : "关闭"}`;
+  const preset = getServicePreset();
+  const serviceLabel = preset?.label || "OpenAI-compatible";
+  els.requestSettingsSummary.textContent = `服务 ${serviceLabel} · Temperature ${temperature} · Max ${maxTokens} · 角色 ${roleLabel} · System prompt ${hasSystemPrompt ? "已启用" : "关闭"}`;
 }
 
 function formatBytes(bytes) {

@@ -125,6 +125,9 @@ class AppHandler(BaseHTTPRequestHandler):
         if parsed.path == "/api/model-tester/chat":
             self._send_json(MODEL_TESTER_SERVICE.chat(payload))
             return
+        if parsed.path == "/api/model-tester/image-to-markdown":
+            self._send_json(MODEL_TESTER_SERVICE.image_to_markdown(payload))
+            return
         if parsed.path == "/api/ocr/convert":
             self._send_json(MINERU_CLIENT.convert_markdown(payload))
             return

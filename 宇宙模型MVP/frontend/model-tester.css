@@ -408,6 +408,72 @@ input[readonly] {
   overflow-wrap: anywhere;
 }
 
+.markdown-body {
+  white-space: normal;
+}
+
+.markdown-body p {
+  margin: 0 0 12px;
+}
+
+.markdown-body p:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.markdown-body table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  line-height: 1.45;
+  white-space: nowrap;
+}
+
+.markdown-body th,
+.markdown-body td {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.markdown-body th {
+  background: #f8fafc;
+  font-weight: 700;
+}
+
+.markdown-body .markdown-table-wrap:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body pre {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.markdown-body code {
+  font: 13px/1.55 "SFMono-Regular", Consolas, monospace;
+}
+
+.markdown-body pre code {
+  display: block;
+  white-space: pre;
+}
+
 .message.user .bubble {
   background: var(--user);
   border-color: #bfe8d4;
@@ -424,12 +490,16 @@ input[readonly] {
   white-space: pre-wrap;
 }
 
+.chat-bottom {
+  border-top: 1px solid var(--line);
+  background: var(--panel);
+}
+
 .composer {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 12px;
-  padding: 18px 24px 22px;
-  border-top: 1px solid var(--line);
+  padding: 18px 24px 12px;
   background: var(--panel);
 }
 
@@ -470,10 +540,39 @@ input[readonly] {
   gap: 6px;
 }
 
+.model-picker-panel {
+  display: grid;
+  gap: 10px;
+  padding: 0 24px 18px;
+  background: var(--panel);
+}
+
+.model-picker-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.model-picker-head strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.model-picker-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .model-checklist {
-  max-height: 162px;
+  max-height: 148px;
   overflow-y: auto;
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 6px;
   padding: 8px;
   border: 1px solid var(--line);
@@ -710,9 +809,21 @@ input[readonly] {
   background: #fffaf8;
 }
 
+.comparison-card-head {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
 .comparison-model {
   font-weight: 700;
   overflow-wrap: anywhere;
+}
+
+.comparison-copy-button {
+  flex: 0 0 auto;
 }
 
 .comparison-hint {
@@ -751,7 +862,8 @@ input[readonly] {
   }
 
   .chat-header,
-  .composer {
+  .composer,
+  .model-picker-panel {
     padding-left: 16px;
     padding-right: 16px;
   }
@@ -766,6 +878,19 @@ input[readonly] {
 
   .composer-actions {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .model-picker-head {
+    display: grid;
+  }
+
+  .model-picker-actions {
+    justify-content: flex-start;
+  }
+
+  .model-checklist {
+    grid-template-columns: 1fr;
+    max-height: 180px;
   }
 
   .send-button {

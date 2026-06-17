@@ -4,9 +4,9 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_DIR="${ROOT_DIR}/.run-logs"
-PID_FILE="${LOG_DIR}/backend.pid"
-ENV_FILE="${LOG_DIR}/backend.env"
-LOG_FILE="${LOG_DIR}/backend.log"
+PID_FILE="${LOG_DIR}/static-backend.pid"
+ENV_FILE="${LOG_DIR}/static-backend.env"
+LOG_FILE="${LOG_DIR}/static-backend.log"
 APP_HOST="${APP_HOST:-127.0.0.1}"
 APP_PORT_START="${APP_PORT:-8787}"
 
@@ -34,12 +34,14 @@ find_free_port() {
 
 write_env_file() {
   local port="$1"
+  local pid="$2"
   cat > "${ENV_FILE}" <<EOF
 BACKEND_HOST=${APP_HOST}
 BACKEND_PORT=${port}
 BACKEND_URL=http://${APP_HOST}:${port}
 BACKEND_HEALTH_URL=http://${APP_HOST}:${port}/api/health
 BACKEND_LOG=${LOG_FILE}
+BACKEND_PID=${pid}
 EOF
 }
 
@@ -104,7 +106,7 @@ BACKEND_PID=$!
 popd >/dev/null
 
 echo "${BACKEND_PID}" > "${PID_FILE}"
-write_env_file "${BACKEND_PORT}"
+write_env_file "${BACKEND_PORT}" "${BACKEND_PID}"
 wait_for_backend "${BACKEND_HEALTH_URL}" "${BACKEND_PID}"
 
 echo "Backend started"

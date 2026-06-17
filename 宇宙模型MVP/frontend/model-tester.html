@@ -46,15 +46,6 @@
         <p id="modelStatus" class="field-note">正在加载模型</p>
       </section>
 
-      <section class="control-group">
-        <div class="label-row">
-          <label>对比模型</label>
-          <button id="selectAllModelsButton" class="text-button compact-button" type="button">全选</button>
-        </div>
-        <div id="modelChecklist" class="model-checklist"></div>
-        <p id="modelChecklistHint" class="field-note">默认可多选，用于横向对比。</p>
-      </section>
-
       <section class="split-controls">
         <div class="control-group">
           <label for="temperatureInput">Temperature</label>
@@ -90,20 +81,37 @@
 
       <section id="messages" class="messages" aria-live="polite"></section>
 
-      <form id="chatForm" class="composer">
-        <div class="composer-stack">
-          <div id="attachmentList" class="attachment-list"></div>
-          <div class="composer-row">
-            <input id="attachmentInput" class="hidden-file-input" type="file" multiple>
-            <button id="attachButton" class="attach-button" type="button" title="添加附件" aria-label="添加附件">＋</button>
-            <textarea id="messageInput" rows="1" placeholder="输入测试问题，Enter 发送，Shift + Enter 换行"></textarea>
+      <div class="chat-bottom">
+        <form id="chatForm" class="composer">
+          <div class="composer-stack">
+            <div id="attachmentList" class="attachment-list"></div>
+            <div class="composer-row">
+              <input id="attachmentInput" class="hidden-file-input" type="file" multiple>
+              <button id="attachButton" class="attach-button" type="button" title="添加附件" aria-label="添加附件">＋</button>
+              <textarea id="messageInput" rows="1" placeholder="输入测试问题，Enter 发送，Shift + Enter 换行"></textarea>
+            </div>
           </div>
-        </div>
-        <div class="composer-actions">
-          <button id="compareButton" class="secondary-button compare-button" type="button">对比</button>
-          <button id="sendButton" class="send-button" type="submit">发送</button>
-        </div>
-      </form>
+          <div class="composer-actions">
+            <button id="compareButton" class="secondary-button compare-button" type="button">对比</button>
+            <button id="sendButton" class="send-button" type="submit">发送</button>
+          </div>
+        </form>
+
+        <section class="model-picker-panel" aria-label="可用模型">
+          <div class="model-picker-head">
+            <div>
+              <strong>可用模型</strong>
+              <p id="modelChecklistHint" class="field-note">默认可多选，用于横向对比。</p>
+            </div>
+            <div class="model-picker-actions">
+              <button id="selectOnlineModelsButton" class="text-button compact-button" type="button">在线识别</button>
+              <button id="selectAllModelsButton" class="text-button compact-button" type="button">全选</button>
+              <button id="deselectAllModelsButton" class="text-button compact-button" type="button">全不选</button>
+            </div>
+          </div>
+          <div id="modelChecklist" class="model-checklist"></div>
+        </section>
+      </div>
     </main>
 
     <aside class="inspector">

@@ -85,6 +85,11 @@ class Settings:
     yunwu_api_key: str = os.getenv("YUNWU_API_KEY", "")
     yunwu_gpt55_model: str = os.getenv("YUNWU_GPT55_MODEL", "gpt-5.5")
     yunwu_chat_path: str = os.getenv("YUNWU_CHAT_PATH", "/v1/chat/completions")
+    mathpix_api_url: str = os.getenv("MATHPIX_API_URL", "https://api.mathpix.com/v3/text").rstrip("/")
+    mathpix_app_id: str = os.getenv("MATHPIX_APP_ID", "")
+    mathpix_app_key: str = os.getenv("MATHPIX_APP_KEY", "")
+    mathpix_model: str = os.getenv("MATHPIX_MODEL", "mathpix-text")
+    mathpix_timeout_seconds: float = float(os.getenv("MATHPIX_TIMEOUT_SECONDS", "60"))
     ocr_correction_provider: str = os.getenv("OCR_CORRECTION_PROVIDER", "openai-compatible")
     ocr_correction_base_url: str = os.getenv("OCR_CORRECTION_BASE_URL", os.getenv("LLM_BASE_URL", "")).rstrip("/")
     ocr_correction_api_key: str = os.getenv("OCR_CORRECTION_API_KEY", os.getenv("LLM_API_KEY", ""))
@@ -136,6 +141,7 @@ class Settings:
             "llmConfigured": bool(self.llm_base_url and self.llm_model),
             "geminiConfigured": bool(self.gemini_api_keys),
             "yunwuConfigured": bool(self.yunwu_api_base_url and self.yunwu_api_key),
+            "mathpixConfigured": bool(self.mathpix_app_id and self.mathpix_app_key),
             "ocrCorrectionConfigured": bool(self.ocr_correction_api_key and self.ocr_correction_model),
             "ocrCorrectionProvider": self.ocr_correction_provider,
         }

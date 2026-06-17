@@ -1,0 +1,35 @@
+mathpix:
+  api_url: "https://api.mathpix.com/v3/text"
+  timeout_seconds: 60
+  max_retries: 3
+  retry_sleep_seconds: 3
+  cache_dir: ".mathpix_cache"
+  formats:
+    - "text"
+    - "latex_styled"
+    - "data"
+    - "html"
+
+crop:
+  padding: 8
+  output_dir: "crops"
+
+risk:
+  enabled_block_types:
+    - "table"
+    - "equation"
+    - "inline_formula"
+    - "interline_equation"
+    - "matrix"
+    - "align"
+    - "cases"
+    - "array"
+    - "tabular"
+
+chunking:
+  chunk_size_tokens: 1200
+  chunk_overlap_tokens: 150
+  min_chunk_tokens: 250
+
+markdown:
+  attach_metadata_comments: true

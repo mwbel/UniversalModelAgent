@@ -5,10 +5,10 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FRONTEND_DIR="${ROOT_DIR}/frontend"
 LOG_DIR="${ROOT_DIR}/.run-logs"
-PID_FILE="${LOG_DIR}/frontend.pid"
-ENV_FILE="${LOG_DIR}/frontend.env"
-BACKEND_ENV_FILE="${LOG_DIR}/backend.env"
-LOG_FILE="${LOG_DIR}/frontend.log"
+PID_FILE="${LOG_DIR}/static-frontend.pid"
+ENV_FILE="${LOG_DIR}/static-frontend.env"
+BACKEND_ENV_FILE="${LOG_DIR}/static-backend.env"
+LOG_FILE="${LOG_DIR}/static-frontend.log"
 RUNTIME_CONFIG_FILE="${FRONTEND_DIR}/runtime-config.js"
 FRONTEND_HOST="${FRONTEND_HOST:-127.0.0.1}"
 FRONTEND_PORT_START="${FRONTEND_PORT:-8001}"
@@ -70,6 +70,7 @@ EOF
 write_env_file() {
   local port="$1"
   local backend_url="$2"
+  local pid="$3"
   cat > "${ENV_FILE}" <<EOF
 FRONTEND_HOST=${FRONTEND_HOST}
 FRONTEND_PORT=${port}
@@ -77,6 +78,7 @@ FRONTEND_URL=http://${FRONTEND_HOST}:${port}
 FRONTEND_LOG=${LOG_FILE}
 FRONTEND_RUNTIME_CONFIG=${RUNTIME_CONFIG_FILE}
 FRONTEND_BACKEND_URL=${backend_url}
+FRONTEND_PID=${pid}
 EOF
 }
 
@@ -145,7 +147,7 @@ FRONTEND_PID=$!
 popd >/dev/null
 
 echo "${FRONTEND_PID}" > "${PID_FILE}"
-write_env_file "${FRONTEND_PORT}" "${backend_url}"
+write_env_file "${FRONTEND_PORT}" "${backend_url}" "${FRONTEND_PID}"
 wait_for_frontend "${FRONTEND_URL}" "${FRONTEND_PID}"
 
 echo "Frontend started"

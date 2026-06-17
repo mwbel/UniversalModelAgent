@@ -62,6 +62,7 @@ const state = {
   messages: [],
   defaultModels: [],
   servicePresets: [],
+  availableModelItems: [],
   attachments: [],
   activeModel: "",
   activeProviderPreset: "openai-compatible",
@@ -118,7 +119,9 @@ function bindElements() {
     "modelStatus",
     "modelChecklist",
     "modelChecklistHint",
+    "selectOnlineModelsButton",
     "selectAllModelsButton",
+    "deselectAllModelsButton",
     "temperatureInput",
     "maxTokensInput",
     "modelsPathInput",
@@ -169,7 +172,9 @@ function bindEvents() {
   });
 
   els.refreshModelsButton.addEventListener("click", () => refreshModels({ forceRemote: true }));
+  els.selectOnlineModelsButton.addEventListener("click", handleSelectOnlineModels);
   els.selectAllModelsButton.addEventListener("click", handleSelectAllModels);
+  els.deselectAllModelsButton.addEventListener("click", handleDeselectAllModels);
 
   els.modelSelect.addEventListener("change", () => {
     state.activeModel = els.modelSelect.value;
@@ -288,7 +293,11 @@ async function loadConfig() {
         },
       ];
     }
-    state.defaultModels = Array.isArray(config.defaultModels) ? config.defaultModels : [];
+    state.defaultModels = Array.isArray(config.unifiedModels)
+      ? config.unifiedModels
+      : Array.isArray(config.defaultModels)
+        ? config.defaultModels
+        : [];
     state.hasBackendKey = Boolean(config.hasApiKey);
     renderServicePresets();
     applyServicePreset(state.activeProviderPreset, config, false);
@@ -385,7 +394,7 @@ async function refreshModels({ forceRemote = false } = {}) {
     const response = await fetch(apiUrl("/api/model-tester/models"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(buildConnectionPayload()),
+      body: JSON.stringify(buildUnifiedModelsPayload()),
     });
     const data = await response.json();
     const fallbackItems = data.items || state.defaultModels;
@@ -458,6 +467,46 @@ function buildConnectionPayload() {
   };
 }
 
+function buildUnifiedModelsPayload() {
+  const payload = buildConnectionPayload();
+  const openaiPreset = getServicePreset("openai-compatible") || {};
+  const manualBaseUrl = localStorage.getItem("modelTester.manual.baseUrl") || "";
+  const manualModelsPath = localStorage.getItem("modelTester.manual.modelsPath") || "";
+  const manualChatPath = localStorage.getItem("modelTester.manual.chatPath") || "";
+  return {
+    ...payload,
+    providerPreset: "all",
+    baseUrl: manualBaseUrl || (state.activeProviderPreset === "openai-compatible" ? payload.baseUrl : openaiPreset.baseUrl || payload.baseUrl),
+    modelsPath: manualModelsPath || openaiPreset.modelsPath || payload.modelsPath,
+    chatPath: manualChatPath || openaiPreset.chatPath || payload.chatPath,
+  };
+}
+
+function buildRequestPayloadForModel(model) {
+  const payload = buildConnectionPayload();
+  const modelText = String(model || "");
+  if (modelText.startsWith("gemini:")) {
+    return { ...payload, providerPreset: "gemini", apiKey: "" };
+  }
+  if (modelText.startsWith("yunwu:")) {
+    return { ...payload, providerPreset: "yunwu-gpt55", apiKey: "" };
+  }
+  if (modelText.startsWith("mathpix:")) {
+    return { ...payload, providerPreset: "mathpix", apiKey: "" };
+  }
+  if (modelText.startsWith("local:")) {
+    const openaiPreset = getServicePreset("openai-compatible") || {};
+    return {
+      ...payload,
+      providerPreset: "openai-compatible",
+      baseUrl: localStorage.getItem("modelTester.manual.baseUrl") || openaiPreset.baseUrl || payload.baseUrl,
+      modelsPath: localStorage.getItem("modelTester.manual.modelsPath") || openaiPreset.modelsPath || payload.modelsPath,
+      chatPath: localStorage.getItem("modelTester.manual.chatPath") || openaiPreset.chatPath || payload.chatPath,
+    };
+  }
+  return payload;
+}
+
 function getSelectedModels() {
   return state.selectedModels.filter(Boolean);
 }
@@ -482,10 +531,13 @@ function getModelHintType(model) {
   if (!lowered) {
     return "text_only";
   }
-  if (lowered.includes("gemini")) {
+  if (lowered.startsWith("gemini:") || lowered.includes("gemini-")) {
     return "vision_verified";
   }
-  if (lowered.includes("medgemma")) {
+  if (lowered.startsWith("yunwu:") || lowered.includes("gpt-5.5")) {
+    return "vision_verified";
+  }
+  if (lowered.startsWith("mathpix:") || lowered.includes("mathpix")) {
     return "vision_verified";
   }
   if (
@@ -500,7 +552,7 @@ function getModelHintType(model) {
   if (lowered.includes("embed")) {
     return "embedding";
   }
-  if (lowered.includes("gemma4") || lowered.includes("qwen3.6") || lowered.includes("gpt-5.5")) {
+  if (lowered.includes("medgemma") || lowered.includes("gemma4") || lowered.includes("qwen3.6")) {
     return "vision_possible";
   }
   return "text_only";
@@ -511,7 +563,14 @@ function getModelHint(model) {
 }
 
 function getRecommendedImageModels(models) {
-  return (models || []).filter((model) => getModelHint(model).compareRecommended);
+  return (models || []).filter((model) => {
+    return isOnlineOcrModel(model) && getModelHint(model).compareRecommended;
+  });
+}
+
+function isOnlineOcrModel(model) {
+  const text = String(model || "").toLowerCase();
+  return text.startsWith("gemini:") || text.startsWith("yunwu:") || text.startsWith("mathpix:");
 }
 
 function syncModelSelectionStrategy(models = getAllModels()) {
@@ -598,10 +657,28 @@ function handleSelectAllModels() {
   updateCompareButtonLabel();
 }
 
+function handleSelectOnlineModels() {
+  state.selectedModels = getAllModels().filter(isOnlineOcrModel);
+  state.imageSelectionAutoApplied = true;
+  renderModelChecklist(getAllModels());
+  updateCompareButtonLabel();
+}
+
+function handleDeselectAllModels() {
+  state.selectedModels = [];
+  state.imageSelectionAutoApplied = false;
+  renderModelChecklist(getAllModels());
+  updateCompareButtonLabel();
+}
+
 function updateModelChecklistHint(models = getAllModels()) {
   const hasImages = hasImageAttachments(state.attachments);
+  const selectedCount = getSelectedModels().length;
+  const totalCount = models.length;
   if (!hasImages) {
-    els.modelChecklistHint.textContent = "默认可多选，用于横向对比。";
+    els.modelChecklistHint.textContent = totalCount
+      ? `已选择 ${selectedCount}/${totalCount} 个模型，用于横向对比。`
+      : "暂无可用模型。";
     els.modelChecklistHint.className = "field-note";
     return;
   }
@@ -730,7 +807,7 @@ async function sendChatRequest(model, messages) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      ...buildConnectionPayload(),
+      ...buildRequestPayloadForModel(model),
       model,
       messages,
       temperature: Number(els.temperatureInput.value || 0.7),
@@ -740,6 +817,45 @@ async function sendChatRequest(model, messages) {
   const data = await response.json();
   if (!data.ok) {
     throw new Error(data.error || "请求失败");
+  }
+  return data;
+}
+
+function isImageMarkdownRequest(text, attachments) {
+  if (!hasImageAttachments(attachments)) {
+    return false;
+  }
+  const cleanText = String(text || "").trim();
+  if (!cleanText) {
+    return true;
+  }
+  return /markdown|md|ocr|识别|提取|转换|转为|转成|表格|公式|文字|文本/i.test(cleanText);
+}
+
+async function sendImageMarkdownRequest(model, prompt, attachments, models = null, options = {}) {
+  const attachmentIds = attachments
+    .filter((item) => item.kind === "image" && item.id)
+    .map((item) => item.id);
+  const response = await fetch(apiUrl("/api/model-tester/image-to-markdown"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ...buildRequestPayloadForModel(model),
+      model,
+      models: Array.isArray(models) && models.length ? models : [model],
+      attachmentIds,
+      prompt,
+      temperature: Number(els.temperatureInput.value || 0),
+      maxTokens: els.maxTokensInput.value.trim(),
+      ...options,
+    }),
+  });
+  const data = await response.json();
+  if (!data.ok) {
+    const attempts = Array.isArray(data.attempts)
+      ? data.attempts.map((item) => `${item.modelRef || item.model}: ${item.error || item.status}`).join("；")
+      : "";
+    throw new Error(`${data.error || "图片转 Markdown 失败"}${attempts ? `（${attempts}）` : ""}`);
   }
   return data;
 }
@@ -763,11 +879,14 @@ async function handleSubmit(event) {
       setImageModelStatus();
     }
   }
+  const useImageMarkdown = isImageMarkdownRequest(content, attachments);
   const apiContent = buildUserContent(content, attachments);
-  const requestMessages = buildChatMessages({
-    additionalUserMessage: { role: "user", content: apiContent },
-    includeHistory: true,
-  });
+  const requestMessages = useImageMarkdown
+    ? []
+    : buildChatMessages({
+        additionalUserMessage: { role: "user", content: apiContent },
+        includeHistory: true,
+      });
   state.messages.push({
     role: "user",
     content: content || "附件测试",
@@ -789,14 +908,16 @@ async function handleSubmit(event) {
   els.refreshModelsButton.disabled = true;
 
   try {
-    const data = await sendChatRequest(state.activeModel, requestMessages);
+    const data = useImageMarkdown
+      ? await sendImageMarkdownRequest(state.activeModel, content, attachments)
+      : await sendChatRequest(state.activeModel, requestMessages);
     renderRaw(data.raw || data);
 
     state.messages.push({
       role: "assistant",
-      content: data.answer || "(空响应)",
+      content: data.markdown || data.answer || "(空响应)",
       reasoning: data.reasoning || "",
-      model: data.model || state.activeModel,
+      model: data.modelRef || data.model || state.activeModel,
       createdAt: Date.now(),
     });
     updateMetrics(data);
@@ -841,11 +962,14 @@ async function handleCompareAll() {
   if (hasImageAttachments(attachments) && !models.some((model) => getModelHint(model).compareRecommended)) {
     setModelStatus("已上传图片，但当前对比列表没有已验证视觉模型，结果可能忽略图片内容。", false);
   }
+  const useImageMarkdown = isImageMarkdownRequest(content, attachments);
   const apiContent = buildUserContent(content, attachments);
-  const requestMessages = buildChatMessages({
-    additionalUserMessage: { role: "user", content: apiContent },
-    includeHistory: false,
-  });
+  const requestMessages = useImageMarkdown
+    ? []
+    : buildChatMessages({
+        additionalUserMessage: { role: "user", content: apiContent },
+        includeHistory: false,
+      });
 
   state.messages.push({
     role: "user",
@@ -869,6 +993,7 @@ async function handleCompareAll() {
       attachments: buildAttachmentSummary(attachments),
     },
     results: models.map((model) => ({ model, status: "pending", answer: "", latencyMs: null, usage: null })),
+    mode: useImageMarkdown ? "image-to-markdown" : "chat",
   };
   state.messages.push(comparison);
 
@@ -890,15 +1015,18 @@ async function handleCompareAll() {
       setRequestState(`${index + 1}/${comparison.results.length}`, "busy");
       renderMessages();
       try {
-        const data = await sendChatRequest(result.model, requestMessages);
+        const data = useImageMarkdown
+          ? await sendImageMarkdownRequest(result.model, content, attachments, [result.model], { allowFallback: false })
+          : await sendChatRequest(result.model, requestMessages);
         result.status = "done";
-        result.answer = data.answer || "(空响应)";
+        result.answer = data.markdown || data.answer || "(空响应)";
         result.reasoning = data.reasoning || "";
+        result.actualModel = data.modelRef || data.model || result.model;
         result.latencyMs = data.latencyMs;
         result.usage = data.usage;
         result.finishReason = data.finishReason;
         result.path = data.path;
-        rawResults.push({ model: result.model, ok: true, data: data.raw || data });
+        rawResults.push({ model: result.model, actualModel: result.actualModel, ok: true, data: data.raw || data, attempts: data.attempts });
       } catch (error) {
         result.status = "error";
         result.answer = error.message;
@@ -969,7 +1097,7 @@ function renderComparisonMessage(message) {
   const header = document.createElement("div");
   header.className = "comparison-header";
   const title = document.createElement("div");
-  title.innerHTML = `<strong>横向对比</strong><span>${formatTime(message.createdAt)}</span>`;
+  title.innerHTML = `<strong>${message.mode === "image-to-markdown" ? "图片转 Markdown 对比" : "横向对比"}</strong><span>${formatTime(message.createdAt)}</span>`;
   const settings = document.createElement("div");
   settings.className = "comparison-settings";
   settings.textContent = `Temperature ${message.settings.temperature} · Max ${message.settings.maxTokens} · 角色 ${message.settings.promptPresetLabel} · System ${message.settings.systemPromptEnabled ? "on" : "off"}${message.settings.attachments ? ` · ${message.settings.attachments}` : ""}`;
@@ -981,9 +1109,26 @@ function renderComparisonMessage(message) {
     const card = document.createElement("section");
     card.className = `comparison-card ${result.status === "error" ? "is-error" : ""}`;
 
+    const cardHead = document.createElement("div");
+    cardHead.className = "comparison-card-head";
+
     const model = document.createElement("div");
     model.className = "comparison-model";
     model.textContent = result.model;
+
+    const copyButton = document.createElement("button");
+    copyButton.className = "text-button compact-button comparison-copy-button";
+    copyButton.type = "button";
+    copyButton.textContent = "复制";
+    copyButton.disabled = result.status === "pending" || !result.answer;
+    copyButton.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(normalizeAnswerForDisplay(result.answer || ""));
+      copyButton.textContent = "已复制";
+      window.setTimeout(() => {
+        copyButton.textContent = "复制";
+      }, 1200);
+    });
+    cardHead.append(model, copyButton);
 
     const hint = document.createElement("div");
     hint.className = `comparison-hint is-${getModelHintType(result.model).replace(/_/g, "-")}`;
@@ -995,16 +1140,17 @@ function renderComparisonMessage(message) {
     if (result.status === "pending") {
       meta.textContent = "等待中";
     } else {
-      meta.textContent = `${result.latencyMs ? `${result.latencyMs} ms` : "-"} · ${totalTokens ? `${totalTokens} tokens` : "tokens -"}`;
+      const actual = result.actualModel && result.actualModel !== result.model ? ` · 命中 ${result.actualModel}` : "";
+      meta.textContent = `${result.latencyMs ? `${result.latencyMs} ms` : "-"} · ${totalTokens ? `${totalTokens} tokens` : "tokens -"}${actual}`;
     }
 
     if (result.reasoning) {
       const reasoning = document.createElement("div");
       reasoning.className = "reasoning";
       reasoning.textContent = result.reasoning;
-      card.append(model, hint, meta, reasoning, bubble(result.answer || "等待响应...", result.status === "error"));
+      card.append(cardHead, hint, meta, reasoning, bubble(result.answer || "等待响应...", result.status === "error"));
     } else {
-      card.append(model, hint, meta, bubble(result.answer || "等待响应...", result.status === "error"));
+      card.append(cardHead, hint, meta, bubble(result.answer || "等待响应...", result.status === "error"));
     }
     grid.append(card);
   });
@@ -1026,12 +1172,14 @@ function renderAttachmentBadges(attachments) {
 
 function bubble(content, isError = false) {
   const node = document.createElement("div");
-  node.className = "bubble";
+  node.className = "bubble markdown-body";
   if (isError) {
     node.style.borderColor = "#ffc9b8";
     node.style.background = "#fff7f3";
+    node.textContent = normalizeAnswerForDisplay(content);
+    return node;
   }
-  node.textContent = normalizeAnswerForDisplay(content);
+  node.innerHTML = renderMarkdownHtml(normalizeAnswerForDisplay(content));
   return node;
 }
 
@@ -1046,12 +1194,12 @@ function stripMarkdownFence(text) {
 }
 
 function normalizeMathMarkdown(text) {
-  const inlineMathPattern = /\b([A-Za-z]\s*=\s*[-+A-Za-z0-9.]+(?:\^[A-Za-z0-9()+-]+)?)/g;
+  const inlineMathPattern = /\b([A-Za-z]\s*=\s*[-+]?(?:[A-Za-z]+|\d+(?:\.\d+)?)(?:\s*\^\s*(?:\{[^}\n]+\}|[A-Za-z0-9()+-]+))?)(?=$|[\s,.;:|)\]])/g;
   return text
     .split("\n")
     .map((line) => {
       if (!line.includes("|")) {
-        return line.replace(inlineMathPattern, wrapInlineMath);
+        return wrapInlineMathOutsideMathSpans(line, inlineMathPattern);
       }
       return line
         .split("|")
@@ -1060,15 +1208,139 @@ function normalizeMathMarkdown(text) {
           if (!trimmed || /^:?-{3,}:?$/.test(trimmed)) {
             return cell;
           }
-          return cell.replace(trimmed, trimmed.replace(inlineMathPattern, wrapInlineMath));
+          return cell.replace(trimmed, wrapInlineMathOutsideMathSpans(trimmed, inlineMathPattern));
         })
         .join("|");
     })
     .join("\n");
 }
 
-function wrapInlineMath(match) {
-  return match.includes("$") ? match : `$${match}$`;
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function splitMarkdownTableRow(line) {
+  const trimmed = line.trim();
+  const body = trimmed.startsWith("|") ? trimmed.slice(1) : trimmed;
+  const withoutTrailing = body.endsWith("|") ? body.slice(0, -1) : body;
+  return withoutTrailing.split("|").map((cell) => cell.trim());
+}
+
+function isMarkdownTableSeparator(line) {
+  const cells = splitMarkdownTableRow(line);
+  return cells.length > 0 && cells.every((cell) => /^:?-{3,}:?$/.test(cell));
+}
+
+function isMarkdownTableStart(lines, index) {
+  return (
+    typeof lines[index] === "string" &&
+    typeof lines[index + 1] === "string" &&
+    lines[index].trim().startsWith("|") &&
+    lines[index + 1].trim().startsWith("|") &&
+    isMarkdownTableSeparator(lines[index + 1])
+  );
+}
+
+function isCodeFenceStart(line) {
+  return /^```/.test(String(line || "").trim());
+}
+
+function renderCodeBlock(lines) {
+  const opener = lines[0].trim();
+  const language = opener.replace(/^```/, "").trim();
+  const body = lines.slice(1, -1).join("\n");
+  const languageClass = language ? ` class="language-${escapeHtml(language)}"` : "";
+  return `<pre><code${languageClass}>${escapeHtml(body)}</code></pre>`;
+}
+
+function renderMarkdownTable(lines) {
+  const header = splitMarkdownTableRow(lines[0]);
+  const bodyRows = lines.slice(2).map(splitMarkdownTableRow);
+  const width = Math.max(header.length, ...bodyRows.map((row) => row.length), 1);
+  const normalizeRow = (row) => row.concat(Array(Math.max(0, width - row.length)).fill(""));
+  const headHtml = normalizeRow(header)
+    .map((cell) => `<th>${escapeHtml(cell)}</th>`)
+    .join("");
+  const bodyHtml = bodyRows
+    .map((row) => `<tr>${normalizeRow(row).map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`)
+    .join("");
+  return `<div class="markdown-table-wrap"><table><thead><tr>${headHtml}</tr></thead><tbody>${bodyHtml}</tbody></table></div>`;
+}
+
+function renderParagraph(lines) {
+  const text = lines.join("\n").trim();
+  if (!text) {
+    return "";
+  }
+  return `<p>${escapeHtml(text).replace(/\n/g, "<br>")}</p>`;
+}
+
+function renderMarkdownHtml(markdown) {
+  const lines = String(markdown || "").replace(/\r\n?/g, "\n").split("\n");
+  const parts = [];
+  let index = 0;
+
+  while (index < lines.length) {
+    if (!lines[index].trim()) {
+      index += 1;
+      continue;
+    }
+
+    if (isCodeFenceStart(lines[index])) {
+      const codeLines = [lines[index]];
+      index += 1;
+      while (index < lines.length && !isCodeFenceStart(lines[index])) {
+        codeLines.push(lines[index]);
+        index += 1;
+      }
+      if (index < lines.length) {
+        codeLines.push(lines[index]);
+        index += 1;
+      } else {
+        codeLines.push("```");
+      }
+      parts.push(renderCodeBlock(codeLines));
+      continue;
+    }
+
+    if (isMarkdownTableStart(lines, index)) {
+      const tableLines = [lines[index], lines[index + 1]];
+      index += 2;
+      while (index < lines.length && lines[index].trim().startsWith("|")) {
+        tableLines.push(lines[index]);
+        index += 1;
+      }
+      parts.push(renderMarkdownTable(tableLines));
+      continue;
+    }
+
+    const paragraphLines = [];
+    while (index < lines.length && lines[index].trim() && !isMarkdownTableStart(lines, index)) {
+      paragraphLines.push(lines[index]);
+      index += 1;
+    }
+    parts.push(renderParagraph(paragraphLines));
+  }
+
+  return parts.join("");
+}
+
+function wrapInlineMathOutsideMathSpans(text, inlineMathPattern) {
+  const mathSpanPattern = /(\$\$[\s\S]*?\$\$|\$[^$\n]*?\$)/g;
+  return text
+    .split(mathSpanPattern)
+    .map((part) => {
+      if (!part || /^(\$\$[\s\S]*?\$\$|\$[^$\n]*?\$)$/.test(part)) {
+        return part;
+      }
+      return part.replace(inlineMathPattern, (match) => `$${match}$`);
+    })
+    .join("");
 }
 
 async function handleAttachmentFiles(fileList) {

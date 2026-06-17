@@ -1,6 +1,34 @@
-# 宇宙模型智能体 MVP
+# 宇宙模型
 
-这是一个本地优先的宇宙模型智能体 MVP，内置 OCR 接入位与 3 种可切换的本地 RAG 策略。
+这是一个本地优先的宇宙模型智能体工作区，内置 OCR 接入位、本地 RAG 策略和天文学 A2UI 可视化。
+
+## 版本目录
+
+当前已经冻结并拆分出两个版本：
+
+- `versions/宇宙模型-v0.1`：当前已实现智能体版本，命名为 `宇宙模型 v0.1`
+- `versions/宇宙模型-v0.2`：基于 `v0.1` 创建的新版本起点，默认端口与 `v0.1` 错开
+
+两个版本共用根目录 `.env`、`.local_rag`，并继续共用 `UnivModel/RAG` 与 `UnivModel/行星运动模型` 下的图文资料、星历和模型文件。
+
+启动 `v0.2`：
+
+```bash
+./start_v0.2.sh
+```
+
+也可以分开启动：
+
+```bash
+./start_v0.2_backend.sh
+./start_v0.2_frontend.sh
+```
+
+默认访问地址：
+
+- v0.2 版本首页：`http://127.0.0.1:5174/?home=1`
+- v0.2 智能体工作台：`http://127.0.0.1:5174/`
+- v0.2 后端：`http://127.0.0.1:8788/`
 
 ## 当前已完成
 
@@ -41,17 +69,19 @@ cd "/Users/Min369/Documents/同步空间/Manju/AIProjects/UnivModel/宇宙模型
 ./start_static_stack.sh
 ```
 
+这个脚本会保持运行来守护前后端服务。使用时保持终端窗口打开；需要停止时，在该终端按 `Ctrl+C`。
+
 如果想分别启动，也可以：
 
 ```bash
 ./start_backend.sh
-./start_frontend.sh
+./start_backend.sh
 ```
 
 脚本会把实际地址和端口写到：
 
-- `.run-logs/backend.env`
-- `.run-logs/frontend.env`
+- `.run-logs/static-backend.env`
+- `.run-logs/static-frontend.env`
 
 其中最常用的是：
 
@@ -143,6 +173,99 @@ export MINERU_BASE_URL="https://mineryou.cpolar.top"
 export MINERU_CONVERT_PATH="/api/convert"
 export MARKDOWN_LIBRARY_DIR="/Users/Min369/Documents/同步空间/Manju/AIProjects/UnivModel/RAG/宇宙模型资料202605-仅留md 和图片"
 ```
+
+## 数学书籍 PDF 到 RAG Markdown
+
+根目录新增了一条离线批处理流水线，用于把已有 MinerU 输出修复成适合 RAG 入库的 Markdown：
+
+```text
+原始 PDF
+-> MinerU markdown/json/layout/page images
+-> 高风险数学 block 检测
+-> 按 bbox 裁剪页面原图
+-> Mathpix 重新识别高风险区域
+-> 替换 block 并保留 metadata
+-> final.md / chunks.jsonl / audit_report.json
+```
+
+运行前设置 Mathpix 凭据：
+
+```bash
+python3 -m pip install -r requirements.txt
+export MATHPIX_APP_ID="your_app_id"
+export MATHPIX_APP_KEY="your_app_key"
+```
+
+执行：
+
+```bash
+python main.py \
+  --pdf input/book.pdf \
+  --mineru-output output/mineru_book \
+  --page-images output/mineru_book/images \
+  --out output/rag_book
+```
+
+可选配置在 `config.yaml`，包括 Mathpix API 地址、缓存目录、裁剪 padding、chunk size 和 metadata 注释开关。所有 Mathpix 请求都会按图片 hash 写入本地缓存，默认缓存目录是输出目录下的 `.mathpix_cache`；重复运行时命中缓存不会再次计费。
+
+输出文件：
+
+- `final.md`：RAG 友好的 Markdown，公式使用 `$...$` / `$$...$$`，每个 block 带 HTML metadata 注释。
+- `chunks.jsonl`：按 chapter / section / theorem / proof / example / equation / table 友好的边界切分，尽量不截断公式、表格和证明。
+- `audit_report.json`：记录替换、失败和低置信度 block，包含 `page`、`bbox`、`original_text`、`new_text`、`reason`、`ocr_engine`。
+- `run_manifest.json`：记录本次运行输入、输出、统计和配置快照。
+
+如果 Mathpix 失败，流程不会中断；对应 block 会保留 MinerU 原结果，并在 metadata 与审计报告中标记为 `confidence: low`。
+
+批量处理已有 MinerU 书库：
+
+```bash
+python scripts/batch_mathpix_fix_books.py \
+  --root "/Users/Min369/Documents/同步空间/Manju/AIProjects/UnivModel/RAG/宇宙模型资料202605" \
+  --out "/Users/Min369/Documents/同步空间/Manju/AIProjects/UnivModel/RAG/mathpix_rag_outputs" \
+  --dry-run
+```
+
+集中缺少 Mathpix 修复所需文件的书籍目录：
+
+```bash
+python scripts/batch_mathpix_fix_books.py \
+  --root "/Users/Min369/Documents/同步空间/Manju/AIProjects/UnivModel/RAG/宇宙模型资料202605" \
+  --out "/Users/Min369/Documents/同步空间/Manju/AIProjects/UnivModel/RAG/mathpix_rag_outputs" \
+  --collect-missing-only
+```
+
+确认 `MATHPIX_APP_ID` 和 `MATHPIX_APP_KEY` 后，正式批量修复：
+
+```bash
+python scripts/batch_mathpix_fix_books.py \
+  --root "/Users/Min369/Documents/同步空间/Manju/AIProjects/UnivModel/RAG/宇宙模型资料202605" \
+  --out "/Users/Min369/Documents/同步空间/Manju/AIProjects/UnivModel/RAG/mathpix_rag_outputs" \
+  --skip-existing \
+  --continue-on-error
+```
+
+批处理脚本会自动遍历可用书籍下的 `auto` / `ocr` / `hybrid_auto` chunk，逐个调用 `main.py`，并在每本书输出目录中合并生成：
+
+- `book_final.md`
+- `book_chunks.jsonl`
+- `book_audit_report.json`
+
+建议第一次正式调用时加 `--limit-books 1 --limit-chunks 1` 做小规模计费验证。
+
+也可以只测试指定书籍目录，并限制每个 chunk 最多送给 Mathpix 的高风险块数：
+
+```bash
+python scripts/batch_mathpix_fix_books.py \
+  --root "/Users/Min369/Documents/同步空间/Manju/AIProjects/UnivModel/RAG/宇宙模型资料202605" \
+  --book-dir "/path/to/one/book-folder" \
+  --out "/Users/Min369/Documents/同步空间/Manju/AIProjects/UnivModel/RAG/mathpix_rag_outputs_test" \
+  --limit-chunks 1 \
+  --max-mathpix-blocks 3 \
+  --continue-on-error
+```
+
+对于当前这批 MinerU chunk，如果 `images/` 只有内嵌图而不是整页图，脚本会优先使用 chunk 目录中的 `*_origin.pdf` 自动渲染整页图片，再按 `page_idx + bbox` 裁剪。
 
 查看当前配置：
 

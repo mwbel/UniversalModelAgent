@@ -42,13 +42,20 @@ def _split_blocks(markdown: str) -> list[tuple[int, int, str]]:
 
 
 def _has_table(text: str) -> bool:
+    if re.search(r"<\s*/?\s*(table|thead|tbody|tr|td|th)\b", text, flags=re.IGNORECASE):
+        return True
     lines = [line for line in text.splitlines() if line.strip()]
     return sum(1 for line in lines if "|" in line) >= 2
 
 
+def _strip_html_tags(text: str) -> str:
+    return re.sub(r"<[^>]+>", " ", text)
+
+
 def _has_math(text: str) -> bool:
+    text_for_math = _strip_html_tags(text)
     return bool(
-        re.search(r"\\\(|\\\[|\$|\\frac|\\sum|\\int|\\sqrt|\\begin\{|[_^=<>≤≥±×÷]", text)
+        re.search(r"\\\(|\\\[|\$|\\frac|\\sum|\\int|\\sqrt|\\begin\{|[_^=<>≤≥±×÷]", text_for_math)
     )
 
 
@@ -64,6 +71,18 @@ def _has_split_formula(text: str) -> bool:
     return any(re.search(pattern, text) for pattern in patterns)
 
 
+def _has_compact_formula_loss(text: str) -> bool:
+    if not _has_table(text):
+        return False
+    compact = re.sub(r"\s+", "", text)
+    patterns = [
+        r"(?:^|[<>|,;，；])(?:w|x|y|z|n|m|k|p|q|r|t)={0,1}2\d{1,3}(?:[<>|,;，；]|$)",
+        r"(?:^|[<>|,;，；])(?:w|x|y|z|n|m|k|p|q|r|t)\d{2,4}(?:[<>|,;，；]|$)",
+        r"(?:^|[<>|,;，；])2\d{1,3}\$(?:[<>|,;，；]|$)",
+    ]
+    return any(re.search(pattern, compact, flags=re.IGNORECASE) for pattern in patterns)
+
+
 def _has_matrix_signal(text: str) -> bool:
     lowered = text.lower()
     return bool(
@@ -76,24 +95,21 @@ def _has_matrix_signal(text: str) -> bool:
 
 
 def _has_pseudocode_signal(text: str) -> bool:
-    lowered = text.lower()
-    markers = [
-        "algorithm",
-        "input:",
-        "output:",
-        "procedure",
-        "return",
-        "for ",
-        "while ",
-        "if ",
-        "else",
-        "伪代码",
-        "输入",
-        "输出",
-        "算法",
-        "步骤",
+    plain_text = _strip_html_tags(text)
+    lowered = plain_text.lower()
+    english_patterns = [
+        r"\binput\s*:",
+        r"\boutput\s*:",
+        r"\bprocedure\b",
+        r"\breturn\b",
+        r"\bfor\b",
+        r"\bwhile\b",
+        r"\bif\b",
+        r"\belse\b",
+        r"(?:^|\n)\s*algorithm\s+\d+",
     ]
-    return any(marker in lowered or marker in text for marker in markers)
+    chinese_markers = ["伪代码", "输入", "输出", "算法", "步骤"]
+    return any(re.search(pattern, lowered) for pattern in english_patterns) or any(marker in text for marker in chinese_markers)
 
 
 def _score_block(text: str) -> tuple[float, list[str]]:
@@ -102,6 +118,9 @@ def _score_block(text: str) -> tuple[float, list[str]]:
     if _has_table(text) and _has_math(text):
         score += 0.38
         reasons.append("table_with_math")
+    if _has_compact_formula_loss(text):
+        score += 0.36
+        reasons.append("compact_formula_maybe_missing_superscript")
     if _has_split_formula(text):
         score += 0.32
         reasons.append("split_formula_tokens")
@@ -395,6 +414,7 @@ class OcrCorrectionService:
         return (
             "请根据页面图像和上下文校正下面这个 MinerU 识别块。"
             "常见错误包括把上标识别成普通空格数字，例如把 $2^7$ 识别为 $2 7$；"
+            "也包括表格表头或单元格里把 $2^7$ 识别成 27、w=27 或 27$；"
             "把矩阵行列拆坏；把伪代码缩进和关键字识别错。\n\n"
             "只输出校正后的 Markdown 块，不要解释。\n\n"
             f"疑似原因: {', '.join(candidate.reasons)}\n\n"

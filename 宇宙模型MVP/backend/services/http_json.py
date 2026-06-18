@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import time
 import urllib.error
 import urllib.request
 from typing import Any
@@ -35,13 +36,19 @@ def get_json(url: str, timeout: float) -> dict[str, Any]:
 
 
 def safe_post_json(url: str, payload: dict[str, Any], timeout: float) -> tuple[dict[str, Any] | None, str | None]:
-    try:
-        return post_json(url, payload, timeout), None
-    except urllib.error.HTTPError as error:
-        details = error.read().decode("utf-8", errors="ignore")
-        return None, f"HTTP {error.code}: {details[:300]}"
-    except Exception as error:  # noqa: BLE001
-        return None, str(error)
+    last_error = ""
+    for attempt in range(2):
+        try:
+            return post_json(url, payload, timeout), None
+        except urllib.error.HTTPError as error:
+            details = error.read().decode("utf-8", errors="ignore")
+            return None, f"HTTP {error.code}: {details[:300]}"
+        except Exception as error:  # noqa: BLE001
+            last_error = str(error)
+            if attempt == 0:
+                time.sleep(0.35)
+                continue
+    return None, last_error
 
 
 def safe_get_json(url: str, timeout: float) -> tuple[dict[str, Any] | None, str | None]:

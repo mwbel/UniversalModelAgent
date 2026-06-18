@@ -15,6 +15,7 @@ from backend.services.mineru_client import MINERU_CLIENT
 from backend.services.markdown_library import MARKDOWN_LIBRARY
 from backend.services.model_tester import MODEL_TESTER_SERVICE
 from backend.services.ocr_correction import OCR_CORRECTION_SERVICE
+from backend.services.ocr_preview import OCR_PREVIEW_SERVICE
 from backend.services.rag_client import RAG_CLIENT
 from backend.services.visualization_planner import VISUALIZATION_PLANNER
 
@@ -130,6 +131,9 @@ class AppHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/ocr/convert":
             self._send_json(MINERU_CLIENT.convert_markdown(payload))
+            return
+        if parsed.path == "/api/ocr/preview-pages":
+            self._send_json(OCR_PREVIEW_SERVICE.preview_pages(payload))
             return
         if parsed.path == "/api/ocr/correct":
             self._send_json(OCR_CORRECTION_SERVICE.correct_markdown(payload))

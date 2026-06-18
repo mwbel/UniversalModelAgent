@@ -104,7 +104,7 @@ textarea {
 
 .control-band {
   display: grid;
-  grid-template-columns: auto auto auto auto minmax(220px, 1fr) auto;
+  grid-template-columns: auto auto auto auto auto auto auto minmax(220px, 1fr) auto;
   gap: 10px;
   align-items: center;
   padding: 14px 22px;
@@ -274,6 +274,13 @@ textarea {
   gap: 2px;
 }
 
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
 .card-head strong {
   min-width: 0;
   overflow-wrap: anywhere;
@@ -315,6 +322,187 @@ textarea {
   overflow: auto;
   padding: 18px;
   line-height: 1.72;
+}
+
+.typora-preview {
+  padding: 24px 28px;
+  background: #ffffff;
+}
+
+.mineru-page-preview {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.mineru-block {
+  position: relative;
+  margin: 0 0 12px;
+  padding: 1px 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+}
+
+.mineru-block.is-risk {
+  margin: 14px 0;
+  padding: 10px 12px 12px;
+  border-color: #f2c14e;
+  background: #fffdf5;
+}
+
+.mineru-block.is-corrected {
+  border-color: #7bdcb5;
+  background: #f3fff8;
+}
+
+.block-risk-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #f5df9a;
+}
+
+.block-risk-head span {
+  min-width: 0;
+  color: #7c4a03;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.mineru-block-content {
+  min-width: 0;
+}
+
+.block-source-detail {
+  margin-top: 10px;
+  border: 1px solid #f5df9a;
+  border-radius: 8px;
+  background: #fffefa;
+}
+
+.block-source-detail summary {
+  min-height: 30px;
+  padding: 6px 9px;
+  color: #7c4a03;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.block-source-detail pre {
+  max-height: 280px;
+  overflow: auto;
+  margin: 0;
+  padding: 10px;
+  border-top: 1px solid #f5df9a;
+  color: #1f2937;
+  background: #ffffff;
+  white-space: pre-wrap;
+}
+
+.block-source-detail code {
+  font: 12px/1.55 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.risk-panel {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  background: #fff8e6;
+}
+
+.risk-panel.is-low {
+  color: #087f5b;
+  background: #eefbf4;
+  font-size: 13px;
+}
+
+.risk-summary {
+  display: grid;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.risk-summary strong {
+  color: #7c4a03;
+  font-size: 13px;
+}
+
+.risk-summary span {
+  color: #7c5b15;
+  font-size: 12px;
+}
+
+.risk-list {
+  display: grid;
+  gap: 6px;
+}
+
+.risk-item {
+  padding: 8px;
+  border: 1px solid #f2d477;
+  border-radius: 8px;
+  background: #fffdf5;
+}
+
+.risk-item > div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.risk-item strong {
+  color: #7c4a03;
+  font-size: 12px;
+}
+
+.risk-item span {
+  color: #8a6a1f;
+  font-size: 11px;
+}
+
+.risk-item p {
+  margin: 5px 0 0;
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.risk-detail {
+  margin-top: 8px;
+  border: 1px solid #f5df9a;
+  border-radius: 8px;
+  background: #fffefa;
+}
+
+.risk-detail summary {
+  min-height: 30px;
+  padding: 6px 9px;
+  color: #7c4a03;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.risk-detail pre {
+  max-height: 260px;
+  overflow: auto;
+  margin: 0;
+  padding: 10px;
+  border-top: 1px solid #f5df9a;
+  color: #1f2937;
+  background: #ffffff;
+  white-space: pre-wrap;
+}
+
+.risk-detail code {
+  font: 12px/1.55 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.risk-action {
+  margin-top: 8px;
 }
 
 .render-body.is-loading,
@@ -426,6 +614,17 @@ textarea {
   font-weight: 700;
 }
 
+.latex-table-figure {
+  margin: 14px 0;
+}
+
+.latex-table-figure figcaption {
+  margin: 0 0 8px;
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
 .markdown-body pre {
   max-width: 100%;
   overflow-x: auto;
@@ -495,6 +694,73 @@ textarea {
 
 .mathpix-tab-panel.is-active {
   display: block;
+}
+
+.diff-empty {
+  min-height: 360px;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: var(--muted);
+  text-align: center;
+  background: #fff;
+}
+
+.diff-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  background: #ffffff;
+  font-size: 12px;
+}
+
+.diff-view {
+  min-height: 320px;
+  max-height: 560px;
+  overflow: auto;
+  padding: 8px 0;
+  background: #ffffff;
+  font: 12px/1.5 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.diff-line {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 8px;
+  padding: 1px 10px;
+  white-space: pre-wrap;
+}
+
+.diff-line span {
+  color: #64748b;
+  text-align: right;
+  user-select: none;
+}
+
+.diff-line code {
+  min-width: 0;
+  color: #111827;
+  overflow-wrap: anywhere;
+}
+
+.diff-line.is-add {
+  background: #ecfdf3;
+}
+
+.diff-line.is-add span {
+  color: #087f5b;
+}
+
+.diff-line.is-remove {
+  background: #fff1f0;
+}
+
+.diff-line.is-remove span {
+  color: #c2410c;
 }
 
 .markdown-editor {

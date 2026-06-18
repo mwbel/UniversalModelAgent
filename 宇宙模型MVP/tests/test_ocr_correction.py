@@ -32,6 +32,17 @@ class OcrCorrectionCandidateDetectionTest(unittest.TestCase):
         self.assertTrue(result["ok"])
         self.assertEqual(result["candidates"], [])
 
+    def test_pseudocode_block_is_candidate(self) -> None:
+        markdown = "```\nfor i = 1:60\nx = sqrt(x)\nend\n```"
+
+        result = OCR_CORRECTION_SERVICE.correct_markdown(
+            {"markdown": markdown, "dryRun": True, "maxCandidates": 8}
+        )
+
+        self.assertTrue(result["ok"])
+        self.assertEqual(len(result["candidates"]), 1)
+        self.assertIn("pseudocode_like_layout", result["candidates"][0]["reasons"])
+
 
 if __name__ == "__main__":
     unittest.main()

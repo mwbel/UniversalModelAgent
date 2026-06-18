@@ -128,7 +128,7 @@ def _score_block(text: str) -> tuple[float, list[str]]:
         score += 0.34
         reasons.append("matrix_like_layout")
     if _has_pseudocode_signal(text):
-        score += 0.24
+        score += 0.28
         reasons.append("pseudocode_like_layout")
     if text.count("$") % 2 == 1:
         score += 0.2

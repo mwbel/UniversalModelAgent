@@ -29,6 +29,7 @@ Rules:
 - `renderValidator` only reports static Markdown/LaTeX render risks for one block; it must not call MathJax, access the DOM, or repair Markdown.
 - Pipeline tests compose adapter, delimiter normalization, and render validation on fixtures only; they must not call Mathpix, MathJax, the DOM, or OCR compare UI code.
 - Patch modules define stable OCR correction patches and merge accepted patches by block hash only; they must not read/write Markdown files, call APIs, choose conflict winners, or touch UI state.
+- `patch/ocrPatch.browser.js` exposes the patch pure-function contract as `globalThis.OcrCorePatch` for direct browser script loading; it must stay behavior-compatible with the CommonJS patch modules and must not become a separate source of truth.
 - Block parser modules convert MinerU page blocks into stable OCR block records with `blockId` and `oldHash`; they must not normalize Markdown, call validators, generate patches, or touch UI state.
 
 Fixture convention:

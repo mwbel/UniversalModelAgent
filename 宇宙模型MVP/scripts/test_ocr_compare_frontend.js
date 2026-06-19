@@ -8,6 +8,9 @@ const { createRequire } = require("module");
 const source = fs
   .readFileSync("frontend/ocr-compare.js", "utf8")
   .replace(/\ninitialize\(\);\s*$/, "\n");
+const patchBrowserSource = fs.readFileSync("frontend/ocr-core/patch/ocrPatch.browser.js", "utf8");
+const { hashBlockText: nodeHashBlockText } = require(path.resolve("frontend/ocr-core/patch/blockHasher"));
+const { createOcrPatch: nodeCreateOcrPatch } = require(path.resolve("frontend/ocr-core/patch/patchGenerator"));
 
 const context = {
   console,
@@ -30,6 +33,57 @@ function call(expression) {
   return vm.runInContext(expression, context);
 }
 
+function createOcrCompareContext(extra = {}) {
+  const testContext = {
+    console,
+    window: {
+      __UMA_RUNTIME_CONFIG__: {},
+      location: { protocol: "http:", port: "8787" },
+      setTimeout() {},
+    },
+    document: {},
+    navigator: {},
+    Blob: function Blob() {},
+    URL: { createObjectURL() { return ""; } },
+    ...extra,
+  };
+  vm.createContext(testContext);
+  return testContext;
+}
+
+function runOcrCompareInContext(testContext) {
+  vm.runInContext(source, testContext);
+  return testContext;
+}
+
+{
+  const browserPatchContext = createOcrCompareContext();
+  vm.runInContext(patchBrowserSource, browserPatchContext);
+  assert.strictEqual(typeof browserPatchContext.OcrCorePatch.hashBlockText, "function");
+  assert.strictEqual(typeof browserPatchContext.OcrCorePatch.createOcrPatch, "function");
+  assert.strictEqual(typeof browserPatchContext.OcrCorePatch.detectPatchConflicts, "function");
+  assert.strictEqual(typeof browserPatchContext.OcrCorePatch.mergeAcceptedPatches, "function");
+  const sampleText = "Magnitude equation m-M=5log(d/10pc).\r\n中文 OCR";
+  const patchInput = {
+    blockId: "p2_b4_testhash",
+    oldText: sampleText,
+    newText: "Magnitude equation $m-M=5\\log_{10}(d/10\\mathrm{pc})$.\n中文 OCR",
+    source: "human",
+    status: "draft",
+    metadata: { pageNo: 2, renderStatusAfter: "ok" },
+  };
+  assert.strictEqual(
+    browserPatchContext.OcrCorePatch.hashBlockText(sampleText),
+    nodeHashBlockText(sampleText),
+    "browser wrapper hashBlockText should match the pure CommonJS module",
+  );
+  assert.deepStrictEqual(
+    JSON.parse(JSON.stringify(browserPatchContext.OcrCorePatch.createOcrPatch(patchInput))),
+    nodeCreateOcrPatch(patchInput),
+    "browser wrapper createOcrPatch should match the pure CommonJS module",
+  );
+}
+
 const singleLineDisplay =
   "$$\\widehat {f}(x) = \\left\\{ \\begin{array}{ll}0, & 0 \\leq x < 1, \\\\ 1, & x \\geq 1. \\end{array} \\right.$$";
 const singleLineHtml = call(
@@ -38,25 +92,86 @@ const singleLineHtml = call(
 assert(singleLineHtml.includes('class="math-display"'), "single-line display math should render as display math");
 assert(!singleLineHtml.includes("<p>$$"), "single-line display math should not render as raw paragraph text");
 
-const brokenAligned = `$$\\begin{aligned}
-$$
-\\sqrt { x } & \\leq ...
-$$
-$$
-& = ...
-$$
-\\end{aligned}$$`;
-const repairedAligned = call(`prepareMathpixMarkdown(${JSON.stringify(brokenAligned)})`);
+function prepareMathpix(markdown) {
+  return call(`prepareMathpixMarkdown(${JSON.stringify(markdown)})`);
+}
+
+const fencedMarkdown = "```markdown\n$$\nE = mc^2\n$$\n```";
 assert.strictEqual(
-  repairedAligned,
-  `$$
-\\begin{aligned}
-\\sqrt { x } & \\leq ...
-& = ...
-\\end{aligned}
-$$`,
-  "broken Mathpix aligned delimiters should be normalized into one display block",
+  prepareMathpix(fencedMarkdown),
+  "$$\nE = mc^2\n$$",
+  "prepareMathpixMarkdown should delegate fenced markdown cleanup to the adapter",
 );
+
+const fencedLatexAlign = "```latex\n\\begin{align}\na &= b+c\n\\end{align}\n```";
+assert.strictEqual(
+  prepareMathpix(fencedLatexAlign),
+  `$$
+\\begin{align}
+a &= b+c
+\\end{align}
+$$`,
+  "prepareMathpixMarkdown should wrap fenced latex align output as display math",
+);
+
+assert.strictEqual(
+  prepareMathpix("\\[\nF = ma\n\\]"),
+  "$$\nF = ma\n$$",
+  "prepareMathpixMarkdown should convert bracket display math",
+);
+
+assert.strictEqual(
+  prepareMathpix("The orbit satisfies \\(e<1\\) for an ellipse."),
+  "The orbit satisfies $e<1$ for an ellipse.",
+  "prepareMathpixMarkdown should convert paren inline math",
+);
+
+const bareArray = "\\begin{array}{cc}\na & b \\\\\nc & d\n\\end{array}";
+assert.strictEqual(
+  prepareMathpix(bareArray),
+  `$$
+\\begin{array}{cc}
+a & b \\\\
+c & d
+\\end{array}
+$$`,
+  "prepareMathpixMarkdown should wrap bare array environments",
+);
+
+assert.strictEqual(
+  prepareMathpix("$$\n$$\nE = mc^2\n$$\n$$"),
+  "$$\nE = mc^2\n$$",
+  "prepareMathpixMarkdown should collapse repeated display delimiters through the adapter",
+);
+
+const inlineOnly = prepareMathpix("The period is \\(P=2\\pi\\sqrt{a^3/GM}\\).");
+assert.strictEqual(inlineOnly, "The period is $P=2\\pi\\sqrt{a^3/GM}$.");
+assert(!inlineOnly.includes("$$"), "prepareMathpixMarkdown should not upgrade inline math to display math");
+
+assert.strictEqual(
+  prepareMathpix("The replacement CCD cost $100."),
+  "The replacement CCD cost $100.",
+  "prepareMathpixMarkdown should preserve currency-like dollar signs",
+);
+
+const mathpixTable = [
+  "| Quantity | Formula |",
+  "| --- | --- |",
+  "| Einstein radius | \\(r_E=\\sqrt{4GM D/c^2}\\) |",
+].join("\n");
+const preparedTable = prepareMathpix(mathpixTable);
+assert.strictEqual(
+  preparedTable,
+  [
+    "| Quantity | Formula |",
+    "| --- | --- |",
+    "| Einstein radius | $r_E=\\sqrt{4GM D/c^2}$ |",
+  ].join("\n"),
+  "prepareMathpixMarkdown should preserve Markdown table structure",
+);
+assert(preparedTable.split("\n").every((line) => line.split("|").length === 4));
+
+assert.strictEqual(prepareMathpix("   "), "", "prepareMathpixMarkdown should tolerate empty Mathpix output");
 
 const latexTable = "\\begin{array}{cc}\na & b \\\\ c & d\n\\end{array}";
 const bareTableHtml = call(`renderMarkdownHtml(normalizeMathMarkdown(${JSON.stringify(latexTable)}))`);
@@ -83,6 +198,1249 @@ for (const fixtureName of [
   const expected = readFixture(fixtureName, "expected");
   const actual = call(`normalizeMathMarkdown(${JSON.stringify(input)})`).trimEnd();
   assert.strictEqual(actual, expected, `normalizeMathMarkdown wrapper should satisfy ${fixtureName}`);
+}
+
+function createDraftPatch(input) {
+  return JSON.parse(
+    call(`(() => {
+      state.ocrPatches = [];
+      const result = createAndStoreDraftOcrPatch(${JSON.stringify(input)});
+      return JSON.stringify({
+        patch: result.patch,
+        normalizedText: result.normalizedText,
+        renderSeverity: result.renderValidation.severity,
+        patchCount: state.ocrPatches.length
+      });
+    })()`),
+  );
+}
+
+function assertOcrPatchShape(patch) {
+  assert.strictEqual(typeof patch.patchId, "string");
+  assert(patch.patchId.startsWith("patch_"));
+  assert.strictEqual(typeof patch.blockId, "string");
+  assert.strictEqual(typeof patch.oldHash, "string");
+  assert.strictEqual(patch.oldHash.length, 64);
+  assert.strictEqual(typeof patch.newText, "string");
+  assert.strictEqual(typeof patch.source, "string");
+  assert.strictEqual(typeof patch.status, "string");
+  assert.strictEqual(typeof patch.createdAt, "string");
+  assert(patch.metadata && typeof patch.metadata.renderStatusAfter === "string");
+}
+
+{
+  const oldText = "The OCR line reads E=mc2.";
+  const result = createDraftPatch({
+    pageNo: 7,
+    blockIndex: "3",
+    oldText,
+    newText: "$$\nE=mc^2\n$$",
+    source: "mathpix",
+  });
+  const contextJson = call(`JSON.stringify(createLegacyBlockPatchContext(7, "3", ${JSON.stringify(oldText)}))`);
+  const legacyContext = JSON.parse(contextJson);
+  assert.strictEqual(result.patchCount, 1);
+  assertOcrPatchShape(result.patch);
+  assert.strictEqual(result.patch.source, "mathpix");
+  assert.strictEqual(result.patch.status, "draft");
+  assert.strictEqual(result.patch.blockId, legacyContext.blockId);
+  assert.strictEqual(result.patch.blockId, `p7_b3_${legacyContext.oldHash.slice(0, 8)}`);
+  assert.strictEqual(result.patch.metadata.pageNo, 7);
+  assert.strictEqual(result.patch.metadata.renderStatusAfter, "ok");
+}
+
+{
+  const result = createDraftPatch({
+    pageNo: 8,
+    blockIndex: "2",
+    oldText: "Magnitude equation m-M=5log(d/10pc).",
+    newText: "Magnitude equation $m-M=5\\log_{10}(d/10\\mathrm{pc})$.",
+    source: "human",
+  });
+  assert.strictEqual(result.patchCount, 1);
+  assertOcrPatchShape(result.patch);
+  assert.strictEqual(result.patch.source, "human");
+  assert.strictEqual(result.patch.status, "draft");
+  assert.strictEqual(result.patch.metadata.renderStatusAfter, "ok");
+}
+
+{
+  const result = createDraftPatch({
+    pageNo: 9,
+    blockIndex: "1",
+    oldText: "$$\nF=ma\n$$",
+    newText: "$$\nF=ma\n$$",
+    source: "human",
+  });
+  assert.strictEqual(result.patchCount, 1);
+  assertOcrPatchShape(result.patch);
+  assert.strictEqual(result.patch.status, "noop");
+}
+
+{
+  const result = createDraftPatch({
+    pageNo: 10,
+    blockIndex: "4",
+    oldText: "Broken aligned equation.",
+    newText: "\\begin{align}\na&=b",
+    source: "mathpix",
+  });
+  assert.strictEqual(result.patchCount, 1);
+  assertOcrPatchShape(result.patch);
+  assert.strictEqual(result.patch.source, "mathpix");
+  assert.strictEqual(result.patch.status, "draft");
+  assert.strictEqual(result.patch.metadata.renderStatusAfter, "error");
+  assert.strictEqual(result.renderSeverity, "error");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.ocrPatches = [];
+      const patchResult = createAndStoreDraftOcrPatch({
+        pageNo: 16,
+        blockIndex: "1",
+        oldText: "The OCR line reads E=mc2.",
+        newText: "$$\\nE=mc^2\\n$$",
+        source: "mathpix"
+      });
+      const statusResult = updateOcrPatchStatus(patchResult.patch.patchId, "accepted");
+      return JSON.stringify({
+        ok: statusResult.ok,
+        patch: statusResult.patch,
+        storedPatch: state.ocrPatches[0],
+        patchCount: state.ocrPatches.length
+      });
+    })()`),
+  );
+  assert.strictEqual(result.ok, true);
+  assert.strictEqual(result.patchCount, 1);
+  assert.strictEqual(result.patch.source, "mathpix");
+  assert.strictEqual(result.patch.status, "accepted");
+  assert.strictEqual(result.storedPatch.status, "accepted");
+  assert.strictEqual(typeof result.patch.updatedAt, "string");
+  assert(!Number.isNaN(Date.parse(result.patch.updatedAt)), "accepted patch should receive updatedAt");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.ocrPatches = [];
+      const first = createAndStoreDraftOcrPatch({
+        pageNo: 17,
+        blockIndex: "1",
+        oldText: "First OCR line.",
+        newText: "First corrected line.",
+        source: "human"
+      }).patch;
+      const second = createAndStoreDraftOcrPatch({
+        pageNo: 17,
+        blockIndex: "2",
+        oldText: "Second OCR line.",
+        newText: "Second corrected line.",
+        source: "human"
+      }).patch;
+      const statusResult = updateOcrPatchStatus(second.patchId, "rejected");
+      return JSON.stringify({
+        ok: statusResult.ok,
+        first: state.ocrPatches[0],
+        second: state.ocrPatches[1],
+        firstPatchId: first.patchId,
+        secondPatchId: second.patchId
+      });
+    })()`),
+  );
+  assert.strictEqual(result.ok, true);
+  assert.strictEqual(result.first.status, "draft");
+  assert.strictEqual(result.second.status, "rejected");
+  assert.strictEqual(result.first.patchId, result.firstPatchId);
+  assert.strictEqual(result.second.patchId, result.secondPatchId);
+  assert.strictEqual(typeof result.second.updatedAt, "string");
+  assert.strictEqual(result.first.updatedAt, undefined);
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.ocrPatches = [];
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 18,
+        blockIndex: "1",
+        oldText: "$$\\nF=ma\\n$$",
+        newText: "$$\\nF=ma\\n$$",
+        source: "human"
+      }).patch;
+      const statusResult = updateOcrPatchStatus(patch.patchId, "accepted");
+      return JSON.stringify({
+        ok: statusResult.ok,
+        reason: statusResult.reason,
+        patch: state.ocrPatches[0]
+      });
+    })()`),
+  );
+  assert.strictEqual(result.ok, false);
+  assert.strictEqual(result.reason, "noop_not_transitionable");
+  assert.strictEqual(result.patch.status, "noop");
+  assert.strictEqual(result.patch.updatedAt, undefined);
+}
+
+{
+  const warnings = [];
+  const missingPatchContext = createOcrCompareContext({
+    console: {
+      warn(...args) {
+        warnings.push(args.map(String).join(" "));
+      },
+    },
+    require: createRequire(path.resolve("frontend/ocr-compare.js")),
+  });
+  runOcrCompareInContext(missingPatchContext);
+  const result = JSON.parse(
+    vm.runInContext(`JSON.stringify(updateOcrPatchStatus("missing-patch-id", "accepted"))`, missingPatchContext),
+  );
+  assert.strictEqual(result.ok, false);
+  assert.strictEqual(result.reason, "not_found");
+  assert(warnings.some((warning) => warning.includes("missing-patch-id")), "missing patchId should warn without throwing");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.ocrPatches = [];
+      state.mineruOverrides.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              { type: "text", lines: [{ spans: [{ content: "Original Export Line" }] }] }
+            ]
+          }
+        ]
+      };
+      const beforeExport = buildBookMarkdown(true);
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Original Export Line",
+        newText: "Accepted Patch Line",
+        source: "mathpix"
+      }).patch;
+      const statusResult = updateOcrPatchStatus(patch.patchId, "accepted");
+      const afterExport = buildBookMarkdown(true);
+      return JSON.stringify({
+        ok: statusResult.ok,
+        beforeExport,
+        afterExport,
+        patches: state.ocrPatches
+      });
+    })()`),
+  );
+  assert.strictEqual(result.ok, true);
+  assert.strictEqual(result.beforeExport, result.afterExport);
+  assert(!result.afterExport.includes("Accepted Patch Line"), "accepted patch should not alter corrected export yet");
+  assert.strictEqual(result.patches[0].status, "accepted");
+}
+
+{
+  const statusHtml = call(`(() => {
+    state.ocrPatches = [];
+    const patch = createAndStoreDraftOcrPatch({
+      pageNo: 19,
+      blockIndex: "3",
+      oldText: "Flux relation.",
+      newText: "$$\\nF=\\\\sigma T^4\\n$$",
+      source: "mathpix"
+    }).patch;
+    const draftHtml = renderReviewItem(
+      { blockIndex: "3", markdown: "Flux relation.", kind: "text" },
+      { reasons: ["split_formula_tokens"], bbox: [0, 0, 10, 10] },
+      "",
+      false,
+      "",
+      patch
+    );
+    updateOcrPatchStatus(patch.patchId, "accepted");
+    const acceptedHtml = renderReviewItem(
+      { blockIndex: "3", markdown: "Flux relation.", kind: "text" },
+      { reasons: ["split_formula_tokens"], bbox: [0, 0, 10, 10] },
+      "",
+      false,
+      "",
+      patch
+    );
+    const rejectedPatch = createAndStoreDraftOcrPatch({
+      pageNo: 19,
+      blockIndex: "4",
+      oldText: "Rejected relation.",
+      newText: "Rejected corrected relation.",
+      source: "human"
+    }).patch;
+    updateOcrPatchStatus(rejectedPatch.patchId, "rejected");
+    const noopPatch = createAndStoreDraftOcrPatch({
+      pageNo: 19,
+      blockIndex: "5",
+      oldText: "$$\\nF=ma\\n$$",
+      newText: "$$\\nF=ma\\n$$",
+      source: "human"
+    }).patch;
+    return JSON.stringify({
+      draftHtml,
+      acceptedHtml,
+      rejectedHtml: renderOcrPatchStatusControls(rejectedPatch),
+      noopHtml: renderOcrPatchStatusControls(noopPatch)
+    });
+  })()`);
+  const parsed = JSON.parse(statusHtml);
+  assert(parsed.draftHtml.includes("Patch 状态：draft"));
+  assert(parsed.draftHtml.includes("data-ocr-patch-status-action=\"accepted\""));
+  assert(parsed.draftHtml.includes(">接受<"));
+  assert(parsed.draftHtml.includes(">拒绝<"));
+  assert(parsed.acceptedHtml.includes("Patch 状态：accepted"));
+  assert(parsed.acceptedHtml.includes("已接受"));
+  assert(!parsed.acceptedHtml.includes("data-ocr-patch-status-action=\"accepted\""));
+  assert(parsed.rejectedHtml.includes("Patch 状态：rejected"));
+  assert(parsed.rejectedHtml.includes("已拒绝"));
+  assert(!parsed.rejectedHtml.includes("data-ocr-patch-status-action=\"accepted\""));
+  assert(parsed.noopHtml.includes("Patch 状态：noop"));
+  assert(parsed.noopHtml.includes("无变化"));
+  assert(!parsed.noopHtml.includes("data-ocr-patch-status-action=\"accepted\""));
+}
+
+function setupPreviewPageExpression(blocks) {
+  return `
+    state.currentPage = 1;
+    state.ocrPatches = [];
+    state.acceptedPatchPreview = null;
+    state.acceptedPatchBookPreview = null;
+    state.mineruOverrides.clear();
+    state.mineruBlockOverrides.clear();
+    state.mathpixBlockDrafts.clear();
+    state.mineruInfo = {
+      pdf_info: [
+        {
+          para_blocks: ${JSON.stringify(blocks)}.map((text) => ({
+            type: "text",
+            lines: [{ spans: [{ content: text }] }]
+          }))
+        }
+      ]
+    };
+  `;
+}
+
+function setupPreviewBookExpression(pages) {
+  return `
+    state.currentPage = 1;
+    state.ocrPatches = [];
+    state.acceptedPatchPreview = null;
+    state.acceptedPatchBookPreview = null;
+    state.mineruOverrides.clear();
+    state.mineruBlockOverrides.clear();
+    state.mathpixBlockDrafts.clear();
+    state.mineruInfo = {
+      pdf_info: ${JSON.stringify(pages)}.map((blocks) => ({
+        para_blocks: blocks.map((text) => ({
+          type: "text",
+          lines: [{ spans: [{ content: text }] }]
+        }))
+      }))
+    };
+  `;
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression(["Original spectrum line", "Original orbit line"])}
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify(preview);
+    })()`),
+  );
+  assert.strictEqual(result.ok, true);
+  assert.strictEqual(result.appliedPatchCount, 0);
+  assert(result.markdown.includes("Original spectrum line"));
+  assert(result.warnings.some((warning) => warning.type === "no_accepted_patch"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression(["Original spectrum line", "Original orbit line"])}
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Original spectrum line",
+        newText: "Accepted spectrum correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify(preview);
+    })()`),
+  );
+  assert.strictEqual(result.ok, true);
+  assert.strictEqual(result.appliedPatchCount, 1);
+  assert(result.markdown.includes("Accepted spectrum correction"));
+  assert(result.markdown.includes("Original orbit line"));
+  assert(!result.markdown.includes("Original spectrum line"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression(["Draft base", "Rejected base", "Noop base"])}
+      createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Draft base",
+        newText: "Draft correction should not preview",
+        source: "mathpix"
+      });
+      const rejected = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "1",
+        oldText: "Rejected base",
+        newText: "Rejected correction should not preview",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(rejected.patchId, "rejected");
+      createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "2",
+        oldText: "Noop base",
+        newText: "Noop base",
+        source: "human"
+      });
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify(preview);
+    })()`),
+  );
+  assert.strictEqual(result.appliedPatchCount, 0);
+  assert(result.markdown.includes("Draft base"));
+  assert(result.markdown.includes("Rejected base"));
+  assert(result.markdown.includes("Noop base"));
+  assert(!result.markdown.includes("Draft correction should not preview"));
+  assert(!result.markdown.includes("Rejected correction should not preview"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression(["Hash guarded source"])}
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Hash guarded source",
+        newText: "Should not overwrite on mismatch",
+        source: "mathpix"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      patch.oldHash = "0".repeat(64);
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify(preview);
+    })()`),
+  );
+  assert.strictEqual(result.ok, false);
+  assert.strictEqual(result.appliedPatchCount, 0);
+  assert(result.errors.some((error) => error.type === "old_hash_mismatch"));
+  assert(result.markdown.includes("Hash guarded source"));
+  assert(!result.markdown.includes("Should not overwrite on mismatch"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression(["Only existing block"])}
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "99",
+        oldText: "Missing block",
+        newText: "Missing block correction",
+        source: "mathpix"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify(preview);
+    })()`),
+  );
+  assert.strictEqual(result.ok, true);
+  assert.strictEqual(result.appliedPatchCount, 0);
+  assert(result.warnings.some((warning) => warning.type === "patch_block_not_found"));
+  assert(result.markdown.includes("Only existing block"));
+  assert(!result.markdown.includes("Missing block correction"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression(["State source"])}
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "State source",
+        newText: "State preview correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      getBlockOverrides(1).set("0", "Existing override stays");
+      const beforePatches = JSON.stringify(state.ocrPatches);
+      const beforeOverrides = JSON.stringify(Array.from(getBlockOverrides(1).entries()));
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      const afterPatches = JSON.stringify(state.ocrPatches);
+      const afterOverrides = JSON.stringify(Array.from(getBlockOverrides(1).entries()));
+      return JSON.stringify({ preview, beforePatches, afterPatches, beforeOverrides, afterOverrides });
+    })()`),
+  );
+  assert.strictEqual(result.preview.appliedPatchCount, 1);
+  assert.strictEqual(result.beforePatches, result.afterPatches);
+  assert.strictEqual(result.beforeOverrides, result.afterOverrides);
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression(["Export guard source"])}
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Export guard source",
+        newText: "Dry run only correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      const originalBuildBookMarkdown = buildBookMarkdown;
+      let buildCalled = 0;
+      buildBookMarkdown = function buildBookMarkdownProbe() {
+        buildCalled += 1;
+        throw new Error("formal export should not be called by dry-run preview");
+      };
+      let preview;
+      try {
+        preview = buildAcceptedPatchPreviewForPage(1);
+      } finally {
+        buildBookMarkdown = originalBuildBookMarkdown;
+      }
+      return JSON.stringify({ preview, buildCalled });
+    })()`),
+  );
+  assert.strictEqual(result.buildCalled, 0);
+  assert.strictEqual(result.preview.appliedPatchCount, 1);
+  assert(result.preview.markdown.includes("Dry run only correction"));
+}
+
+{
+  const unavailableContext = createOcrCompareContext();
+  runOcrCompareInContext(unavailableContext);
+  const result = JSON.parse(
+    vm.runInContext(`(() => {
+      state.currentPage = 1;
+      state.mineruInfo = {
+        pdf_info: [
+          { para_blocks: [{ type: "text", lines: [{ spans: [{ content: "Fallback source" }] }] }] }
+        ]
+      };
+      return JSON.stringify(buildAcceptedPatchPreviewForPage(1));
+    })()`, unavailableContext),
+  );
+  assert.strictEqual(result.ok, false);
+  assert(result.warnings.some((warning) => warning.type === "patch_tool_unavailable"));
+  assert(result.markdown.includes("Fallback source"));
+}
+
+{
+  const unavailableContext = createOcrCompareContext();
+  runOcrCompareInContext(unavailableContext);
+  const result = JSON.parse(
+    vm.runInContext(`(() => {
+      state.currentPage = 1;
+      state.mineruInfo = {
+        pdf_info: [
+          { para_blocks: [{ type: "text", lines: [{ spans: [{ content: "Book fallback page 1" }] }] }] },
+          { para_blocks: [{ type: "text", lines: [{ spans: [{ content: "Book fallback page 2" }] }] }] }
+        ]
+      };
+      return JSON.stringify(buildAcceptedPatchPreviewForBook());
+    })()`, unavailableContext),
+  );
+  assert.strictEqual(result.ok, false);
+  assert(result.warnings.some((warning) => warning.type === "patch_tool_unavailable"));
+  assert(result.markdown.includes("Book fallback page 1"));
+  assert(result.markdown.includes("Book fallback page 2"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Book page 1 source"], ["Book page 2 source"]])}
+      const preview = buildAcceptedPatchPreviewForBook();
+      return JSON.stringify(preview);
+    })()`),
+  );
+  assert.strictEqual(result.ok, true);
+  assert.strictEqual(result.acceptedPatchCount, 0);
+  assert.strictEqual(result.appliedPatchCount, 0);
+  assert.strictEqual(result.skippedPatchCount, 0);
+  assert(result.markdown.includes("Book page 1 source"));
+  assert(result.markdown.includes("Book page 2 source"));
+  assert(result.warnings.some((warning) => warning.type === "no_accepted_patch"));
+  assert.strictEqual(result.pageSummaries.length, 2);
+  assert.deepStrictEqual(
+    result.pageSummaries.map((page) => [page.pageNo, page.appliedPatchCount, page.warningCount, page.errorCount]),
+    [[1, 0, 0, 0], [2, 0, 0, 0]],
+  );
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Single accepted source"], ["Untouched second page"]])}
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Single accepted source",
+        newText: "Single accepted correction",
+        source: "mathpix"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      const preview = buildAcceptedPatchPreviewForBook();
+      return JSON.stringify(preview);
+    })()`),
+  );
+  assert.strictEqual(result.ok, true);
+  assert.strictEqual(result.acceptedPatchCount, 1);
+  assert.strictEqual(result.appliedPatchCount, 1);
+  assert.strictEqual(result.skippedPatchCount, 0);
+  assert(result.markdown.includes("Single accepted correction"));
+  assert(result.markdown.includes("Untouched second page"));
+  assert(!result.markdown.includes("Single accepted source"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["First page source"], ["Second page source"]])}
+      const firstPatch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "First page source",
+        newText: "First page accepted correction",
+        source: "human"
+      }).patch;
+      const secondPatch = createAndStoreDraftOcrPatch({
+        pageNo: 2,
+        blockIndex: "0",
+        oldText: "Second page source",
+        newText: "Second page accepted correction",
+        source: "mathpix"
+      }).patch;
+      updateOcrPatchStatus(firstPatch.patchId, "accepted");
+      updateOcrPatchStatus(secondPatch.patchId, "accepted");
+      const preview = buildAcceptedPatchPreviewForBook();
+      return JSON.stringify(preview);
+    })()`),
+  );
+  assert.strictEqual(result.ok, true);
+  assert.strictEqual(result.acceptedPatchCount, 2);
+  assert.strictEqual(result.appliedPatchCount, 2);
+  assert.strictEqual(result.skippedPatchCount, 0);
+  assert(result.markdown.includes("First page accepted correction"));
+  assert(result.markdown.includes("Second page accepted correction"));
+  assert.deepStrictEqual(
+    result.pageSummaries.map((page) => page.appliedPatchCount),
+    [1, 1],
+  );
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Book draft base"], ["Book rejected base"], ["Book noop base"]])}
+      createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Book draft base",
+        newText: "Book draft correction should not preview",
+        source: "mathpix"
+      });
+      const rejected = createAndStoreDraftOcrPatch({
+        pageNo: 2,
+        blockIndex: "0",
+        oldText: "Book rejected base",
+        newText: "Book rejected correction should not preview",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(rejected.patchId, "rejected");
+      createAndStoreDraftOcrPatch({
+        pageNo: 3,
+        blockIndex: "0",
+        oldText: "Book noop base",
+        newText: "Book noop base",
+        source: "human"
+      });
+      const preview = buildAcceptedPatchPreviewForBook();
+      return JSON.stringify(preview);
+    })()`),
+  );
+  assert.strictEqual(result.acceptedPatchCount, 0);
+  assert.strictEqual(result.appliedPatchCount, 0);
+  assert(result.markdown.includes("Book draft base"));
+  assert(result.markdown.includes("Book rejected base"));
+  assert(result.markdown.includes("Book noop base"));
+  assert(!result.markdown.includes("Book draft correction should not preview"));
+  assert(!result.markdown.includes("Book rejected correction should not preview"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Mismatch page source"], ["Missing target host"]])}
+      const mismatch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Mismatch page source",
+        newText: "Mismatch correction should not apply",
+        source: "mathpix"
+      }).patch;
+      updateOcrPatchStatus(mismatch.patchId, "accepted");
+      mismatch.oldHash = "0".repeat(64);
+      const missing = createAndStoreDraftOcrPatch({
+        pageNo: 2,
+        blockIndex: "99",
+        oldText: "Missing target source",
+        newText: "Missing target correction should not apply",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(missing.patchId, "accepted");
+      const preview = buildAcceptedPatchPreviewForBook();
+      return JSON.stringify(preview);
+    })()`),
+  );
+  assert.strictEqual(result.ok, false);
+  assert.strictEqual(result.acceptedPatchCount, 2);
+  assert.strictEqual(result.appliedPatchCount, 0);
+  assert.strictEqual(result.skippedPatchCount, 2);
+  assert(result.errors.some((error) => error.type === "old_hash_mismatch" && error.pageNo === 1));
+  assert(result.warnings.some((warning) => warning.type === "patch_block_not_found" && warning.pageNo === 2));
+  assert(result.markdown.includes("Mismatch page source"));
+  assert(result.markdown.includes("Missing target host"));
+  assert(!result.markdown.includes("Mismatch correction should not apply"));
+  assert(!result.markdown.includes("Missing target correction should not apply"));
+  assert.deepStrictEqual(
+    result.pageSummaries.map((page) => [page.pageNo, page.appliedPatchCount, page.warningCount, page.errorCount]),
+    [[1, 0, 0, 1], [2, 0, 1, 0]],
+  );
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["State book source"], ["State book second page"]])}
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "State book source",
+        newText: "State book correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      getBlockOverrides(1).set("0", "Existing book override stays");
+      const beforePatches = JSON.stringify(state.ocrPatches);
+      const beforeOverrides = JSON.stringify(Array.from(getBlockOverrides(1).entries()));
+      const originalBuildBookMarkdown = buildBookMarkdown;
+      let buildCalled = 0;
+      buildBookMarkdown = function buildBookMarkdownProbe() {
+        buildCalled += 1;
+        throw new Error("formal export should not be called by book dry-run preview");
+      };
+      let preview;
+      try {
+        preview = buildAcceptedPatchPreviewForBook();
+      } finally {
+        buildBookMarkdown = originalBuildBookMarkdown;
+      }
+      const afterPatches = JSON.stringify(state.ocrPatches);
+      const afterOverrides = JSON.stringify(Array.from(getBlockOverrides(1).entries()));
+      return JSON.stringify({ preview, beforePatches, afterPatches, beforeOverrides, afterOverrides, buildCalled });
+    })()`),
+  );
+  assert.strictEqual(result.preview.appliedPatchCount, 1);
+  assert.strictEqual(result.beforePatches, result.afterPatches);
+  assert.strictEqual(result.beforeOverrides, result.afterOverrides);
+  assert.strictEqual(result.buildCalled, 0);
+  assert(result.preview.markdown.includes("State book correction"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["No accepted download source"]])}
+      const downloads = [];
+      const originalDownloadTextFile = downloadTextFile;
+      downloadTextFile = function captureDownload(filename, text) {
+        downloads.push({ filename, text });
+      };
+      let downloadResult;
+      try {
+        downloadResult = downloadAcceptedCorrectedMarkdown();
+      } finally {
+        downloadTextFile = originalDownloadTextFile;
+      }
+      return JSON.stringify({ downloadResult, downloads, preview: state.acceptedPatchBookPreview });
+    })()`),
+  );
+  assert.strictEqual(result.downloadResult.ok, false);
+  assert.strictEqual(result.downloadResult.reason, "no_accepted_patch");
+  assert.strictEqual(result.downloads.length, 0);
+  assert(result.downloadResult.preview.warnings.some((warning) => warning.type === "no_accepted_patch"));
+  assert(result.preview.warnings.some((warning) => warning.message.includes("accepted patch")));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Download accepted source"], ["Download untouched page"]])}
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Download accepted source",
+        newText: "Download accepted correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      const downloads = [];
+      const originalDownloadTextFile = downloadTextFile;
+      downloadTextFile = function captureDownload(filename, text) {
+        downloads.push({ filename, text });
+      };
+      let downloadResult;
+      try {
+        downloadResult = downloadAcceptedCorrectedMarkdown();
+      } finally {
+        downloadTextFile = originalDownloadTextFile;
+      }
+      return JSON.stringify({ downloadResult, downloads });
+    })()`),
+  );
+  assert.strictEqual(result.downloadResult.ok, true);
+  assert.strictEqual(result.downloads.length, 1);
+  assert(result.downloads[0].filename.endsWith("-accepted-corrected.md"));
+  assert(result.downloads[0].text.includes("Generated by OCR accepted patch dry-run export."));
+  assert(result.downloads[0].text.includes("Only accepted OcrPatch entries are applied."));
+  assert(result.downloads[0].text.includes("Download accepted correction"));
+  assert(result.downloads[0].text.includes("Download untouched page"));
+  assert(!result.downloads[0].text.includes("Download accepted source"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Download draft base"], ["Download rejected base"], ["Download noop base"], ["Download accepted base"]])}
+      createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Download draft base",
+        newText: "Download draft correction should not appear",
+        source: "mathpix"
+      });
+      const rejected = createAndStoreDraftOcrPatch({
+        pageNo: 2,
+        blockIndex: "0",
+        oldText: "Download rejected base",
+        newText: "Download rejected correction should not appear",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(rejected.patchId, "rejected");
+      createAndStoreDraftOcrPatch({
+        pageNo: 3,
+        blockIndex: "0",
+        oldText: "Download noop base",
+        newText: "Download noop base",
+        source: "human"
+      });
+      const accepted = createAndStoreDraftOcrPatch({
+        pageNo: 4,
+        blockIndex: "0",
+        oldText: "Download accepted base",
+        newText: "Download accepted included",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(accepted.patchId, "accepted");
+      const downloads = [];
+      const originalDownloadTextFile = downloadTextFile;
+      downloadTextFile = function captureDownload(filename, text) {
+        downloads.push({ filename, text });
+      };
+      let downloadResult;
+      try {
+        downloadResult = downloadAcceptedCorrectedMarkdown();
+      } finally {
+        downloadTextFile = originalDownloadTextFile;
+      }
+      return JSON.stringify({ downloadResult, downloads });
+    })()`),
+  );
+  assert.strictEqual(result.downloadResult.ok, true);
+  assert.strictEqual(result.downloads.length, 1);
+  assert(result.downloads[0].text.includes("Download accepted included"));
+  assert(result.downloads[0].text.includes("Download draft base"));
+  assert(result.downloads[0].text.includes("Download rejected base"));
+  assert(result.downloads[0].text.includes("Download noop base"));
+  assert(!result.downloads[0].text.includes("Download draft correction should not appear"));
+  assert(!result.downloads[0].text.includes("Download rejected correction should not appear"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Mismatch download source"]])}
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Mismatch download source",
+        newText: "Mismatch download correction",
+        source: "mathpix"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      patch.oldHash = "0".repeat(64);
+      const downloads = [];
+      const originalDownloadTextFile = downloadTextFile;
+      downloadTextFile = function captureDownload(filename, text) {
+        downloads.push({ filename, text });
+      };
+      let downloadResult;
+      try {
+        downloadResult = downloadAcceptedCorrectedMarkdown();
+      } finally {
+        downloadTextFile = originalDownloadTextFile;
+      }
+      return JSON.stringify({ downloadResult, downloads });
+    })()`),
+  );
+  assert.strictEqual(result.downloadResult.ok, false);
+  assert.strictEqual(result.downloadResult.reason, "preview_not_ok");
+  assert.strictEqual(result.downloads.length, 0);
+  assert(result.downloadResult.preview.errors.some((error) => error.type === "old_hash_mismatch"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Warning valid source"], ["Warning host source"]])}
+      const valid = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Warning valid source",
+        newText: "Warning valid correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(valid.patchId, "accepted");
+      const missing = createAndStoreDraftOcrPatch({
+        pageNo: 2,
+        blockIndex: "99",
+        oldText: "Warning missing source",
+        newText: "Warning missing correction should not appear",
+        source: "mathpix"
+      }).patch;
+      updateOcrPatchStatus(missing.patchId, "accepted");
+      const downloads = [];
+      const originalDownloadTextFile = downloadTextFile;
+      downloadTextFile = function captureDownload(filename, text) {
+        downloads.push({ filename, text });
+      };
+      let downloadResult;
+      try {
+        downloadResult = downloadAcceptedCorrectedMarkdown();
+      } finally {
+        downloadTextFile = originalDownloadTextFile;
+      }
+      return JSON.stringify({ downloadResult, downloads });
+    })()`),
+  );
+  assert.strictEqual(result.downloadResult.ok, true);
+  assert.strictEqual(result.downloads.length, 1);
+  assert.strictEqual(result.downloadResult.preview.appliedPatchCount, 1);
+  assert.strictEqual(result.downloadResult.preview.skippedPatchCount, 1);
+  assert(result.downloadResult.preview.warnings.some((warning) => warning.type === "patch_block_not_found"));
+  assert(result.downloads[0].text.includes("Warning valid correction"));
+  assert(!result.downloads[0].text.includes("Warning missing correction should not appear"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Formal export guard source"]])}
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Formal export guard source",
+        newText: "Accepted download without formal export",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      let exportCalled = 0;
+      let buildCalled = 0;
+      const originalExportMineruMarkdown = exportMineruMarkdown;
+      const originalBuildBookMarkdown = buildBookMarkdown;
+      const originalDownloadTextFile = downloadTextFile;
+      exportMineruMarkdown = function exportProbe() {
+        exportCalled += 1;
+        throw new Error("accepted download should not call formal export");
+      };
+      buildBookMarkdown = function buildProbe() {
+        buildCalled += 1;
+        throw new Error("accepted download should not call formal buildBookMarkdown");
+      };
+      downloadTextFile = function captureDownload() {};
+      let downloadResult;
+      try {
+        downloadResult = downloadAcceptedCorrectedMarkdown();
+      } finally {
+        exportMineruMarkdown = originalExportMineruMarkdown;
+        buildBookMarkdown = originalBuildBookMarkdown;
+        downloadTextFile = originalDownloadTextFile;
+      }
+      return JSON.stringify({ downloadResult, exportCalled, buildCalled });
+    })()`),
+  );
+  assert.strictEqual(result.downloadResult.ok, true);
+  assert.strictEqual(result.exportCalled, 0);
+  assert.strictEqual(result.buildCalled, 0);
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Formal export source"]])}
+      getBlockOverrides(1).set("0", "Formal export override");
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Formal export source",
+        newText: "Accepted patch should not alter formal export",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      const formalBefore = buildBookMarkdown(true);
+      const downloads = [];
+      const originalDownloadTextFile = downloadTextFile;
+      els.statusBadge = { textContent: "", className: "" };
+      downloadTextFile = function captureDownload(filename, text) {
+        downloads.push({ filename, text });
+      };
+      try {
+        exportMineruMarkdown(true);
+      } finally {
+        downloadTextFile = originalDownloadTextFile;
+      }
+      const formalAfter = buildBookMarkdown(true);
+      return JSON.stringify({ formalBefore, formalAfter, downloads });
+    })()`),
+  );
+  assert.strictEqual(result.formalBefore, result.formalAfter);
+  assert.strictEqual(result.downloads.length, 1);
+  assert(result.downloads[0].text.includes("Formal export override"));
+  assert(!result.downloads[0].text.includes("Accepted patch should not alter formal export"));
+}
+
+{
+  const uiHtml = call(`(() => {
+    ${setupPreviewPageExpression(["UI source"])}
+    const fakeCard = {
+      className: "",
+      innerHTML: "",
+      querySelectorAll() { return []; },
+      querySelector() { return null; }
+    };
+    document = {
+      createElement() { return fakeCard; }
+    };
+    state.riskByPage.clear();
+    const card = renderReviewCard();
+    state.acceptedPatchPreview = {
+      ok: true,
+      pageNo: 1,
+      markdown: "Preview correction text",
+      appliedPatchCount: 1,
+      errors: [],
+      warnings: []
+    };
+    state.acceptedPatchBookPreview = {
+      ok: true,
+      markdown: "Book preview correction text",
+      pageSummaries: [{ pageNo: 1, appliedPatchCount: 1, warningCount: 0, errorCount: 0 }],
+      appliedPatchCount: 1,
+      acceptedPatchCount: 1,
+      skippedPatchCount: 0,
+      errors: [],
+      warnings: []
+    };
+    const panel = renderAcceptedPatchPreviewPanel();
+    const bookPanel = renderAcceptedPatchBookPreviewPanel();
+    return JSON.stringify({ html: card.innerHTML, panel, bookPanel });
+  })()`);
+  const parsed = JSON.parse(uiHtml);
+  assert(parsed.html.includes("预览 accepted 校正稿"));
+  assert(parsed.html.includes("data-preview-accepted-patches"));
+  assert(parsed.html.includes("预览整书 accepted 校正稿"));
+  assert(parsed.html.includes("data-preview-accepted-book-patches"));
+  assert(parsed.html.includes("下载 accepted 校正稿"));
+  assert(parsed.html.includes("data-download-accepted-corrected"));
+  assert(parsed.panel.includes("appliedPatchCount: 1"));
+  assert(parsed.panel.includes("Preview correction text"));
+  assert(parsed.bookPanel.includes("acceptedPatchCount: 1"));
+  assert(parsed.bookPanel.includes("Book preview correction text"));
+  assert(parsed.bookPanel.includes("pageSummaries"));
+}
+
+{
+  const sameA = JSON.parse(call(`JSON.stringify(createLegacyBlockPatchContext(11, "5", "same OCR text"))`));
+  const sameB = JSON.parse(call(`JSON.stringify(createLegacyBlockPatchContext(11, "5", "same OCR text"))`));
+  const changed = JSON.parse(call(`JSON.stringify(createLegacyBlockPatchContext(11, "5", "changed OCR text"))`));
+  assert.strictEqual(sameA.blockId, sameB.blockId, "provisional blockId should be stable for identical page/block/text");
+  assert.notStrictEqual(sameA.blockId, changed.blockId, "provisional blockId should change when oldText changes");
+  assert.strictEqual(sameA.blockId, `p11_b5_${sameA.oldHash.slice(0, 8)}`);
+}
+
+{
+  const browserContext = createOcrCompareContext();
+  vm.runInContext(patchBrowserSource, browserContext);
+  runOcrCompareInContext(browserContext);
+  const result = JSON.parse(
+    vm.runInContext(`(() => {
+      state.ocrPatches = [];
+      const patchResult = createAndStoreDraftOcrPatch({
+        pageNo: 12,
+        blockIndex: "6",
+        oldText: "The OCR line reads L=4piR2sigmaT4.",
+        newText: "$$\\nL=4\\\\pi R^2\\\\sigma T^4\\n$$",
+        source: "mathpix"
+      });
+      return JSON.stringify({
+        patch: patchResult.patch,
+        patchCount: state.ocrPatches.length,
+        expectedOldHash: OcrCorePatch.hashBlockText("The OCR line reads L=4piR2sigmaT4.")
+      });
+    })()`, browserContext),
+  );
+  assert.strictEqual(result.patchCount, 1);
+  assertOcrPatchShape(result.patch);
+  assert.strictEqual(result.patch.source, "mathpix");
+  assert.strictEqual(result.patch.status, "draft");
+  assert.strictEqual(result.patch.oldHash, result.expectedOldHash);
+  assert.strictEqual(result.patch.metadata.renderStatusAfter, "warning");
+}
+
+{
+  const browserContext = createOcrCompareContext();
+  vm.runInContext(patchBrowserSource, browserContext);
+  runOcrCompareInContext(browserContext);
+  const result = JSON.parse(
+    vm.runInContext(`(() => {
+      state.ocrPatches = [];
+      const patchResult = createAndStoreDraftOcrPatch({
+        pageNo: 13,
+        blockIndex: "1",
+        oldText: "Magnitude equation m-M=5log(d/10pc).",
+        newText: "Magnitude equation $m-M=5\\\\log_{10}(d/10\\\\mathrm{pc})$.",
+        source: "human"
+      });
+      return JSON.stringify({
+        patch: patchResult.patch,
+        patchCount: state.ocrPatches.length
+      });
+    })()`, browserContext),
+  );
+  assert.strictEqual(result.patchCount, 1);
+  assertOcrPatchShape(result.patch);
+  assert.strictEqual(result.patch.source, "human");
+  assert.strictEqual(result.patch.status, "draft");
+}
+
+{
+  const browserContext = createOcrCompareContext();
+  vm.runInContext(patchBrowserSource, browserContext);
+  runOcrCompareInContext(browserContext);
+  const result = JSON.parse(
+    vm.runInContext(`(() => {
+      state.ocrPatches = [];
+      const patchResult = createAndStoreDraftOcrPatch({
+        pageNo: 14,
+        blockIndex: "1",
+        oldText: "$$\\nF=ma\\n$$",
+        newText: "$$\\nF=ma\\n$$",
+        source: "human"
+      });
+      return JSON.stringify({
+        patch: patchResult.patch,
+        patchCount: state.ocrPatches.length
+      });
+    })()`, browserContext),
+  );
+  assert.strictEqual(result.patchCount, 1);
+  assertOcrPatchShape(result.patch);
+  assert.strictEqual(result.patch.status, "noop");
+}
+
+{
+  const warnings = [];
+  const fallbackContext = createOcrCompareContext({
+    console: {
+      warn(...args) {
+        warnings.push(args.map(String).join(" "));
+      },
+    },
+  });
+  runOcrCompareInContext(fallbackContext);
+  const result = JSON.parse(
+    vm.runInContext(`(() => {
+      state.ocrPatches = [];
+      const patchResult = createAndStoreDraftOcrPatch({
+        pageNo: 15,
+        blockIndex: "1",
+        oldText: "Original OCR text.",
+        newText: "Edited OCR text.",
+        source: "human"
+      });
+      return JSON.stringify({
+        patch: patchResult.patch,
+        normalizedText: patchResult.normalizedText,
+        patchCount: state.ocrPatches.length
+      });
+    })()`, fallbackContext),
+  );
+  assert.strictEqual(result.patch, null);
+  assert.strictEqual(result.patchCount, 0);
+  assert.strictEqual(result.normalizedText, "Edited OCR text.");
+  assert(warnings.some((warning) => warning.includes("OCR draft patch")), "missing patch tools should emit a warning");
+}
+
+{
+  const appended = [];
+  const loaderContext = createOcrCompareContext({
+    document: {
+      createElement(tagName) {
+        return {
+          tagName,
+          dataset: {},
+          addEventListener() {},
+          async: true,
+          src: "",
+        };
+      },
+      head: {
+        appendChild(node) {
+          appended.push(node);
+        },
+      },
+    },
+  });
+  runOcrCompareInContext(loaderContext);
+  assert(
+    appended.some((node) => node.src === "./ocr-core/patch/ocrPatch.browser.js" && node.dataset.ocrCore === "ocr-patch"),
+    "ocr compare should request the patch browser wrapper during browser initialization",
+  );
 }
 
 call(`

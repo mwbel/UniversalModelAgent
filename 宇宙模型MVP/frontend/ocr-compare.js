@@ -17,12 +17,16 @@ const state = {
   mineruOverrides: new Map(),
   mineruBlockOverrides: new Map(),
   mathpixBlockDrafts: new Map(),
+  ocrPatches: [],
+  acceptedPatchPreview: null,
+  acceptedPatchBookPreview: null,
   riskByPage: new Map(),
   mathpixCache: new Map(),
   reviewExpanded: new Set(),
   reviewInitializedPages: new Set(),
   busy: false,
 };
+state.ocrPatches = state.ocrPatches || [];
 
 const els = {};
 const COLUMN_WIDTHS_KEY = "uma-ocr-compare-column-ratios-v6";
@@ -37,6 +41,15 @@ const LEGACY_COLUMN_WIDTHS_KEYS = [
 let ocrCoreNormalizeMathDelimiters = null;
 let ocrCoreNormalizerLoadStarted = false;
 let ocrCoreNormalizerWarningShown = false;
+let ocrCoreAdaptMathpixToTargetMarkdown = null;
+let ocrCoreMathpixAdapterLoadStarted = false;
+let ocrCoreMathpixAdapterWarningShown = false;
+let ocrCoreHashBlockText = null;
+let ocrCoreCreateOcrPatch = null;
+let ocrCoreMergeAcceptedPatches = null;
+let ocrCoreValidateRenderability = null;
+let ocrCorePatchLoadStarted = false;
+let ocrCorePatchWarningShown = false;
 
 function getOcrCoreNormalizeMathDelimiters() {
   if (ocrCoreNormalizeMathDelimiters) {
@@ -86,6 +99,174 @@ function warnOcrCoreNormalizer(message, error) {
 }
 
 loadOcrCoreNormalizerForBrowser();
+
+function getOcrCoreAdaptMathpixToTargetMarkdown() {
+  if (ocrCoreAdaptMathpixToTargetMarkdown) {
+    return ocrCoreAdaptMathpixToTargetMarkdown;
+  }
+  const browserModule = globalThis?.OcrCoreMathpixAdapter;
+  if (typeof browserModule?.adaptMathpixToTargetMarkdown === "function") {
+    ocrCoreAdaptMathpixToTargetMarkdown = browserModule.adaptMathpixToTargetMarkdown;
+    return ocrCoreAdaptMathpixToTargetMarkdown;
+  }
+  if (typeof require === "function") {
+    try {
+      const module = require("./ocr-core/mathpix/mathpixToTargetMarkdownAdapter");
+      if (typeof module?.adaptMathpixToTargetMarkdown === "function") {
+        ocrCoreAdaptMathpixToTargetMarkdown = module.adaptMathpixToTargetMarkdown;
+        return ocrCoreAdaptMathpixToTargetMarkdown;
+      }
+    } catch (error) {
+      warnOcrCoreMathpixAdapter("无法通过 require 加载 mathpixToTargetMarkdownAdapter。", error);
+    }
+  }
+  return null;
+}
+
+function loadOcrCoreMathpixAdapterForBrowser() {
+  if (ocrCoreMathpixAdapterLoadStarted || typeof document === "undefined" || typeof document.createElement !== "function") {
+    return;
+  }
+  ocrCoreMathpixAdapterLoadStarted = true;
+  const script = document.createElement("script");
+  script.src = "./ocr-core/mathpix/mathpixToTargetMarkdownAdapter.browser.js";
+  script.async = false;
+  script.dataset.ocrCore = "mathpix-adapter";
+  script.addEventListener("error", () => {
+    warnOcrCoreMathpixAdapter("浏览器兼容入口 mathpixToTargetMarkdownAdapter.browser.js 加载失败。");
+  });
+  (document.head || document.body || document.documentElement).appendChild(script);
+}
+
+function warnOcrCoreMathpixAdapter(message, error) {
+  if (ocrCoreMathpixAdapterWarningShown || typeof console === "undefined" || typeof console.warn !== "function") {
+    return;
+  }
+  ocrCoreMathpixAdapterWarningShown = true;
+  console.warn(`[OCR Core] ${message}`, error || "");
+}
+
+loadOcrCoreMathpixAdapterForBrowser();
+
+function getOcrCoreHashBlockText() {
+  if (ocrCoreHashBlockText) {
+    return ocrCoreHashBlockText;
+  }
+  const browserModule = globalThis?.OcrCorePatch;
+  if (typeof browserModule?.hashBlockText === "function") {
+    ocrCoreHashBlockText = browserModule.hashBlockText;
+    return ocrCoreHashBlockText;
+  }
+  if (typeof require === "function") {
+    try {
+      const module = require("./ocr-core/patch/blockHasher");
+      if (typeof module?.hashBlockText === "function") {
+        ocrCoreHashBlockText = module.hashBlockText;
+        return ocrCoreHashBlockText;
+      }
+    } catch (error) {
+      warnOcrCorePatch("无法通过 require 加载 blockHasher。", error);
+    }
+  }
+  loadOcrCorePatchForBrowser();
+  return null;
+}
+
+function getOcrCoreCreateOcrPatch() {
+  if (ocrCoreCreateOcrPatch) {
+    return ocrCoreCreateOcrPatch;
+  }
+  const browserModule = globalThis?.OcrCorePatch;
+  if (typeof browserModule?.createOcrPatch === "function") {
+    ocrCoreCreateOcrPatch = browserModule.createOcrPatch;
+    return ocrCoreCreateOcrPatch;
+  }
+  if (typeof require === "function") {
+    try {
+      const module = require("./ocr-core/patch/patchGenerator");
+      if (typeof module?.createOcrPatch === "function") {
+        ocrCoreCreateOcrPatch = module.createOcrPatch;
+        return ocrCoreCreateOcrPatch;
+      }
+    } catch (error) {
+      warnOcrCorePatch("无法通过 require 加载 patchGenerator。", error);
+    }
+  }
+  loadOcrCorePatchForBrowser();
+  return null;
+}
+
+function getOcrCoreMergeAcceptedPatches() {
+  if (ocrCoreMergeAcceptedPatches) {
+    return ocrCoreMergeAcceptedPatches;
+  }
+  const browserModule = globalThis?.OcrCorePatch;
+  if (typeof browserModule?.mergeAcceptedPatches === "function") {
+    ocrCoreMergeAcceptedPatches = browserModule.mergeAcceptedPatches;
+    return ocrCoreMergeAcceptedPatches;
+  }
+  if (typeof require === "function") {
+    try {
+      const module = require("./ocr-core/patch/patchMerger");
+      if (typeof module?.mergeAcceptedPatches === "function") {
+        ocrCoreMergeAcceptedPatches = module.mergeAcceptedPatches;
+        return ocrCoreMergeAcceptedPatches;
+      }
+    } catch (error) {
+      warnOcrCorePatch("无法通过 require 加载 patchMerger。", error);
+    }
+  }
+  loadOcrCorePatchForBrowser();
+  return null;
+}
+
+function loadOcrCorePatchForBrowser() {
+  if (ocrCorePatchLoadStarted || typeof document === "undefined" || typeof document.createElement !== "function") {
+    return;
+  }
+  ocrCorePatchLoadStarted = true;
+  const script = document.createElement("script");
+  script.src = "./ocr-core/patch/ocrPatch.browser.js";
+  script.async = false;
+  script.dataset.ocrCore = "ocr-patch";
+  script.addEventListener("error", () => {
+    warnOcrCorePatch("浏览器兼容入口 ocrPatch.browser.js 加载失败。");
+  });
+  (document.head || document.body || document.documentElement).appendChild(script);
+}
+
+function getOcrCoreValidateRenderability() {
+  if (ocrCoreValidateRenderability) {
+    return ocrCoreValidateRenderability;
+  }
+  if (typeof require === "function") {
+    try {
+      const module = require("./ocr-core/validation/renderValidator");
+      if (typeof module?.validateRenderability === "function") {
+        ocrCoreValidateRenderability = module.validateRenderability;
+        return ocrCoreValidateRenderability;
+      }
+    } catch (error) {
+      warnOcrCorePatch("无法通过 require 加载 renderValidator。", error);
+    }
+  }
+  const browserModule = globalThis?.OcrCoreRenderValidator;
+  if (typeof browserModule?.validateRenderability === "function") {
+    ocrCoreValidateRenderability = browserModule.validateRenderability;
+    return ocrCoreValidateRenderability;
+  }
+  return null;
+}
+
+function warnOcrCorePatch(message, error) {
+  if (ocrCorePatchWarningShown || typeof console === "undefined" || typeof console.warn !== "function") {
+    return;
+  }
+  ocrCorePatchWarningShown = true;
+  console.warn(`[OCR Core] ${message}`, error || "");
+}
+
+loadOcrCorePatchForBrowser();
 
 function apiUrl(path) {
   return `${API_BASE}${path}`;
@@ -146,6 +327,9 @@ async function handlePdfChange() {
   state.mathpixBlockDrafts.clear();
   state.mineruOverrides.clear();
   state.mineruBlockOverrides.clear();
+  state.ocrPatches = [];
+  state.acceptedPatchPreview = null;
+  state.acceptedPatchBookPreview = null;
   state.riskByPage.clear();
   state.reviewExpanded.clear();
   state.reviewInitializedPages.clear();
@@ -185,6 +369,9 @@ async function handleMineruChange() {
     state.mineruOverrides.clear();
     state.mineruBlockOverrides.clear();
     state.mathpixBlockDrafts.clear();
+    state.ocrPatches = [];
+    state.acceptedPatchPreview = null;
+    state.acceptedPatchBookPreview = null;
     state.reviewExpanded.clear();
     state.reviewInitializedPages.clear();
     analyzeMineruRiskPages();
@@ -200,6 +387,9 @@ async function handleMineruChange() {
     state.mineruOverrides.clear();
     state.mineruBlockOverrides.clear();
     state.mathpixBlockDrafts.clear();
+    state.ocrPatches = [];
+    state.acceptedPatchPreview = null;
+    state.acceptedPatchBookPreview = null;
     state.riskByPage.clear();
     state.reviewExpanded.clear();
     state.reviewInitializedPages.clear();
@@ -218,6 +408,9 @@ function resetPage() {
   state.mineruOverrides.clear();
   state.mineruBlockOverrides.clear();
   state.mathpixBlockDrafts.clear();
+  state.ocrPatches = [];
+  state.acceptedPatchPreview = null;
+  state.acceptedPatchBookPreview = null;
   state.riskByPage.clear();
   state.mathpixCache.clear();
   state.reviewExpanded.clear();
@@ -239,6 +432,7 @@ async function goToPage(pageNumber) {
     return;
   }
   state.currentPage = nextPage;
+  state.acceptedPatchPreview = null;
   state.reviewExpanded.clear();
   updatePager();
   await renderCurrentPage();
@@ -609,7 +803,14 @@ function renderReviewCard() {
         <strong>高风险校对</strong>
         <span>${orderedRisks.length ? `${orderedRisks.length} 个待核查块` : "当前页未发现高风险块"}</span>
       </div>
+      <div class="mathpix-edit-actions">
+        <button class="text-button" type="button" data-preview-accepted-patches>预览 accepted 校正稿</button>
+        <button class="text-button" type="button" data-preview-accepted-book-patches>预览整书 accepted 校正稿</button>
+        <button class="text-button" type="button" data-download-accepted-corrected>下载 accepted 校正稿</button>
+      </div>
     </div>
+    ${renderAcceptedPatchPreviewPanel()}
+    ${renderAcceptedPatchBookPreviewPanel()}
     <div class="review-list markdown-body">
       ${
         orderedRisks.length
@@ -621,12 +822,14 @@ function renderReviewCard() {
                   markdown: risk.text,
                   kind: "block",
                 };
+                const ocrPatch = getLatestOcrPatchForBlock(state.currentPage, key, segment.markdown);
                 return renderReviewItem(
                   segment,
                   risk,
                   blockOverrides.get(key) || "",
                   blockOverrides.has(key),
                   mathpixDrafts.get(key) || "",
+                  ocrPatch,
                 );
               })
               .join("")
@@ -643,7 +846,85 @@ function renderReviewCard() {
   card.querySelectorAll("[data-apply-mathpix-block-edit]").forEach((button) => {
     button.addEventListener("click", () => applyMathpixBlockEdit(button.dataset.applyMathpixBlockEdit, button));
   });
+  card.querySelectorAll("[data-ocr-patch-status-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const result = updateOcrPatchStatus(button.dataset.ocrPatchId, button.dataset.ocrPatchStatusAction);
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      setStatus(result.ok ? `Patch ${result.patch.status}` : "Patch unchanged", result.ok ? "ok" : "error");
+      await renderCurrentPage();
+    });
+  });
+  card.querySelector("[data-preview-accepted-patches]")?.addEventListener("click", async () => {
+    state.acceptedPatchPreview = buildAcceptedPatchPreviewForPage(state.currentPage);
+    setStatus(state.acceptedPatchPreview.ok ? "Patch preview" : "Preview warning", state.acceptedPatchPreview.ok ? "ok" : "error");
+    await renderCurrentPage();
+  });
+  card.querySelector("[data-preview-accepted-book-patches]")?.addEventListener("click", async () => {
+    state.acceptedPatchBookPreview = buildAcceptedPatchPreviewForBook();
+    setStatus(state.acceptedPatchBookPreview.ok ? "Book patch preview" : "Book preview warning", state.acceptedPatchBookPreview.ok ? "ok" : "error");
+    await renderCurrentPage();
+  });
+  card.querySelector("[data-download-accepted-corrected]")?.addEventListener("click", async () => {
+    const result = downloadAcceptedCorrectedMarkdown();
+    const warningCount = result.preview?.warnings?.length || 0;
+    const statusText = result.ok
+      ? warningCount
+        ? `Downloaded with ${warningCount} warnings`
+        : "Downloaded accepted"
+      : "Accepted download blocked";
+    setStatus(statusText, result.ok ? "ok" : "error");
+    await renderCurrentPage();
+  });
   return card;
+}
+
+function renderAcceptedPatchPreviewPanel() {
+  const preview = state.acceptedPatchPreview;
+  if (!preview || Number(preview.pageNo) !== Number(state.currentPage)) {
+    return "";
+  }
+  const warnings = Array.isArray(preview.warnings) ? preview.warnings : [];
+  const errors = Array.isArray(preview.errors) ? preview.errors : [];
+  const noAccepted = warnings.some((warning) => warning?.type === "no_accepted_patch");
+  const summary = noAccepted
+    ? "当前页没有 accepted patch"
+    : `appliedPatchCount: ${preview.appliedPatchCount} · warnings: ${warnings.length} · errors: ${errors.length}`;
+  return `
+    <section class="ocr-patch-preview" data-accepted-patch-preview>
+      <div class="review-pane-title">Accepted patch dry-run 预览</div>
+      <div class="ocr-patch-preview-summary">${escapeHtml(summary)}</div>
+      ${
+        warnings.length || errors.length
+          ? `<pre class="ocr-patch-preview-issues"><code>${escapeHtml(JSON.stringify({ warnings, errors }, null, 2))}</code></pre>`
+          : ""
+      }
+      <textarea class="mathpix-source-editor" data-accepted-patch-preview-markdown readonly>${escapeHtml(preview.markdown || "")}</textarea>
+    </section>
+  `;
+}
+
+function renderAcceptedPatchBookPreviewPanel() {
+  const preview = state.acceptedPatchBookPreview;
+  if (!preview) {
+    return "";
+  }
+  const warnings = Array.isArray(preview.warnings) ? preview.warnings : [];
+  const errors = Array.isArray(preview.errors) ? preview.errors : [];
+  return `
+    <section class="ocr-patch-preview" data-accepted-patch-book-preview>
+      <div class="review-pane-title">整书 accepted patch dry-run 预览</div>
+      <div class="ocr-patch-preview-summary">
+        acceptedPatchCount: ${preview.acceptedPatchCount} · appliedPatchCount: ${preview.appliedPatchCount} · skippedPatchCount: ${preview.skippedPatchCount} · warnings: ${warnings.length} · errors: ${errors.length}
+      </div>
+      <pre class="ocr-patch-preview-issues"><code>${escapeHtml(JSON.stringify({
+        pageSummaries: preview.pageSummaries || [],
+        warnings,
+        errors,
+      }, null, 2))}</code></pre>
+      <textarea class="mathpix-source-editor" data-accepted-patch-book-preview-markdown readonly>${escapeHtml(preview.markdown || "")}</textarea>
+    </section>
+  `;
 }
 
 function ensureDefaultReviewExpansion(orderedRisks) {
@@ -665,7 +946,7 @@ function orderRisksBySegment(risks, segments) {
     );
 }
 
-function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDraftMarkdown = "") {
+function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDraftMarkdown = "", ocrPatch = null) {
   const labels = risk.reasons.map(riskReasonLabel).join(" · ");
   const disabled = risk.bbox ? "" : "disabled";
   const hasMathpixDraft = Boolean(String(mathpixDraftMarkdown || "").trim());
@@ -682,6 +963,7 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
           <span>Block ${escapeHtml(String(segment.blockIndex))}</span>
         </div>
         <div class="review-item-actions">
+          ${renderOcrPatchStatusControls(ocrPatch)}
           <button class="text-button review-toggle" type="button" data-review-toggle="${escapeHtml(reviewKey)}">
             ${expanded ? "收起" : "展开"}
           </button>
@@ -725,6 +1007,31 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
   `;
 }
 
+function renderOcrPatchStatusControls(patch) {
+  if (!patch) {
+    return "";
+  }
+  const status = String(patch.status || "");
+  const patchId = String(patch.patchId || "");
+  const labels = {
+    draft: "待确认",
+    accepted: "已接受",
+    rejected: "已拒绝",
+    noop: "无变化",
+  };
+  const actionHtml =
+    status === "draft"
+      ? `<button class="text-button" type="button" data-ocr-patch-id="${escapeHtml(patchId)}" data-ocr-patch-status-action="accepted">接受</button>
+         <button class="text-button" type="button" data-ocr-patch-id="${escapeHtml(patchId)}" data-ocr-patch-status-action="rejected">拒绝</button>`
+      : `<span class="ocr-patch-state-label">${escapeHtml(labels[status] || status)}</span>`;
+  return `
+    <div class="ocr-patch-status" data-ocr-patch-id="${escapeHtml(patchId)}" data-ocr-patch-status="${escapeHtml(status)}">
+      <span>Patch 状态：${escapeHtml(status)}${labels[status] ? ` · ${escapeHtml(labels[status])}` : ""}</span>
+      ${actionHtml}
+    </div>
+  `;
+}
+
 function reviewBlockKey(pageNumber, blockIndex) {
   return `${pageNumber}:${blockIndex}`;
 }
@@ -750,8 +1057,18 @@ async function applyMathpixBlockEdit(blockIndex, trigger) {
   if (!editor) {
     return;
   }
-  const markdown = prepareMathpixMarkdown(editor.value || "");
+  const preparedMarkdown = prepareMathpixMarkdown(editor.value || "");
+  const segment = pageSegmentsForPage(state.currentPage).find((item) => String(item.blockIndex) === blockKey);
+  const patchResult = createAndStoreDraftOcrPatch({
+    pageNo: state.currentPage,
+    blockIndex: blockKey,
+    oldText: segment?.markdown || "",
+    newText: preparedMarkdown,
+    source: "human",
+  });
+  const markdown = patchResult.normalizedText;
   getMathpixBlockDrafts(state.currentPage).delete(blockKey);
+  // TODO: next step will switch display/export to accepted patches.
   getBlockOverrides(state.currentPage).set(blockKey, markdown);
   expandOnlyReviewBlock(state.currentPage, blockKey);
   updateCorrectionSummary();
@@ -1029,10 +1346,19 @@ async function recognizeRiskBlockWithMathpix(blockIndex) {
     if (!data.ok) {
       throw new Error(data.error || "Mathpix 块级请求失败");
     }
-    const markdown = prepareMathpixMarkdown(data.markdown || data.answer || "");
-    if (!markdown.trim()) {
+    const preparedMarkdown = prepareMathpixMarkdown(data.markdown || data.answer || "");
+    if (!preparedMarkdown.trim()) {
       throw new Error("Mathpix 块级响应为空");
     }
+    const patchResult = createAndStoreDraftOcrPatch({
+      pageNo: state.currentPage,
+      blockIndex: blockKey,
+      oldText: risk.text || "",
+      newText: preparedMarkdown,
+      source: "mathpix",
+    });
+    const markdown = patchResult.normalizedText;
+    // TODO: next step will switch display/export to accepted patches.
     getMathpixBlockDrafts(state.currentPage).set(blockKey, markdown);
     expandOnlyReviewBlock(state.currentPage, blockKey);
     updateCorrectionSummary();
@@ -1172,6 +1498,325 @@ function getMathpixBlockDrafts(pageNumber, create = true) {
     state.mathpixBlockDrafts.set(pageNumber, new Map());
   }
   return state.mathpixBlockDrafts.get(pageNumber) || new Map();
+}
+
+function createLegacyBlockPatchContext(pageNo, blockIndex, oldText) {
+  const hashBlockText = getOcrCoreHashBlockText();
+  if (!hashBlockText) {
+    warnOcrCorePatch("hashBlockText 不可用，无法生成 OCR draft patch。");
+    return null;
+  }
+  const oldHash = hashBlockText(oldText);
+  // TODO: migrate provisional UI blockId to blockParser.createStableBlockId() once OCR compare uses OcrBlock records.
+  return {
+    pageNo,
+    blockIndex,
+    blockId: `p${pageNo}_b${blockIndex}_${oldHash.slice(0, 8)}`,
+    oldHash,
+  };
+}
+
+function createAndStoreDraftOcrPatch({ pageNo, blockIndex, oldText, newText, source }) {
+  const context = createLegacyBlockPatchContext(pageNo, blockIndex, oldText);
+  const createOcrPatch = getOcrCoreCreateOcrPatch();
+  if (!context || !createOcrPatch) {
+    warnOcrCorePatch("createOcrPatch 不可用，已跳过 OCR draft patch 记录。");
+    return {
+      patch: null,
+      normalizedText: String(newText || ""),
+      renderValidation: { severity: "warning" },
+    };
+  }
+
+  const normalizedText = normalizeDraftPatchMarkdown(context.blockId, newText);
+  const renderValidation = validateDraftPatchRenderability(context.blockId, normalizedText);
+  const patch = createOcrPatch({
+    blockId: context.blockId,
+    oldText: String(oldText || ""),
+    newText: normalizedText,
+    source,
+    status: "draft",
+    metadata: {
+      pageNo: Number(pageNo) || 0,
+      renderStatusAfter: renderValidation.severity,
+    },
+  });
+  state.ocrPatches = state.ocrPatches || [];
+  state.ocrPatches.push(patch);
+  return { patch, normalizedText, renderValidation };
+}
+
+function getLatestOcrPatchForBlock(pageNo, blockIndex, oldText) {
+  const context = createLegacyBlockPatchContext(pageNo, blockIndex, oldText);
+  if (!context) {
+    return null;
+  }
+  const patches = Array.isArray(state.ocrPatches) ? state.ocrPatches : [];
+  for (let index = patches.length - 1; index >= 0; index -= 1) {
+    const patch = patches[index];
+    if (patch?.blockId === context.blockId) {
+      return patch;
+    }
+  }
+  return null;
+}
+
+function updateOcrPatchStatus(patchId, nextStatus) {
+  const targetStatus = String(nextStatus || "");
+  if (!["accepted", "rejected"].includes(targetStatus)) {
+    warnOcrPatchStatus(`不支持的 OCR patch 状态切换：${targetStatus || "(empty)"}`);
+    return { ok: false, reason: "unsupported_status", patch: null };
+  }
+
+  const patches = Array.isArray(state.ocrPatches) ? state.ocrPatches : [];
+  const patch = patches.find((item) => item?.patchId === patchId);
+  if (!patch) {
+    warnOcrPatchStatus(`找不到 OCR patch：${patchId || "(empty)"}`);
+    return { ok: false, reason: "not_found", patch: null };
+  }
+
+  if (patch.status !== "draft") {
+    const reason = patch.status === "noop" ? "noop_not_transitionable" : "status_not_transitionable";
+    warnOcrPatchStatus(`OCR patch 当前状态为 ${patch.status || "(empty)"}，不能切换为 ${targetStatus}。`);
+    return { ok: false, reason, patch };
+  }
+
+  patch.status = targetStatus;
+  patch.updatedAt = new Date().toISOString();
+  return { ok: true, reason: "", patch };
+}
+
+function warnOcrPatchStatus(message) {
+  if (typeof console === "undefined" || typeof console.warn !== "function") {
+    return;
+  }
+  console.warn(`[OCR Patch] ${message}`);
+}
+
+function buildAcceptedPatchPreviewForPage(pageNo) {
+  const pageNumber = Number(pageNo) || 0;
+  const mergeAcceptedPatches = getOcrCoreMergeAcceptedPatches();
+  const hashBlockText = getOcrCoreHashBlockText();
+  const sourceSegments = pageSegmentsForPage(pageNumber);
+  const fallbackMarkdown = sourceSegments.map((segment) => String(segment.markdown || "").replace(/\r\n?/g, "\n")).filter(Boolean).join("\n\n");
+
+  if (!mergeAcceptedPatches || !hashBlockText) {
+    return {
+      ok: false,
+      pageNo: pageNumber,
+      markdown: fallbackMarkdown,
+      appliedPatchCount: 0,
+      errors: [],
+      warnings: [
+        {
+          type: "patch_tool_unavailable",
+          message: "OCR patch merge tool is not available for dry-run preview.",
+        },
+      ],
+    };
+  }
+
+  const blocks = sourceSegments.map((segment) => {
+    const text = String(segment.markdown || "").replace(/\r\n?/g, "\n");
+    const oldHash = hashBlockText(text);
+    return {
+      blockId: `p${pageNumber}_b${segment.blockIndex}_${oldHash.slice(0, 8)}`,
+      text,
+    };
+  });
+  const acceptedPatches = acceptedOcrPatchesForPage(pageNumber);
+  const result = mergeAcceptedPatches({
+    blocks,
+    patches: acceptedPatches,
+  });
+  const errors = Array.isArray(result?.errors) ? result.errors : [];
+  const warnings = Array.isArray(result?.warnings) ? result.warnings.slice() : [];
+  if (!acceptedPatches.length) {
+    warnings.unshift({
+      type: "no_accepted_patch",
+      message: "当前页没有 accepted patch。",
+    });
+  }
+  const mergedBlocks = Array.isArray(result?.mergedBlocks) ? result.mergedBlocks : blocks;
+  return {
+    ok: errors.length === 0,
+    pageNo: pageNumber,
+    markdown: mergedBlocks.map((block) => String(block?.text || "")).filter(Boolean).join("\n\n"),
+    appliedPatchCount: countAppliedAcceptedPatches(acceptedPatches, blocks, errors, warnings),
+    errors,
+    warnings,
+  };
+}
+
+function buildAcceptedPatchPreviewForBook() {
+  const total = getMineruPageCount();
+  const acceptedPatchCount = (Array.isArray(state.ocrPatches) ? state.ocrPatches : []).filter((patch) => patch?.status === "accepted").length;
+  const pageSummaries = [];
+  const errors = [];
+  const warnings = [];
+  const pages = [];
+  let appliedPatchCount = 0;
+  let allPagesOk = true;
+
+  for (let pageNo = 1; pageNo <= total; pageNo += 1) {
+    const pagePreview = buildAcceptedPatchPreviewForPage(pageNo);
+    allPagesOk = allPagesOk && Boolean(pagePreview.ok);
+    const pageErrors = withIssuePageNo(pagePreview.errors, pageNo);
+    const pageWarnings = withIssuePageNo(
+      (pagePreview.warnings || []).filter((warning) => warning?.type !== "no_accepted_patch"),
+      pageNo,
+    );
+    errors.push(...pageErrors);
+    warnings.push(...pageWarnings);
+    appliedPatchCount += Number(pagePreview.appliedPatchCount) || 0;
+    pageSummaries.push({
+      pageNo,
+      appliedPatchCount: Number(pagePreview.appliedPatchCount) || 0,
+      warningCount: pageWarnings.length,
+      errorCount: pageErrors.length,
+    });
+    pages.push(`<!-- page: ${pageNo} -->\n\n${pagePreview.markdown || ""}`.trim());
+  }
+
+  if (!total) {
+    warnings.push({
+      type: "no_mineru_pages",
+      message: "没有可预览的 MinerU 页面。",
+    });
+  }
+  if (!acceptedPatchCount) {
+    warnings.unshift({
+      type: "no_accepted_patch",
+      message: "整书没有 accepted patch。",
+    });
+  }
+
+  return {
+    ok: allPagesOk && errors.length === 0,
+    markdown: `${pages.join("\n\n---\n\n")}${pages.length ? "\n" : ""}`,
+    pageSummaries,
+    appliedPatchCount,
+    acceptedPatchCount,
+    skippedPatchCount: Math.max(0, acceptedPatchCount - appliedPatchCount),
+    errors,
+    warnings,
+  };
+}
+
+function downloadAcceptedCorrectedMarkdown() {
+  const preview = buildAcceptedPatchPreviewForBook();
+  state.acceptedPatchBookPreview = preview;
+  if (!preview.ok) {
+    return {
+      ok: false,
+      reason: "preview_not_ok",
+      preview,
+    };
+  }
+  if (!preview.acceptedPatchCount) {
+    return {
+      ok: false,
+      reason: "no_accepted_patch",
+      preview,
+    };
+  }
+  if (!preview.appliedPatchCount) {
+    return {
+      ok: false,
+      reason: "no_applied_patch",
+      preview,
+    };
+  }
+
+  const markdown = `${acceptedPatchDownloadHeader()}\n\n${preview.markdown || ""}`;
+  const filename = `${baseExportName()}-accepted-corrected.md`;
+  downloadTextFile(filename, markdown);
+  return {
+    ok: true,
+    reason: "",
+    filename,
+    markdown,
+    preview,
+  };
+}
+
+function acceptedPatchDownloadHeader() {
+  return `<!--
+Generated by OCR accepted patch dry-run export.
+Only accepted OcrPatch entries are applied.
+Original export button is unchanged.
+-->`;
+}
+
+function withIssuePageNo(issues, pageNo) {
+  return (Array.isArray(issues) ? issues : []).map((issue) => ({
+    pageNo,
+    ...issue,
+  }));
+}
+
+function acceptedOcrPatchesForPage(pageNo) {
+  const patches = Array.isArray(state.ocrPatches) ? state.ocrPatches : [];
+  return patches.filter((patch) => patch?.status === "accepted" && ocrPatchBelongsToPage(patch, pageNo));
+}
+
+function ocrPatchBelongsToPage(patch, pageNo) {
+  const metadataPageNo = Number(patch?.metadata?.pageNo);
+  if (Number.isFinite(metadataPageNo) && metadataPageNo > 0) {
+    return metadataPageNo === Number(pageNo);
+  }
+  return String(patch?.blockId || "").startsWith(`p${pageNo}_`);
+}
+
+function countAppliedAcceptedPatches(acceptedPatches, blocks, errors, warnings) {
+  const existingBlockIds = new Set(blocks.map((block) => block.blockId));
+  const failedBlockIds = new Set(
+    []
+      .concat(errors || [])
+      .concat((warnings || []).filter((warning) => warning?.type === "patch_block_not_found"))
+      .map((issue) => issue?.blockId)
+      .filter(Boolean),
+  );
+  return acceptedPatches.filter((patch) => existingBlockIds.has(patch.blockId) && !failedBlockIds.has(patch.blockId)).length;
+}
+
+function normalizeDraftPatchMarkdown(blockId, markdown) {
+  const rawMarkdown = String(markdown || "");
+  const normalizeMathDelimiters = getOcrCoreNormalizeMathDelimiters();
+  if (!normalizeMathDelimiters) {
+    warnOcrCorePatch("mathDelimiterNormalizer 不可用，draft patch 将保留未规范化 Markdown。");
+    return rawMarkdown;
+  }
+  try {
+    const result = normalizeMathDelimiters({
+      blockId,
+      blockText: rawMarkdown,
+      blockType: "unknown",
+    });
+    return typeof result?.normalizedText === "string" ? result.normalizedText : rawMarkdown;
+  } catch (error) {
+    warnOcrCorePatch("draft patch 公式分隔符规范化失败，已保守使用原文。", error);
+    return rawMarkdown;
+  }
+}
+
+function validateDraftPatchRenderability(blockId, markdown) {
+  const validateRenderability = getOcrCoreValidateRenderability();
+  if (!validateRenderability) {
+    warnOcrCorePatch("renderValidator 不可用，draft patch renderStatusAfter 标记为 warning。");
+    return { severity: "warning" };
+  }
+  try {
+    return validateRenderability({
+      blockId,
+      markdown,
+      blockType: "unknown",
+      source: "unknown",
+    });
+  } catch (error) {
+    warnOcrCorePatch("draft patch 渲染静态校验失败，renderStatusAfter 标记为 error。", error);
+    return { severity: "error" };
+  }
 }
 
 function analyzeMineruRiskPages() {
@@ -1592,17 +2237,28 @@ function prepareMarkdownForExport(markdown) {
 }
 
 function prepareMathpixMarkdown(markdown) {
-  return normalizeSingleLineDisplayMath(
-    removeDanglingSingleDollarLines(
-      wrapLikelyDisplayMathLines(
-        wrapBareDisplayMathBlocks(repairBrokenDisplayMathDelimiters(stripMarkdownFence(markdown))),
-      ),
-    ),
-  )
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+  const rawMarkdown = String(markdown || "");
+  const adaptMathpixToTargetMarkdown = getOcrCoreAdaptMathpixToTargetMarkdown();
+  if (!adaptMathpixToTargetMarkdown) {
+    warnOcrCoreMathpixAdapter("mathpixToTargetMarkdownAdapter 不可用，已保守返回原始 Markdown。");
+    return rawMarkdown;
+  }
+  try {
+    const result = adaptMathpixToTargetMarkdown({
+      blockId: "legacy-prepareMathpixMarkdown",
+      rawText: rawMarkdown,
+      source: "mathpix",
+      blockType: "unknown",
+    });
+    return typeof result?.targetMarkdown === "string" ? result.targetMarkdown : rawMarkdown;
+  } catch (error) {
+    warnOcrCoreMathpixAdapter("prepareMathpixMarkdown 调用 mathpixToTargetMarkdownAdapter 失败，已保守返回原始 Markdown。", error);
+    return rawMarkdown;
+  }
 }
 
+// Legacy Mathpix cleanup helpers are kept for now so older paths can be audited
+// before a later cleanup removes unused OCR compare normalization code.
 function removeDanglingSingleDollarLines(markdown) {
   return String(markdown || "")
     .replace(/\r\n?/g, "\n")

@@ -1,109 +1,104 @@
 # AGENTS.md
 
-This file guides Codex when working in this repository.
+## 项目目标
 
-## Language
+本项目是数学、物理、天文学专业书籍 OCR 校对 MVP。
 
-- Use Chinese when communicating with the user.
-- Keep commands, paths, API names, environment variables, and schema keys in English.
+核心链路：
 
-## Project Direction
+MinerU output
+→ 第三栏校正
+→ Mathpix / human draft patch
+→ accepted patch
+→ dry-run preview
+→ accepted corrected Markdown download
 
-This project is a local-first Universe Model Agent. It combines:
+目标是 MVP 实用闭环，不追求架构洁癖。
 
-- local RAG strategies
-- DeepSeek-compatible answer generation
-- astronomy-focused interactive visualizations
+## 执行前必须先输出 Preflight Plan
 
-Interactive visualization work should follow the A2UI-oriented approach used by `edu-viz-core-main`: the agent chooses a declared capability, emits a structured render instruction, and the frontend renders it through a consistent surface.
+Codex 修改代码前必须先输出：
 
-## A2UI Visualization Rules
+1. 本次任务目标。
+2. 准备修改的文件。
+3. 明确不会修改的文件。
+4. 是否涉及：
+   - `frontend/ocr-compare.js`
+   - `state.ocrPatches`
+   - DOM / UI buttons
+   - browser wrapper
+   - Mathpix API
+   - export / download logic
+5. 准备运行的测试命令。
+6. 如果涉及前端，必须给出手动前端冒烟测试步骤。
 
-Do not add new visualizations as one-off hardcoded buttons or ad hoc if/else branches.
+涉及以下内容时，必须等待用户确认后再改代码：
 
-Every visualization capability must be registered in:
+1. `frontend/ocr-compare.js`
+2. `state.ocrPatches`
+3. accepted / rejected patch status
+4. export / download logic
+5. Mathpix API
+6. browser wrapper
+7. UI buttons / DOM events
 
-- `backend/visualization_catalog.py`
+## MVP 当前优先级
 
-Each capability should declare:
+优先顺序：
 
-- `id`
-- `title`
-- `description`
-- `concepts`
-- `keywords`
-- `tags`
-- `a2ui_hint`
-- `expresses`
-- `educational_use`
-- `cannot_express`
-- `implementation_kind`
-- `source_entry`
-- `trigger_patterns`
-- `plugin_id`
-- `component_id`
-- `intent_type`
-- `props_schema`
-- `default_props`
-- `interaction_events`
-- `feedback_contract`
+1. 不替换原正式导出按钮。
+2. 保留原正式导出逻辑作为 fallback。
+3. 使用 accepted patch dry-run preview。
+4. 新增独立 “下载 accepted 校正稿” 按钮。
+5. 只有 accepted 校正稿下载稳定后，才考虑替换正式导出。
 
-The planner in `backend/services/visualization_planner.py` is the only place that should decide which visualization capability to return for a question.
+## 禁止越界修改
 
-Planner output must include:
+除非任务明确要求，否则禁止修改：
 
-- `matchScore`
-- `matchReasons`
-- `matchedConcepts`
-- `renderMode`
-- `generatorType`
-- `a2uiInstruction`
-- `embedUrl`
-- `galleryUrl`
+1. `backend/services/model_tester.py`
+2. `backend/services/ocr_correction.py`
+3. `math_rag_pipeline/mineru_loader.py`
+4. Mathpix API 调用逻辑
+5. 原正式导出逻辑
+6. `buildBookMarkdown()`
+7. `mineruMarkdownForPage()`
+8. 已有 fixtures expected 文件
+9. package dependencies
+10. 全局项目配置
 
-The current frontend may still use iframe fallback rendering, but all new capabilities must provide an `a2uiInstruction` with:
+## Patch 规则
 
-- `protocol`
-- `surface`
-- `pluginId`
-- `componentId`
-- `intentType`
-- `initialProps`
-- `propsSchema`
-- `events`
-- `feedbackContract`
-- `fallback`
+所有校正修改必须进入 `OcrPatch`。
 
-## Interaction Feedback
+允许状态：
 
-When adding real A2UI components later, user interactions should be designed to flow back into the teaching conversation. At minimum, define the intended feedback payload in `feedback_contract` before implementing the UI.
+- `draft`
+- `accepted`
+- `rejected`
+- `noop`
+- `conflict`
 
-Examples:
+MVP 规则：
 
-- selected body in a solar-system scene
-- current date in an ephemeris comparison
-- observer frame in a retrograde-motion demo
-- selected moon phase in an eclipse demo
+1. `draft` 可以变成 `accepted` 或 `rejected`。
+2. accepted patches 可以进入 dry-run preview。
+3. accepted patches 可以进入独立的 accepted corrected Markdown download。
+4. accepted patches 暂时不能静默替换原正式导出。
+5. rejected / noop / conflict patches 不进入 accepted corrected Markdown download。
 
-## Frontend
-
-The current renderer lives in:
-
-- `frontend/app.js`
-
-It should display the chosen visualization, preserve the fallback embed path, and expose enough A2UI metadata for debugging. When replacing iframe rendering with a real A2UI renderer, keep the same planner response shape so backend orchestration remains stable.
-
-## Verification
-
-For visualization changes, run:
+## 每次修改后必须运行
 
 ```bash
-python3 -m py_compile backend/*.py backend/services/*.py
-node -e "const fs=require('fs'); new Function(fs.readFileSync('frontend/app.js','utf8')); console.log('frontend ok')"
-```
-
-If the local server is running, also verify:
-
-```bash
-curl -s "http://127.0.0.1:8787/api/visualizations/plan?question=为什么会发生月食"
+node scripts/test_ocr_compare_frontend.js
+node frontend/ocr-core/tests/test_block_parser.js
+node frontend/ocr-core/tests/test_patch_model.js
+node frontend/ocr-core/tests/test_patch_merger.js
+node frontend/ocr-core/tests/test_mathpix_render_pipeline.js
+node frontend/ocr-core/tests/test_render_validator.js
+node frontend/ocr-core/tests/test_mathpix_to_target_markdown_adapter.js
+node scripts/test_ocr_core_fixtures.js
+node frontend/ocr-core/tests/test_math_delimiter_normalizer.js
+node -e "const fs=require('fs'); new Function(fs.readFileSync('frontend/ocr-compare.js','utf8')); console.log('ocr frontend ok')"
+git diff --check -- frontend/ocr-compare.js scripts/test_ocr_compare_frontend.js
 ```

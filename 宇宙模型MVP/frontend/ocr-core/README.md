@@ -27,6 +27,8 @@ Rules:
 - UI code must not assemble final export Markdown.
 - `mathpixToTargetMarkdownAdapter` only converts one Mathpix block into the third-column target Markdown dialect; it must not call Mathpix, patch files, or update UI state.
 - `renderValidator` only reports static Markdown/LaTeX render risks for one block; it must not call MathJax, access the DOM, or repair Markdown.
+- Pipeline tests compose adapter, delimiter normalization, and render validation on fixtures only; they must not call Mathpix, MathJax, the DOM, or OCR compare UI code.
+- Patch modules define stable OCR correction patches and merge accepted patches by block hash only; they must not read/write Markdown files, call APIs, choose conflict winners, or touch UI state.
 
 Fixture convention:
 

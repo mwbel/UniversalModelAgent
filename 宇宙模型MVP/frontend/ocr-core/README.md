@@ -26,6 +26,7 @@ Rules:
 - Renderers must not modify source Markdown.
 - UI code must not assemble final export Markdown.
 - `mathpixToTargetMarkdownAdapter` only converts one Mathpix block into the third-column target Markdown dialect; it must not call Mathpix, patch files, or update UI state.
+- `renderValidator` only reports static Markdown/LaTeX render risks for one block; it must not call MathJax, access the DOM, or repair Markdown.
 
 Fixture convention:
 

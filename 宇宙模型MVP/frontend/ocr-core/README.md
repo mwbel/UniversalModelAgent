@@ -7,6 +7,7 @@ Current scope:
 - Store regression fixtures.
 - Define fixture and test conventions.
 - Keep current behavior observable before extracting modules from `frontend/ocr-compare.js`.
+- Provide isolated pure-function modules before they are wired into the OCR compare UI.
 
 Planned modules:
 
@@ -24,6 +25,7 @@ Rules:
 - Pure-function modules must not read or write the original Markdown file.
 - Renderers must not modify source Markdown.
 - UI code must not assemble final export Markdown.
+- `mathpixToTargetMarkdownAdapter` only converts one Mathpix block into the third-column target Markdown dialect; it must not call Mathpix, patch files, or update UI state.
 
 Fixture convention:
 

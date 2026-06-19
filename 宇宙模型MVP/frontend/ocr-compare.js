@@ -16,19 +16,76 @@ const state = {
   mineruFileName: "",
   mineruOverrides: new Map(),
   mineruBlockOverrides: new Map(),
+  mathpixBlockDrafts: new Map(),
   riskByPage: new Map(),
   mathpixCache: new Map(),
   reviewExpanded: new Set(),
+  reviewInitializedPages: new Set(),
   busy: false,
 };
 
 const els = {};
-const COLUMN_WIDTHS_KEY = "uma-ocr-compare-column-ratios-v4";
+const COLUMN_WIDTHS_KEY = "uma-ocr-compare-column-ratios-v6";
 const LEGACY_COLUMN_WIDTHS_KEYS = [
   "uma-ocr-compare-column-widths",
   "uma-ocr-compare-column-fractions-v2",
   "uma-ocr-compare-column-fractions-v3",
+  "uma-ocr-compare-column-ratios-v4",
+  "uma-ocr-compare-column-ratios-v5",
 ];
+
+let ocrCoreNormalizeMathDelimiters = null;
+let ocrCoreNormalizerLoadStarted = false;
+let ocrCoreNormalizerWarningShown = false;
+
+function getOcrCoreNormalizeMathDelimiters() {
+  if (ocrCoreNormalizeMathDelimiters) {
+    return ocrCoreNormalizeMathDelimiters;
+  }
+  if (typeof require === "function") {
+    try {
+      const module = require("./ocr-core/normalization/mathDelimiterNormalizer");
+      if (typeof module?.normalizeMathDelimiters === "function") {
+        ocrCoreNormalizeMathDelimiters = module.normalizeMathDelimiters;
+        return ocrCoreNormalizeMathDelimiters;
+      }
+    } catch (error) {
+      warnOcrCoreNormalizer("无法通过 require 加载 mathDelimiterNormalizer。", error);
+    }
+  }
+  const browserModule = globalThis?.OcrCoreMathDelimiterNormalizer;
+  if (typeof browserModule?.normalizeMathDelimiters === "function") {
+    ocrCoreNormalizeMathDelimiters = browserModule.normalizeMathDelimiters;
+    return ocrCoreNormalizeMathDelimiters;
+  }
+  loadOcrCoreNormalizerForBrowser();
+  return null;
+}
+
+function loadOcrCoreNormalizerForBrowser() {
+  if (ocrCoreNormalizerLoadStarted || typeof document === "undefined" || typeof document.createElement !== "function") {
+    return;
+  }
+  ocrCoreNormalizerLoadStarted = true;
+  const script = document.createElement("script");
+  script.src = "./ocr-core/normalization/mathDelimiterNormalizer.browser.js";
+  script.async = false;
+  script.dataset.ocrCore = "math-delimiter-normalizer";
+  script.addEventListener("error", () => {
+    warnOcrCoreNormalizer("浏览器兼容入口 mathDelimiterNormalizer.browser.js 加载失败。");
+  });
+  (document.head || document.body || document.documentElement).appendChild(script);
+}
+
+function warnOcrCoreNormalizer(message, error) {
+  if (ocrCoreNormalizerWarningShown || typeof console === "undefined" || typeof console.warn !== "function") {
+    return;
+  }
+  ocrCoreNormalizerWarningShown = true;
+  console.warn(`[OCR Core] ${message}`, error || "");
+}
+
+loadOcrCoreNormalizerForBrowser();
 
 function apiUrl(path) {
   return `${API_BASE}${path}`;
@@ -86,9 +143,12 @@ async function handlePdfChange() {
   state.pdfDataUrl = await readFileAsDataUrl(file);
   state.pageCache.clear();
   state.mathpixCache.clear();
+  state.mathpixBlockDrafts.clear();
   state.mineruOverrides.clear();
   state.mineruBlockOverrides.clear();
   state.riskByPage.clear();
+  state.reviewExpanded.clear();
+  state.reviewInitializedPages.clear();
   state.currentPage = 1;
   els.fileName.textContent = file.name;
   els.fileMeta.textContent = `${file.type || "unknown"} · ${formatBytes(file.size)} · 正在读取页数`;
@@ -124,6 +184,9 @@ async function handleMineruChange() {
     state.mineruFileName = file.name;
     state.mineruOverrides.clear();
     state.mineruBlockOverrides.clear();
+    state.mathpixBlockDrafts.clear();
+    state.reviewExpanded.clear();
+    state.reviewInitializedPages.clear();
     analyzeMineruRiskPages();
     if (!state.pdfPageCount) {
       state.pdfPageCount = pdfInfo.length;
@@ -136,7 +199,10 @@ async function handleMineruChange() {
     state.mineruInfo = null;
     state.mineruOverrides.clear();
     state.mineruBlockOverrides.clear();
+    state.mathpixBlockDrafts.clear();
     state.riskByPage.clear();
+    state.reviewExpanded.clear();
+    state.reviewInitializedPages.clear();
     renderCurrentPage();
   }
 }
@@ -151,8 +217,11 @@ function resetPage() {
   state.mineruFileName = "";
   state.mineruOverrides.clear();
   state.mineruBlockOverrides.clear();
+  state.mathpixBlockDrafts.clear();
   state.riskByPage.clear();
   state.mathpixCache.clear();
+  state.reviewExpanded.clear();
+  state.reviewInitializedPages.clear();
   state.busy = false;
   els.pdfInput.value = "";
   els.mineruInput.value = "";
@@ -170,6 +239,7 @@ async function goToPage(pageNumber) {
     return;
   }
   state.currentPage = nextPage;
+  state.reviewExpanded.clear();
   updatePager();
   await renderCurrentPage();
 }
@@ -196,7 +266,7 @@ async function renderCurrentPage() {
     createColumnResizer("left"),
     renderMineruCard(),
     createColumnResizer("right"),
-    renderReviewCard(),
+    renderRightWorkbench(page),
   );
   els.pageList.append(row);
   typesetMath(row);
@@ -207,7 +277,11 @@ function createColumnResizer(side) {
   button.className = "column-resizer";
   button.type = "button";
   button.dataset.resizer = side;
-  button.setAttribute("aria-label", side === "left" ? "调整原文和 MinerU 栏宽" : "调整 MinerU 和校对栏宽");
+  const labels = {
+    left: "调整原文和 MinerU 栏宽",
+    right: "调整 MinerU 和校对栏宽",
+  };
+  button.setAttribute("aria-label", labels[side] || "调整栏宽");
   return button;
 }
 
@@ -243,7 +317,7 @@ function handleColumnResizeStart(event) {
 
   const startX = event.clientX;
   const start = { ...columns };
-  const min = { left: 180, middle: 260, right: 240 };
+  const min = { left: 180, middle: 260, right: 320 };
   document.body.classList.add("is-resizing-columns");
 
   const onMove = (moveEvent) => {
@@ -316,9 +390,9 @@ function widthsToRatios(widths) {
 }
 
 function normalizeColumnRatios(ratios) {
-  const left = clamp(Number(ratios?.left) || 0.27, 0.12, 0.65);
-  const middle = clamp(Number(ratios?.middle) || 0.42, 0.18, 0.7);
-  const right = clamp(Number(ratios?.right) || 0.31, 0.12, 0.65);
+  const left = clamp(Number(ratios?.left) || 0.28, 0.12, 0.58);
+  const middle = clamp(Number(ratios?.middle) || 0.42, 0.18, 0.65);
+  const right = clamp(Number(ratios?.right) || 0.3, 0.18, 0.6);
   const total = Math.max(0.01, left + middle + right);
   return {
     left: roundFraction(left / total),
@@ -483,14 +557,52 @@ function renderMineruBlock(entry, markdown, risk, corrected, options = {}) {
   `;
 }
 
+function renderRightWorkbench(page) {
+  const card = document.createElement("section");
+  card.className = "preview-card right-workbench-card";
+  card.innerHTML = `
+    <div class="card-head">
+      <div>
+        <strong>校对工作台</strong>
+        <span>Mathpix draft 需应用后才会进入导出校正稿</span>
+      </div>
+    </div>
+    <div class="right-workbench-tabs" role="tablist" aria-label="OCR correction workspace">
+      <button class="right-workbench-tab is-active" type="button" data-workbench-tab="review">块级校对</button>
+      <button class="right-workbench-tab" type="button" data-workbench-tab="mathpix">整页 Mathpix</button>
+    </div>
+    <div class="right-workbench-panel is-active" data-workbench-panel="review"></div>
+    <div class="right-workbench-panel" data-workbench-panel="mathpix"></div>
+  `;
+  card.querySelector('[data-workbench-panel="review"]').append(renderReviewCard());
+  card.querySelector('[data-workbench-panel="mathpix"]').append(renderMathpixCard(page));
+  card.querySelectorAll("[data-workbench-tab]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const target = button.dataset.workbenchTab;
+      card.querySelectorAll("[data-workbench-tab]").forEach((tabButton) => {
+        tabButton.classList.toggle("is-active", tabButton.dataset.workbenchTab === target);
+      });
+      card.querySelectorAll("[data-workbench-panel]").forEach((panel) => {
+        panel.classList.toggle("is-active", panel.dataset.workbenchPanel === target);
+      });
+      if (target === "mathpix") {
+        typesetMath(card.querySelector('[data-workbench-panel="mathpix"]'));
+      }
+    });
+  });
+  return card;
+}
+
 function renderReviewCard() {
   const card = document.createElement("section");
-  card.className = "preview-card review-card";
+  card.className = "review-card";
   const risks = state.riskByPage.get(state.currentPage) || [];
   const segments = pageSegmentsForPage(state.currentPage);
   const orderedRisks = orderRisksBySegment(risks, segments);
+  ensureDefaultReviewExpansion(orderedRisks);
   const segmentByKey = new Map(segments.map((segment) => [String(segment.blockIndex), segment]));
   const blockOverrides = getBlockOverrides(state.currentPage, false);
+  const mathpixDrafts = getMathpixBlockDrafts(state.currentPage, false);
   card.innerHTML = `
     <div class="card-head">
       <div>
@@ -509,7 +621,13 @@ function renderReviewCard() {
                   markdown: risk.text,
                   kind: "block",
                 };
-                return renderReviewItem(segment, risk, blockOverrides.get(key) || "", blockOverrides.has(key));
+                return renderReviewItem(
+                  segment,
+                  risk,
+                  blockOverrides.get(key) || "",
+                  blockOverrides.has(key),
+                  mathpixDrafts.get(key) || "",
+                );
               })
               .join("")
           : `<div class="empty-inline">当前页未发现高风险块。</div>`
@@ -522,7 +640,18 @@ function renderReviewCard() {
   card.querySelectorAll("[data-review-toggle]").forEach((button) => {
     button.addEventListener("click", () => toggleReviewBlock(button.dataset.reviewToggle));
   });
+  card.querySelectorAll("[data-apply-mathpix-block-edit]").forEach((button) => {
+    button.addEventListener("click", () => applyMathpixBlockEdit(button.dataset.applyMathpixBlockEdit, button));
+  });
   return card;
+}
+
+function ensureDefaultReviewExpansion(orderedRisks) {
+  if (!orderedRisks.length || state.reviewInitializedPages.has(state.currentPage)) {
+    return;
+  }
+  state.reviewExpanded.add(reviewBlockKey(state.currentPage, orderedRisks[0].blockIndex));
+  state.reviewInitializedPages.add(state.currentPage);
 }
 
 function orderRisksBySegment(risks, segments) {
@@ -536,17 +665,20 @@ function orderRisksBySegment(risks, segments) {
     );
 }
 
-function renderReviewItem(segment, risk, correctedMarkdown, corrected) {
+function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDraftMarkdown = "") {
   const labels = risk.reasons.map(riskReasonLabel).join(" · ");
   const disabled = risk.bbox ? "" : "disabled";
-  const mathpixMarkdown = corrected ? prepareMathpixMarkdown(correctedMarkdown) : "";
+  const hasMathpixDraft = Boolean(String(mathpixDraftMarkdown || "").trim());
+  const editableMarkdown = prepareMathpixMarkdown(mathpixDraftMarkdown || correctedMarkdown || "");
+  const hasEditableMarkdown = Boolean(editableMarkdown.trim());
+  const previewMarkdown = hasMathpixDraft ? editableMarkdown : correctedMarkdown;
   const reviewKey = reviewBlockKey(state.currentPage, segment.blockIndex);
   const expanded = state.reviewExpanded.has(reviewKey);
   return `
-    <article class="review-item ${corrected ? "is-corrected" : ""} ${expanded ? "is-expanded" : "is-collapsed"}">
+    <article class="review-item ${corrected ? "is-corrected" : ""} ${hasMathpixDraft ? "has-mathpix-draft" : ""} ${expanded ? "is-expanded" : "is-collapsed"}">
       <div class="review-item-head">
         <div>
-          <strong>${corrected ? "已校正" : "待核查"} · ${escapeHtml(labels)}</strong>
+          <strong>${hasMathpixDraft ? "Mathpix 待应用" : corrected ? "已应用" : "待核查"} · ${escapeHtml(labels)}</strong>
           <span>Block ${escapeHtml(String(segment.blockIndex))}</span>
         </div>
         <div class="review-item-actions">
@@ -570,19 +702,24 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected) {
           </details>
         </section>
         ${
-          corrected
+          corrected || hasEditableMarkdown
             ? `<section class="review-pane mathpix-pane">
-                <div class="review-pane-title">Mathpix 校正稿</div>
+                <div class="review-pane-title">${hasMathpixDraft ? "Mathpix 识别稿（未应用）" : "校正稿渲染"}</div>
                 <div class="review-render">
-                  ${renderBlockContent(mathpixMarkdown, segment)}
+                  ${renderBlockContent(previewMarkdown, segment)}
                 </div>
-                <details class="block-source-detail">
-                  <summary>查看 Mathpix Markdown 源码</summary>
-                  <pre><code>${escapeHtml(mathpixMarkdown)}</code></pre>
-                </details>
-              </section>`
-            : `<div class="review-placeholder">确认 MinerU 有误后，再调用 Mathpix 校正此块。</div>`
-        }
+              <details class="block-source-detail">
+                <summary>编辑 Markdown 源码（应用后写入校正稿）</summary>
+                <textarea class="mathpix-source-editor" data-mathpix-edit="${escapeHtml(String(segment.blockIndex))}" spellcheck="false">${escapeHtml(editableMarkdown)}</textarea>
+                <div class="mathpix-edit-actions">
+                  <button class="text-button" type="button" data-apply-mathpix-block-edit="${escapeHtml(String(segment.blockIndex))}">
+                    ${hasMathpixDraft ? "应用到校正稿" : "更新校正稿"}
+                  </button>
+                </div>
+              </details>
+            </section>`
+          : `<div class="review-placeholder">确认 MinerU 有误后，再调用 Mathpix 校正此块。</div>`
+      }
       </div>
     </article>
   `;
@@ -602,6 +739,30 @@ async function toggleReviewBlock(key) {
     state.reviewExpanded.add(key);
   }
   await renderCurrentPage();
+}
+
+async function applyMathpixBlockEdit(blockIndex, trigger) {
+  const blockKey = String(blockIndex || "");
+  if (!blockKey) {
+    return;
+  }
+  const editor = trigger?.closest?.(".review-item")?.querySelector?.("[data-mathpix-edit]");
+  if (!editor) {
+    return;
+  }
+  const markdown = prepareMathpixMarkdown(editor.value || "");
+  getMathpixBlockDrafts(state.currentPage).delete(blockKey);
+  getBlockOverrides(state.currentPage).set(blockKey, markdown);
+  expandOnlyReviewBlock(state.currentPage, blockKey);
+  updateCorrectionSummary();
+  setStatus("Ready", "ok");
+  await renderCurrentPage();
+}
+
+function expandOnlyReviewBlock(pageNumber, blockIndex) {
+  state.reviewExpanded.clear();
+  state.reviewExpanded.add(reviewBlockKey(pageNumber, blockIndex));
+  state.reviewInitializedPages.add(pageNumber);
 }
 
 function renderBlockContent(markdown, entry) {
@@ -666,7 +827,7 @@ function renderRiskItem(item) {
 
 function renderMathpixCard(page) {
   const card = document.createElement("section");
-  card.className = "preview-card";
+  card.className = "mathpix-page-card";
   const cached = state.mathpixCache.get(state.currentPage);
   const markdown = cached?.editText || cached?.markdown || "";
   const error = cached?.error || "";
@@ -727,7 +888,7 @@ function bindDiffApplyButton(card) {
   }
   button.addEventListener("click", async () => {
     const latest = state.mathpixCache.get(state.currentPage);
-    const corrected = latest?.editText || latest?.markdown || "";
+    const corrected = prepareMathpixMarkdown(latest?.editText || latest?.markdown || "");
     if (!corrected.trim()) {
       return;
     }
@@ -743,7 +904,7 @@ function renderMathpixBody({ markdown, error, editorId, previewId }) {
     return `<div class="render-body markdown-body is-error">${escapeHtml(error)}</div>`;
   }
   if (!markdown) {
-    return `<div class="render-body markdown-body is-loading">点击 MinerU 高风险块里的“Mathpix 校正此块”后，会只识别该裁剪块；整页识别仅作为备用。</div>`;
+    return `<div class="render-body markdown-body is-loading">点击顶部“整页 Mathpix（备用）”后，这里会显示当前页的整页识别结果，可作为块级校对漏行时的参考。</div>`;
   }
   return `
     <div class="mathpix-workbench">
@@ -872,10 +1033,10 @@ async function recognizeRiskBlockWithMathpix(blockIndex) {
     if (!markdown.trim()) {
       throw new Error("Mathpix 块级响应为空");
     }
-    getBlockOverrides(state.currentPage).set(blockKey, markdown);
-    state.reviewExpanded.add(reviewBlockKey(state.currentPage, blockKey));
+    getMathpixBlockDrafts(state.currentPage).set(blockKey, markdown);
+    expandOnlyReviewBlock(state.currentPage, blockKey);
     updateCorrectionSummary();
-    setStatus("Ready", "ok");
+    setStatus("Draft ready", "ok");
   } catch (error) {
     setStatus("Error", "error");
     state.mathpixCache.set(state.currentPage, { error: error.message });
@@ -1004,6 +1165,13 @@ function getBlockOverrides(pageNumber, create = true) {
     state.mineruBlockOverrides.set(pageNumber, new Map());
   }
   return state.mineruBlockOverrides.get(pageNumber) || new Map();
+}
+
+function getMathpixBlockDrafts(pageNumber, create = true) {
+  if (!state.mathpixBlockDrafts.has(pageNumber) && create) {
+    state.mathpixBlockDrafts.set(pageNumber, new Map());
+  }
+  return state.mathpixBlockDrafts.get(pageNumber) || new Map();
 }
 
 function analyzeMineruRiskPages() {
@@ -1416,11 +1584,72 @@ function buildBookMarkdown(useCorrections) {
 }
 
 function prepareMarkdownForExport(markdown) {
-  return wrapBareDisplayMathBlocks(normalizeMathMarkdown(markdown)).replace(/\n{3,}/g, "\n\n").trim();
+  return normalizeSingleLineDisplayMath(
+    wrapBareDisplayMathBlocks(normalizeMathMarkdown(markdown)),
+  )
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 function prepareMathpixMarkdown(markdown) {
-  return prepareMarkdownForExport(markdown);
+  return normalizeSingleLineDisplayMath(
+    removeDanglingSingleDollarLines(
+      wrapLikelyDisplayMathLines(
+        wrapBareDisplayMathBlocks(repairBrokenDisplayMathDelimiters(stripMarkdownFence(markdown))),
+      ),
+    ),
+  )
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function removeDanglingSingleDollarLines(markdown) {
+  return String(markdown || "")
+    .replace(/\r\n?/g, "\n")
+    .split("\n")
+    .filter((line) => String(line || "").trim() !== "$")
+    .join("\n");
+}
+
+function normalizeSingleLineDisplayMath(markdown) {
+  return String(markdown || "")
+    .replace(/\r\n?/g, "\n")
+    .split("\n")
+    .flatMap((line) => {
+      const trimmed = String(line || "").trim();
+      const match = trimmed.match(/^\$\$(.+)\$\$$/);
+      if (!match) {
+        return [line];
+      }
+      const body = match[1].trim();
+      return body ? ["$$", body, "$$"] : ["$$"];
+    })
+    .join("\n");
+}
+
+function repairBrokenDisplayMathDelimiters(markdown) {
+  const normalized = String(markdown || "")
+    .replace(/\$\$\s*(\\begin\s*\{(?:aligned|align|array|tabular|table|matrix|pmatrix|bmatrix|cases)\*?\})/g, "$$\n$1")
+    .replace(/(\\end\s*\{(?:aligned|align|array|tabular|table|matrix|pmatrix|bmatrix|cases)\*?\})\s*\$\$/g, "$1\n$$");
+  const lines = normalized.replace(/\r\n?/g, "\n").split("\n");
+  const output = [];
+  let mathEnvDepth = 0;
+  for (const line of lines) {
+    const trimmed = String(line || "").trim();
+    if (trimmed === "$$" && mathEnvDepth > 0) {
+      continue;
+    }
+    const begins = countMathEnvironmentTokens(trimmed, "begin");
+    const ends = countMathEnvironmentTokens(trimmed, "end");
+    output.push(line);
+    mathEnvDepth = Math.max(0, mathEnvDepth + begins - ends);
+  }
+  return output.join("\n");
+}
+
+function countMathEnvironmentTokens(text, kind) {
+  const pattern = new RegExp(`\\\\${kind}\\s*\\{(?:aligned|align|array|tabular|table|matrix|pmatrix|bmatrix|cases)\\*?\\}`, "g");
+  return (String(text || "").match(pattern) || []).length;
 }
 
 function wrapBareDisplayMathBlocks(markdown) {
@@ -1445,6 +1674,46 @@ function wrapBareDisplayMathBlocks(markdown) {
     index += 1;
   }
   return output.join("\n");
+}
+
+function wrapLikelyDisplayMathLines(markdown) {
+  const lines = String(markdown || "").replace(/\r\n?/g, "\n").split("\n");
+  const output = [];
+  let inFence = false;
+  let inDisplayMath = false;
+  for (const line of lines) {
+    const trimmed = String(line || "").trim();
+    if (/^```/.test(trimmed)) {
+      inFence = !inFence;
+      output.push(line);
+      continue;
+    }
+    if (trimmed === "$$") {
+      inDisplayMath = !inDisplayMath;
+      output.push(line);
+      continue;
+    }
+    if (inFence || inDisplayMath || !isLikelyStandaloneMathLine(trimmed)) {
+      output.push(line);
+      continue;
+    }
+    output.push("$$", trimmed, "$$");
+  }
+  return output.join("\n");
+}
+
+function isLikelyStandaloneMathLine(trimmed) {
+  if (!trimmed || trimmed.includes("$") || trimmed.includes("|") || /^#{1,6}\s+/.test(trimmed) || /^[-*+]\s+/.test(trimmed)) {
+    return false;
+  }
+  if (!/[=<>^_]/.test(trimmed)) {
+    return false;
+  }
+  if (/\\(?:frac|sin|cos|tan|quad|widehat|hat|sqrt|left|right|epsilon|varepsilon|leq|geq|times|begin|end|sum|int|infty|kappa|ldots)/.test(trimmed)) {
+    return true;
+  }
+  const plainMathLike = /^[A-Za-z0-9\\{}()[\]\s+\-*/^_=,.;:<>]+$/.test(trimmed);
+  return plainMathLike && trimmed.length <= 180;
 }
 
 function isBareDisplayMathStart(line) {
@@ -1612,48 +1881,23 @@ function stripMarkdownFence(text) {
 }
 
 function normalizeMathMarkdown(text) {
-  const inlineMathPattern = /\b([A-Za-z]\s*=\s*[-+]?(?:[A-Za-z]+|\d+(?:\.\d+)?)(?:\s*\^\s*(?:\{[^}\n]+\}|[A-Za-z0-9()+-]+))?)(?=$|[\s,.;:|)\]])/g;
-  const lines = String(text || "").split("\n");
-  const normalized = [];
-  let index = 0;
-  while (index < lines.length) {
-    const line = lines[index];
-    if (String(line || "").trim() === "|") {
-      const nextIndex = nextNonEmptyLineIndex(lines, index + 1);
-      if (nextIndex >= 0 && isLatexTableAt(lines, nextIndex)) {
-        index += 1;
-        continue;
-      }
-    }
-    if (isLatexTableAt(lines, index)) {
-      const { blockLines, nextIndex } = collectLatexTableBlock(lines, index);
-      normalized.push(...blockLines);
-      index = nextIndex;
-      continue;
-    }
-    if (!isLikelyMarkdownTableLine(line)) {
-      normalized.push(wrapInlineMathOutsideMathSpans(line, inlineMathPattern));
-      index += 1;
-      continue;
-    }
-    const cells = splitMarkdownTableRow(line);
-    if (cells.length < 2) {
-      normalized.push(wrapInlineMathOutsideMathSpans(line, inlineMathPattern));
-      index += 1;
-      continue;
-    }
-    normalized.push(`| ${cells
-      .map((cell) => {
-        const trimmed = cell.trim();
-        if (!trimmed || /^:?-{3,}:?$/.test(trimmed)) {
-          return trimmed;
-        }
-        return wrapInlineMathOutsideMathSpans(trimmed, inlineMathPattern);
-      })
-      .join(" | ")} |`);
-    index += 1;
+  const markdown = String(text || "");
+  const normalizeMathDelimiters = getOcrCoreNormalizeMathDelimiters();
+  if (!normalizeMathDelimiters) {
+    warnOcrCoreNormalizer("mathDelimiterNormalizer 不可用，已保守返回原始 Markdown。");
+    return markdown;
   }
-  return normalized.join("\n");
+  try {
+    const result = normalizeMathDelimiters({
+      blockId: "legacy-normalizeMathMarkdown",
+      blockText: markdown,
+      blockType: "unknown",
+    });
+    return typeof result?.normalizedText === "string" ? result.normalizedText : markdown;
+  } catch (error) {
+    warnOcrCoreNormalizer("normalizeMathMarkdown 调用 mathDelimiterNormalizer 失败，已保守返回原始 Markdown。", error);
+    return markdown;
+  }
 }
 
 function isLikelyMarkdownTableLine(line) {
@@ -1752,6 +1996,33 @@ function isMarkdownTableStart(lines, index) {
 
 function isCodeFenceStart(line) {
   return /^```/.test(String(line || "").trim());
+}
+
+function isDisplayMathStart(line) {
+  const trimmed = String(line || "").trim();
+  return trimmed === "$$" || /^\$\$.+\$\$$/.test(trimmed);
+}
+
+function collectDisplayMathBlock(lines, startIndex) {
+  const first = String(lines[startIndex] || "").trim();
+  const singleLine = first.match(/^\$\$(.+)\$\$$/);
+  if (singleLine) {
+    return { blockLines: [singleLine[1].trim()], nextIndex: startIndex + 1 };
+  }
+  const blockLines = [];
+  let index = startIndex + 1;
+  while (index < lines.length && String(lines[index] || "").trim() !== "$$") {
+    blockLines.push(lines[index]);
+    index += 1;
+  }
+  if (index < lines.length) {
+    index += 1;
+  }
+  return { blockLines, nextIndex: index };
+}
+
+function renderDisplayMathBlock(lines) {
+  return `<div class="math-display">$$\n${escapeHtml(lines.join("\n").trim())}\n$$</div>`;
 }
 
 function renderCodeBlock(lines) {
@@ -2019,6 +2290,10 @@ function renderMarkdownHtml(markdown) {
       index += 1;
       continue;
     }
+    if (lines[index].trim() === "$") {
+      index += 1;
+      continue;
+    }
 
     if (lines[index].trim() === "|") {
       const nextIndex = nextNonEmptyLineIndex(lines, index + 1);
@@ -2058,6 +2333,13 @@ function renderMarkdownHtml(markdown) {
         index = nextIndex;
         continue;
       }
+    }
+
+    if (isDisplayMathStart(lines[index]) && !isLatexTableAt(lines, index)) {
+      const { blockLines, nextIndex } = collectDisplayMathBlock(lines, index);
+      parts.push(renderDisplayMathBlock(blockLines));
+      index = nextIndex;
+      continue;
     }
 
     if (isLatexTableAt(lines, index)) {
@@ -2105,6 +2387,7 @@ function renderMarkdownHtml(markdown) {
       !/^(#{1,6})\s+/.test(lines[index].trim()) &&
       !/^\s*[-*+]\s+/.test(lines[index]) &&
       !/^\s*>\s?/.test(lines[index]) &&
+      !isDisplayMathStart(lines[index]) &&
       !isLatexTableAt(lines, index) &&
       !isMarkdownTableStart(lines, index) &&
       !isCodeFenceStart(lines[index])

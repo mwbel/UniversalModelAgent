@@ -18,10 +18,17 @@ const state = {
   mineruBlockOverrides: new Map(),
   riskByPage: new Map(),
   mathpixCache: new Map(),
+  reviewExpanded: new Set(),
   busy: false,
 };
 
 const els = {};
+const COLUMN_WIDTHS_KEY = "uma-ocr-compare-column-ratios-v4";
+const LEGACY_COLUMN_WIDTHS_KEYS = [
+  "uma-ocr-compare-column-widths",
+  "uma-ocr-compare-column-fractions-v2",
+  "uma-ocr-compare-column-fractions-v3",
+];
 
 function apiUrl(path) {
   return `${API_BASE}${path}`;
@@ -53,6 +60,7 @@ function bindElements() {
 
 function initialize() {
   bindElements();
+  restoreColumnWidths();
   els.pickPdfButton.addEventListener("click", () => els.pdfInput.click());
   els.pickMineruButton.addEventListener("click", () => els.mineruInput.click());
   els.pdfInput.addEventListener("change", handlePdfChange);
@@ -65,6 +73,7 @@ function initialize() {
   els.prevPageButton.addEventListener("click", () => goToPage(state.currentPage - 1));
   els.nextPageButton.addEventListener("click", () => goToPage(state.currentPage + 1));
   els.pageInput.addEventListener("change", () => goToPage(Number(els.pageInput.value || 1)));
+  document.addEventListener("pointerdown", handleColumnResizeStart);
   window.addEventListener("mathjax-ready", () => typesetMath(els.pageList));
 }
 
@@ -182,9 +191,148 @@ async function renderCurrentPage() {
   const row = document.createElement("article");
   row.className = "page-row";
   const page = await ensureCurrentPagePreview();
-  row.append(renderImageCard(page), renderMineruCard(), renderMathpixCard(page));
+  row.append(
+    renderImageCard(page),
+    createColumnResizer("left"),
+    renderMineruCard(),
+    createColumnResizer("right"),
+    renderReviewCard(),
+  );
   els.pageList.append(row);
   typesetMath(row);
+}
+
+function createColumnResizer(side) {
+  const button = document.createElement("button");
+  button.className = "column-resizer";
+  button.type = "button";
+  button.dataset.resizer = side;
+  button.setAttribute("aria-label", side === "left" ? "调整原文和 MinerU 栏宽" : "调整 MinerU 和校对栏宽");
+  return button;
+}
+
+function restoreColumnWidths() {
+  const panel = document.querySelector(".preview-panel");
+  if (!panel) {
+    return;
+  }
+  LEGACY_COLUMN_WIDTHS_KEYS.forEach((key) => localStorage.removeItem(key));
+  try {
+    const saved = JSON.parse(localStorage.getItem(COLUMN_WIDTHS_KEY) || "null");
+    if (!saved) {
+      return;
+    }
+    setColumnRatios(normalizeColumnRatios(saved));
+  } catch {
+    localStorage.removeItem(COLUMN_WIDTHS_KEY);
+  }
+}
+
+function handleColumnResizeStart(event) {
+  const handle = event.target.closest?.(".column-resizer[data-resizer]");
+  if (!handle || window.matchMedia("(max-width: 980px)").matches) {
+    return;
+  }
+  event.preventDefault();
+  const side = handle.dataset.resizer;
+  const panel = document.querySelector(".preview-panel");
+  const columns = readCurrentColumnWidths();
+  if (!panel || !columns) {
+    return;
+  }
+
+  const startX = event.clientX;
+  const start = { ...columns };
+  const min = { left: 180, middle: 260, right: 240 };
+  document.body.classList.add("is-resizing-columns");
+
+  const onMove = (moveEvent) => {
+    const dx = moveEvent.clientX - startX;
+    if (side === "left") {
+      const nextLeft = clamp(start.left + dx, min.left, start.left + start.middle - min.middle);
+      const nextMiddle = start.middle - (nextLeft - start.left);
+      setColumnWidths({ left: nextLeft, middle: nextMiddle, right: start.right });
+      return;
+    }
+    const nextMiddle = clamp(start.middle + dx, min.middle, start.middle + start.right - min.right);
+    const nextRight = start.right - (nextMiddle - start.middle);
+    setColumnWidths({ left: start.left, middle: nextMiddle, right: nextRight });
+  };
+
+  const onUp = () => {
+    document.body.classList.remove("is-resizing-columns");
+    const latest = readCurrentColumnWidths();
+    if (latest) {
+      localStorage.setItem(COLUMN_WIDTHS_KEY, JSON.stringify(widthsToRatios(latest)));
+    }
+    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("pointerup", onUp);
+  };
+
+  window.addEventListener("pointermove", onMove);
+  window.addEventListener("pointerup", onUp, { once: true });
+}
+
+function readCurrentColumnWidths() {
+  const row = document.querySelector(".page-row") || document.querySelector(".column-heads");
+  if (!row) {
+    return null;
+  }
+  const columns = getComputedStyle(row)
+    .gridTemplateColumns.split(/\s+/)
+    .map((item) => Number.parseFloat(item))
+    .filter(Number.isFinite);
+  if (columns.length < 5) {
+    return null;
+  }
+  return {
+    left: columns[0],
+    middle: columns[2],
+    right: columns[4],
+  };
+}
+
+function setColumnWidths(widths) {
+  setColumnRatios(widthsToRatios(widths));
+}
+
+function setColumnRatios(ratios) {
+  const panel = document.querySelector(".preview-panel");
+  if (!panel) {
+    return;
+  }
+  panel.style.setProperty("--ocr-left-ratio", String(ratios.left));
+  panel.style.setProperty("--ocr-middle-ratio", String(ratios.middle));
+  panel.style.setProperty("--ocr-right-ratio", String(ratios.right));
+}
+
+function widthsToRatios(widths) {
+  const total = Math.max(1, widths.left + widths.middle + widths.right);
+  return normalizeColumnRatios({
+    left: widths.left / total,
+    middle: widths.middle / total,
+    right: widths.right / total,
+  });
+}
+
+function normalizeColumnRatios(ratios) {
+  const left = clamp(Number(ratios?.left) || 0.27, 0.12, 0.65);
+  const middle = clamp(Number(ratios?.middle) || 0.42, 0.18, 0.7);
+  const right = clamp(Number(ratios?.right) || 0.31, 0.12, 0.65);
+  const total = Math.max(0.01, left + middle + right);
+  return {
+    left: roundFraction(left / total),
+    middle: roundFraction(middle / total),
+    right: roundFraction(right / total),
+  };
+}
+
+function roundFraction(value) {
+  return Math.round(value * 1000) / 1000;
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
 }
 
 async function ensureCurrentPagePreview() {
@@ -230,7 +378,7 @@ async function loadPagePreview(pageNumber) {
 
 function renderImageCard(page) {
   const card = document.createElement("section");
-  card.className = "preview-card";
+  card.className = "preview-card image-card";
   const imageHtml = page.image
     ? `<img src="${page.image}" alt="第 ${page.pageNumber} 页 OCR 截图">`
     : `<div class="empty-inline">尚未选择 PDF。</div>`;
@@ -246,7 +394,7 @@ function renderImageCard(page) {
 
 function renderMineruCard() {
   const card = document.createElement("section");
-  card.className = "preview-card";
+  card.className = "preview-card mineru-card";
   const markdown = mineruMarkdownForPage(state.currentPage);
   const source = state.mineruFileName ? `来自 ${state.mineruFileName}` : "未选择 middle.json";
   const hasOverride = state.mineruOverrides.has(state.currentPage) || getBlockOverrides(state.currentPage, false).size > 0;
@@ -276,9 +424,6 @@ function renderMineruCard() {
     updateCorrectionSummary();
     await renderCurrentPage();
   });
-  card.querySelectorAll("[data-risk-mathpix]").forEach((button) => {
-    button.addEventListener("click", () => recognizeRiskBlockWithMathpix(button.dataset.riskMathpix));
-  });
   return card;
 }
 
@@ -299,14 +444,16 @@ function renderMineruPagePreview(pageNumber, risks) {
           const key = String(segment.blockIndex);
           const risk = riskByBlock.get(key);
           const markdown = blockOverrides.get(key) || segment.markdown;
-          return renderMineruBlock(segment, markdown, risk, blockOverrides.has(key));
+          return renderMineruBlock(segment, markdown, risk, blockOverrides.has(key), { showControls: false, showSource: false });
         })
         .join("")}
     </div>
   `;
 }
 
-function renderMineruBlock(entry, markdown, risk, corrected) {
+function renderMineruBlock(entry, markdown, risk, corrected, options = {}) {
+  const showControls = options.showControls !== false;
+  const showSource = options.showSource !== false;
   const isRisk = Boolean(risk);
   const labels = risk ? risk.reasons.map(riskReasonLabel).join(" · ") : "";
   const disabled = risk?.bbox ? "" : "disabled";
@@ -317,7 +464,7 @@ function renderMineruBlock(entry, markdown, risk, corrected) {
         isRisk
           ? `<div class="block-risk-head">
               <span>${corrected ? "已校正" : "高风险"} · ${escapeHtml(labels)}</span>
-              <button class="text-button risk-action" type="button" data-risk-mathpix="${entry.blockIndex}" ${disabled}>${actionLabel}</button>
+              ${showControls ? `<button class="text-button risk-action" type="button" data-risk-mathpix="${entry.blockIndex}" ${disabled}>${actionLabel}</button>` : ""}
             </div>`
           : ""
       }
@@ -325,7 +472,7 @@ function renderMineruBlock(entry, markdown, risk, corrected) {
         ${renderBlockContent(markdown, entry)}
       </div>
       ${
-        isRisk
+        isRisk && showSource
           ? `<details class="block-source-detail">
               <summary>查看当前块 Markdown 源码</summary>
               <pre><code>${escapeHtml(markdown)}</code></pre>
@@ -334,6 +481,127 @@ function renderMineruBlock(entry, markdown, risk, corrected) {
       }
     </section>
   `;
+}
+
+function renderReviewCard() {
+  const card = document.createElement("section");
+  card.className = "preview-card review-card";
+  const risks = state.riskByPage.get(state.currentPage) || [];
+  const segments = pageSegmentsForPage(state.currentPage);
+  const orderedRisks = orderRisksBySegment(risks, segments);
+  const segmentByKey = new Map(segments.map((segment) => [String(segment.blockIndex), segment]));
+  const blockOverrides = getBlockOverrides(state.currentPage, false);
+  card.innerHTML = `
+    <div class="card-head">
+      <div>
+        <strong>高风险校对</strong>
+        <span>${orderedRisks.length ? `${orderedRisks.length} 个待核查块` : "当前页未发现高风险块"}</span>
+      </div>
+    </div>
+    <div class="review-list markdown-body">
+      ${
+        orderedRisks.length
+          ? orderedRisks
+              .map((risk) => {
+                const key = String(risk.blockIndex);
+                const segment = segmentByKey.get(key) || {
+                  blockIndex: key,
+                  markdown: risk.text,
+                  kind: "block",
+                };
+                return renderReviewItem(segment, risk, blockOverrides.get(key) || "", blockOverrides.has(key));
+              })
+              .join("")
+          : `<div class="empty-inline">当前页未发现高风险块。</div>`
+      }
+    </div>
+  `;
+  card.querySelectorAll("[data-risk-mathpix]").forEach((button) => {
+    button.addEventListener("click", () => recognizeRiskBlockWithMathpix(button.dataset.riskMathpix));
+  });
+  card.querySelectorAll("[data-review-toggle]").forEach((button) => {
+    button.addEventListener("click", () => toggleReviewBlock(button.dataset.reviewToggle));
+  });
+  return card;
+}
+
+function orderRisksBySegment(risks, segments) {
+  const orderByKey = new Map(segments.map((segment, index) => [String(segment.blockIndex), index]));
+  return risks
+    .slice()
+    .sort(
+      (left, right) =>
+        (orderByKey.get(String(left.blockIndex)) ?? Number.MAX_SAFE_INTEGER) -
+        (orderByKey.get(String(right.blockIndex)) ?? Number.MAX_SAFE_INTEGER),
+    );
+}
+
+function renderReviewItem(segment, risk, correctedMarkdown, corrected) {
+  const labels = risk.reasons.map(riskReasonLabel).join(" · ");
+  const disabled = risk.bbox ? "" : "disabled";
+  const mathpixMarkdown = corrected ? prepareMathpixMarkdown(correctedMarkdown) : "";
+  const reviewKey = reviewBlockKey(state.currentPage, segment.blockIndex);
+  const expanded = state.reviewExpanded.has(reviewKey);
+  return `
+    <article class="review-item ${corrected ? "is-corrected" : ""} ${expanded ? "is-expanded" : "is-collapsed"}">
+      <div class="review-item-head">
+        <div>
+          <strong>${corrected ? "已校正" : "待核查"} · ${escapeHtml(labels)}</strong>
+          <span>Block ${escapeHtml(String(segment.blockIndex))}</span>
+        </div>
+        <div class="review-item-actions">
+          <button class="text-button review-toggle" type="button" data-review-toggle="${escapeHtml(reviewKey)}">
+            ${expanded ? "收起" : "展开"}
+          </button>
+          <button class="text-button risk-action" type="button" data-risk-mathpix="${segment.blockIndex}" ${disabled}>
+            ${corrected ? "重新校正此块" : risk.bbox ? "Mathpix 校正此块" : "缺少 bbox"}
+          </button>
+        </div>
+      </div>
+      <div class="review-item-body" ${expanded ? "" : "hidden"}>
+        <section class="review-pane">
+          <div class="review-pane-title">MinerU 渲染</div>
+          <div class="review-render">
+            ${renderBlockContent(segment.markdown, segment)}
+          </div>
+          <details class="block-source-detail">
+            <summary>查看当前块 Markdown 源码</summary>
+            <pre><code>${escapeHtml(segment.markdown)}</code></pre>
+          </details>
+        </section>
+        ${
+          corrected
+            ? `<section class="review-pane mathpix-pane">
+                <div class="review-pane-title">Mathpix 校正稿</div>
+                <div class="review-render">
+                  ${renderBlockContent(mathpixMarkdown, segment)}
+                </div>
+                <details class="block-source-detail">
+                  <summary>查看 Mathpix Markdown 源码</summary>
+                  <pre><code>${escapeHtml(mathpixMarkdown)}</code></pre>
+                </details>
+              </section>`
+            : `<div class="review-placeholder">确认 MinerU 有误后，再调用 Mathpix 校正此块。</div>`
+        }
+      </div>
+    </article>
+  `;
+}
+
+function reviewBlockKey(pageNumber, blockIndex) {
+  return `${pageNumber}:${blockIndex}`;
+}
+
+async function toggleReviewBlock(key) {
+  if (!key) {
+    return;
+  }
+  if (state.reviewExpanded.has(key)) {
+    state.reviewExpanded.delete(key);
+  } else {
+    state.reviewExpanded.add(key);
+  }
+  await renderCurrentPage();
 }
 
 function renderBlockContent(markdown, entry) {
@@ -547,7 +815,7 @@ async function recognizeCurrentPageWithMathpix() {
     if (!data.ok) {
       throw new Error(data.error || "Mathpix 请求失败");
     }
-    const markdown = data.markdown || data.answer || "";
+    const markdown = prepareMathpixMarkdown(data.markdown || data.answer || "");
     if (!markdown) {
       throw new Error("Mathpix 响应为空");
     }
@@ -600,11 +868,12 @@ async function recognizeRiskBlockWithMathpix(blockIndex) {
     if (!data.ok) {
       throw new Error(data.error || "Mathpix 块级请求失败");
     }
-    const markdown = data.markdown || data.answer || "";
+    const markdown = prepareMathpixMarkdown(data.markdown || data.answer || "");
     if (!markdown.trim()) {
       throw new Error("Mathpix 块级响应为空");
     }
     getBlockOverrides(state.currentPage).set(blockKey, markdown);
+    state.reviewExpanded.add(reviewBlockKey(state.currentPage, blockKey));
     updateCorrectionSummary();
     setStatus("Ready", "ok");
   } catch (error) {
@@ -1137,13 +1406,75 @@ function buildBookMarkdown(useCorrections) {
   const total = getMineruPageCount();
   const pages = [];
   for (let pageNumber = 1; pageNumber <= total; pageNumber += 1) {
-    const markdown = useCorrections ? mineruMarkdownForPage(pageNumber) : baseMineruMarkdownForPage(pageNumber);
+    const markdown = prepareMarkdownForExport(useCorrections ? mineruMarkdownForPage(pageNumber) : baseMineruMarkdownForPage(pageNumber));
     pages.push(`<!-- page: ${pageNumber} -->\n\n${markdown || ""}`.trim());
   }
   const correctionNote = useCorrections
     ? `<!-- corrected_pages: ${correctedPageNumbers().join(", ") || "none"} -->\n\n`
     : "";
   return `${correctionNote}${pages.join("\n\n---\n\n")}\n`;
+}
+
+function prepareMarkdownForExport(markdown) {
+  return wrapBareDisplayMathBlocks(normalizeMathMarkdown(markdown)).replace(/\n{3,}/g, "\n\n").trim();
+}
+
+function prepareMathpixMarkdown(markdown) {
+  return prepareMarkdownForExport(markdown);
+}
+
+function wrapBareDisplayMathBlocks(markdown) {
+  const lines = String(markdown || "").replace(/\r\n?/g, "\n").split("\n");
+  const output = [];
+  let index = 0;
+  while (index < lines.length) {
+    if (String(lines[index] || "").trim() === "|") {
+      const nextIndex = nextNonEmptyLineIndex(lines, index + 1);
+      if (nextIndex >= 0 && isBareDisplayMathStart(lines[nextIndex])) {
+        index += 1;
+        continue;
+      }
+    }
+    if (isBareDisplayMathStart(lines[index])) {
+      const { blockLines, nextIndex } = collectBareDisplayMathBlock(lines, index);
+      output.push("$$", ...blockLines, "$$");
+      index = nextIndex;
+      continue;
+    }
+    output.push(lines[index]);
+    index += 1;
+  }
+  return output.join("\n");
+}
+
+function isBareDisplayMathStart(line) {
+  const trimmed = String(line || "").trim();
+  if (!trimmed || trimmed === "$$" || trimmed.startsWith("```")) {
+    return false;
+  }
+  return /^\\begin\s*\{(?:array|tabular|table|aligned|align|matrix|pmatrix|bmatrix|cases)\*?\}/.test(trimmed);
+}
+
+function collectBareDisplayMathBlock(lines, startIndex) {
+  const firstLine = String(lines[startIndex] || "");
+  const match = firstLine.match(/\\begin\s*\{([a-zA-Z*]+)\}/);
+  const env = match ? match[1].replace(/\*$/, "") : "";
+  const endPattern = env ? new RegExp(`\\\\end\\s*\\{${escapeRegExp(env)}\\*?\\}`) : /\\end\s*\{[a-zA-Z*]+\}/;
+  const blockLines = [];
+  let index = startIndex;
+  while (index < lines.length) {
+    blockLines.push(lines[index]);
+    if (endPattern.test(lines[index])) {
+      index += 1;
+      break;
+    }
+    index += 1;
+  }
+  return { blockLines, nextIndex: index };
+}
+
+function escapeRegExp(text) {
+  return String(text).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function correctedPageNumbers() {
@@ -1282,27 +1613,58 @@ function stripMarkdownFence(text) {
 
 function normalizeMathMarkdown(text) {
   const inlineMathPattern = /\b([A-Za-z]\s*=\s*[-+]?(?:[A-Za-z]+|\d+(?:\.\d+)?)(?:\s*\^\s*(?:\{[^}\n]+\}|[A-Za-z0-9()+-]+))?)(?=$|[\s,.;:|)\]])/g;
-  return String(text || "")
-    .split("\n")
-    .map((line) => {
-      if (!line.includes("|")) {
-        return wrapInlineMathOutsideMathSpans(line, inlineMathPattern);
+  const lines = String(text || "").split("\n");
+  const normalized = [];
+  let index = 0;
+  while (index < lines.length) {
+    const line = lines[index];
+    if (String(line || "").trim() === "|") {
+      const nextIndex = nextNonEmptyLineIndex(lines, index + 1);
+      if (nextIndex >= 0 && isLatexTableAt(lines, nextIndex)) {
+        index += 1;
+        continue;
       }
-      const cells = splitMarkdownTableRow(line);
-      if (cells.length < 2) {
-        return wrapInlineMathOutsideMathSpans(line, inlineMathPattern);
-      }
-      return `| ${cells
-        .map((cell) => {
-          const trimmed = cell.trim();
-          if (!trimmed || /^:?-{3,}:?$/.test(trimmed)) {
-            return trimmed;
-          }
-          return wrapInlineMathOutsideMathSpans(trimmed, inlineMathPattern);
-        })
-        .join(" | ")} |`;
-    })
-    .join("\n");
+    }
+    if (isLatexTableAt(lines, index)) {
+      const { blockLines, nextIndex } = collectLatexTableBlock(lines, index);
+      normalized.push(...blockLines);
+      index = nextIndex;
+      continue;
+    }
+    if (!isLikelyMarkdownTableLine(line)) {
+      normalized.push(wrapInlineMathOutsideMathSpans(line, inlineMathPattern));
+      index += 1;
+      continue;
+    }
+    const cells = splitMarkdownTableRow(line);
+    if (cells.length < 2) {
+      normalized.push(wrapInlineMathOutsideMathSpans(line, inlineMathPattern));
+      index += 1;
+      continue;
+    }
+    normalized.push(`| ${cells
+      .map((cell) => {
+        const trimmed = cell.trim();
+        if (!trimmed || /^:?-{3,}:?$/.test(trimmed)) {
+          return trimmed;
+        }
+        return wrapInlineMathOutsideMathSpans(trimmed, inlineMathPattern);
+      })
+      .join(" | ")} |`);
+    index += 1;
+  }
+  return normalized.join("\n");
+}
+
+function isLikelyMarkdownTableLine(line) {
+  const trimmed = String(line || "").trim();
+  if (!trimmed.includes("|")) {
+    return false;
+  }
+  if (/\\(?:left|right)?\|/.test(trimmed)) {
+    return false;
+  }
+  return trimmed.startsWith("|") || trimmed.endsWith("|") || /\s\|\s/.test(trimmed);
 }
 
 function wrapInlineMathOutsideMathSpans(text, inlineMathPattern) {
@@ -1458,7 +1820,7 @@ function isLatexTableAt(lines, index) {
 }
 
 function isLatexTableStart(line) {
-  return /^\\begin\{(?:array|tabular|table)\}/.test(String(line || "").trim());
+  return /^\\begin\s*\{(?:array|tabular|table)\*?\}/.test(String(line || "").trim());
 }
 
 function collectLatexTableBlock(lines, startIndex) {
@@ -1471,7 +1833,7 @@ function collectLatexTableBlock(lines, startIndex) {
   }
   while (index < lines.length) {
     blockLines.push(lines[index]);
-    if (/\\end\{(?:array|tabular|table)\}/.test(lines[index])) {
+    if (/\\end\s*\{(?:array|tabular|table)\*?\}/.test(lines[index])) {
       index += 1;
       break;
     }
@@ -1484,18 +1846,20 @@ function collectLatexTableBlock(lines, startIndex) {
 }
 
 function renderLatexTableBlock(lines) {
-  const raw = lines.join("\n");
+  const raw = lines.join("\n").replace(/^\s*\|\s*\n+/, "");
   const captionMatch = raw.match(/\\caption\{([^}]*)\}/);
   const caption = captionMatch ? captionMatch[1].trim() : "";
-  const tableMatch = raw.match(/\\begin\{(?:array|tabular)\}\s*(?:\{[^}\n]*\})?([\s\S]*?)\\end\{(?:array|tabular)\}/);
+  const tableMatch = raw.match(
+    /\\begin\s*\{(?:array|tabular)\*?\}\s*(?:\{[^}\n]*\})?([\s\S]*?)\\end\s*\{(?:array|tabular)\*?\}/,
+  );
   const tableSource = tableMatch ? tableMatch[1] : raw;
   const body = tableSource
-    .replace(/\\begin\{table\}/g, "")
-    .replace(/\\end\{table\}/g, "")
+    .replace(/\\begin\s*\{table\*?\}/g, "")
+    .replace(/\\end\s*\{table\*?\}/g, "")
     .replace(/\\captionsetup\{[^}]*\}/g, "")
     .replace(/\\caption\{[^}]*\}/g, "")
-    .replace(/\\begin\{(?:array|tabular)\}\s*(?:\{[^}\n]*\})?/, "")
-    .replace(/\\end\{(?:array|tabular)\}/, "")
+    .replace(/\\begin\s*\{(?:array|tabular)\*?\}\s*(?:\{[^}\n]*\})?/, "")
+    .replace(/\\end\s*\{(?:array|tabular)\*?\}/, "")
     .trim();
   const rows = body
     .split(/\\\\/)
@@ -1636,6 +2000,15 @@ function nextNonEmptyLine(lines, startIndex) {
   return "";
 }
 
+function nextNonEmptyLineIndex(lines, startIndex) {
+  for (let index = startIndex; index < lines.length; index += 1) {
+    if (String(lines[index] || "").trim()) {
+      return index;
+    }
+  }
+  return -1;
+}
+
 function renderMarkdownHtml(markdown) {
   const lines = String(markdown || "").replace(/\r\n?/g, "\n").split("\n");
   const parts = [];
@@ -1645,6 +2018,14 @@ function renderMarkdownHtml(markdown) {
     if (!lines[index].trim()) {
       index += 1;
       continue;
+    }
+
+    if (lines[index].trim() === "|") {
+      const nextIndex = nextNonEmptyLineIndex(lines, index + 1);
+      if (nextIndex >= 0 && isLatexTableAt(lines, nextIndex)) {
+        index += 1;
+        continue;
+      }
     }
 
     if (/^(#{1,6})\s+/.test(lines[index].trim())) {

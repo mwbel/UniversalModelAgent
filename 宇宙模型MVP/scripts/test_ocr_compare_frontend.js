@@ -9,6 +9,7 @@ const source = fs
   .readFileSync("frontend/ocr-compare.js", "utf8")
   .replace(/\ninitialize\(\);\s*$/, "\n");
 const patchBrowserSource = fs.readFileSync("frontend/ocr-core/patch/ocrPatch.browser.js", "utf8");
+const ocrCompareHtml = fs.readFileSync("frontend/ocr-compare.html", "utf8");
 const { hashBlockText: nodeHashBlockText } = require(path.resolve("frontend/ocr-core/patch/blockHasher"));
 const { createOcrPatch: nodeCreateOcrPatch } = require(path.resolve("frontend/ocr-core/patch/patchGenerator"));
 
@@ -54,6 +55,13 @@ function createOcrCompareContext(extra = {}) {
 function runOcrCompareInContext(testContext) {
   vm.runInContext(source, testContext);
   return testContext;
+}
+
+{
+  assert(ocrCompareHtml.includes('id="firstPageButton"'));
+  assert(ocrCompareHtml.includes('id="lastPageButton"'));
+  assert(ocrCompareHtml.includes('aria-label="跳转到首页"'));
+  assert(ocrCompareHtml.includes('aria-label="跳转到尾页"'));
 }
 
 {
@@ -385,6 +393,33 @@ function assertOcrPatchShape(patch) {
 }
 
 {
+  const result = JSON.parse(
+    call(`(() => {
+      state.ocrPatches = [];
+      const preserved = createAndStoreDraftOcrPatch({
+        pageNo: 21,
+        blockIndex: "0",
+        oldText: "Note that the transformation equations (2.60) resulted in unit coefficients.",
+        newText: "Note that the transformation equations resulted in unit coefficients.",
+        source: "human"
+      });
+      const alreadyPresent = createAndStoreDraftOcrPatch({
+        pageNo: 21,
+        blockIndex: "1",
+        oldText: "The binding-energy expansion is Eq. (2.33).",
+        newText: "The binding-energy expansion is Eq. (2.33).",
+        source: "mathpix"
+      });
+      return JSON.stringify({ preserved, alreadyPresent, patches: state.ocrPatches });
+    })()`),
+  );
+  assert(result.preserved.normalizedText.includes("(2.60)"), "missing equation number should be preserved from original block");
+  assert.strictEqual((result.alreadyPresent.normalizedText.match(/\(2\.33\)/g) || []).length, 1, "existing equation number should not be duplicated");
+  assert(result.patches[0].newText.includes("(2.60)"));
+  assert.strictEqual((result.patches[1].newText.match(/\(2\.33\)/g) || []).length, 1);
+}
+
+{
   const warnings = [];
   const missingPatchContext = createOcrCompareContext({
     console: {
@@ -493,19 +528,96 @@ function assertOcrPatchShape(patch) {
     });
   })()`);
   const parsed = JSON.parse(statusHtml);
-  assert(parsed.draftHtml.includes("Patch 状态：draft"));
+  assert(parsed.draftHtml.includes("Patch：draft"));
   assert(parsed.draftHtml.includes("data-ocr-patch-status-action=\"accepted\""));
   assert(parsed.draftHtml.includes(">接受<"));
   assert(parsed.draftHtml.includes(">拒绝<"));
-  assert(parsed.acceptedHtml.includes("Patch 状态：accepted"));
+  assert(parsed.acceptedHtml.includes("Patch：accepted"));
   assert(parsed.acceptedHtml.includes("已接受"));
   assert(!parsed.acceptedHtml.includes("data-ocr-patch-status-action=\"accepted\""));
-  assert(parsed.rejectedHtml.includes("Patch 状态：rejected"));
+  assert(parsed.rejectedHtml.includes("Patch：rejected"));
   assert(parsed.rejectedHtml.includes("已拒绝"));
   assert(!parsed.rejectedHtml.includes("data-ocr-patch-status-action=\"accepted\""));
-  assert(parsed.noopHtml.includes("Patch 状态：noop"));
+  assert(parsed.noopHtml.includes("Patch：noop"));
   assert(parsed.noopHtml.includes("无变化"));
   assert(!parsed.noopHtml.includes("data-ocr-patch-status-action=\"accepted\""));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression(["Original OCR block text"])}
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      state.riskByPage.set(1, [{
+        pageNumber: 1,
+        blockIndex: "0",
+        bbox: [0, 0, 10, 10],
+        text: "Original OCR block text",
+        reasons: ["split_formula_tokens"],
+        score: 0.5
+      }]);
+      const oldAccepted = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Original OCR block text",
+        newText: "Old accepted correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(oldAccepted.patchId, "accepted");
+      const mathpixDraft = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Original OCR block text",
+        newText: "Mathpix draft correction",
+        source: "mathpix"
+      }).patch;
+      getMathpixBlockDrafts(1).set("0", "Mathpix draft correction");
+      els.fileMeta = { textContent: "" };
+      els.statusBadge = { textContent: "", className: "" };
+      renderCurrentPage = async function noopRenderCurrentPage() {};
+      const trigger = {
+        closest() {
+          return {
+            querySelector() {
+              return { value: "Edited Markdown accepted correction" };
+            }
+          };
+        }
+      };
+      applyMathpixBlockEdit("0", trigger);
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify({
+        patches: state.ocrPatches.map((patch) => ({
+          patchId: patch.patchId,
+          source: patch.source,
+          status: patch.status,
+          newText: patch.newText,
+          replacedByPatchId: patch.metadata?.replacedByPatchId || ""
+        })),
+        draftExists: getMathpixBlockDrafts(1, false).has("0"),
+        override: getBlockOverrides(1, false).get("0"),
+        preview
+      });
+    })()`),
+  );
+  const humanAccepted = result.patches.find((patch) => patch.source === "human" && patch.newText === "Edited Markdown accepted correction");
+  const oldAccepted = result.patches.find((patch) => patch.newText === "Old accepted correction");
+  const mathpixDraft = result.patches.find((patch) => patch.source === "mathpix");
+  assert(humanAccepted, "edited Markdown should create a human patch");
+  assert.strictEqual(humanAccepted.status, "accepted");
+  assert.strictEqual(oldAccepted.status, "rejected");
+  assert.strictEqual(oldAccepted.replacedByPatchId, humanAccepted.patchId);
+  assert.strictEqual(mathpixDraft.status, "rejected");
+  assert.strictEqual(result.draftExists, false);
+  assert.strictEqual(result.override, "Edited Markdown accepted correction");
+  assert.strictEqual(result.preview.ok, true);
+  assert.strictEqual(result.preview.appliedPatchCount, 1);
+  assert(result.preview.markdown.includes("Edited Markdown accepted correction"));
+  assert(!result.preview.markdown.includes("Old accepted correction"));
+  assert(!result.preview.errors.some((error) => error.type === "multiple_accepted_patches_for_block"));
 }
 
 function setupPreviewPageExpression(blocks) {
@@ -548,6 +660,556 @@ function setupPreviewBookExpression(pages) {
       }))
     };
   `;
+}
+
+{
+  const savedItems = new Map();
+  const storage = {
+    getItem(key) {
+      return savedItems.has(key) ? savedItems.get(key) : null;
+    },
+    setItem(key, value) {
+      savedItems.set(key, String(value));
+    },
+    removeItem(key) {
+      savedItems.delete(key);
+    },
+  };
+  const persistContext = runOcrCompareInContext(
+    createOcrCompareContext({
+      require: createRequire(path.resolve("frontend/ocr-compare.js")),
+      localStorage: storage,
+    }),
+  );
+  const result = JSON.parse(
+    vm.runInContext(`(() => {
+      state.mineruFileName = "persist_middle.json";
+      state.pdfPageCount = 2;
+      ${setupPreviewBookExpression([["Persistent original block"], ["Persistent second page"]])}
+      state.mineruFileName = "persist_middle.json";
+      state.pdfPageCount = 2;
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Persistent original block",
+        newText: "Persistent accepted correction",
+        source: "mathpix"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      getMathpixBlockDrafts(1).set("0", "Persistent Mathpix draft");
+      getBlockOverrides(1).set("0", "Persistent block override");
+      state.mineruOverrides.set(2, "Persistent whole-page override");
+      state.mathpixCache.set(1, {
+        markdown: "Persistent Mathpix markdown",
+        editText: "Persistent edited Mathpix markdown",
+        latencyMs: 88
+      });
+      const saveOk = saveOcrWorkspaceState();
+      const key = ocrWorkspaceStorageKey();
+      state.ocrPatches = [];
+      state.mathpixBlockDrafts.clear();
+      state.mineruBlockOverrides.clear();
+      state.mineruOverrides.clear();
+      state.mathpixCache.clear();
+      const restored = restoreOcrWorkspaceState();
+      const output = {
+        saveOk,
+        key,
+        restored,
+        patchStatus: state.ocrPatches[0]?.status,
+        patchText: state.ocrPatches[0]?.newText,
+        draft: getMathpixBlockDrafts(1, false).get("0"),
+        blockOverride: getBlockOverrides(1, false).get("0"),
+        pageOverride: state.mineruOverrides.get(2),
+        mathpixEditText: state.mathpixCache.get(1)?.editText,
+        storedPatchCount: state.ocrPatches.length
+      };
+      const clearOk = clearPersistedOcrWorkspaceState();
+      output.clearOk = clearOk;
+      return JSON.stringify(output);
+    })()`, persistContext),
+  );
+  assert.strictEqual(result.saveOk, true);
+  assert.strictEqual(result.restored, true);
+  assert(result.key.includes("persist_middle.json"));
+  assert.strictEqual(result.patchStatus, "accepted");
+  assert.strictEqual(result.patchText, "Persistent accepted correction");
+  assert.strictEqual(result.draft, "Persistent Mathpix draft");
+  assert.strictEqual(result.blockOverride, "Persistent block override");
+  assert.strictEqual(result.pageOverride, "Persistent whole-page override");
+  assert.strictEqual(result.mathpixEditText, "Persistent edited Mathpix markdown");
+  assert.strictEqual(result.storedPatchCount, 1);
+  assert.strictEqual(result.clearOk, true);
+  assert.strictEqual(savedItems.has(result.key), false);
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression([
+        "Plain paragraph about the possible occurrence of EEP violations.",
+        "$$\\nM_R = M_0 - c^{-2} E_B(X,V)\\n$$",
+        "\\\\begin{array}{cc}\\nE_0 & E_1 \\\\\\\\ \\nV_0 & V_1\\n\\\\end{array}",
+        "E_B(X,V)=E_B^0+\\\\delta m_P^{jk} U^{jk}(X)-\\\\frac{1}{2}\\\\delta m_I^{jk}V^jV^k"
+      ])}
+      const risks = detectRiskCandidatesForPage(1);
+      return JSON.stringify(risks.map((risk) => ({
+        blockIndex: risk.blockIndex,
+        score: risk.score,
+        reasons: risk.reasons,
+        text: risk.text
+      })));
+    })()`),
+  );
+  assert(!result.some((risk) => risk.blockIndex === "0"), "plain prose should not be promoted only because nearby blocks have formulas");
+  assert(result.some((risk) => risk.blockIndex === "1" && risk.reasons.includes("display_math_block")), "display math must enter third-column risk candidates");
+  assert(result.some((risk) => risk.blockIndex === "2" && risk.reasons.includes("latex_math_environment")), "bare LaTeX math environments must enter third-column risk candidates");
+  assert(result.some((risk) => risk.blockIndex === "3" && risk.reasons.includes("standalone_equation_line")), "standalone equation lines must enter third-column risk candidates");
+}
+
+{
+  const result = JSON.parse(
+    call(`JSON.stringify(scoreRiskBlock("M_R = M_0 - c^{-2} E_B(X,V),"))`),
+  );
+  assert(result.score >= 0.25);
+  assert(result.reasons.includes("standalone_equation_line"));
+  assert.strictEqual(call('riskReasonLabel("display_math_block")'), "独立公式");
+  assert.strictEqual(call('riskReasonLabel("latex_math_environment")'), "LaTeX 公式环境");
+  assert.strictEqual(call('riskReasonLabel("standalone_equation_line")'), "独立方程行");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.riskByPage.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              { type: "title", lines: [{ spans: [{ content: "2.4 Ordinary Formalism" }] }] },
+              { type: "title", lines: [{ spans: [{ content: "2.5 The TH#µ Formalism" }] }] }
+            ]
+          }
+        ]
+      };
+      const risks = detectRiskCandidatesForPage(1);
+      return JSON.stringify(risks.map((risk) => ({
+        blockIndex: risk.blockIndex,
+        reasons: risk.reasons,
+        text: risk.text
+      })));
+    })()`),
+  );
+  assert(!result.some((risk) => risk.blockIndex === "0"), "ordinary MinerU title should not be promoted");
+  assert(result.some((risk) => risk.blockIndex === "1" && risk.reasons.includes("heading_special_symbol")), "MinerU title with OCR-risk symbols should enter third-column candidates");
+  assert(result.some((risk) => risk.text.includes("### 2.5 The TH#µ Formalism")));
+  assert.strictEqual(call('riskReasonLabel("heading_special_symbol")'), "标题特殊符号");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression([
+        "Schiff’s conjecture is discussed in the surrounding prose without a special scientific glyph.",
+        "This viewpoint is part of what has come to be known as the Dicke Framework, to be described in Section 2.1, allowing one to discuss the Eötvös experiment and tensor fields."
+      ])}
+      const risks = detectRiskCandidatesForPage(1);
+      return JSON.stringify(risks.map((risk) => ({
+        blockIndex: risk.blockIndex,
+        reasons: risk.reasons,
+        text: risk.text
+      })));
+    })()`),
+  );
+  assert(!result.some((risk) => risk.blockIndex === "0"), "ordinary apostrophes should not promote plain prose");
+  assert(result.some((risk) => risk.blockIndex === "1" && risk.reasons.includes("scientific_special_symbol")), "scientific special letters such as Eötvös should enter third-column candidates");
+  assert.strictEqual(call('riskReasonLabel("scientific_special_symbol")'), "科学特殊符号");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression([
+        "The principle can then be stated succinctly: for any body,1",
+        "1 Although Newton asserted only that m_P and m_I be proportional to each other, they can be made equal by suitable choice of units."
+      ])}
+      const risks = detectRiskCandidatesForPage(1);
+      return JSON.stringify(risks.map((risk) => ({
+        blockIndex: risk.blockIndex,
+        reasons: risk.reasons,
+        text: risk.text
+      })));
+    })()`),
+  );
+  assert(result.some((risk) => risk.blockIndex === "0" && risk.reasons.includes("footnote_marker_or_note")), "inline footnote marker should enter third-column candidates");
+  assert(result.some((risk) => risk.blockIndex === "1" && risk.reasons.includes("footnote_marker_or_note")), "footnote text should enter third-column candidates");
+  assert.strictEqual(call('riskReasonLabel("footnote_marker_or_note")'), "脚注/注释");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.riskByPage.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              {
+                type: "text",
+                lines: [{ spans: [{ content: "The principle can then be stated succinctly: for any body,1" }] }]
+              },
+              {
+                type: "discarded",
+                bbox: [200, 879, 911, 909],
+                lines: [{ spans: [{ content: "1 Although Newton asserted only that m_P and m_I be proportional to each other, they can be made equal by suitable choice of units." }] }]
+              }
+            ]
+          }
+        ]
+      };
+      const risks = detectRiskCandidatesForPage(1);
+      return JSON.stringify(risks.map((risk) => ({
+        blockIndex: risk.blockIndex,
+        reasons: risk.reasons,
+        text: risk.text
+      })));
+    })()`),
+  );
+  assert(result.some((risk) => risk.blockIndex === "1" && risk.reasons.includes("footnote_marker_or_note")), "discarded MinerU footnote should still enter third-column candidates");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression([
+        "The Eotv¨os experiment and the gravitational redshift experiment are used as probes of equivalence principles."
+      ])}
+      const risks = detectRiskCandidatesForPage(1);
+      return JSON.stringify(risks.map((risk) => ({
+        blockIndex: risk.blockIndex,
+        reasons: risk.reasons,
+        text: risk.text
+      })));
+    })()`),
+  );
+  assert(result.some((risk) => risk.blockIndex === "0" && risk.reasons.includes("scientific_special_symbol")), "broken diacritic OCR such as Eotv¨os should enter third-column candidates");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression([
+        "The Michelson-Morley (1887) experiment and its many descendants failed to find evidence at X-ray wavelengths.",
+        "The Michelson-Morley (1\\\\$\\\\$7) experiment and its many descendents (Shankland et al., 1&55; Champeney et al., 1&6(; Jaseja et al., 1&6); Brillet and Hall, 1&7&; Riis et al., 1&\\\\$\\\\$; Krisher et al., 1&&0b) failed to +nd evidence.",
+        "At the other extreme, a 1&6) experiment at CERN timed photons over a ,ight path of (0 meters and later con+rmed the e-ect."
+      ])}
+      const risks = detectRiskCandidatesForPage(1);
+      return JSON.stringify(risks.map((risk) => ({
+        blockIndex: risk.blockIndex,
+        reasons: risk.reasons,
+        text: risk.text
+      })));
+    })()`),
+  );
+  assert(!result.some((risk) => risk.blockIndex === "0"), "ordinary years and X-ray prose should not enter OCR-garbled candidates");
+  assert(result.some((risk) => risk.blockIndex === "1" && risk.reasons.includes("ocr_garbled_text")), "garbled year-like OCR should enter third-column candidates");
+  assert(result.some((risk) => risk.blockIndex === "2" && risk.reasons.includes("ocr_garbled_text")), "garbled prose OCR should enter third-column candidates");
+  assert.strictEqual(call('riskReasonLabel("ocr_garbled_text")'), "疑似 OCR 字符乱码");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.riskByPage.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            page_size: [1000, 1200],
+            para_blocks: [
+              { type: "text", bbox: [120, 305, 900, 430], lines: [{ spans: [{ content: "The Principle of Equivalence has played a central role in the development of gravitation theory." }] }] }
+            ]
+          }
+        ]
+      };
+      const risks = detectRiskCandidatesForPage(1);
+      return JSON.stringify(risks.map((risk) => ({
+        blockIndex: risk.blockIndex,
+        bbox: risk.bbox,
+        syntheticPlacement: risk.syntheticPlacement,
+        reasons: risk.reasons,
+        text: risk.text
+      })));
+    })()`),
+  );
+  const candidate = result.find((risk) => risk.blockIndex === "missing-heading-1");
+  assert(candidate, "page with top background heading omitted by MinerU should get a synthetic title crop candidate");
+  assert(candidate.reasons.includes("background_heading_missing"));
+  assert.strictEqual(candidate.syntheticPlacement, "page_top");
+  assert(Array.isArray(candidate.bbox) && candidate.bbox[3] > 0, "synthetic title candidate should include a crop bbox");
+  assert.strictEqual(call('riskReasonLabel("background_heading_missing")'), "疑似漏识别标题");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.riskByPage.clear();
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            page_size: [1000, 1200],
+            para_blocks: [
+              { type: "text", bbox: [120, 520, 900, 690], lines: [{ spans: [{ content: "Einstein's generalization of the Weak Equivalence Principle may not have been a generalization at all." }] }] }
+            ]
+          }
+        ]
+      };
+      const risks = detectRiskCandidatesForPage(1);
+      const candidate = risks.find((risk) => risk.blockIndex === "missing-page-top-text-1");
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: candidate.blockIndex,
+        oldText: candidate.text,
+        newText: "of Robert Dicke, we have come to view principles of equivalence, along with experiments such as the Eötvös experiment.",
+        source: "mathpix"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify({
+        candidate,
+        preview
+      });
+    })()`),
+  );
+  assert(result.candidate, "page top text gap should get a synthetic current-page OCR candidate");
+  assert(result.candidate.reasons.includes("page_top_text_missing"));
+  assert.strictEqual(result.candidate.syntheticLabel, "页首正文候选");
+  assert.strictEqual(call('riskReasonLabel("page_top_text_missing")'), "疑似漏识别页首正文");
+  assert.strictEqual(result.preview.ok, true);
+  assert.strictEqual(result.preview.appliedPatchCount, 1);
+  assert(result.preview.markdown.includes("of Robert Dicke, we have come to view principles of equivalence"));
+  assert(result.preview.markdown.includes("Einstein's generalization of the Weak Equivalence Principle"));
+  assert(!result.preview.warnings.some((warning) => warning.type === "patch_block_not_found"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.riskByPage.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            page_size: [1000, 1200],
+            para_blocks: [
+              { type: "title", bbox: [100, 80, 900, 150], lines: [{ spans: [{ content: "2 The Einstein Equivalence Principle" }] }] },
+              { type: "text", bbox: [120, 305, 900, 430], lines: [{ spans: [{ content: "The Principle of Equivalence has played a central role in the development of gravitation theory." }] }] }
+            ]
+          }
+        ]
+      };
+      return JSON.stringify(detectRiskCandidatesForPage(1).map((risk) => risk.blockIndex));
+    })()`),
+  );
+  assert(!result.includes("missing-heading-1"), "existing top title should suppress the synthetic missing-title candidate");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression([
+        "This paragraph explains the qualitative consequences in ordinary prose without formula tokens.",
+        "The rest mass $M_R$ is mentioned once in this sentence but the expression is otherwise ordinary.",
+        "The possible occurrence of EEP violations arises when we write the rest mass $M_R$ in the form where $M_0$ is the sum of rest masses and $E_B(X,V)$ is the binding energy; the location and velocity dependence in $E_B$ is a result of the external gravitational environment.",
+        "where M_R = M_0 - c^{-2}E_B(X,V), and E_B(X,V)=E_B^0+\\\\delta m_P^{jk}U^{jk}(X)-\\\\frac{1}{2}\\\\delta m_I^{jk}V^jV^k"
+      ])}
+      const risks = detectRiskCandidatesForPage(1);
+      return JSON.stringify(risks.map((risk) => ({
+        blockIndex: risk.blockIndex,
+        reasons: risk.reasons,
+        text: risk.text
+      })));
+    })()`),
+  );
+  assert(!result.some((risk) => risk.blockIndex === "0"), "ordinary prose should not be promoted by dense math rules");
+  assert(!result.some((risk) => risk.blockIndex === "1"), "a single inline variable should not make a block high risk");
+  assert(result.some((risk) => risk.blockIndex === "2" && risk.reasons.includes("math_dense_text")), "multiple inline math spans should enter third-column candidates");
+  assert(result.some((risk) => risk.blockIndex === "3" && risk.reasons.includes("math_dense_text")), "formula-dense physics text without display delimiters should enter third-column candidates");
+  assert.strictEqual(call('riskReasonLabel("math_dense_text")'), "公式密集段落");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 2;
+      state.ocrPatches = [];
+      state.riskByPage.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            page_size: [1000, 1200],
+            para_blocks: [
+              { type: "text", bbox: [100, 320, 900, 620], lines: [{ spans: [{ content: "The Eötvös experiment and tensor fields are discussed in the middle of the previous page." }] }] },
+              { type: "text", bbox: [100, 1040, 900, 1160], lines: [{ spans: [{ content: "Plain previous page footer without risky notation." }] }] }
+            ]
+          },
+          {
+            page_size: [1000, 1200],
+            para_blocks: [
+              { type: "text", bbox: [100, 120, 900, 260], lines: [{ spans: [{ content: "of Robert Dicke, we have come to view principles of equivalence in this section." }] }] },
+              { type: "title", bbox: [100, 870, 900, 930], lines: [{ spans: [{ content: "2.1 The Dicke Framework" }] }] },
+              { type: "text", bbox: [100, 940, 900, 1130], lines: [{ spans: [{ content: "The Dicke Framework for analyzing experimental tests of gravitation was spelled out in appendix 4 of Dicke's lectures." }] }] }
+            ]
+          }
+        ]
+      };
+      const risks = detectRiskCandidatesForPage(2);
+      return JSON.stringify(risks.map((risk) => ({
+        blockIndex: risk.blockIndex,
+        sourceBlockIndex: risk.sourceBlockIndex,
+        crossPageSourcePage: risk.crossPageSourcePage,
+        crossPageHint: risk.crossPageHint,
+        reasons: risk.reasons,
+        text: risk.text
+      })));
+    })()`),
+  );
+  assert(!result.some((risk) => risk.crossPageSourcePage === 1 || risk.text.includes("middle of the previous page")), "previous-page middle content should not be injected into the current page");
+  assert(result.some((risk) => risk.blockIndex === "1" && risk.reasons.includes("page_bottom_boundary")), "current-page bottom heading should enter third-column candidates");
+  assert(result.some((risk) => risk.blockIndex === "2" && risk.reasons.includes("page_bottom_boundary")), "current-page bottom paragraph should enter third-column candidates");
+  assert.strictEqual(call('riskReasonLabel("page_bottom_boundary")'), "页底待核查");
+}
+
+{
+  const html = call(`(() => {
+    state.currentPage = 2;
+    state.pdfPageCount = 4;
+    const risk = {
+      blockIndex: "cross-previous_tail-1-1",
+      sourceBlockIndex: "1",
+      crossPageSourcePage: 1,
+      crossPageHint: "previous_tail",
+      crossPageLabel: "上一页候选 · 第 1 页",
+      bbox: null,
+      reasons: ["cross_page_previous_tail", "scientific_special_symbol"]
+    };
+    const segment = {
+      blockIndex: risk.blockIndex,
+      markdown: "The Eötvös experiment appears on the previous OCR page.",
+      kind: "text"
+    };
+    return renderReviewItem(segment, risk, "", false, "", null);
+  })()`);
+  assert(html.includes("跨页候选"));
+  assert(html.includes('data-cross-page-jump-page="1"'));
+  assert(html.includes('data-cross-page-jump-block="1"'));
+  assert(!html.includes("data-risk-mathpix"));
+}
+
+{
+  const navHtml = call(`(() => {
+    state.currentPage = 2;
+    state.pdfPageCount = 4;
+    return renderReviewBottomPager();
+  })()`);
+  assert(navHtml.includes('data-page-nav="review-bottom"'));
+  assert(navHtml.includes('data-page-jump="first"'));
+  assert(navHtml.includes('data-page-jump="prev"'));
+  assert(navHtml.includes('data-page-jump="next"'));
+  assert(navHtml.includes('data-page-jump="last"'));
+  assert(navHtml.includes("⏮"));
+  assert(navHtml.includes("⏭"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      const listeners = [];
+      document = {
+        createElement() {
+          return {
+            className: "",
+            innerHTML: "",
+            querySelectorAll() {
+              return [
+                {
+                  dataset: { imageZoom: "out" },
+                  addEventListener(type) {
+                    listeners.push(type);
+                  }
+                },
+                {
+                  dataset: { imageZoom: "in" },
+                  addEventListener(type) {
+                    listeners.push(type);
+                  }
+                }
+              ];
+            },
+            querySelector() {
+              return {
+                addEventListener(type) {
+                  listeners.push(type);
+                }
+              };
+            }
+          };
+        }
+      };
+      state.currentPage = 6;
+      state.pdfImageZoom = 1;
+      const normal = renderImageCard({ pageNumber: 6, image: "data:image/png;base64,abc", width: 919, height: 1256 });
+      state.pdfImageZoom = 1.75;
+      const zoomed = renderImageCard({ pageNumber: 6, image: "data:image/png;base64,abc", width: 919, height: 1256 });
+      return JSON.stringify({
+        normalClass: normal.className,
+        zoomedClass: zoomed.className,
+        normalHtml: normal.innerHTML,
+        zoomedHtml: zoomed.innerHTML,
+        listeners
+      });
+    })()`),
+  );
+  assert(result.normalHtml.includes('data-image-zoom="in"'));
+  assert(result.normalHtml.includes('data-image-zoom="out"'));
+  assert(result.normalHtml.includes("100%"));
+  assert(result.zoomedHtml.includes("175%"));
+  assert(result.zoomedHtml.includes("--pdf-image-zoom: 1.75"));
+  assert(!result.normalClass.includes("is-zoomed"));
+  assert(result.zoomedClass.includes("is-zoomed"));
+  assert(result.listeners.includes("click"));
+}
+
+{
+  const mineruCardHtml = call(`(() => {
+    ${setupPreviewPageExpression(["MinerU preview source"])}
+    state.mineruFileName = "Theory and Experiment in Gravitational Physics long middle file name.json";
+    document = {
+      createElement() {
+        return {
+          className: "",
+          innerHTML: "",
+          querySelector() {
+            return { addEventListener() {} };
+          }
+        };
+      }
+    };
+    const card = renderMineruCard();
+    return card.innerHTML;
+  })()`);
+  assert(!mineruCardHtml.includes("Theory and Experiment in Gravitational Physics long middle file name.json"));
+  assert(mineruCardHtml.includes("当前 MinerU 识别结果"));
 }
 
 {
@@ -973,6 +1635,142 @@ function setupPreviewBookExpression(pages) {
 }
 
 {
+  const status = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Empty status source"]])}
+      return JSON.stringify(getAcceptedCorrectedDownloadStatus());
+    })()`),
+  );
+  assert.strictEqual(status.status, "empty");
+  assert.strictEqual(status.canDownload, false);
+  assert.strictEqual(status.acceptedPatchCount, 0);
+  assert(status.message.includes("当前没有 accepted patch"));
+}
+
+{
+  const status = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Ready status source"], ["Ready untouched page"]])}
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Ready status source",
+        newText: "Ready status correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      return JSON.stringify(getAcceptedCorrectedDownloadStatus());
+    })()`),
+  );
+  assert.strictEqual(status.status, "ready");
+  assert.strictEqual(status.canDownload, true);
+  assert.strictEqual(status.acceptedPatchCount, 1);
+  assert.strictEqual(status.appliedPatchCount, 1);
+  assert.strictEqual(status.warningCount, 0);
+  assert.strictEqual(status.errorCount, 0);
+}
+
+{
+  const status = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Warning status source"], ["Warning status host"]])}
+      const valid = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Warning status source",
+        newText: "Warning status correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(valid.patchId, "accepted");
+      const missing = createAndStoreDraftOcrPatch({
+        pageNo: 2,
+        blockIndex: "99",
+        oldText: "Warning status missing source",
+        newText: "Warning status missing correction",
+        source: "mathpix"
+      }).patch;
+      updateOcrPatchStatus(missing.patchId, "accepted");
+      return JSON.stringify(getAcceptedCorrectedDownloadStatus());
+    })()`),
+  );
+  assert.strictEqual(status.status, "warning-only");
+  assert.strictEqual(status.canDownload, true);
+  assert.strictEqual(status.acceptedPatchCount, 2);
+  assert.strictEqual(status.appliedPatchCount, 1);
+  assert.strictEqual(status.errorCount, 0);
+  assert.strictEqual(status.firstWarningType, "patch_block_not_found");
+  assert(status.message.includes("warning"));
+}
+
+{
+  const status = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Blocked status source"]])}
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Blocked status source",
+        newText: "Blocked status correction",
+        source: "mathpix"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      patch.oldHash = "0".repeat(64);
+      return JSON.stringify(getAcceptedCorrectedDownloadStatus());
+    })()`),
+  );
+  assert.strictEqual(status.status, "blocked");
+  assert.strictEqual(status.canDownload, false);
+  assert.strictEqual(status.errorCount, 1);
+  assert.strictEqual(status.firstErrorType, "old_hash_mismatch");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Status mutation source"]])}
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Status mutation source",
+        newText: "Status mutation correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      getBlockOverrides(1).set("0", "Status override stays");
+      const beforePatches = JSON.stringify(state.ocrPatches);
+      const beforeOverrides = JSON.stringify(Array.from(getBlockOverrides(1).entries()));
+      const originalExportMineruMarkdown = exportMineruMarkdown;
+      const originalBuildBookMarkdown = buildBookMarkdown;
+      let exportCalled = 0;
+      let buildCalled = 0;
+      exportMineruMarkdown = function exportProbe() {
+        exportCalled += 1;
+        throw new Error("download status should not call formal export");
+      };
+      buildBookMarkdown = function buildProbe() {
+        buildCalled += 1;
+        throw new Error("download status should not call formal buildBookMarkdown");
+      };
+      let status;
+      try {
+        status = getAcceptedCorrectedDownloadStatus();
+      } finally {
+        exportMineruMarkdown = originalExportMineruMarkdown;
+        buildBookMarkdown = originalBuildBookMarkdown;
+      }
+      const afterPatches = JSON.stringify(state.ocrPatches);
+      const afterOverrides = JSON.stringify(Array.from(getBlockOverrides(1).entries()));
+      return JSON.stringify({ status, beforePatches, afterPatches, beforeOverrides, afterOverrides, exportCalled, buildCalled });
+    })()`),
+  );
+  assert.strictEqual(result.status.status, "ready");
+  assert.strictEqual(result.beforePatches, result.afterPatches);
+  assert.strictEqual(result.beforeOverrides, result.afterOverrides);
+  assert.strictEqual(result.exportCalled, 0);
+  assert.strictEqual(result.buildCalled, 0);
+}
+
+{
   const result = JSON.parse(
     call(`(() => {
       ${setupPreviewBookExpression([["No accepted download source"]])}
@@ -992,6 +1790,8 @@ function setupPreviewBookExpression(pages) {
   );
   assert.strictEqual(result.downloadResult.ok, false);
   assert.strictEqual(result.downloadResult.reason, "no_accepted_patch");
+  assert.strictEqual(result.downloadResult.status.status, "empty");
+  assert.strictEqual(result.downloadResult.status.canDownload, false);
   assert.strictEqual(result.downloads.length, 0);
   assert(result.downloadResult.preview.warnings.some((warning) => warning.type === "no_accepted_patch"));
   assert(result.preview.warnings.some((warning) => warning.message.includes("accepted patch")));
@@ -1024,6 +1824,8 @@ function setupPreviewBookExpression(pages) {
     })()`),
   );
   assert.strictEqual(result.downloadResult.ok, true);
+  assert.strictEqual(result.downloadResult.status.status, "ready");
+  assert.strictEqual(result.downloadResult.status.canDownload, true);
   assert.strictEqual(result.downloads.length, 1);
   assert(result.downloads[0].filename.endsWith("-accepted-corrected.md"));
   assert(result.downloads[0].text.includes("Generated by OCR accepted patch dry-run export."));
@@ -1120,6 +1922,8 @@ function setupPreviewBookExpression(pages) {
   );
   assert.strictEqual(result.downloadResult.ok, false);
   assert.strictEqual(result.downloadResult.reason, "preview_not_ok");
+  assert.strictEqual(result.downloadResult.status.status, "blocked");
+  assert.strictEqual(result.downloadResult.status.canDownload, false);
   assert.strictEqual(result.downloads.length, 0);
   assert(result.downloadResult.preview.errors.some((error) => error.type === "old_hash_mismatch"));
 }
@@ -1159,6 +1963,9 @@ function setupPreviewBookExpression(pages) {
     })()`),
   );
   assert.strictEqual(result.downloadResult.ok, true);
+  assert.strictEqual(result.downloadResult.status.status, "warning-only");
+  assert.strictEqual(result.downloadResult.status.canDownload, true);
+  assert.strictEqual(result.downloadResult.status.firstWarningType, "patch_block_not_found");
   assert.strictEqual(result.downloads.length, 1);
   assert.strictEqual(result.downloadResult.preview.appliedPatchCount, 1);
   assert.strictEqual(result.downloadResult.preview.skippedPatchCount, 1);
@@ -1247,17 +2054,28 @@ function setupPreviewBookExpression(pages) {
 {
   const uiHtml = call(`(() => {
     ${setupPreviewPageExpression(["UI source"])}
-    const fakeCard = {
-      className: "",
-      innerHTML: "",
-      querySelectorAll() { return []; },
-      querySelector() { return null; }
-    };
+    function fakeCard() {
+      return {
+        className: "",
+        innerHTML: "",
+        querySelectorAll() { return []; },
+        querySelector() { return null; }
+      };
+    }
     document = {
-      createElement() { return fakeCard; }
+      createElement() { return fakeCard(); }
     };
     state.riskByPage.clear();
-    const card = renderReviewCard();
+    const emptyCard = renderReviewCard();
+    const patch = createAndStoreDraftOcrPatch({
+      pageNo: 1,
+      blockIndex: "0",
+      oldText: "UI source",
+      newText: "UI accepted correction",
+      source: "human"
+    }).patch;
+    updateOcrPatchStatus(patch.patchId, "accepted");
+    const acceptedCard = renderReviewCard();
     state.acceptedPatchPreview = {
       ok: true,
       pageNo: 1,
@@ -1278,15 +2096,37 @@ function setupPreviewBookExpression(pages) {
     };
     const panel = renderAcceptedPatchPreviewPanel();
     const bookPanel = renderAcceptedPatchBookPreviewPanel();
-    return JSON.stringify({ html: card.innerHTML, panel, bookPanel });
+    const statusHtml = ["empty", "ready", "warning-only", "blocked"].map((status) =>
+      renderAcceptedCorrectedDownloadStatus({
+        status,
+        canDownload: status === "ready" || status === "warning-only",
+        message: status,
+        acceptedPatchCount: status === "empty" ? 0 : 1,
+        appliedPatchCount: status === "empty" || status === "blocked" ? 0 : 1,
+        warningCount: status === "warning-only" ? 1 : 0,
+        errorCount: status === "blocked" ? 1 : 0
+      })
+    ).join("\\n");
+    return JSON.stringify({ emptyHtml: emptyCard.innerHTML, acceptedHtml: acceptedCard.innerHTML, panel, bookPanel, statusHtml });
   })()`);
   const parsed = JSON.parse(uiHtml);
-  assert(parsed.html.includes("预览 accepted 校正稿"));
-  assert(parsed.html.includes("data-preview-accepted-patches"));
-  assert(parsed.html.includes("预览整书 accepted 校正稿"));
-  assert(parsed.html.includes("data-preview-accepted-book-patches"));
-  assert(parsed.html.includes("下载 accepted 校正稿"));
-  assert(parsed.html.includes("data-download-accepted-corrected"));
+  assert(!parsed.emptyHtml.includes("预览 accepted 校正稿"));
+  assert(!parsed.emptyHtml.includes("data-preview-accepted-patches"));
+  assert(!parsed.emptyHtml.includes("下载 accepted 校正稿"));
+  assert(!parsed.emptyHtml.includes("data-accepted-download-status"));
+  assert(parsed.acceptedHtml.includes("预览 accepted 校正稿"));
+  assert(parsed.acceptedHtml.includes("data-preview-accepted-patches"));
+  assert(parsed.acceptedHtml.includes("预览整书 accepted 校正稿"));
+  assert(parsed.acceptedHtml.includes("data-preview-accepted-book-patches"));
+  assert(parsed.acceptedHtml.includes("下载 accepted 校正稿"));
+  assert(parsed.acceptedHtml.includes("data-download-accepted-corrected"));
+  assert(parsed.acceptedHtml.includes("data-accepted-download-status"));
+  assert(parsed.acceptedHtml.includes("下载状态：ready"));
+  assert(parsed.acceptedHtml.indexOf('class="review-list markdown-body"') < parsed.acceptedHtml.indexOf('data-accepted-patch-export-section'), "accepted export tools should be rendered after the review list");
+  assert(parsed.statusHtml.includes('data-accepted-download-status="empty"'));
+  assert(parsed.statusHtml.includes('data-accepted-download-status="ready"'));
+  assert(parsed.statusHtml.includes('data-accepted-download-status="warning-only"'));
+  assert(parsed.statusHtml.includes('data-accepted-download-status="blocked"'));
   assert(parsed.panel.includes("appliedPatchCount: 1"));
   assert(parsed.panel.includes("Preview correction text"));
   assert(parsed.bookPanel.includes("acceptedPatchCount: 1"));
@@ -1452,6 +2292,34 @@ call(`
 assert(call('state.reviewExpanded.has("3:a")'), "first risk block should expand on first page render");
 call(`ensureDefaultReviewExpansion([{ blockIndex: "b" }]);`);
 assert(!call('state.reviewExpanded.has("3:b")'), "default expansion should only initialize once per page");
+const reviewToggleResult = JSON.parse(
+  call(`(() => {
+    const originalRenderCurrentPage = renderCurrentPage;
+    renderCurrentPage = async function renderCurrentPageStub() {};
+    try {
+      state.reviewExpanded.clear();
+      state.reviewExpanded.add("3:a");
+      state.reviewExpanded.add("3:c");
+      toggleReviewBlock("3:b");
+      const afterOpen = Array.from(state.reviewExpanded);
+      toggleReviewBlock("3:b");
+      const afterClose = Array.from(state.reviewExpanded);
+      return JSON.stringify({ afterOpen, afterClose });
+    } finally {
+      renderCurrentPage = originalRenderCurrentPage;
+    }
+  })()`),
+);
+assert.strictEqual(
+  JSON.stringify(reviewToggleResult.afterOpen),
+  JSON.stringify(["3:b"]),
+  "opening a review block should close previously expanded blocks",
+);
+assert.strictEqual(
+  JSON.stringify(reviewToggleResult.afterClose),
+  JSON.stringify([]),
+  "clicking the open review block should collapse it",
+);
 call(`expandOnlyReviewBlock(3, "b");`);
 assert.strictEqual(
   call("JSON.stringify(Array.from(state.reviewExpanded))"),
@@ -1489,7 +2357,12 @@ const reviewHtml = call(`
     "New Mathpix draft"
   )
 `);
-assert(reviewHtml.includes("Mathpix 待应用"), "new Mathpix draft should be shown as pending even when an older correction exists");
+assert(reviewHtml.includes('data-review-item-state="mathpix-draft"'), "new Mathpix draft should be marked as the active state");
+assert(reviewHtml.includes("Mathpix draft"), "new Mathpix draft should be shown as pending even when an older correction exists");
+assert(!reviewHtml.includes("待核查"), "review item title should avoid noisy pending copy");
+assert(!reviewHtml.includes("公式被拆散"), "review item title should avoid long risk reason chains");
+assert(reviewHtml.includes("保存修改并接受"), "editing Mathpix Markdown should use the streamlined save-and-accept action");
+assert(!reviewHtml.includes("应用到校正稿"), "old apply wording should not be shown in block edit UI");
 assert(reviewHtml.includes("New Mathpix draft"), "pending Mathpix draft should be previewed");
 assert(!reviewHtml.includes("Old applied correction</div>"), "old applied correction should not be the visible pending preview");
 

@@ -10,6 +10,7 @@ const source = fs
   .replace(/\ninitialize\(\);\s*$/, "\n");
 const patchBrowserSource = fs.readFileSync("frontend/ocr-core/patch/ocrPatch.browser.js", "utf8");
 const ocrCompareHtml = fs.readFileSync("frontend/ocr-compare.html", "utf8");
+const ocrCompareCss = fs.readFileSync("frontend/ocr-compare.css", "utf8");
 const { hashBlockText: nodeHashBlockText } = require(path.resolve("frontend/ocr-core/patch/blockHasher"));
 const { createOcrPatch: nodeCreateOcrPatch } = require(path.resolve("frontend/ocr-core/patch/patchGenerator"));
 
@@ -58,6 +59,13 @@ function runOcrCompareInContext(testContext) {
 }
 
 {
+  assert.strictEqual(call("DEFAULT_PDF_IMAGE_ZOOM"), 1.25);
+  assert(ocrCompareCss.includes(".review-block-navigator"));
+  assert(ocrCompareCss.includes("position: sticky"));
+  assert(ocrCompareCss.includes(".review-block-nav-patch"));
+  assert(ocrCompareCss.includes(".preview-panel"));
+  assert(ocrCompareCss.includes(".page-list"));
+  assert(ocrCompareCss.includes("overflow: visible"));
   assert(ocrCompareHtml.includes('id="firstPageButton"'));
   assert(ocrCompareHtml.includes('id="lastPageButton"'));
   assert(ocrCompareHtml.includes('id="contentListInput"'));
@@ -1569,6 +1577,34 @@ function setupPreviewBookExpression(pages) {
 {
   const result = JSON.parse(
     call(`(() => {
+      const wrap = {
+        clientHeight: 400,
+        clientWidth: 600,
+        scrollHeight: 1700,
+        scrollWidth: 1250,
+        scrollTo(options) {
+          this.scrolled = options;
+        }
+      };
+      const image = { clientWidth: 1250, clientHeight: 1700 };
+      const focus = { hidden: true, style: {} };
+      const ok = applyPdfFocusBox(wrap, image, focus, { bbox: [100, 200, 300, 260], pageSize: [500, 1000] });
+      return JSON.stringify({ ok, hidden: focus.hidden, style: focus.style, scrolled: wrap.scrolled });
+    })()`),
+  );
+  assert.strictEqual(result.ok, true);
+  assert.strictEqual(result.hidden, false);
+  assert.strictEqual(result.style.left, "250px");
+  assert.strictEqual(result.style.top, "340px");
+  assert.strictEqual(result.style.width, "500px");
+  assert.strictEqual(result.style.height, "102px");
+  assert.strictEqual(result.scrolled.top, 191);
+  assert.strictEqual(result.scrolled.left, 200);
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
       state.currentPage = 6;
       state.reviewExpanded = new Set(["6:0"]);
       state.riskByPage = new Map();
@@ -1652,20 +1688,31 @@ function setupPreviewBookExpression(pages) {
     call(`(() => {
       state.currentPage = 1;
       state.reviewExpanded = new Set(["1:7"]);
+      state.ocrPatches = [];
       const entries = buildReviewEntriesForPage(
         [{ blockIndex: "7", bbox: [0, 20, 10, 30], text: "Risk 7", reasons: ["math_dense_text"] }],
         [
           { blockIndex: "3", markdown: "Visible block 3", bbox: [0, 0, 10, 10], pageSize: [100, 100] },
-          { blockIndex: "7", markdown: "Visible block 7", bbox: [0, 20, 10, 30], pageSize: [100, 100] }
+          { blockIndex: "7", markdown: "Visible block 7 after local edit", bbox: [0, 20, 10, 30], pageSize: [100, 100] }
         ],
         1
       );
+      createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "7",
+        oldText: "Visible block 7",
+        newText: "Corrected block 7",
+        source: "mathpix"
+      });
       const html = renderReviewBlockNavigator(entries);
       return JSON.stringify({ html });
     })()`),
   );
   assert(result.html.includes("块导航"));
   assert(result.html.includes("2 / 2"));
+  assert(result.html.includes("review-block-nav-patch"));
+  assert(result.html.includes('data-ocr-patch-status-action="accepted"'));
+  assert(result.html.includes('data-ocr-patch-status-action="rejected"'));
   assert(result.html.includes('data-review-block-step="prev"'));
   assert(result.html.includes('data-review-block-select'));
   assert(result.html.includes('value="7" selected'));
@@ -2903,5 +2950,56 @@ assert(reviewHtml.includes("保存修改并接受"), "editing Mathpix Markdown s
 assert(!reviewHtml.includes("应用到校正稿"), "old apply wording should not be shown in block edit UI");
 assert(reviewHtml.includes("New Mathpix draft"), "pending Mathpix draft should be previewed");
 assert(!reviewHtml.includes("Old applied correction</div>"), "old applied correction should not be the visible pending preview");
+
+const imageRenderHtml = call(`renderMarkdownHtml("![image](fig-2-2.jpg)\\n\\nFig. 2.2 Caption")`);
+assert(imageRenderHtml.includes("markdown-image-reference"), "standalone markdown image should render as image reference");
+assert(imageRenderHtml.includes('src="fig-2-2.jpg"'), "image source should be preserved in rendered html");
+assert(imageRenderHtml.includes("Fig. 2.2"), "caption text should remain visible after image rendering");
+
+const preservedFigurePatch = JSON.parse(
+  call(`(() => {
+    state.ocrPatches = [];
+    const oldText = "![image](fig-2-2.jpg)\\n\\nFig. 2.2 Selected tests (2.60) \\\\tag{2.60}";
+    const result = createAndStoreDraftOcrPatch({
+      pageNo: 21,
+      blockIndex: "1",
+      oldText,
+      newText: "Selected tests of the Weak Equivalence Principle.",
+      source: "human"
+    });
+    return JSON.stringify({ normalizedText: result.normalizedText, patchText: result.patch.newText });
+  })()`),
+);
+assert(preservedFigurePatch.normalizedText.includes("![image](fig-2-2.jpg)"), "human patch should preserve original image reference");
+assert(preservedFigurePatch.normalizedText.includes("Fig. 2.2"), "human patch should preserve original figure label");
+assert(preservedFigurePatch.normalizedText.includes("(2.60)"), "human patch should preserve original equation number");
+assert(preservedFigurePatch.normalizedText.includes("\\tag{2.60}"), "human patch should preserve original latex tag");
+assert.strictEqual((preservedFigurePatch.normalizedText.match(/Fig\. 2\.2/g) || []).length, 1);
+
+const imagePadding = JSON.parse(
+  call(`JSON.stringify(cropPaddingForRiskBlock({ text: "![image](fig.jpg)", pageSize: [1000, 1200], reasons: [] }))`),
+);
+assert(imagePadding.left >= 120, "image block crop should expand left enough to include side figure labels");
+assert(imagePadding.bottom >= 40, "image block crop should expand bottom enough to include captions");
+
+const formulaPadding = JSON.parse(
+  call(`JSON.stringify(cropPaddingForRiskBlock({ text: "$$\\\\nE=mc^2\\\\n$$", pageSize: [1000, 1200], reasons: ["display_math_block"] }))`),
+);
+assert(formulaPadding.right >= 100, "formula crop should expand right enough to include equation numbers");
+
+const imagePreviewHtml = call(`(() => {
+  state.currentPage = 21;
+  state.pageCache.set(21, { image: "data:image/png;base64,AAA" });
+  return renderBlockContent("![image](fig.jpg)\\n\\nFig. 2.2 Caption", {
+    blockIndex: "1",
+    markdown: "![image](fig.jpg)\\n\\nFig. 2.2 Caption",
+    kind: "image",
+    bbox: [100, 100, 300, 300],
+    pageSize: [1000, 1200]
+  });
+})()`);
+assert(imagePreviewHtml.includes("review-image-preview"), "image block should render a page-crop preview when page image exists");
+assert(!imagePreviewHtml.includes("![image]"), "literal markdown image token should be hidden when preview is rendered");
+assert(imagePreviewHtml.includes("Fig. 2.2 Caption"), "figure caption should remain visible beside image preview");
 
 console.log("ocr compare frontend regressions ok");

@@ -60,6 +60,9 @@ let ocrCoreMergeAcceptedPatches = null;
 let ocrCoreValidateRenderability = null;
 let ocrCorePatchLoadStarted = false;
 let ocrCorePatchWarningShown = false;
+let mathJaxLoadPromise = null;
+let riskAnalysisTimer = null;
+let riskAnalysisRunId = 0;
 
 function getOcrCoreNormalizeMathDelimiters() {
   if (ocrCoreNormalizeMathDelimiters) {
@@ -352,6 +355,7 @@ async function handlePdfChange() {
   state.acceptedPatchPreview = null;
   state.acceptedPatchBookPreview = null;
   state.riskByPage.clear();
+  cancelScheduledRiskAnalysis();
   state.reviewExpanded.clear();
   state.reviewInitializedPages.clear();
   state.pdfImageZoom = DEFAULT_PDF_IMAGE_ZOOM;
@@ -363,13 +367,17 @@ async function handlePdfChange() {
   try {
     const preview = await loadPagePreview(1);
     state.pdfPageCount = preview.pageCount || preview.pages?.length || 1;
+    cachePreviewPage(1, preview);
     if (state.mineruInfo) {
-      analyzeMineruRiskPages();
+      analyzeCurrentMineruRiskPage();
       restoreOcrWorkspaceState();
     }
     els.fileMeta.textContent = `${file.type || "unknown"} · ${formatBytes(file.size)} · ${state.pdfPageCount} 页`;
     updatePager();
     await renderCurrentPage();
+    if (state.mineruInfo) {
+      scheduleMineruRiskAnalysis();
+    }
     setStatus("Ready", "ok");
   } catch (error) {
     setStatus("Error", "error");
@@ -398,15 +406,18 @@ async function handleMineruChange() {
     state.ocrPatches = [];
     state.acceptedPatchPreview = null;
     state.acceptedPatchBookPreview = null;
+    state.riskByPage.clear();
+    cancelScheduledRiskAnalysis();
     state.reviewExpanded.clear();
     state.reviewInitializedPages.clear();
-    analyzeMineruRiskPages();
+    analyzeCurrentMineruRiskPage();
     if (!state.pdfPageCount) {
       state.pdfPageCount = pdfInfo.length;
     }
     restoreOcrWorkspaceState();
     updatePager();
     await renderCurrentPage();
+    scheduleMineruRiskAnalysis();
     setStatus("Ready", "ok");
   } catch (error) {
     setStatus("Error", "error");
@@ -418,6 +429,7 @@ async function handleMineruChange() {
     state.acceptedPatchPreview = null;
     state.acceptedPatchBookPreview = null;
     state.riskByPage.clear();
+    cancelScheduledRiskAnalysis();
     state.reviewExpanded.clear();
     state.reviewInitializedPages.clear();
     renderCurrentPage();
@@ -439,20 +451,27 @@ async function handleContentListChange() {
     }
     state.contentListItems = items;
     state.contentListFileName = file.name;
+    state.riskByPage.clear();
+    cancelScheduledRiskAnalysis();
     state.reviewExpanded.clear();
     state.reviewInitializedPages.clear();
-    analyzeMineruRiskPages();
+    analyzeCurrentMineruRiskPage();
     updatePager();
     updateCorrectionSummary();
     await renderCurrentPage();
+    scheduleMineruRiskAnalysis();
     setStatus("Ready", "ok");
   } catch (error) {
     setStatus("Error", "error");
     state.contentListItems = [];
     state.contentListFileName = "";
-    analyzeMineruRiskPages();
+    state.riskByPage.clear();
+    cancelScheduledRiskAnalysis();
+    analyzeCurrentMineruRiskPage();
     updatePager();
+    updateCorrectionSummary();
     await renderCurrentPage();
+    scheduleMineruRiskAnalysis();
   }
 }
 
@@ -474,6 +493,7 @@ function resetPage() {
   state.acceptedPatchPreview = null;
   state.acceptedPatchBookPreview = null;
   state.riskByPage.clear();
+  cancelScheduledRiskAnalysis();
   state.mathpixCache.clear();
   state.reviewExpanded.clear();
   state.reviewInitializedPages.clear();
@@ -743,6 +763,8 @@ function persistMiddleColumnCollapsed() {
 function applyMiddleColumnCollapsedState() {
   const panel = document.querySelector(".preview-panel");
   panel?.classList.toggle("is-middle-collapsed", Boolean(state.middleColumnCollapsed));
+  const controls = document.querySelector(".control-band");
+  controls?.classList.toggle("is-middle-collapsed", Boolean(state.middleColumnCollapsed));
 }
 
 function restoreColumnWidths() {
@@ -831,13 +853,15 @@ function setColumnWidths(widths) {
 }
 
 function setColumnRatios(ratios) {
-  const panel = document.querySelector(".preview-panel");
-  if (!panel) {
+  const targets = document.querySelectorAll(".preview-panel, .control-band");
+  if (!targets.length) {
     return;
   }
-  panel.style.setProperty("--ocr-left-ratio", String(ratios.left));
-  panel.style.setProperty("--ocr-middle-ratio", String(ratios.middle));
-  panel.style.setProperty("--ocr-right-ratio", String(ratios.right));
+  targets.forEach((target) => {
+    target.style.setProperty("--ocr-left-ratio", String(ratios.left));
+    target.style.setProperty("--ocr-middle-ratio", String(ratios.middle));
+    target.style.setProperty("--ocr-right-ratio", String(ratios.right));
+  });
   schedulePdfFocusSync();
 }
 
@@ -909,6 +933,15 @@ async function loadPagePreview(pageNumber) {
     throw new Error(response.error || "PDF 页面渲染失败");
   }
   return response;
+}
+
+function cachePreviewPage(pageNumber, preview) {
+  const page = preview?.pages?.[0];
+  if (!page) {
+    return false;
+  }
+  state.pageCache.set(Number(pageNumber) || 1, page);
+  return true;
 }
 
 function renderImageCard(page) {
@@ -1174,32 +1207,11 @@ function renderRightWorkbench(page) {
       <div class="card-head">
         <div>
           <strong>校对工作台</strong>
-        <span>Mathpix draft 可直接接受；编辑后保存并接受</span>
         </div>
       </div>
-    <div class="right-workbench-tabs" role="tablist" aria-label="OCR correction workspace">
-      <button class="right-workbench-tab is-active" type="button" data-workbench-tab="review">块级校对</button>
-      <button class="right-workbench-tab" type="button" data-workbench-tab="mathpix">整页 Mathpix</button>
-    </div>
     <div class="right-workbench-panel is-active" data-workbench-panel="review"></div>
-    <div class="right-workbench-panel" data-workbench-panel="mathpix"></div>
   `;
   card.querySelector('[data-workbench-panel="review"]').append(renderReviewCard());
-  card.querySelector('[data-workbench-panel="mathpix"]').append(renderMathpixCard(page));
-  card.querySelectorAll("[data-workbench-tab]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const target = button.dataset.workbenchTab;
-      card.querySelectorAll("[data-workbench-tab]").forEach((tabButton) => {
-        tabButton.classList.toggle("is-active", tabButton.dataset.workbenchTab === target);
-      });
-      card.querySelectorAll("[data-workbench-panel]").forEach((panel) => {
-        panel.classList.toggle("is-active", panel.dataset.workbenchPanel === target);
-      });
-      if (target === "mathpix") {
-        typesetMath(card.querySelector('[data-workbench-panel="mathpix"]'));
-      }
-    });
-  });
   return card;
 }
 
@@ -1393,11 +1405,9 @@ function renderAcceptedCorrectedDownloadStatus(status = getAcceptedCorrectedDown
 }
 
 function renderReviewWorkbenchPager() {
-  const riskPages = Array.from(state.riskByPage.keys()).sort((a, b) => a - b);
   return `
     <div class="review-workbench-pager">
       ${renderPageNavigator("review-workbench")}
-      <button class="secondary-button review-next-risk-button" type="button" data-next-risk-page ${riskPages.length ? "" : "disabled"}>下一高风险页</button>
     </div>
   `;
 }
@@ -1421,11 +1431,11 @@ function renderReviewBlockNavigator(reviewEntries) {
       </div>
       <div class="review-block-nav-patch">${activePatchControls || ""}</div>
       <div class="review-block-nav-controls">
-        <button class="secondary-button pager-icon" type="button" data-review-block-step="prev" ${activeIndex <= 0 ? "disabled" : ""} aria-label="上一校对块" title="上一校对块">‹</button>
+        <button class="secondary-button block-step-button" type="button" data-review-block-step="prev" ${activeIndex <= 0 ? "disabled" : ""} aria-label="上一校对块" title="上一校对块">‹</button>
         <select data-review-block-select aria-label="选择校对块">
           ${entries.map((entry) => `<option value="${escapeHtml(entry.key)}" ${entry.key === active.key ? "selected" : ""}>${escapeHtml(reviewEntryLabel(entry))}</option>`).join("")}
         </select>
-        <button class="secondary-button pager-icon" type="button" data-review-block-step="next" ${activeIndex >= entries.length - 1 ? "disabled" : ""} aria-label="下一校对块" title="下一校对块">›</button>
+        <button class="secondary-button block-step-button" type="button" data-review-block-step="next" ${activeIndex >= entries.length - 1 ? "disabled" : ""} aria-label="下一校对块" title="下一校对块">›</button>
       </div>
     </div>
   `;
@@ -1655,7 +1665,7 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
         </details>`;
   const bodyHtml = shouldShowLatestOnly
     ? `${correctedPaneHtml}${originalMineruDetailHtml}`
-    : `${mineruPaneHtml}${correctedPaneHtml || `<div class="review-placeholder">确认 MinerU 有误后，再调用 Mathpix 校正此块。</div>`}`;
+    : `${mineruPaneHtml}${correctedPaneHtml}`;
   return `
     <article class="review-item ${isReviewOnly ? "is-normal" : ""} ${isCorrected ? "is-corrected" : ""} ${hasMathpixDraft ? "has-mathpix-draft" : ""} ${isCrossPage ? "is-cross-page" : ""} ${expanded ? "is-expanded" : "is-collapsed"}" data-review-item-state="${escapeHtml(itemState)}" data-source-block-id="${escapeHtml(String(segment.blockIndex))}">
       <div class="review-item-head">
@@ -1938,11 +1948,14 @@ function isStandaloneMarkdownImageLine(line) {
 }
 
 function stripMarkdownImageReferences(markdown) {
+  const imagePattern = /!\[[^\]]*\]\([^)]+\)/g;
   return String(markdown || "")
     .replace(/\r\n?/g, "\n")
+    .replace(imagePattern, "")
     .split("\n")
-    .filter((line) => !isStandaloneMarkdownImageLine(line))
+    .map((line) => line.replace(/[ \t]{2,}/g, " ").trimEnd())
     .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
     .replace(/^\n+/, "");
 }
 
@@ -1994,7 +2007,7 @@ function cropPaddingForRiskBlock(risk) {
     const pageWidth = pageSizeWidth(risk?.pageSize);
     return {
       left: BLOCK_MATHPIX_CROP_PADDING.horizontal,
-      right: Math.max(72, pageWidth * 0.1, BLOCK_MATHPIX_CROP_PADDING.horizontal),
+      right: Math.max(140, pageWidth * 0.18, BLOCK_MATHPIX_CROP_PADDING.horizontal),
       top: BLOCK_MATHPIX_CROP_PADDING.vertical,
       bottom: BLOCK_MATHPIX_CROP_PADDING.vertical,
     };
@@ -2006,10 +2019,10 @@ function cropPaddingForImageLikeBlock(pageSize) {
   const pageWidth = pageSizeWidth(pageSize);
   const pageHeight = pageSizeHeight(pageSize);
   return {
-    left: Math.max(72, pageWidth * 0.12, BLOCK_MATHPIX_CROP_PADDING.horizontal),
-    right: Math.max(24, pageWidth * 0.04, BLOCK_MATHPIX_CROP_PADDING.horizontal),
+    left: Math.max(120, pageWidth * 0.16, BLOCK_MATHPIX_CROP_PADDING.horizontal),
+    right: Math.max(48, pageWidth * 0.06, BLOCK_MATHPIX_CROP_PADDING.horizontal),
     top: Math.max(8, pageHeight * 0.015, BLOCK_MATHPIX_CROP_PADDING.vertical),
-    bottom: Math.max(24, pageHeight * 0.035, BLOCK_MATHPIX_CROP_PADDING.vertical),
+    bottom: Math.max(40, pageHeight * 0.05, BLOCK_MATHPIX_CROP_PADDING.vertical),
   };
 }
 
@@ -2969,13 +2982,69 @@ function validateDraftPatchRenderability(blockId, markdown) {
 }
 
 function analyzeMineruRiskPages() {
+  cancelScheduledRiskAnalysis();
   state.riskByPage.clear();
   const total = getMineruPageCount();
   for (let pageNumber = 1; pageNumber <= total; pageNumber += 1) {
-    const risks = detectRiskCandidatesForPage(pageNumber);
-    if (risks.length) {
-      state.riskByPage.set(pageNumber, risks);
+    analyzeMineruRiskPage(pageNumber);
+  }
+}
+
+function analyzeMineruRiskPage(pageNumber) {
+  const risks = detectRiskCandidatesForPage(pageNumber);
+  if (risks.length) {
+    state.riskByPage.set(pageNumber, risks);
+  } else {
+    state.riskByPage.delete(pageNumber);
+  }
+  return risks;
+}
+
+function analyzeCurrentMineruRiskPage() {
+  if (!state.mineruInfo) {
+    return [];
+  }
+  return analyzeMineruRiskPage(state.currentPage);
+}
+
+function scheduleMineruRiskAnalysis() {
+  cancelScheduledRiskAnalysis();
+  const total = getMineruPageCount();
+  if (!total) {
+    return;
+  }
+  const runId = ++riskAnalysisRunId;
+  const currentPage = state.currentPage;
+  let pageNumber = 1;
+  const processChunk = () => {
+    if (runId !== riskAnalysisRunId || !state.mineruInfo) {
+      return;
     }
+    const startedAt = Date.now();
+    let processed = 0;
+    while (pageNumber <= total && processed < 12 && Date.now() - startedAt < 24) {
+      if (pageNumber !== currentPage) {
+        analyzeMineruRiskPage(pageNumber);
+      }
+      pageNumber += 1;
+      processed += 1;
+    }
+    updatePager();
+    updateCorrectionSummary();
+    if (pageNumber <= total) {
+      riskAnalysisTimer = setTimeout(processChunk, 0);
+    } else {
+      riskAnalysisTimer = null;
+    }
+  };
+  riskAnalysisTimer = setTimeout(processChunk, 0);
+}
+
+function cancelScheduledRiskAnalysis() {
+  riskAnalysisRunId += 1;
+  if (riskAnalysisTimer) {
+    clearTimeout(riskAnalysisTimer);
+    riskAnalysisTimer = null;
   }
 }
 
@@ -4615,6 +4684,13 @@ function renderParagraph(lines) {
   if (!text) {
     return "";
   }
+  if (hasMarkdownImageReference(text)) {
+    const imageHtml = extractMarkdownImageReferences(text)
+      .map((image) => renderMarkdownImage(image.alt || "image", image.src))
+      .join("");
+    const textWithoutImages = stripMarkdownImageReferences(text).trim();
+    return `${imageHtml}${textWithoutImages ? `<p>${escapeHtml(textWithoutImages).replace(/\n/g, "<br>")}</p>` : ""}`;
+  }
   return `<p>${escapeHtml(text).replace(/\n/g, "<br>")}</p>`;
 }
 
@@ -4852,10 +4928,48 @@ function renderMarkdownHtml(markdown) {
 }
 
 function typesetMath(root) {
-  if (!root || !window.MathJax?.typesetPromise) {
+  if (!root || !rootHasMathContent(root)) {
     return;
   }
-  window.MathJax.typesetPromise([root]).catch(() => {});
+  if (window.MathJax?.typesetPromise) {
+    window.MathJax.typesetPromise([root]).catch(() => {});
+    return;
+  }
+  ensureMathJaxLoaded()
+    .then(() => {
+      if (window.MathJax?.typesetPromise) {
+        return window.MathJax.typesetPromise([root]);
+      }
+      return null;
+    })
+    .catch(() => {});
+}
+
+function rootHasMathContent(root) {
+  const text = String(root?.textContent || "");
+  return /(\$\$?|\\\(|\\\[|\\begin\{|\^|_\{)/.test(text);
+}
+
+function ensureMathJaxLoaded() {
+  if (window.MathJax?.typesetPromise) {
+    return Promise.resolve(window.MathJax);
+  }
+  if (mathJaxLoadPromise) {
+    return mathJaxLoadPromise;
+  }
+  if (typeof document === "undefined" || typeof document.createElement !== "function") {
+    return Promise.reject(new Error("MathJax loader requires document.createElement."));
+  }
+  mathJaxLoadPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js";
+    script.async = true;
+    script.dataset.ocrLazyMathjax = "1";
+    script.addEventListener("load", () => resolve(window.MathJax));
+    script.addEventListener("error", () => reject(new Error("MathJax failed to load.")));
+    (document.head || document.body || document.documentElement).appendChild(script);
+  });
+  return mathJaxLoadPromise;
 }
 
 initialize();

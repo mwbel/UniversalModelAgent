@@ -104,10 +104,21 @@ textarea {
 }
 
 .control-band {
+  --ocr-left-ratio: 0.28;
+  --ocr-middle-ratio: 0.42;
+  --ocr-right-ratio: 0.3;
+  --ocr-resizer-width: 14px;
+  --ocr-column-gap: 8px;
+  --ocr-columns-available: calc(100% - (2 * var(--ocr-resizer-width)) - (4 * var(--ocr-column-gap)));
   display: grid;
-  grid-template-columns: auto auto auto auto auto auto auto minmax(220px, 1fr) auto;
-  gap: 10px;
-  align-items: center;
+  grid-template-columns:
+    minmax(0, calc(var(--ocr-columns-available) * var(--ocr-left-ratio)))
+    var(--ocr-resizer-width)
+    minmax(0, calc(var(--ocr-columns-available) * var(--ocr-middle-ratio)))
+    var(--ocr-resizer-width)
+    minmax(0, calc(var(--ocr-columns-available) * var(--ocr-right-ratio)));
+  gap: var(--ocr-column-gap);
+  align-items: start;
   padding: 14px 22px;
   border-bottom: 1px solid var(--line);
   background: var(--panel);
@@ -146,6 +157,112 @@ textarea {
   background: transparent;
 }
 
+.control-column,
+.workflow-actions {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.control-column {
+  justify-content: flex-start;
+}
+
+.control-column-pdf {
+  grid-column: 1;
+}
+
+.control-column-mineru {
+  grid-column: 3;
+}
+
+.control-column-review {
+  grid-column: 5;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.control-band.is-middle-collapsed {
+  grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr);
+}
+
+.control-band.is-middle-collapsed .control-column-mineru {
+  display: none;
+}
+
+.control-band.is-middle-collapsed .control-column-review {
+  grid-column: 3;
+}
+
+.upload-button {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 18px;
+  border-radius: 8px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.upload-button.primary-button {
+  min-height: 48px;
+  padding: 0 24px;
+  border-color: #207a4d;
+  border-radius: 9px;
+  background: #217a4f;
+  font-size: 21px;
+}
+
+.upload-button.secondary-button {
+  color: #16633f;
+  border-color: #b7ddc9;
+  background: #edf8f2;
+}
+
+.upload-icon {
+  width: 25px;
+  height: 25px;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.upload-button.secondary-button .upload-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.upload-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.workflow-actions {
+  justify-content: flex-start;
+}
+
+.utility-hidden[hidden] {
+  display: none !important;
+}
+
+.control-label {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .primary-button:disabled,
 .secondary-button:disabled,
 .text-button:disabled {
@@ -180,6 +297,7 @@ textarea {
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .pager-compact {
@@ -644,8 +762,13 @@ textarea {
 }
 
 .right-workbench-card {
-  grid-template-rows: auto auto minmax(0, 1fr);
-  overflow: visible;
+  position: sticky;
+  top: 34px;
+  align-self: start;
+  height: calc(100vh - 52px);
+  max-height: calc(100vh - 52px);
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
 }
 
 .right-workbench-tabs {
@@ -679,12 +802,12 @@ textarea {
   min-width: 0;
   max-width: 100%;
   min-height: 0;
-  overflow: visible;
+  overflow: hidden;
   display: none;
 }
 
 .right-workbench-panel.is-active {
-  display: block;
+  display: grid;
 }
 
 .review-card,
@@ -693,21 +816,35 @@ textarea {
   max-width: 100%;
 }
 
+.review-card {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  overflow: hidden;
+}
+
+.mathpix-page-card {
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+}
+
 .review-card > .card-head {
   align-items: flex-start;
   flex-wrap: wrap;
 }
 
 .review-sticky-controls {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 9;
   background: #f8fafc;
   border-bottom: 1px solid var(--line);
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.1);
+  box-shadow: none;
 }
 
 .review-sticky-controls .review-card-head {
+  min-height: 56px;
   border-bottom: 1px solid var(--line);
   background: #f8fafc;
 }
@@ -715,7 +852,8 @@ textarea {
 .review-list {
   min-width: 0;
   max-width: 100%;
-  overflow: hidden;
+  min-height: 0;
+  overflow: auto;
   padding: 14px;
   background: #f8fafc;
 }
@@ -978,13 +1116,14 @@ textarea {
 }
 
 .review-block-navigator {
-  min-height: 48px;
+  min-height: 56px;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) minmax(220px, 340px);
+  grid-template-columns: minmax(92px, auto) minmax(64px, 112px) minmax(220px, 340px);
   align-items: center;
   gap: 10px;
   padding: 8px 12px;
   background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .review-block-navigator > div:first-child {
@@ -1009,11 +1148,16 @@ textarea {
   min-width: 0;
   min-height: 28px;
   display: flex;
+  overflow: hidden;
   justify-content: flex-end;
 }
 
 .review-block-nav-patch .ocr-patch-status {
   justify-content: flex-end;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .review-block-nav-controls {
@@ -1025,17 +1169,29 @@ textarea {
   gap: 6px;
 }
 
-.review-block-nav-controls .pager-icon {
-  width: 32px;
-  min-width: 32px;
+.block-step-button {
+  width: 34px;
+  min-width: 34px;
   min-height: 32px;
-  font-size: 16px;
+  padding: 0;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.block-step-button:hover:not(:disabled),
+.block-step-button:focus-visible:not(:disabled) {
+  border-color: #93c5fd;
+  background: #dbeafe;
 }
 
 .review-block-nav-controls select {
   min-width: 0;
   width: 100%;
   min-height: 32px;
+  max-width: 240px;
   padding: 5px 8px;
   color: #1f2937;
   border: 1px solid #cbd5e1;
@@ -1464,6 +1620,8 @@ mjx-container[display="true"] {
     grid-template-columns: 1fr 1fr;
   }
 
+  .control-column,
+  .workflow-actions,
   .file-summary,
   .pager {
     grid-column: 1 / -1;
@@ -1508,8 +1666,11 @@ mjx-container[display="true"] {
     max-height: none;
   }
 
+  .right-workbench-card,
   .review-sticky-controls {
     position: static;
+    height: auto;
+    max-height: none;
   }
 
   .review-block-navigator {

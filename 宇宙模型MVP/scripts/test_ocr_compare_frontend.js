@@ -62,6 +62,16 @@ function runOcrCompareInContext(testContext) {
   assert.strictEqual(call("DEFAULT_PDF_IMAGE_ZOOM"), 1.25);
   assert(ocrCompareCss.includes(".review-block-navigator"));
   assert(ocrCompareCss.includes("position: sticky"));
+  assert(ocrCompareCss.includes(".control-column-pdf"));
+  assert(ocrCompareCss.includes(".control-column-mineru"));
+  assert(ocrCompareCss.includes(".control-column-review"));
+  assert(ocrCompareCss.includes(".workflow-actions"));
+  assert(ocrCompareCss.includes(".upload-button.primary-button"));
+  assert(ocrCompareCss.includes(".upload-icon svg"));
+  assert(ocrCompareCss.includes(".right-workbench-card"));
+  assert(ocrCompareCss.includes("height: calc(100vh - 52px)"));
+  assert(ocrCompareCss.includes("grid-template-rows: auto minmax(0, 1fr);"));
+  assert(ocrCompareCss.includes(".block-step-button"));
   assert(ocrCompareCss.includes(".review-block-nav-patch"));
   assert(ocrCompareCss.includes(".preview-panel"));
   assert(ocrCompareCss.includes(".page-list"));
@@ -70,9 +80,36 @@ function runOcrCompareInContext(testContext) {
   assert(ocrCompareHtml.includes('id="lastPageButton"'));
   assert(ocrCompareHtml.includes('id="contentListInput"'));
   assert(ocrCompareHtml.includes('id="pickContentListButton"'));
+  assert(ocrCompareHtml.includes('class="control-column control-column-pdf"'));
+  assert(ocrCompareHtml.includes('class="control-column control-column-mineru"'));
+  assert(ocrCompareHtml.includes('class="control-column control-column-review"'));
+  assert(ocrCompareHtml.includes('class="workflow-actions"'));
+  assert(ocrCompareHtml.includes("上传 PDF"));
+  assert(ocrCompareHtml.includes("上传 MinerU JSON"));
+  assert(ocrCompareHtml.includes("上传 content_list"));
+  assert(ocrCompareHtml.includes('class="upload-icon"'));
+  assert(ocrCompareHtml.includes('viewBox="0 0 24 24"'));
+  assert(!ocrCompareHtml.includes("cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"), "MathJax CDN should be lazy-loaded by ocr-compare.js");
   assert(ocrCompareHtml.includes('aria-label="跳转到首页"'));
   assert(ocrCompareHtml.includes('aria-label="跳转到尾页"'));
-  assert(ocrCompareHtml.includes("选择 content_list.json"));
+  assert(ocrCompareHtml.includes('class="control-label">页码</span>'));
+}
+
+{
+  const mineruUploadSource = source.slice(
+    source.indexOf("async function handleMineruChange"),
+    source.indexOf("async function handleContentListChange"),
+  );
+  const contentListUploadSource = source.slice(
+    source.indexOf("async function handleContentListChange"),
+    source.indexOf("function resetPage"),
+  );
+  assert(mineruUploadSource.includes("analyzeCurrentMineruRiskPage();"));
+  assert(mineruUploadSource.includes("scheduleMineruRiskAnalysis();"));
+  assert(!mineruUploadSource.includes("analyzeMineruRiskPages();"), "MinerU upload must not synchronously scan the whole book");
+  assert(contentListUploadSource.includes("analyzeCurrentMineruRiskPage();"));
+  assert(contentListUploadSource.includes("scheduleMineruRiskAnalysis();"));
+  assert(!contentListUploadSource.includes("analyzeMineruRiskPages();"), "content_list upload must not synchronously scan the whole book");
 }
 
 {
@@ -110,6 +147,53 @@ const singleLineHtml = call(
 );
 assert(singleLineHtml.includes('class="math-display"'), "single-line display math should render as display math");
 assert(!singleLineHtml.includes("<p>$$"), "single-line display math should not render as raw paragraph text");
+assert.strictEqual(call("rootHasMathContent({ textContent: 'plain OCR text' })"), false);
+assert.strictEqual(call("rootHasMathContent({ textContent: 'formula $E=mc^2$' })"), true);
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.pageCache.clear();
+      const cached = cachePreviewPage(1, {
+        ok: true,
+        pageCount: 12,
+        pages: [{ pageNumber: 1, width: 100, height: 120, image: "data:image/png;base64,AAA" }]
+      });
+      return JSON.stringify({
+        cachedResult: cached,
+        cached: state.pageCache.has(1),
+        cachedImage: state.pageCache.get(1)?.image || ""
+      });
+    })()`),
+  );
+  assert.strictEqual(result.cachedResult, true, "preview page cache helper should report success");
+  assert.strictEqual(result.cached, true, "first PDF preview page should be cached for renderCurrentPage");
+  assert.strictEqual(result.cachedImage, "data:image/png;base64,AAA");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      const originalDetect = detectRiskCandidatesForPage;
+      const calls = [];
+      detectRiskCandidatesForPage = (pageNumber) => {
+        calls.push(pageNumber);
+        return [{ pageNumber, blockIndex: "0", text: "risk", score: 1, reasons: ["math"] }];
+      };
+      state.currentPage = 3;
+      state.mineruInfo = { pdf_info: [{}, {}, {}, {}, {}] };
+      state.riskByPage.clear();
+      const risks = analyzeCurrentMineruRiskPage();
+      const stored = state.riskByPage.has(3);
+      detectRiskCandidatesForPage = originalDetect;
+      return JSON.stringify({ calls, riskCount: risks.length, stored, riskPageCount: state.riskByPage.size });
+    })()`),
+  );
+  assert.deepStrictEqual(result.calls, [3], "MinerU upload should analyze the current page first instead of scanning the whole book synchronously");
+  assert.strictEqual(result.riskCount, 1);
+  assert.strictEqual(result.stored, true);
+  assert.strictEqual(result.riskPageCount, 1);
+}
 
 function prepareMathpix(markdown) {
   return call(`prepareMathpixMarkdown(${JSON.stringify(markdown)})`);
@@ -543,6 +627,7 @@ function assertOcrPatchShape(patch) {
   assert(parsed.draftHtml.includes("data-ocr-patch-status-action=\"accepted\""));
   assert(parsed.draftHtml.includes(">接受<"));
   assert(parsed.draftHtml.includes(">拒绝<"));
+  assert(!parsed.draftHtml.includes("确认 MinerU 有误后"));
   assert(parsed.acceptedHtml.includes("Patch：accepted"));
   assert(parsed.acceptedHtml.includes("已接受"));
   assert(parsed.acceptedHtml.includes("已接受校正稿"));
@@ -1470,9 +1555,8 @@ function setupPreviewBookExpression(pages) {
   assert(navHtml.includes('data-page-nav="review-workbench"'));
   assert(navHtml.includes('data-page-jump="prev"'));
   assert(navHtml.includes('data-page-jump="next"'));
-  assert(navHtml.includes("下一高风险页"));
-  assert(navHtml.includes("data-next-risk-page"));
-  assert(!navHtml.includes("data-next-risk-page disabled"));
+  assert(!navHtml.includes("下一高风险页"));
+  assert(!navHtml.includes("data-next-risk-page"));
 }
 
 {
@@ -1714,6 +1798,7 @@ function setupPreviewBookExpression(pages) {
   assert(result.html.includes('data-ocr-patch-status-action="accepted"'));
   assert(result.html.includes('data-ocr-patch-status-action="rejected"'));
   assert(result.html.includes('data-review-block-step="prev"'));
+  assert(result.html.includes("block-step-button"));
   assert(result.html.includes('data-review-block-select'));
   assert(result.html.includes('value="7" selected'));
   assert(result.html.includes("Block 2"));
@@ -2956,6 +3041,11 @@ assert(imageRenderHtml.includes("markdown-image-reference"), "standalone markdow
 assert(imageRenderHtml.includes('src="fig-2-2.jpg"'), "image source should be preserved in rendered html");
 assert(imageRenderHtml.includes("Fig. 2.2"), "caption text should remain visible after image rendering");
 
+const inlineImageRenderHtml = call(`renderMarkdownHtml("See ![image](fig-2-2.jpg) for Fig. 2.2 Caption")`);
+assert(inlineImageRenderHtml.includes("markdown-image-reference"), "inline markdown image should render as image reference");
+assert(!inlineImageRenderHtml.includes("![image]"), "inline markdown image token should not render literally");
+assert(inlineImageRenderHtml.includes("See for Fig. 2.2 Caption"), "inline image surrounding text should remain visible");
+
 const preservedFigurePatch = JSON.parse(
   call(`(() => {
     state.ocrPatches = [];
@@ -2985,7 +3075,7 @@ assert(imagePadding.bottom >= 40, "image block crop should expand bottom enough 
 const formulaPadding = JSON.parse(
   call(`JSON.stringify(cropPaddingForRiskBlock({ text: "$$\\\\nE=mc^2\\\\n$$", pageSize: [1000, 1200], reasons: ["display_math_block"] }))`),
 );
-assert(formulaPadding.right >= 100, "formula crop should expand right enough to include equation numbers");
+assert(formulaPadding.right >= 180, "formula crop should expand right enough to include equation numbers");
 
 const imagePreviewHtml = call(`(() => {
   state.currentPage = 21;
@@ -3001,5 +3091,20 @@ const imagePreviewHtml = call(`(() => {
 assert(imagePreviewHtml.includes("review-image-preview"), "image block should render a page-crop preview when page image exists");
 assert(!imagePreviewHtml.includes("![image]"), "literal markdown image token should be hidden when preview is rendered");
 assert(imagePreviewHtml.includes("Fig. 2.2 Caption"), "figure caption should remain visible beside image preview");
+
+const inlineImagePreviewHtml = call(`(() => {
+  state.currentPage = 21;
+  state.pageCache.set(21, { image: "data:image/png;base64,AAA" });
+  return renderBlockContent("See ![image](fig.jpg) for Fig. 2.2 Caption", {
+    blockIndex: "1",
+    markdown: "See ![image](fig.jpg) for Fig. 2.2 Caption",
+    kind: "image",
+    bbox: [100, 100, 300, 300],
+    pageSize: [1000, 1200]
+  });
+})()`);
+assert(inlineImagePreviewHtml.includes("review-image-preview"), "inline image block should render a page-crop preview when page image exists");
+assert(!inlineImagePreviewHtml.includes("![image]"), "inline image token should be hidden when preview is rendered");
+assert(inlineImagePreviewHtml.includes("See for Fig. 2.2 Caption"), "inline image caption text should remain visible beside preview");
 
 console.log("ocr compare frontend regressions ok");

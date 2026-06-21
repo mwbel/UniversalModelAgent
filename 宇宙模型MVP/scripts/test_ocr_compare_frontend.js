@@ -60,8 +60,11 @@ function runOcrCompareInContext(testContext) {
 {
   assert(ocrCompareHtml.includes('id="firstPageButton"'));
   assert(ocrCompareHtml.includes('id="lastPageButton"'));
+  assert(ocrCompareHtml.includes('id="contentListInput"'));
+  assert(ocrCompareHtml.includes('id="pickContentListButton"'));
   assert(ocrCompareHtml.includes('aria-label="跳转到首页"'));
   assert(ocrCompareHtml.includes('aria-label="跳转到尾页"'));
+  assert(ocrCompareHtml.includes("选择 content_list.json"));
 }
 
 {
@@ -534,6 +537,12 @@ function assertOcrPatchShape(patch) {
   assert(parsed.draftHtml.includes(">拒绝<"));
   assert(parsed.acceptedHtml.includes("Patch：accepted"));
   assert(parsed.acceptedHtml.includes("已接受"));
+  assert(parsed.acceptedHtml.includes("已接受校正稿"));
+  assert(parsed.acceptedHtml.includes("data-mathpix-edit=\"3\""));
+  assert(parsed.acceptedHtml.includes("已保存"));
+  assert(parsed.acceptedHtml.includes("data-disable-when-clean=\"1\""));
+  assert(parsed.acceptedHtml.includes("F=\\sigma T^4"));
+  assert(!parsed.acceptedHtml.includes("确认 MinerU 有误后"));
   assert(!parsed.acceptedHtml.includes("data-ocr-patch-status-action=\"accepted\""));
   assert(parsed.rejectedHtml.includes("Patch：rejected"));
   assert(parsed.rejectedHtml.includes("已拒绝"));
@@ -620,12 +629,97 @@ function assertOcrPatchShape(patch) {
   assert(!result.preview.errors.some((error) => error.type === "multiple_accepted_patches_for_block"));
 }
 
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression(["Original OCR block text"])}
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      els.fileMeta = { textContent: "" };
+      els.statusBadge = { textContent: "", className: "" };
+      renderCurrentPage = async function noopRenderCurrentPage() {};
+      const trigger = {
+        closest() {
+          return {
+            querySelector() {
+              return { value: "Manual MinerU source edit" };
+            }
+          };
+        }
+      };
+      applyMineruSourceEdit("0", trigger);
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify({
+        patches: state.ocrPatches.map((patch) => ({
+          source: patch.source,
+          status: patch.status,
+          newText: patch.newText
+        })),
+        override: getBlockOverrides(1, false).get("0"),
+        preview
+      });
+    })()`),
+  );
+  const humanAccepted = result.patches.find((patch) => patch.source === "human" && patch.newText === "Manual MinerU source edit");
+  assert(humanAccepted, "editing MinerU source should create a human patch");
+  assert.strictEqual(humanAccepted.status, "accepted");
+  assert.strictEqual(result.override, "Manual MinerU source edit");
+  assert.strictEqual(result.preview.appliedPatchCount, 1);
+  assert(result.preview.markdown.includes("Manual MinerU source edit"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      const button = {
+        disabled: false,
+        textContent: "",
+        dataset: {
+          disableWhenClean: "1",
+          cleanLabel: "已保存",
+          dirtyLabel: "保存修改并接受"
+        }
+      };
+      const container = {
+        querySelector() {
+          return button;
+        }
+      };
+      const editor = {
+        value: "Saved markdown",
+        defaultValue: "Saved markdown",
+        closest() {
+          return container;
+        }
+      };
+      const clean = updateReviewEditorActionState(editor);
+      const cleanState = { clean, disabled: button.disabled, text: button.textContent };
+      editor.value = "Edited markdown";
+      const dirty = updateReviewEditorActionState(editor);
+      return JSON.stringify({
+        cleanState,
+        dirtyState: { dirty, disabled: button.disabled, text: button.textContent }
+      });
+    })()`),
+  );
+  assert.strictEqual(result.cleanState.clean, false);
+  assert.strictEqual(result.cleanState.disabled, true);
+  assert.strictEqual(result.cleanState.text, "已保存");
+  assert.strictEqual(result.dirtyState.dirty, true);
+  assert.strictEqual(result.dirtyState.disabled, false);
+  assert.strictEqual(result.dirtyState.text, "保存修改并接受");
+}
+
 function setupPreviewPageExpression(blocks) {
   return `
     state.currentPage = 1;
     state.ocrPatches = [];
     state.acceptedPatchPreview = null;
     state.acceptedPatchBookPreview = null;
+    state.contentListItems = [];
+    state.contentListFileName = "";
     state.mineruOverrides.clear();
     state.mineruBlockOverrides.clear();
     state.mathpixBlockDrafts.clear();
@@ -648,6 +742,8 @@ function setupPreviewBookExpression(pages) {
     state.ocrPatches = [];
     state.acceptedPatchPreview = null;
     state.acceptedPatchBookPreview = null;
+    state.contentListItems = [];
+    state.contentListFileName = "";
     state.mineruOverrides.clear();
     state.mineruBlockOverrides.clear();
     state.mathpixBlockDrafts.clear();
@@ -784,6 +880,14 @@ function setupPreviewBookExpression(pages) {
       state.currentPage = 1;
       state.ocrPatches = [];
       state.riskByPage.clear();
+      state.contentListItems = normalizeContentListItems([
+        {
+          type: "discarded",
+          page_idx: 5,
+          bbox: [80, 80, 460, 150],
+          text: "of Robert Dicke, we have come to view principles of equivalence, along with experiments"
+        }
+      ]);
       state.mineruInfo = {
         pdf_info: [
           {
@@ -880,6 +984,138 @@ function setupPreviewBookExpression(pages) {
     })()`),
   );
   assert(result.some((risk) => risk.blockIndex === "1" && risk.reasons.includes("footnote_marker_or_note")), "discarded MinerU footnote should still enter third-column candidates");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 5;
+      state.ocrPatches = [];
+      state.riskByPage.clear();
+      state.contentListItems = normalizeContentListItems([
+        {
+          type: "text",
+          page_idx: 4,
+          bbox: [203, 236, 913, 459],
+          text: "The Principle of Equivalence has played a central role in the development of gravitation theory."
+        },
+        {
+          type: "discarded",
+          page_idx: 4,
+          bbox: [200, 879, 911, 909],
+          text: "1 Although Newton asserted only that $m _ { \\\\mathrm { P } }$ and $m _ { \\\\mathrm { I } }$ be proportional to each other, they can be made equal by suitable choice of units."
+        },
+        {
+          type: "discarded",
+          page_idx: 4,
+          bbox: [133, 912, 149, 925],
+          text: "11 "
+        },
+        {
+          type: "discarded",
+          page_idx: 4,
+          bbox: [88, 100, 911, 180],
+          text: "2 The Einstein Equivalence Principle "
+        }
+      ]);
+      state.mineruInfo = {
+        pdf_info: [
+          {}, {}, {}, {},
+          {
+            page_size: [510, 697],
+            para_blocks: [
+              { type: "text", bbox: [203, 236, 913, 459], lines: [{ spans: [{ content: "The Principle of Equivalence has played a central role in the development of gravitation theory." }] }] }
+            ]
+          }
+        ]
+      };
+      const risks = detectRiskCandidatesForPage(5);
+      const candidate = risks.find((risk) => risk.blockIndex === "content-list-discarded-5-1");
+      let preview = null;
+      if (candidate) {
+        const patch = createAndStoreDraftOcrPatch({
+          pageNo: 5,
+          blockIndex: candidate.blockIndex,
+          oldText: candidate.text,
+          newText: "1 Although Newton asserted only that $m_P$ and $m_I$ are proportional, they can be made equal by suitable choice of units.",
+          source: "human"
+        }).patch;
+        updateOcrPatchStatus(patch.patchId, "accepted");
+        preview = buildAcceptedPatchPreviewForPage(5);
+      }
+      return JSON.stringify({
+        risks: risks.map((risk) => ({
+          blockIndex: risk.blockIndex,
+          reasons: risk.reasons,
+          syntheticLabel: risk.syntheticLabel,
+          syntheticPlacement: risk.syntheticPlacement,
+          text: risk.text
+        })),
+        candidate,
+        preview
+      });
+    })()`),
+  );
+  assert(result.candidate, "content_list discarded footnote should become a third-column supplemental candidate");
+  assert(result.candidate.reasons.includes("content_list_discarded"));
+  assert(result.candidate.reasons.includes("footnote_marker_or_note"));
+  assert(result.candidate.reasons.includes("page_bottom_boundary"));
+  assert.strictEqual(result.candidate.syntheticLabel, "content_list 脚注候选");
+  const titleCandidate = result.risks.find((risk) => risk.blockIndex === "content-list-discarded-5-3");
+  assert(titleCandidate, "content_list top discarded title should become a title candidate");
+  assert.strictEqual(titleCandidate.syntheticLabel, "content_list 标题候选");
+  assert(titleCandidate.reasons.includes("background_heading_missing"));
+  assert(!titleCandidate.reasons.includes("footnote_marker_or_note"), "content_list top title should not be mislabeled as a footnote");
+  assert(!result.risks.some((risk) => risk.text.trim() === "11"), "content_list page-number-only discarded items should be skipped");
+  assert.strictEqual(call('riskReasonLabel("content_list_discarded")'), "content_list 补充");
+  assert.strictEqual(result.preview.ok, true);
+  assert.strictEqual(result.preview.appliedPatchCount, 1);
+  assert(result.preview.markdown.includes("m_P"));
+  assert(result.preview.markdown.includes("The Principle of Equivalence"));
+  assert(result.preview.markdown.indexOf("The Principle of Equivalence") < result.preview.markdown.indexOf("1 Although Newton asserted"), "page-bottom content_list footnote should remain after body text in accepted preview");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 2;
+      state.contentListItems = normalizeContentListItems([
+        {
+          type: "discarded",
+          page_idx: 1,
+          bbox: [80, 100, 450, 180],
+          text: "that bodies made of different material fall with the same acceleration. The theory must incorporate a complete set of electrodynamic and quantum mechanical laws"
+        }
+      ]);
+      state.mineruInfo = {
+        pdf_info: [
+          {},
+          {
+            page_size: [510, 697],
+            para_blocks: [
+              {
+                type: "text",
+                bbox: [80, 100, 450, 230],
+                lines: [
+                  { spans: [{ content: "that bodies made of different material fall with the same acceleration. The theory must incorporate a complete set of electrodynamic and quantum mechanical laws, which can be used to calculate real bodies." }] }
+                ]
+              }
+            ]
+          }
+        ]
+      };
+      const candidates = detectContentListRiskCandidatesForPage(2);
+      return JSON.stringify({
+        redundant: isTextRedundantWithNormalizedSet(
+          "that bodies made of different material fall with the same acceleration. The theory must incorporate a complete set of electrodynamic and quantum mechanical laws",
+          new Set(originalBlockMarkdownsForPage(2).map((entry) => normalizeTextForComparison(entry.markdown)))
+        ),
+        candidates
+      });
+    })()`),
+  );
+  assert.strictEqual(result.redundant, true);
+  assert.strictEqual(result.candidates.length, 0, "content_list text already covered by MinerU should not create a duplicate review block");
 }
 
 {
@@ -1117,6 +1353,121 @@ function setupPreviewBookExpression(pages) {
 }
 
 {
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 6;
+      state.ocrPatches = [];
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      state.mineruOverrides.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.riskByPage.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {}, {}, {}, {},
+          {
+            page_size: [510, 697],
+            para_blocks: [
+              {
+                type: "text",
+                bbox: [104, 577, 465, 602],
+                lines: [
+                  { bbox: [114, 576, 467, 590], spans: [{ bbox: [114, 576, 467, 590], content: "Yet, it was only in the 1960s that we gained a deeper understanding of the significance of" }] },
+                  { bbox: [103, 589, 466, 603], spans: [{ bbox: [103, 589, 466, 603], content: "these principles of equivalence for gravitation and experiment. Largely through the work" }] },
+                  { bbox: [104, 62, 466, 75], spans: [{ bbox: [104, 62, 466, 75], content: "of Robert Dicke, we have come to view principles of equivalence, along with experiments", cross_page: true }] },
+                  { bbox: [105, 75, 467, 87], spans: [{ bbox: [105, 75, 467, 87], content: "such as the Eotv¨ os experiment and the gravitational redshift experiment, as probes more of", cross_page: true }] }
+                ]
+              }
+            ]
+          },
+          {
+            page_size: [510, 697],
+            para_blocks: [
+              { type: "text", bbox: [104, 62, 466, 216], lines: [], lines_deleted: true },
+              { type: "text", bbox: [105, 218, 466, 333], lines: [{ spans: [{ content: "Einstein's generalization of the Weak Equivalence Principle may not have been a generalization at all." }] }] }
+            ]
+          }
+        ]
+      };
+      const page5Review = reviewSegmentsForPage(5);
+      const page5Original = pageSegmentsForPage(5);
+      const page6Risks = detectRiskCandidatesForPage(6);
+      const continuation = page6Risks.find((risk) => risk.blockIndex === "cross-page-continuation-6-0");
+      const pageTopMissing = page6Risks.find((risk) => risk.blockIndex === "missing-page-top-text-6");
+      const page6Entries = buildReviewEntriesForPage(page6Risks, reviewSegmentsForPage(6), 6);
+      const patch5 = createAndStoreDraftOcrPatch({
+        pageNo: 5,
+        blockIndex: "0",
+        oldText: page5Review[0].markdown,
+        newText: "Yet, it was only in the 1960s that we gained a deeper understanding of these principles.",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch5.patchId, "accepted");
+      const patch6 = createAndStoreDraftOcrPatch({
+        pageNo: 6,
+        blockIndex: continuation.blockIndex,
+        oldText: continuation.text,
+        newText: "of Robert Dicke, we have come to view principles of equivalence, along with experiments such as the Eotvos experiment.",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch6.patchId, "accepted");
+      const preview5 = buildAcceptedPatchPreviewForPage(5);
+      const preview6 = buildAcceptedPatchPreviewForPage(6);
+      return JSON.stringify({
+        page5ReviewMarkdown: page5Review[0].markdown,
+        page5OriginalMarkdown: page5Original[0].markdown,
+        continuation,
+        pageTopMissing,
+        page6EntryKeys: page6Entries.map((entry) => entry.key),
+        page6DisplayIndexes: page6Entries.map((entry) => [entry.key, entry.displayIndex]),
+        preview5,
+        preview6,
+        label: riskReasonLabel("cross_page_continuation")
+      });
+    })()`),
+  );
+  assert(result.page5OriginalMarkdown.includes("of Robert Dicke"), "raw MinerU block should still expose cross-page merged text");
+  assert(!result.page5ReviewMarkdown.includes("of Robert Dicke"), "third-column page 5 Markdown should exclude next-page continuation lines");
+  assert(result.page5ReviewMarkdown.includes("Largely through the work"));
+  assert(result.continuation, "page 6 should recover previous-page cross_page lines as a top candidate");
+  assert.strictEqual(result.continuation.syntheticLabel, "跨页续段候选");
+  assert(result.continuation.reasons.includes("cross_page_continuation"));
+  assert(result.continuation.text.includes("of Robert Dicke"));
+  assert.deepStrictEqual(result.continuation.bbox, [104, 62, 467, 87]);
+  assert.strictEqual(result.pageTopMissing, undefined, "real cross-page continuation should suppress generic missing-page-top candidate");
+      assert(result.page6EntryKeys.includes("cross-page-continuation-6-0"), "third column should show recovered cross-page continuation");
+      assert(!result.page6EntryKeys.some((key) => String(key).startsWith("content-list-discarded-6")), "page-top content_list candidate should not duplicate a real cross-page continuation");
+      assert(result.page6EntryKeys.includes("1"), "third column should also show normal current-page text blocks");
+  assert(!result.page6EntryKeys.includes("0"), "empty MinerU placeholders should not show as blank review cards");
+      assert.deepStrictEqual(result.page6DisplayIndexes.map((entry) => entry[1]), [1, 2]);
+  assert.strictEqual(result.page6DisplayIndexes.find((entry) => entry[0] === "cross-page-continuation-6-0")[1], 1);
+  assert(result.page6DisplayIndexes.some((entry) => entry[0] === "1"), "normal current-page text should keep its sparse source id internally");
+  assert.strictEqual(result.label, "跨页续段");
+  assert.strictEqual(result.preview5.ok, true);
+  assert(result.preview5.markdown.includes("these principles."));
+  assert(!result.preview5.markdown.includes("of Robert Dicke"));
+  assert.strictEqual(result.preview6.ok, true);
+  assert(result.preview6.markdown.includes("of Robert Dicke"));
+  assert(result.preview6.markdown.indexOf("of Robert Dicke") < result.preview6.markdown.indexOf("Einstein's generalization"));
+}
+
+{
+  const navHtml = call(`(() => {
+    state.currentPage = 2;
+    state.pdfPageCount = 4;
+    state.riskByPage = new Map([[2, [{ blockIndex: "1", reasons: ["math"] }]]]);
+    return renderReviewWorkbenchPager();
+  })()`);
+  assert(navHtml.includes('data-page-nav="review-workbench"'));
+  assert(navHtml.includes('data-page-jump="prev"'));
+  assert(navHtml.includes('data-page-jump="next"'));
+  assert(navHtml.includes("下一高风险页"));
+  assert(navHtml.includes("data-next-risk-page"));
+  assert(!navHtml.includes("data-next-risk-page disabled"));
+}
+
+{
   const navHtml = call(`(() => {
     state.currentPage = 2;
     state.pdfPageCount = 4;
@@ -1182,12 +1533,143 @@ function setupPreviewBookExpression(pages) {
   );
   assert(result.normalHtml.includes('data-image-zoom="in"'));
   assert(result.normalHtml.includes('data-image-zoom="out"'));
+  assert(result.normalHtml.includes("page-image-surface"));
+  assert(result.normalHtml.includes("data-page-image-focus"));
   assert(result.normalHtml.includes("100%"));
   assert(result.zoomedHtml.includes("175%"));
   assert(result.zoomedHtml.includes("--pdf-image-zoom: 1.75"));
   assert(!result.normalClass.includes("is-zoomed"));
   assert(result.zoomedClass.includes("is-zoomed"));
   assert(result.listeners.includes("click"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 6;
+      state.reviewExpanded = new Set(["6:block-a"]);
+      state.riskByPage = new Map([
+        [6, [
+          { blockIndex: "block-a", bbox: [100, 200, 300, 260], pageSize: [500, 1000] },
+          { blockIndex: "block-b", bbox: [0, 0, 10, 10], pageSize: [500, 1000] }
+        ]]
+      ]);
+      return JSON.stringify({
+        percent: pdfFocusPercentForRisk(activeExpandedRiskForPage(6)),
+        metrics: pdfFocusMetricsForRisk(activeExpandedRiskForPage(6), 1000, 2000),
+        missing: pdfFocusMetricsForRisk({ bbox: null, pageSize: [500, 1000] }, 1000, 2000)
+      });
+    })()`),
+  );
+  assert.deepStrictEqual(result.percent, { left: 20, top: 20, width: 40, height: 6 });
+  assert.deepStrictEqual(result.metrics, { left: 200, top: 400, width: 400, height: 120 });
+  assert.strictEqual(result.missing, null);
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 6;
+      state.reviewExpanded = new Set(["6:0"]);
+      state.riskByPage = new Map();
+      state.mineruInfo = {
+        pdf_info: [
+          {}, {}, {}, {}, {},
+          {
+            page_size: [500, 1000],
+            para_blocks: [
+              {
+                type: "text",
+                bbox: [50, 100, 250, 200],
+                lines: [
+                  { bbox: [50, 100, 250, 200], spans: [{ bbox: [50, 100, 250, 200], content: "Normal paragraph for full-page review." }] }
+                ]
+              }
+            ]
+          }
+        ]
+      };
+      const risk = activeExpandedRiskForPage(6);
+      return JSON.stringify({
+        risk,
+        percent: pdfFocusPercentForRisk(risk)
+      });
+    })()`),
+  );
+  assert.strictEqual(result.risk.reviewOnly, true);
+  assert(result.risk.text.includes("Normal paragraph"));
+  assert.deepStrictEqual(result.percent, { left: 10, top: 10, width: 40, height: 10 });
+}
+
+{
+  const result = JSON.parse(
+    call(`JSON.stringify({
+      numeric: normalizeCropPadding(10),
+      axis: normalizeCropPadding({ horizontal: 4, vertical: 1 }),
+      explicit: normalizeCropPadding({ left: 3, right: 5, top: 0, bottom: 2 })
+    })`),
+  );
+  assert.deepStrictEqual(result.numeric, { left: 10, right: 10, top: 10, bottom: 10 });
+  assert.deepStrictEqual(result.axis, { left: 4, right: 4, top: 1, bottom: 1 });
+  assert.deepStrictEqual(result.explicit, { left: 3, right: 5, top: 0, bottom: 2 });
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      const entries = buildReviewEntriesForPage(
+        [{ blockIndex: "7", bbox: [0, 0, 10, 10], text: "Risk 7", reasons: ["math_dense_text"] }],
+        [
+          { blockIndex: "3", markdown: "Visible block 3", bbox: [0, 0, 10, 10], pageSize: [100, 100] },
+          { blockIndex: "4", markdown: "Visible block 4", bbox: [0, 10, 10, 20], pageSize: [100, 100] },
+          { blockIndex: "7", markdown: "Visible block 7", bbox: [0, 20, 10, 30], pageSize: [100, 100] }
+        ],
+        1
+      );
+      const html = renderReviewItem(
+        entries[2].segment,
+        entries[2].risk,
+        "",
+        false,
+        "",
+        null,
+        { displayIndex: entries[2].displayIndex }
+      );
+      return JSON.stringify({
+        indexes: entries.map((entry) => [entry.key, entry.displayIndex]),
+        html
+      });
+    })()`),
+  );
+  assert.deepStrictEqual(result.indexes, [["3", 1], ["4", 2], ["7", 3]]);
+  assert(result.html.includes(">Block 3</strong>"), "visible review block numbering should be continuous");
+  assert(result.html.includes('data-source-block-id="7"'), "source block id should remain available for patch traceability");
+  assert(!result.html.includes(">Block 7</strong>"), "raw sparse MinerU block index should not be used as the visible title");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.reviewExpanded = new Set(["1:7"]);
+      const entries = buildReviewEntriesForPage(
+        [{ blockIndex: "7", bbox: [0, 20, 10, 30], text: "Risk 7", reasons: ["math_dense_text"] }],
+        [
+          { blockIndex: "3", markdown: "Visible block 3", bbox: [0, 0, 10, 10], pageSize: [100, 100] },
+          { blockIndex: "7", markdown: "Visible block 7", bbox: [0, 20, 10, 30], pageSize: [100, 100] }
+        ],
+        1
+      );
+      const html = renderReviewBlockNavigator(entries);
+      return JSON.stringify({ html });
+    })()`),
+  );
+  assert(result.html.includes("块导航"));
+  assert(result.html.includes("2 / 2"));
+  assert(result.html.includes('data-review-block-step="prev"'));
+  assert(result.html.includes('data-review-block-select'));
+  assert(result.html.includes('value="7" selected'));
+  assert(result.html.includes("Block 2"));
 }
 
 {
@@ -1210,6 +1692,58 @@ function setupPreviewBookExpression(pages) {
   })()`);
   assert(!mineruCardHtml.includes("Theory and Experiment in Gravitational Physics long middle file name.json"));
   assert(mineruCardHtml.includes("当前 MinerU 识别结果"));
+  assert(mineruCardHtml.includes('data-middle-column-toggle="collapse"'));
+  assert(mineruCardHtml.includes("折叠中栏"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      let clicked = false;
+      document = {
+        querySelector() {
+          return {
+            classList: {
+              toggle(className, enabled) {
+                return { className, enabled };
+              }
+            }
+          };
+        },
+        createElement() {
+          return {
+            className: "",
+            type: "",
+            dataset: {},
+            attributes: {},
+            innerHTML: "",
+            setAttribute(key, value) {
+              this.attributes[key] = value;
+            },
+            addEventListener(type, handler) {
+              if (type === "click") {
+                clicked = typeof handler === "function";
+              }
+            }
+          };
+        }
+      };
+      const rail = renderMiddleColumnRestoreRail();
+      return JSON.stringify({
+        className: rail.className,
+        toggle: rail.dataset.middleColumnToggle,
+        aria: rail.attributes["aria-label"],
+        html: rail.innerHTML,
+        clicked
+      });
+    })()`),
+  );
+  assert.strictEqual(result.className, "middle-column-restore");
+  assert.strictEqual(result.toggle, "expand");
+  assert.strictEqual(result.aria, "展开 MinerU 原始识别栏");
+  assert(result.html.includes("MinerU"));
+  assert(result.html.includes("展开"));
+  assert.strictEqual(result.clicked, true);
 }
 
 {
@@ -2110,6 +2644,10 @@ function setupPreviewBookExpression(pages) {
     return JSON.stringify({ emptyHtml: emptyCard.innerHTML, acceptedHtml: acceptedCard.innerHTML, panel, bookPanel, statusHtml });
   })()`);
   const parsed = JSON.parse(uiHtml);
+  assert(parsed.emptyHtml.includes("页面校对"));
+  assert(parsed.emptyHtml.includes("UI source"));
+  assert(parsed.emptyHtml.includes("普通段落"));
+  assert(parsed.emptyHtml.includes('data-review-item-state="normal"'));
   assert(!parsed.emptyHtml.includes("预览 accepted 校正稿"));
   assert(!parsed.emptyHtml.includes("data-preview-accepted-patches"));
   assert(!parsed.emptyHtml.includes("下载 accepted 校正稿"));

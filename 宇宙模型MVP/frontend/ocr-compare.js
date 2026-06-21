@@ -14,6 +14,8 @@ const state = {
   pageCache: new Map(),
   mineruInfo: null,
   mineruFileName: "",
+  contentListItems: [],
+  contentListFileName: "",
   mineruOverrides: new Map(),
   mineruBlockOverrides: new Map(),
   mathpixBlockDrafts: new Map(),
@@ -25,14 +27,17 @@ const state = {
   reviewExpanded: new Set(),
   reviewInitializedPages: new Set(),
   pdfImageZoom: 1,
+  middleColumnCollapsed: false,
   busy: false,
 };
 state.ocrPatches = state.ocrPatches || [];
 
 const els = {};
 const COLUMN_WIDTHS_KEY = "uma-ocr-compare-column-ratios-v6";
+const MIDDLE_COLUMN_COLLAPSED_KEY = "uma-ocr-compare-middle-collapsed-v1";
 const OCR_WORKSPACE_STORAGE_PREFIX = "uma-ocr-compare-workspace-v1";
 const PDF_IMAGE_ZOOM_LEVELS = [1, 1.25, 1.5, 1.75, 2, 2.5];
+const BLOCK_MATHPIX_CROP_PADDING = { horizontal: 4, vertical: 1 };
 const LEGACY_COLUMN_WIDTHS_KEYS = [
   "uma-ocr-compare-column-widths",
   "uma-ocr-compare-column-fractions-v2",
@@ -279,8 +284,10 @@ function bindElements() {
   [
     "pdfInput",
     "mineruInput",
+    "contentListInput",
     "pickPdfButton",
     "pickMineruButton",
+    "pickContentListButton",
     "nextRiskButton",
     "mathpixButton",
     "exportOriginalButton",
@@ -304,10 +311,14 @@ function bindElements() {
 function initialize() {
   bindElements();
   restoreColumnWidths();
+  restoreMiddleColumnCollapsed();
+  applyMiddleColumnCollapsedState();
   els.pickPdfButton.addEventListener("click", () => els.pdfInput.click());
   els.pickMineruButton.addEventListener("click", () => els.mineruInput.click());
+  els.pickContentListButton.addEventListener("click", () => els.contentListInput.click());
   els.pdfInput.addEventListener("change", handlePdfChange);
   els.mineruInput.addEventListener("change", handleMineruChange);
+  els.contentListInput.addEventListener("change", handleContentListChange);
   els.nextRiskButton.addEventListener("click", goToNextRiskPage);
   els.mathpixButton.addEventListener("click", recognizeCurrentPageWithMathpix);
   els.exportOriginalButton.addEventListener("click", () => exportMineruMarkdown(false));
@@ -319,6 +330,7 @@ function initialize() {
   els.lastPageButton.addEventListener("click", () => goToPagerTarget("last"));
   els.pageInput.addEventListener("change", () => goToPage(Number(els.pageInput.value || 1)));
   document.addEventListener("pointerdown", handleColumnResizeStart);
+  window.addEventListener("resize", schedulePdfFocusSync);
   window.addEventListener("mathjax-ready", () => typesetMath(els.pageList));
 }
 
@@ -410,6 +422,38 @@ async function handleMineruChange() {
   }
 }
 
+async function handleContentListChange() {
+  const file = els.contentListInput.files?.[0] || null;
+  if (!file) {
+    return;
+  }
+  setStatus("content_list", "busy");
+  try {
+    const text = await readFileAsText(file);
+    const data = JSON.parse(text);
+    const items = normalizeContentListItems(data);
+    if (!items.length) {
+      throw new Error("这个 JSON 没有找到 content_list 条目。");
+    }
+    state.contentListItems = items;
+    state.contentListFileName = file.name;
+    state.reviewExpanded.clear();
+    state.reviewInitializedPages.clear();
+    analyzeMineruRiskPages();
+    updatePager();
+    updateCorrectionSummary();
+    await renderCurrentPage();
+    setStatus("Ready", "ok");
+  } catch (error) {
+    setStatus("Error", "error");
+    state.contentListItems = [];
+    state.contentListFileName = "";
+    analyzeMineruRiskPages();
+    updatePager();
+    await renderCurrentPage();
+  }
+}
+
 function resetPage() {
   clearPersistedOcrWorkspaceState();
   state.pdfFile = null;
@@ -419,6 +463,8 @@ function resetPage() {
   state.pageCache.clear();
   state.mineruInfo = null;
   state.mineruFileName = "";
+  state.contentListItems = [];
+  state.contentListFileName = "";
   state.mineruOverrides.clear();
   state.mineruBlockOverrides.clear();
   state.mathpixBlockDrafts.clear();
@@ -433,6 +479,7 @@ function resetPage() {
   state.busy = false;
   els.pdfInput.value = "";
   els.mineruInput.value = "";
+  els.contentListInput.value = "";
   els.fileName.textContent = "未选择原书 PDF";
   els.fileMeta.textContent = "中栏读取已有 MinerU 整书识别结果；优先点击高风险块进行 Mathpix 块级校正。";
   els.pageList.innerHTML = '<div class="empty-state">选择原书 PDF，再选择对应的 MinerU `_middle.json`。优先点击高风险块，只对该块调用 Mathpix。</div>';
@@ -623,19 +670,25 @@ async function renderCurrentPage() {
   if (!state.pdfDataUrl && !state.mineruInfo) {
     return;
   }
+  applyMiddleColumnCollapsedState();
   els.pageList.innerHTML = "";
   const row = document.createElement("article");
   row.className = "page-row";
   const page = await ensureCurrentPagePreview();
-  row.append(
-    renderImageCard(page),
-    createColumnResizer("left"),
-    renderMineruCard(),
-    createColumnResizer("right"),
-    renderRightWorkbench(page),
-  );
+  if (state.middleColumnCollapsed) {
+    row.append(renderImageCard(page), renderMiddleColumnRestoreRail(), renderRightWorkbench(page));
+  } else {
+    row.append(
+      renderImageCard(page),
+      createColumnResizer("left"),
+      renderMineruCard(),
+      createColumnResizer("right"),
+      renderRightWorkbench(page),
+    );
+  }
   els.pageList.append(row);
   typesetMath(row);
+  syncPdfFocusToExpandedReviewBlock();
 }
 
 function createColumnResizer(side) {
@@ -649,6 +702,45 @@ function createColumnResizer(side) {
   };
   button.setAttribute("aria-label", labels[side] || "调整栏宽");
   return button;
+}
+
+function renderMiddleColumnRestoreRail() {
+  const button = document.createElement("button");
+  button.className = "middle-column-restore";
+  button.type = "button";
+  button.dataset.middleColumnToggle = "expand";
+  button.setAttribute("aria-label", "展开 MinerU 原始识别栏");
+  button.innerHTML = "<span>MinerU</span><strong>展开</strong>";
+  button.addEventListener("click", () => setMiddleColumnCollapsed(false));
+  return button;
+}
+
+async function setMiddleColumnCollapsed(collapsed) {
+  state.middleColumnCollapsed = Boolean(collapsed);
+  persistMiddleColumnCollapsed();
+  applyMiddleColumnCollapsedState();
+  await renderCurrentPage();
+}
+
+function restoreMiddleColumnCollapsed() {
+  try {
+    state.middleColumnCollapsed = localStorage.getItem(MIDDLE_COLUMN_COLLAPSED_KEY) === "1";
+  } catch {
+    state.middleColumnCollapsed = false;
+  }
+}
+
+function persistMiddleColumnCollapsed() {
+  try {
+    localStorage.setItem(MIDDLE_COLUMN_COLLAPSED_KEY, state.middleColumnCollapsed ? "1" : "0");
+  } catch {
+    // Layout preference is non-critical.
+  }
+}
+
+function applyMiddleColumnCollapsedState() {
+  const panel = document.querySelector(".preview-panel");
+  panel?.classList.toggle("is-middle-collapsed", Boolean(state.middleColumnCollapsed));
 }
 
 function restoreColumnWidths() {
@@ -744,6 +836,7 @@ function setColumnRatios(ratios) {
   panel.style.setProperty("--ocr-left-ratio", String(ratios.left));
   panel.style.setProperty("--ocr-middle-ratio", String(ratios.middle));
   panel.style.setProperty("--ocr-right-ratio", String(ratios.right));
+  schedulePdfFocusSync();
 }
 
 function widthsToRatios(widths) {
@@ -824,7 +917,7 @@ function renderImageCard(page) {
   const atMaxZoom = zoomIndex >= PDF_IMAGE_ZOOM_LEVELS.length - 1;
   card.className = `preview-card image-card ${zoom > 1 ? "is-zoomed" : ""}`;
   const imageHtml = page.image
-    ? `<img src="${page.image}" alt="第 ${page.pageNumber} 页 OCR 截图">`
+    ? `<div class="page-image-surface"><img src="${page.image}" alt="第 ${page.pageNumber} 页 OCR 截图"><div class="page-image-focus" data-page-image-focus hidden></div></div>`
     : `<div class="empty-inline">尚未选择 PDF。</div>`;
   card.innerHTML = `
     <div class="card-head">
@@ -866,6 +959,119 @@ function setPdfImageZoom(direction) {
   state.pdfImageZoom = 1;
 }
 
+function syncPdfFocusToExpandedReviewBlock() {
+  if (typeof document === "undefined" || typeof document.querySelector !== "function") {
+    return false;
+  }
+  const wrap = document.querySelector(".page-image-wrap");
+  const surface = wrap?.querySelector?.(".page-image-surface");
+  const image = surface?.querySelector?.("img");
+  const focus = surface?.querySelector?.("[data-page-image-focus]");
+  if (!wrap || !image || !focus) {
+    return false;
+  }
+  const risk = activeExpandedRiskForPage(state.currentPage);
+  const applyFocus = () => applyPdfFocusBox(wrap, image, focus, risk);
+  if (!image.complete) {
+    image.addEventListener("load", applyFocus, { once: true });
+    return false;
+  }
+  return applyFocus();
+}
+
+function schedulePdfFocusSync() {
+  if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
+    window.requestAnimationFrame(() => syncPdfFocusToExpandedReviewBlock());
+    return;
+  }
+  syncPdfFocusToExpandedReviewBlock();
+}
+
+function activeExpandedRiskForPage(pageNumber) {
+  const prefix = `${pageNumber}:`;
+  const expandedKey = Array.from(state.reviewExpanded || []).find((key) => String(key).startsWith(prefix));
+  if (!expandedKey) {
+    return null;
+  }
+  const blockIndex = String(expandedKey).slice(prefix.length);
+  return reviewRiskForBlock(pageNumber, blockIndex);
+}
+
+function reviewRiskForBlock(pageNumber, blockIndex) {
+  const key = String(blockIndex || "");
+  const risk = (state.riskByPage.get(pageNumber) || []).find((item) => String(item.blockIndex) === key);
+  if (risk) {
+    return risk;
+  }
+  const segment = reviewSegmentsForPage(pageNumber).find((item) => String(item.blockIndex) === key);
+  return segment ? reviewRiskFromSegment(segment, pageNumber) : null;
+}
+
+function applyPdfFocusBox(wrap, image, focus, risk) {
+  const percent = pdfFocusPercentForRisk(risk);
+  const metrics = pdfFocusMetricsForRisk(risk, image.clientWidth || image.naturalWidth || image.width, image.clientHeight || image.naturalHeight || image.height);
+  if (!percent || !metrics) {
+    focus.hidden = true;
+    return false;
+  }
+  focus.hidden = false;
+  focus.style.left = `${percent.left}%`;
+  focus.style.top = `${percent.top}%`;
+  focus.style.width = `${percent.width}%`;
+  focus.style.height = `${percent.height}%`;
+  const targetTop = clamp(metrics.top - wrap.clientHeight * 0.35, 0, Math.max(0, wrap.scrollHeight - wrap.clientHeight));
+  const targetLeft = clamp(metrics.left + metrics.width / 2 - wrap.clientWidth / 2, 0, Math.max(0, wrap.scrollWidth - wrap.clientWidth));
+  if (typeof wrap.scrollTo === "function") {
+    wrap.scrollTo({ top: targetTop, left: targetLeft, behavior: "smooth" });
+  } else {
+    wrap.scrollTop = targetTop;
+    wrap.scrollLeft = targetLeft;
+  }
+  return true;
+}
+
+function pdfFocusPercentForRisk(risk) {
+  const bbox = normalizedBBox(risk?.bbox);
+  const pageWidth = pageSizeWidth(risk?.pageSize);
+  const pageHeight = pageSizeHeight(risk?.pageSize);
+  if (!bbox || !pageWidth || !pageHeight) {
+    return null;
+  }
+  const left = clamp((bbox[0] / pageWidth) * 100, 0, 100);
+  const top = clamp((bbox[1] / pageHeight) * 100, 0, 100);
+  const right = clamp((bbox[2] / pageWidth) * 100, left, 100);
+  const bottom = clamp((bbox[3] / pageHeight) * 100, top, 100);
+  return {
+    left: roundFraction(left),
+    top: roundFraction(top),
+    width: roundFraction(Math.max(0.1, right - left)),
+    height: roundFraction(Math.max(0.1, bottom - top)),
+  };
+}
+
+function pdfFocusMetricsForRisk(risk, imageWidth, imageHeight) {
+  const bbox = normalizedBBox(risk?.bbox);
+  const pageWidth = pageSizeWidth(risk?.pageSize);
+  const pageHeight = pageSizeHeight(risk?.pageSize);
+  const width = Number(imageWidth) || 0;
+  const height = Number(imageHeight) || 0;
+  if (!bbox || !pageWidth || !pageHeight || !width || !height) {
+    return null;
+  }
+  const scaleX = width / pageWidth;
+  const scaleY = height / pageHeight;
+  const left = clamp(bbox[0] * scaleX, 0, width);
+  const top = clamp(bbox[1] * scaleY, 0, height);
+  const right = clamp(bbox[2] * scaleX, left, width);
+  const bottom = clamp(bbox[3] * scaleY, top, height);
+  return {
+    left: Math.round(left),
+    top: Math.round(top),
+    width: Math.max(10, Math.round(right - left)),
+    height: Math.max(10, Math.round(bottom - top)),
+  };
+}
+
 function renderMineruCard() {
   const card = document.createElement("section");
   card.className = "preview-card mineru-card";
@@ -881,6 +1087,7 @@ function renderMineruCard() {
         <span>${hasOverride ? "已应用 Mathpix 校正稿" : escapeHtml(source)}</span>
       </div>
       <div class="card-actions">
+        <button class="text-button" type="button" data-middle-column-toggle="collapse">折叠中栏</button>
         <button class="text-button" type="button" data-copy-mineru ${markdown ? "" : "disabled"}>复制</button>
         <button class="text-button" type="button" data-reset-mineru ${hasOverride ? "" : "hidden"}>还原</button>
       </div>
@@ -892,6 +1099,7 @@ function renderMineruCard() {
   card.querySelector("[data-copy-mineru]").addEventListener("click", async () => {
     await copyButtonText(card.querySelector("[data-copy-mineru]"), markdown);
   });
+  card.querySelector('[data-middle-column-toggle="collapse"]').addEventListener("click", () => setMiddleColumnCollapsed(true));
   card.querySelector("[data-reset-mineru]")?.addEventListener("click", async () => {
     state.mineruOverrides.delete(state.currentPage);
     state.mineruBlockOverrides.delete(state.currentPage);
@@ -998,31 +1206,26 @@ function renderReviewCard() {
   const card = document.createElement("section");
   card.className = "review-card";
   const risks = state.riskByPage.get(state.currentPage) || [];
-  const segments = pageSegmentsForPage(state.currentPage);
-  const orderedRisks = orderRisksBySegment(risks, segments);
-  ensureDefaultReviewExpansion(orderedRisks);
-  const segmentByKey = new Map(segments.map((segment) => [String(segment.blockIndex), segment]));
+  const segments = reviewSegmentsForPage(state.currentPage);
+  const reviewEntries = buildReviewEntriesForPage(risks, segments, state.currentPage);
+  ensureDefaultReviewExpansion(reviewEntries.map((entry) => entry.risk));
   const blockOverrides = getBlockOverrides(state.currentPage, false);
   const mathpixDrafts = getMathpixBlockDrafts(state.currentPage, false);
   const showAcceptedPatchTools = hasAcceptedOcrPatches();
   card.innerHTML = `
     <div class="card-head">
       <div>
-        <strong>高风险校对</strong>
-        <span>${orderedRisks.length ? `${orderedRisks.length} 个待核查块` : "当前页未发现高风险块"}</span>
+        <strong>页面校对</strong>
+        <span>${reviewEntries.length ? `${reviewEntries.length} 个页面块 · ${risks.length} 个高风险/候选` : "当前页未发现可校对文本块"}</span>
       </div>
+      ${renderReviewWorkbenchPager()}
     </div>
+    ${renderReviewBlockNavigator(reviewEntries)}
     <div class="review-list markdown-body">
       ${
-        orderedRisks.length
-          ? orderedRisks
-              .map((risk) => {
-                const key = String(risk.blockIndex);
-                const segment = segmentByKey.get(key) || {
-                  blockIndex: key,
-                  markdown: risk.text,
-                  kind: "block",
-                };
+        reviewEntries.length
+          ? reviewEntries
+              .map(({ key, segment, risk, displayIndex }) => {
                 const ocrPatch = getLatestOcrPatchForBlock(state.currentPage, key, segment.markdown);
                 return renderReviewItem(
                   segment,
@@ -1031,10 +1234,11 @@ function renderReviewCard() {
                   blockOverrides.has(key),
                   mathpixDrafts.get(key) || "",
                   ocrPatch,
+                  { displayIndex },
                 );
               })
               .join("")
-          : `<div class="empty-inline">当前页未发现高风险块。</div>`
+          : `<div class="empty-inline">当前页未发现可校对文本块。</div>`
       }
     </div>
     ${renderReviewBottomPager()}
@@ -1049,6 +1253,19 @@ function renderReviewCard() {
   card.querySelectorAll("[data-apply-mathpix-block-edit]").forEach((button) => {
     button.addEventListener("click", () => applyMathpixBlockEdit(button.dataset.applyMathpixBlockEdit, button));
   });
+  card.querySelectorAll("[data-apply-mineru-source-edit]").forEach((button) => {
+    button.addEventListener("click", () => applyMineruSourceEdit(button.dataset.applyMineruSourceEdit, button));
+  });
+  card.querySelectorAll("[data-mathpix-edit], [data-mineru-source-edit]").forEach((editor) => {
+    editor.addEventListener("input", () => updateReviewEditorActionState(editor));
+    updateReviewEditorActionState(editor);
+  });
+  card.querySelectorAll("[data-review-block-step]").forEach((button) => {
+    button.addEventListener("click", () => navigateReviewBlock(button.dataset.reviewBlockStep));
+  });
+  card.querySelector("[data-review-block-select]")?.addEventListener("change", (event) => {
+    selectReviewBlock(event.target.value);
+  });
   card.querySelectorAll("[data-cross-page-jump-page]").forEach((button) => {
     button.addEventListener("click", () => jumpToCrossPageBlock(button.dataset.crossPageJumpPage, button.dataset.crossPageJumpBlock));
   });
@@ -1058,6 +1275,7 @@ function renderReviewCard() {
   card.querySelectorAll("[data-page-input]").forEach((input) => {
     input.addEventListener("change", () => goToPage(Number(input.value || state.currentPage)));
   });
+  card.querySelector("[data-next-risk-page]")?.addEventListener("click", () => goToNextRiskPage());
   card.querySelectorAll("[data-ocr-patch-status-action]").forEach((button) => {
     button.addEventListener("click", async () => {
       const result = updateOcrPatchStatus(button.dataset.ocrPatchId, button.dataset.ocrPatchStatusAction);
@@ -1171,6 +1389,60 @@ function renderAcceptedCorrectedDownloadStatus(status = getAcceptedCorrectedDown
   `;
 }
 
+function renderReviewWorkbenchPager() {
+  const riskPages = Array.from(state.riskByPage.keys()).sort((a, b) => a - b);
+  return `
+    <div class="review-workbench-pager">
+      ${renderPageNavigator("review-workbench")}
+      <button class="secondary-button review-next-risk-button" type="button" data-next-risk-page ${riskPages.length ? "" : "disabled"}>下一高风险页</button>
+    </div>
+  `;
+}
+
+function renderReviewBlockNavigator(reviewEntries) {
+  const entries = Array.isArray(reviewEntries) ? reviewEntries : [];
+  if (!entries.length) {
+    return "";
+  }
+  const activeIndex = Math.max(0, activeReviewEntryIndex(entries));
+  const active = entries[activeIndex];
+  return `
+    <div class="review-block-navigator" data-review-block-navigator>
+      <div>
+        <strong>块导航</strong>
+        <span>${activeIndex + 1} / ${entries.length}</span>
+      </div>
+      <div class="review-block-nav-controls">
+        <button class="secondary-button pager-icon" type="button" data-review-block-step="prev" ${activeIndex <= 0 ? "disabled" : ""} aria-label="上一校对块" title="上一校对块">‹</button>
+        <select data-review-block-select aria-label="选择校对块">
+          ${entries.map((entry) => `<option value="${escapeHtml(entry.key)}" ${entry.key === active.key ? "selected" : ""}>${escapeHtml(reviewEntryLabel(entry))}</option>`).join("")}
+        </select>
+        <button class="secondary-button pager-icon" type="button" data-review-block-step="next" ${activeIndex >= entries.length - 1 ? "disabled" : ""} aria-label="下一校对块" title="下一校对块">›</button>
+      </div>
+    </div>
+  `;
+}
+
+function activeReviewEntryIndex(reviewEntries) {
+  const entries = Array.isArray(reviewEntries) ? reviewEntries : [];
+  if (!entries.length) {
+    return -1;
+  }
+  const prefix = `${state.currentPage}:`;
+  const activeKey = Array.from(state.reviewExpanded || [])
+    .map((key) => String(key))
+    .find((key) => key.startsWith(prefix))
+    ?.slice(prefix.length);
+  const index = entries.findIndex((entry) => entry.key === activeKey);
+  return index >= 0 ? index : 0;
+}
+
+function reviewEntryLabel(entry) {
+  const blockLabel = `Block ${entry.displayIndex || ""}`.trim();
+  const label = entry.risk?.syntheticLabel || (entry.risk?.crossPageSourcePage ? "跨页候选" : "");
+  return label ? `${label} · ${blockLabel}` : blockLabel;
+}
+
 function renderReviewBottomPager() {
   return `
     <div class="review-bottom-pager">
@@ -1217,9 +1489,70 @@ function orderRisksBySegment(risks, segments) {
     );
 }
 
+function buildReviewEntriesForPage(risks, segments, pageNumber) {
+  const riskByKey = new Map((Array.isArray(risks) ? risks : []).map((risk) => [String(risk.blockIndex), risk]));
+  const seen = new Set();
+  const entries = segments
+    .map((segment) => {
+      const key = String(segment.blockIndex);
+      const risk = riskByKey.get(key);
+      const hasReviewText = Boolean(String(segment.markdown || "").trim());
+      if (!hasReviewText && !risk) {
+        return null;
+      }
+      seen.add(key);
+      return {
+        key,
+        segment,
+        risk: risk || reviewRiskFromSegment(segment, pageNumber),
+      };
+    })
+    .filter(Boolean);
+  (Array.isArray(risks) ? risks : []).forEach((risk) => {
+    const key = String(risk.blockIndex);
+    if (seen.has(key)) {
+      return;
+    }
+    entries.push({
+      key,
+      segment: {
+        blockIndex: key,
+        markdown: risk.text,
+        kind: "block",
+        bbox: risk.bbox,
+        pageSize: risk.pageSize,
+      },
+      risk,
+    });
+  });
+  const orderByKey = new Map(segments.map((segment, index) => [String(segment.blockIndex), index]));
+  return entries
+    .sort((left, right) => riskVisualOrder(left.risk, orderByKey) - riskVisualOrder(right.risk, orderByKey))
+    .map((entry, index) => ({
+      ...entry,
+      displayIndex: index + 1,
+    }));
+}
+
+function reviewRiskFromSegment(segment, pageNumber = state.currentPage) {
+  return {
+    pageNumber,
+    blockIndex: String(segment?.blockIndex ?? ""),
+    bbox: segment?.bbox || null,
+    pageSize: segment?.pageSize || null,
+    text: segment?.markdown || "",
+    score: 0,
+    reasons: [],
+    reviewOnly: true,
+  };
+}
+
 function riskVisualOrder(risk, orderByKey) {
   if (risk?.syntheticPlacement === "page_top") {
     return -2000;
+  }
+  if (risk?.syntheticPlacement === "page_bottom") {
+    return Number.MAX_SAFE_INTEGER - 500;
   }
   if (risk?.crossPageHint === "previous_tail") {
     return -1000 + (Number(risk.sourceBlockIndex) || 0) / 1000;
@@ -1230,24 +1563,50 @@ function riskVisualOrder(risk, orderByKey) {
   return orderByKey.get(String(risk?.blockIndex)) ?? Number.MAX_SAFE_INTEGER / 2;
 }
 
-function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDraftMarkdown = "", ocrPatch = null) {
+function reviewPatchMarkdown(patch) {
+  if (!patch || !["draft", "accepted"].includes(patch.status)) {
+    return "";
+  }
+  return String(patch.newText || "").trim() ? String(patch.newText || "") : "";
+}
+
+function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDraftMarkdown = "", ocrPatch = null, options = {}) {
   const isCrossPage = Boolean(risk?.crossPageSourcePage);
+  const isReviewOnly = Boolean(risk?.reviewOnly);
+  const displayIndex = Number(options.displayIndex) > 0 ? Number(options.displayIndex) : null;
+  const displayBlockLabel = `Block ${escapeHtml(String(displayIndex || segment.blockIndex))}`;
   const disabled = !isCrossPage && risk.bbox ? "" : "disabled";
-  const hasMathpixDraft = Boolean(String(mathpixDraftMarkdown || "").trim());
-  const editableMarkdown = prepareMathpixMarkdown(mathpixDraftMarkdown || correctedMarkdown || "");
+  const patchMarkdown = reviewPatchMarkdown(ocrPatch);
+  const hasPatchDraft = Boolean(patchMarkdown && ocrPatch?.status === "draft");
+  const hasAcceptedPatchMarkdown = Boolean(patchMarkdown && ocrPatch?.status === "accepted");
+  const hasMathpixDraft = Boolean(String(mathpixDraftMarkdown || "").trim()) || hasPatchDraft;
+  const isCorrected = Boolean(corrected || hasAcceptedPatchMarkdown);
+  const editableMarkdown = prepareMathpixMarkdown(mathpixDraftMarkdown || patchMarkdown || correctedMarkdown || "");
   const hasEditableMarkdown = Boolean(editableMarkdown.trim());
-  const previewMarkdown = hasMathpixDraft ? editableMarkdown : correctedMarkdown;
+  const previewMarkdown = hasMathpixDraft || hasAcceptedPatchMarkdown ? editableMarkdown : correctedMarkdown;
+  const mathpixEditorIsSaved = Boolean(hasAcceptedPatchMarkdown && !hasMathpixDraft && editableMarkdown === prepareMathpixMarkdown(patchMarkdown));
   const reviewKey = reviewBlockKey(state.currentPage, segment.blockIndex);
   const expanded = state.reviewExpanded.has(reviewKey);
-  const itemState = hasMathpixDraft ? "mathpix-draft" : corrected ? "corrected" : "candidate";
-  const itemStateLabel = isCrossPage ? risk.crossPageLabel : hasMathpixDraft ? "Mathpix draft" : corrected ? "已应用" : "";
+  const itemState = hasMathpixDraft ? "mathpix-draft" : isCorrected ? "corrected" : isReviewOnly ? "normal" : "candidate";
+  const itemStateLabel = isCrossPage
+    ? risk.crossPageLabel
+    : hasMathpixDraft
+      ? "Mathpix draft"
+      : hasAcceptedPatchMarkdown
+        ? "已接受 patch"
+        : corrected
+          ? "已应用"
+          : isReviewOnly
+            ? "普通段落"
+            : "";
+  const correctedPaneTitle = hasMathpixDraft ? "Mathpix 识别稿（未应用）" : hasAcceptedPatchMarkdown ? "已接受校正稿" : "校正稿渲染";
   const title = risk?.syntheticLabel
-    ? `${escapeHtml(risk.syntheticLabel)} · Block ${escapeHtml(String(segment.blockIndex))}`
+    ? `${escapeHtml(risk.syntheticLabel)} · ${displayBlockLabel}`
     : isCrossPage
-      ? `跨页候选 · Block ${escapeHtml(String(risk.sourceBlockIndex))}`
-      : `Block ${escapeHtml(String(segment.blockIndex))}`;
+      ? `跨页候选 · ${displayBlockLabel}`
+      : displayBlockLabel;
   return `
-    <article class="review-item ${corrected ? "is-corrected" : ""} ${hasMathpixDraft ? "has-mathpix-draft" : ""} ${isCrossPage ? "is-cross-page" : ""} ${expanded ? "is-expanded" : "is-collapsed"}" data-review-item-state="${escapeHtml(itemState)}">
+    <article class="review-item ${isReviewOnly ? "is-normal" : ""} ${isCorrected ? "is-corrected" : ""} ${hasMathpixDraft ? "has-mathpix-draft" : ""} ${isCrossPage ? "is-cross-page" : ""} ${expanded ? "is-expanded" : "is-collapsed"}" data-review-item-state="${escapeHtml(itemState)}" data-source-block-id="${escapeHtml(String(segment.blockIndex))}">
       <div class="review-item-head">
         <div>
           <strong>${title}</strong>
@@ -1262,7 +1621,7 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
             isCrossPage
               ? `<button class="text-button risk-action" type="button" data-cross-page-jump-page="${escapeHtml(String(risk.crossPageSourcePage))}" data-cross-page-jump-block="${escapeHtml(String(risk.sourceBlockIndex))}">跳到第 ${escapeHtml(String(risk.crossPageSourcePage))} 页校对</button>`
               : `<button class="text-button risk-action" type="button" data-risk-mathpix="${segment.blockIndex}" ${disabled}>
-                  ${corrected ? "重新校正此块" : risk.bbox ? "Mathpix 校正此块" : "缺少 bbox"}
+                  ${isCorrected ? "重新校正此块" : risk.bbox ? "Mathpix 校正此块" : "缺少 bbox"}
                 </button>`
           }
         </div>
@@ -1274,14 +1633,19 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
             ${renderBlockContent(segment.markdown, segment)}
           </div>
           <details class="block-source-detail">
-            <summary>查看当前块 Markdown 源码</summary>
-            <pre><code>${escapeHtml(segment.markdown)}</code></pre>
+            <summary>编辑当前块 MinerU Markdown 源码</summary>
+            <textarea class="mathpix-source-editor block-source-editor" data-mineru-source-edit="${escapeHtml(String(segment.blockIndex))}" spellcheck="false">${escapeHtml(segment.markdown)}</textarea>
+            <div class="mathpix-edit-actions">
+              <button class="text-button" type="button" data-apply-mineru-source-edit="${escapeHtml(String(segment.blockIndex))}" data-disable-when-clean="1" data-clean-label="未修改" data-dirty-label="保存修改并接受" disabled>
+                未修改
+              </button>
+            </div>
           </details>
         </section>
         ${
-          corrected || hasEditableMarkdown
+          isCorrected || hasEditableMarkdown
             ? `<section class="review-pane mathpix-pane">
-                <div class="review-pane-title">${hasMathpixDraft ? "Mathpix 识别稿（未应用）" : "校正稿渲染"}</div>
+                <div class="review-pane-title">${correctedPaneTitle}</div>
                 <div class="review-render">
                   ${renderBlockContent(previewMarkdown, segment)}
                 </div>
@@ -1289,8 +1653,8 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
                 <summary>编辑 Markdown 源码（保存后进入 accepted 校正稿）</summary>
                 <textarea class="mathpix-source-editor" data-mathpix-edit="${escapeHtml(String(segment.blockIndex))}" spellcheck="false">${escapeHtml(editableMarkdown)}</textarea>
                 <div class="mathpix-edit-actions">
-                  <button class="text-button" type="button" data-apply-mathpix-block-edit="${escapeHtml(String(segment.blockIndex))}">
-                    保存修改并接受
+                  <button class="text-button" type="button" data-apply-mathpix-block-edit="${escapeHtml(String(segment.blockIndex))}" ${mathpixEditorIsSaved ? 'data-disable-when-clean="1" data-clean-label="已保存" disabled' : ""} data-dirty-label="保存修改并接受">
+                    ${mathpixEditorIsSaved ? "已保存" : "保存修改并接受"}
                   </button>
                 </div>
               </details>
@@ -1300,6 +1664,26 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
       </div>
     </article>
   `;
+}
+
+function updateReviewEditorActionState(editor) {
+  const container = editor?.closest?.(".block-source-detail") || editor?.closest?.(".review-item");
+  const button = container?.querySelector?.("[data-apply-mathpix-block-edit], [data-apply-mineru-source-edit]");
+  if (!button) {
+    return false;
+  }
+  const currentValue = String(editor.value || "");
+  const initialValue = String(editor.defaultValue ?? "");
+  const isDirty = currentValue !== initialValue;
+  if (button.dataset?.disableWhenClean === "1") {
+    button.disabled = !isDirty;
+    button.textContent = isDirty ? button.dataset.dirtyLabel || "保存修改并接受" : button.dataset.cleanLabel || "未修改";
+    return isDirty;
+  }
+  if (button.dataset?.dirtyLabel && isDirty) {
+    button.textContent = button.dataset.dirtyLabel;
+  }
+  return isDirty;
 }
 
 function renderOcrPatchStatusControls(patch) {
@@ -1344,6 +1728,37 @@ async function toggleReviewBlock(key) {
   await renderCurrentPage();
 }
 
+async function navigateReviewBlock(direction) {
+  const entries = reviewEntriesForCurrentPage();
+  if (!entries.length) {
+    return;
+  }
+  const currentIndex = Math.max(0, activeReviewEntryIndex(entries));
+  const delta = direction === "prev" ? -1 : 1;
+  const nextIndex = clamp(currentIndex + delta, 0, entries.length - 1);
+  await selectReviewBlock(entries[nextIndex].key);
+}
+
+async function selectReviewBlock(blockIndex) {
+  const key = String(blockIndex || "");
+  if (!key) {
+    return;
+  }
+  expandOnlyReviewBlock(state.currentPage, key);
+  await renderCurrentPage();
+  scrollExpandedReviewItemIntoView();
+}
+
+function reviewEntriesForCurrentPage() {
+  const risks = state.riskByPage.get(state.currentPage) || [];
+  return buildReviewEntriesForPage(risks, reviewSegmentsForPage(state.currentPage), state.currentPage);
+}
+
+function scrollExpandedReviewItemIntoView() {
+  const item = document.querySelector(".review-item.is-expanded");
+  item?.scrollIntoView?.({ block: "center", behavior: "smooth" });
+}
+
 async function jumpToCrossPageBlock(pageNumber, blockIndex) {
   const targetPage = Number(pageNumber);
   if (!Number.isFinite(targetPage) || targetPage < 1) {
@@ -1367,8 +1782,29 @@ async function applyMathpixBlockEdit(blockIndex, trigger) {
     return;
   }
   const preparedMarkdown = prepareMathpixMarkdown(editor.value || "");
-  const segment = pageSegmentsForPage(state.currentPage).find((item) => String(item.blockIndex) === blockKey);
-  const risk = (state.riskByPage.get(state.currentPage) || []).find((item) => String(item.blockIndex) === blockKey);
+  await saveHumanAcceptedBlockEdit(blockKey, preparedMarkdown);
+}
+
+async function applyMineruSourceEdit(blockIndex, trigger) {
+  const blockKey = String(blockIndex || "");
+  if (!blockKey) {
+    return;
+  }
+  const editor = trigger?.closest?.(".review-item")?.querySelector?.("[data-mineru-source-edit]");
+  if (!editor) {
+    return;
+  }
+  await saveHumanAcceptedBlockEdit(blockKey, editor.value || "");
+}
+
+async function saveHumanAcceptedBlockEdit(blockKey, newMarkdown) {
+  const preparedMarkdown = String(newMarkdown || "");
+  if (!preparedMarkdown.trim()) {
+    setStatus("Empty block", "error");
+    return;
+  }
+  const segment = reviewSegmentsForPage(state.currentPage).find((item) => String(item.blockIndex) === blockKey);
+  const risk = reviewRiskForBlock(state.currentPage, blockKey);
   const patchResult = createAndStoreDraftOcrPatch({
     pageNo: state.currentPage,
     blockIndex: blockKey,
@@ -1661,7 +2097,7 @@ async function recognizeRiskBlockWithMathpix(blockIndex) {
     return;
   }
   const blockKey = String(blockIndex);
-  const risk = (state.riskByPage.get(state.currentPage) || []).find((item) => String(item.blockIndex) === blockKey);
+  const risk = reviewRiskForBlock(state.currentPage, blockKey);
   if (!risk?.bbox) {
     setStatus("No bbox", "error");
     return;
@@ -1671,7 +2107,7 @@ async function recognizeRiskBlockWithMathpix(blockIndex) {
   setStatus("Block OCR", "busy");
   try {
     const page = await ensureCurrentPagePreview();
-    const cropDataUrl = await cropPageImage(page.image, risk.bbox, risk.pageSize, 10);
+    const cropDataUrl = await cropPageImage(page.image, risk.bbox, risk.pageSize, BLOCK_MATHPIX_CROP_PADDING);
     const upload = await postJson("/api/model-tester/upload", {
       name: `page-${state.currentPage}-block-${blockKey.replace(/[^a-zA-Z0-9_-]+/g, "-")}.png`,
       kind: "image",
@@ -1756,6 +2192,32 @@ function originalBlockMarkdownsForPage(pageNumber) {
 
 function pageSegmentsForPage(pageNumber) {
   const entries = originalBlockMarkdownsForPage(pageNumber);
+  return segmentEntries(entries);
+}
+
+function reviewBlockMarkdownsForPage(pageNumber) {
+  const page = state.mineruInfo?.pdf_info?.[pageNumber - 1];
+  if (!page) {
+    return [];
+  }
+  const blocks = Array.isArray(page.para_blocks) ? page.para_blocks : [];
+  return blocks.map((block, blockIndex) => {
+    const scopedBlock = filterBlockLines(block, (line) => !lineHasCrossPageContent(line));
+    return {
+      block,
+      blockIndex,
+      bbox: getBlockBBox(scopedBlock) || getBlockBBox(block),
+      markdown: blockToMarkdown(scopedBlock),
+      pageSize: page.page_size,
+    };
+  });
+}
+
+function reviewSegmentsForPage(pageNumber) {
+  return segmentEntries(reviewBlockMarkdownsForPage(pageNumber));
+}
+
+function segmentEntries(entries) {
   const segments = [];
   let index = 0;
   while (index < entries.length) {
@@ -1805,6 +2267,34 @@ function pageSegmentsForPage(pageNumber) {
     });
   }
   return segments;
+}
+
+function filterBlockLines(block, includeLine) {
+  if (!block || typeof block !== "object") {
+    return block;
+  }
+  const output = { ...block };
+  delete output.bbox;
+  delete output.bbox_fs;
+  if (Array.isArray(block.lines)) {
+    output.lines = block.lines
+      .filter((line) => includeLine(line))
+      .map((line) => ({ ...line, spans: Array.isArray(line.spans) ? line.spans.slice() : [] }));
+  }
+  if (Array.isArray(block.blocks)) {
+    output.blocks = block.blocks.map((nested) => filterBlockLines(nested, includeLine));
+  }
+  return output;
+}
+
+function lineHasCrossPageContent(line) {
+  if (!line || typeof line !== "object") {
+    return false;
+  }
+  if (line.cross_page === true) {
+    return true;
+  }
+  return (Array.isArray(line.spans) ? line.spans : []).some((span) => span?.cross_page === true);
 }
 
 function isAlgorithmStartEntry(entry) {
@@ -1968,7 +2458,7 @@ function buildAcceptedPatchPreviewForPage(pageNo) {
   const mergeAcceptedPatches = getOcrCoreMergeAcceptedPatches();
   const hashBlockText = getOcrCoreHashBlockText();
   const acceptedPatches = acceptedOcrPatchesForPage(pageNumber);
-  const sourceSegments = pageSegmentsForPage(pageNumber);
+  const sourceSegments = reviewSegmentsForPage(pageNumber);
   const fallbackMarkdown = sourceSegments.map((segment) => String(segment.markdown || "").replace(/\r\n?/g, "\n")).filter(Boolean).join("\n\n");
 
   if (!mergeAcceptedPatches || !hashBlockText) {
@@ -1987,7 +2477,10 @@ function buildAcceptedPatchPreviewForPage(pageNo) {
     };
   }
 
-  const previewSegments = syntheticSegmentsForAcceptedPatches(pageNumber, acceptedPatches, hashBlockText).concat(sourceSegments);
+  const orderByKey = new Map(sourceSegments.map((segment, index) => [String(segment.blockIndex), index]));
+  const previewSegments = syntheticSegmentsForAcceptedPatches(pageNumber, acceptedPatches, hashBlockText)
+    .concat(sourceSegments)
+    .sort((left, right) => acceptedPreviewSegmentOrder(left, orderByKey) - acceptedPreviewSegmentOrder(right, orderByKey));
   const blocks = previewSegments.map((segment) => {
     const text = String(segment.markdown || "").replace(/\r\n?/g, "\n");
     const oldHash = hashBlockText(text);
@@ -2019,12 +2512,22 @@ function buildAcceptedPatchPreviewForPage(pageNo) {
   };
 }
 
+function acceptedPreviewSegmentOrder(segment, orderByKey) {
+  if (segment?.syntheticPlacement === "page_top") {
+    return -2000;
+  }
+  if (segment?.syntheticPlacement === "page_bottom") {
+    return Number.MAX_SAFE_INTEGER - 500;
+  }
+  return orderByKey.get(String(segment?.blockIndex)) ?? Number.MAX_SAFE_INTEGER / 2;
+}
+
 function syntheticSegmentsForAcceptedPatches(pageNumber, acceptedPatches, hashBlockText) {
   if (!acceptedPatches.length || typeof hashBlockText !== "function") {
     return [];
   }
   const acceptedBlockIds = new Set(acceptedPatches.map((patch) => patch?.blockId).filter(Boolean));
-  return detectSyntheticRiskCandidatesForPage(pageNumber)
+  return detectSupplementalRiskCandidatesForPage(pageNumber)
     .map((risk) => {
       const markdown = String(risk.text || "").replace(/\r\n?/g, "\n");
       const oldHash = hashBlockText(markdown);
@@ -2257,7 +2760,7 @@ function detectRiskCandidatesForPage(pageNumber) {
 }
 
 function detectLocalRiskCandidatesForPage(pageNumber) {
-  const segmentRisks = pageSegmentsForPage(pageNumber)
+  const segmentRisks = reviewSegmentsForPage(pageNumber)
     .map((segment) => {
       const { score: baseScore, reasons: baseReasons } = scoreRiskBlock(segment.markdown);
       const reasons = baseReasons.slice();
@@ -2277,11 +2780,147 @@ function detectLocalRiskCandidatesForPage(pageNumber) {
       };
     })
     .filter((item) => item.text && item.score >= 0.25);
-  return segmentRisks.concat(detectSyntheticRiskCandidatesForPage(pageNumber)).sort((a, b) => b.score - a.score);
+  return segmentRisks.concat(detectSupplementalRiskCandidatesForPage(pageNumber)).sort((a, b) => b.score - a.score);
+}
+
+function detectSupplementalRiskCandidatesForPage(pageNumber) {
+  return detectCrossPageContinuationCandidatesForPage(pageNumber)
+    .concat(detectSyntheticRiskCandidatesForPage(pageNumber))
+    .concat(detectContentListRiskCandidatesForPage(pageNumber));
 }
 
 function detectSyntheticRiskCandidatesForPage(pageNumber) {
   return detectMissingBackgroundTitleCandidatesForPage(pageNumber).concat(detectMissingPageTopTextCandidatesForPage(pageNumber));
+}
+
+function detectContentListRiskCandidatesForPage(pageNumber) {
+  const items = contentListItemsForPage(pageNumber);
+  if (!items.length) {
+    return [];
+  }
+  const middleTexts = new Set(
+    originalBlockMarkdownsForPage(pageNumber)
+      .map((entry) => normalizeTextForComparison(entry.markdown))
+      .filter(Boolean),
+  );
+  const pageSize = inferContentListPageSize(pageNumber, items);
+  return items
+    .map((item, pageItemIndex) => contentListItemToRiskCandidate(item, pageNumber, pageItemIndex, pageSize, middleTexts))
+    .filter(Boolean);
+}
+
+function detectCrossPageContinuationCandidatesForPage(pageNumber) {
+  const page = state.mineruInfo?.pdf_info?.[pageNumber - 1];
+  const previousPage = state.mineruInfo?.pdf_info?.[pageNumber - 2];
+  if (!page || !previousPage) {
+    return [];
+  }
+  const pageSize = page.page_size || previousPage.page_size || null;
+  const blocks = Array.isArray(previousPage.para_blocks) ? previousPage.para_blocks : [];
+  const currentTexts = new Set(
+    reviewBlockMarkdownsForPage(pageNumber)
+      .map((entry) => normalizeTextForComparison(entry.markdown))
+      .filter(Boolean),
+  );
+  return blocks
+    .map((block, sourceBlockIndex) => {
+      const continuationBlock = filterBlockLines(block, lineHasCrossPageContent);
+      const markdown = blockToMarkdown(continuationBlock).trim();
+      if (!markdown || isTextRedundantWithNormalizedSet(markdown, currentTexts)) {
+        return null;
+      }
+      const bbox = getBlockBBox(continuationBlock);
+      const scored = scoreRiskBlock(markdown);
+      return {
+        pageNumber,
+        blockIndex: `cross-page-continuation-${pageNumber}-${sourceBlockIndex}`,
+        sourceBlockIndex: String(sourceBlockIndex),
+        sourcePageNumber: pageNumber - 1,
+        bbox,
+        pageSize,
+        text: markdown,
+        score: Math.max(scored.score, 0.34),
+        reasons: Array.from(new Set(["cross_page_continuation"].concat(scored.reasons))),
+        syntheticPlacement: "page_top",
+        syntheticLabel: "跨页续段候选",
+        supplementalSource: "cross_page_continuation",
+      };
+    })
+    .filter(Boolean);
+}
+
+function hasCrossPageContinuationForPage(pageNumber) {
+  return detectCrossPageContinuationCandidatesForPage(pageNumber).length > 0;
+}
+
+function contentListItemToRiskCandidate(item, pageNumber, pageItemIndex, pageSize, middleTexts) {
+  if (!item || item.type !== "discarded") {
+    return null;
+  }
+  const text = contentListItemText(item);
+  const normalized = normalizeTextForComparison(text);
+  if (
+    !normalized ||
+    normalized.length < 4 ||
+    isPageNumberOnlyText(normalized) ||
+    isTextRedundantWithNormalizedSet(normalized, middleTexts)
+  ) {
+    return null;
+  }
+  const bbox = normalizedBBox(item.bbox);
+  const geometry = bbox ? bboxGeometryForPageSize(bbox, pageSize) : null;
+  const scored = scoreRiskBlock(text);
+  const reasons = scored.reasons.slice();
+  let score = scored.score;
+  const isTopCandidate = Boolean(geometry?.topRatio <= 0.2 && text.length >= 6);
+  if (isTopCandidate && hasCrossPageContinuationForPage(pageNumber)) {
+    return null;
+  }
+  const isBottomCandidate = Boolean(geometry?.topRatio >= 0.82 || geometry?.bottomRatio >= 0.9);
+  const isFootnoteCandidate = hasFootnoteSignal(text) && !isTopCandidate;
+  if (!isFootnoteCandidate) {
+    const footnoteReasonIndex = reasons.indexOf("footnote_marker_or_note");
+    if (footnoteReasonIndex >= 0) {
+      reasons.splice(footnoteReasonIndex, 1);
+    }
+  }
+  if (!reasons.includes("content_list_discarded")) {
+    reasons.unshift("content_list_discarded");
+  }
+  if (isFootnoteCandidate) {
+    score = Math.max(score, 0.38);
+    if (!reasons.includes("footnote_marker_or_note")) {
+      reasons.push("footnote_marker_or_note");
+    }
+  }
+  if (isTopCandidate) {
+    score = Math.max(score, 0.33);
+    if (!reasons.includes("background_heading_missing")) {
+      reasons.push("background_heading_missing");
+    }
+  }
+  if (isBottomCandidate) {
+    score = Math.max(score, 0.31);
+    if (!reasons.includes("page_bottom_boundary")) {
+      reasons.push("page_bottom_boundary");
+    }
+  }
+  if (score < 0.25) {
+    return null;
+  }
+  return {
+    pageNumber,
+    blockIndex: `content-list-discarded-${pageNumber}-${pageItemIndex}`,
+    bbox,
+    pageSize,
+    text,
+    score: Math.min(score, 1),
+    reasons: Array.from(new Set(reasons)),
+    syntheticPlacement: isTopCandidate ? "page_top" : isBottomCandidate ? "page_bottom" : "content_list",
+    syntheticLabel: isFootnoteCandidate ? "content_list 脚注候选" : isTopCandidate ? "content_list 标题候选" : "content_list 补充候选",
+    supplementalSource: "content_list",
+    contentListIndex: item.__contentListIndex,
+  };
 }
 
 function detectCrossPageRiskCandidatesForPage(pageNumber) {
@@ -2335,6 +2974,9 @@ function detectMissingBackgroundTitleCandidatesForPage(pageNumber) {
   if (!page) {
     return [];
   }
+  if (hasCrossPageContinuationForPage(pageNumber)) {
+    return [];
+  }
   const entries = originalBlockMarkdownsForPage(pageNumber);
   const pageSize = page.page_size || entries.find((entry) => entry.pageSize)?.pageSize;
   const height = pageSizeHeight(pageSize);
@@ -2371,6 +3013,9 @@ function detectMissingBackgroundTitleCandidatesForPage(pageNumber) {
 function detectMissingPageTopTextCandidatesForPage(pageNumber) {
   const page = state.mineruInfo?.pdf_info?.[pageNumber - 1];
   if (!page) {
+    return [];
+  }
+  if (hasCrossPageContinuationForPage(pageNumber)) {
     return [];
   }
   const entries = originalBlockMarkdownsForPage(pageNumber);
@@ -2439,6 +3084,25 @@ function segmentPageGeometry(segment) {
   };
 }
 
+function bboxGeometryForPageSize(bbox, pageSize) {
+  if (!Array.isArray(bbox) || bbox.length < 4) {
+    return null;
+  }
+  const height = pageSizeHeight(pageSize);
+  if (!height) {
+    return null;
+  }
+  const top = Number(bbox[1]);
+  const bottom = Number(bbox[3]);
+  if (!Number.isFinite(top) || !Number.isFinite(bottom)) {
+    return null;
+  }
+  return {
+    topRatio: top / height,
+    bottomRatio: bottom / height,
+  };
+}
+
 function pageSizeHeight(pageSize) {
   if (Array.isArray(pageSize)) {
     return Number(pageSize[1]) || 0;
@@ -2457,6 +3121,122 @@ function pageSizeWidth(pageSize) {
     return Number(pageSize.width || pageSize.w || pageSize[0]) || 0;
   }
   return 0;
+}
+
+function normalizeContentListItems(data) {
+  const rawItems = Array.isArray(data)
+    ? data
+    : Array.isArray(data?.content_list)
+      ? data.content_list
+      : Array.isArray(data?.items)
+        ? data.items
+        : [];
+  return rawItems
+    .filter((item) => item && typeof item === "object")
+    .map((item, index) => ({ ...item, __contentListIndex: index }));
+}
+
+function contentListItemsForPage(pageNumber) {
+  const targetIndex = Number(pageNumber) - 1;
+  if (!Number.isFinite(targetIndex) || targetIndex < 0) {
+    return [];
+  }
+  return (Array.isArray(state.contentListItems) ? state.contentListItems : []).filter((item) => Number(item.page_idx) === targetIndex);
+}
+
+function contentListItemText(item) {
+  if (!item || typeof item !== "object") {
+    return "";
+  }
+  if (typeof item.text === "string") {
+    return item.text.trim();
+  }
+  if (Array.isArray(item.img_caption)) {
+    return item.img_caption.join("\n").trim();
+  }
+  if (typeof item.table_body === "string") {
+    return item.table_body.trim();
+  }
+  if (typeof item.latex === "string") {
+    return item.latex.trim();
+  }
+  return "";
+}
+
+function normalizedBBox(bbox) {
+  if (!Array.isArray(bbox) || bbox.length < 4) {
+    return null;
+  }
+  const normalized = bbox.slice(0, 4).map(Number);
+  return normalized.every(Number.isFinite) ? normalized : null;
+}
+
+function inferContentListPageSize(pageNumber, items = contentListItemsForPage(pageNumber)) {
+  const explicit = items.find((item) => Array.isArray(item.page_size) || item.pageSize)?.page_size || items.find((item) => item.pageSize)?.pageSize;
+  if (explicit) {
+    return explicit;
+  }
+  const boxes = items.map((item) => normalizedBBox(item.bbox)).filter(Boolean);
+  if (!boxes.length) {
+    const page = state.mineruInfo?.pdf_info?.[pageNumber - 1];
+    return page?.page_size || null;
+  }
+  const maxX = Math.max(...boxes.map((box) => box[2]));
+  const maxY = Math.max(...boxes.map((box) => box[3]));
+  return [Math.ceil(Math.max(maxX + 20, maxX * 1.1)), Math.ceil(Math.max(maxY + 20, maxY * 1.08))];
+}
+
+function normalizeTextForComparison(text) {
+  return String(text || "").replace(/\s+/g, " ").trim();
+}
+
+function canonicalTextForOverlap(text) {
+  return normalizeTextForComparison(text)
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function isTextRedundantWithNormalizedSet(text, normalizedTexts) {
+  const normalized = normalizeTextForComparison(text);
+  if (!normalized) {
+    return false;
+  }
+  const canon = canonicalTextForOverlap(normalized);
+  if (!canon) {
+    return false;
+  }
+  const sourceItems = normalizedTexts instanceof Set ? Array.from(normalizedTexts) : Array.isArray(normalizedTexts) ? normalizedTexts : [];
+  return sourceItems.some((candidate) => {
+    const candidateNormalized = normalizeTextForComparison(candidate);
+    if (!candidateNormalized) {
+      return false;
+    }
+    if (candidateNormalized === normalized) {
+      return true;
+    }
+    const other = canonicalTextForOverlap(candidateNormalized);
+    if (!other) {
+      return false;
+    }
+    const shorter = canon.length <= other.length ? canon : other;
+    const longer = canon.length > other.length ? canon : other;
+    if (shorter.length >= 24 && longer.includes(shorter) && shorter.length / longer.length >= 0.55) {
+      return true;
+    }
+    const shortTokens = new Set(shorter.split(/\s+/).filter((token) => token.length > 1));
+    const longTokens = new Set(longer.split(/\s+/).filter((token) => token.length > 1));
+    if (shortTokens.size < 6) {
+      return false;
+    }
+    const shared = Array.from(shortTokens).filter((token) => longTokens.has(token)).length;
+    return shared / shortTokens.size >= 0.88;
+  });
+}
+
+function isPageNumberOnlyText(text) {
+  return /^[\s\dIVXLCDMivxlcdm.()-]+$/.test(String(text || "").trim());
 }
 
 function detectRiskCandidates(markdown, pageNumber) {
@@ -2939,7 +3719,8 @@ function updateCorrectionSummary() {
   const prefix = state.pdfFile
     ? `${state.pdfFile.type || "unknown"} · ${formatBytes(state.pdfFile.size)} · ${state.pdfPageCount || total || "-"} 页`
     : `${total || "-"} 页 MinerU`;
-  els.fileMeta.textContent = `${prefix} · 高风险 ${riskPages} 页 / ${riskBlocks} 块 · 已应用校正 ${count} 页 / ${blockCount} 块`;
+  const contentListSummary = state.contentListItems.length ? ` · content_list ${state.contentListItems.length} 条` : "";
+  els.fileMeta.textContent = `${prefix}${contentListSummary} · 高风险 ${riskPages} 页 / ${riskBlocks} 块 · 已应用校正 ${count} 页 / ${blockCount} 块`;
 }
 
 async function copyButtonText(button, text) {
@@ -3235,8 +4016,10 @@ function riskReasonLabel(reason) {
       scientific_special_symbol: "科学特殊符号",
       footnote_marker_or_note: "脚注/注释",
       ocr_garbled_text: "疑似 OCR 字符乱码",
+      content_list_discarded: "content_list 补充",
       background_heading_missing: "疑似漏识别标题",
       page_top_text_missing: "疑似漏识别页首正文",
+      cross_page_continuation: "跨页续段",
       cross_page_previous_tail: "上一页边界候选",
       cross_page_next_head: "下一页边界候选",
       page_bottom_boundary: "页底待核查",
@@ -3273,10 +4056,11 @@ async function cropPageImage(pageDataUrl, bbox, pageSize, padding = 8) {
   const sourceHeight = Number(pageSize?.[1]) || image.naturalHeight || image.height;
   const scaleX = (image.naturalWidth || image.width) / sourceWidth;
   const scaleY = (image.naturalHeight || image.height) / sourceHeight;
-  const x = Math.max(0, Math.floor((bbox[0] - padding) * scaleX));
-  const y = Math.max(0, Math.floor((bbox[1] - padding) * scaleY));
-  const right = Math.min(image.naturalWidth || image.width, Math.ceil((bbox[2] + padding) * scaleX));
-  const bottom = Math.min(image.naturalHeight || image.height, Math.ceil((bbox[3] + padding) * scaleY));
+  const pad = normalizeCropPadding(padding);
+  const x = Math.max(0, Math.floor((bbox[0] - pad.left) * scaleX));
+  const y = Math.max(0, Math.floor((bbox[1] - pad.top) * scaleY));
+  const right = Math.min(image.naturalWidth || image.width, Math.ceil((bbox[2] + pad.right) * scaleX));
+  const bottom = Math.min(image.naturalHeight || image.height, Math.ceil((bbox[3] + pad.bottom) * scaleY));
   const width = Math.max(1, right - x);
   const height = Math.max(1, bottom - y);
   const canvas = document.createElement("canvas");
@@ -3285,6 +4069,21 @@ async function cropPageImage(pageDataUrl, bbox, pageSize, padding = 8) {
   const context = canvas.getContext("2d");
   context.drawImage(image, x, y, width, height, 0, 0, width, height);
   return canvas.toDataURL("image/png");
+}
+
+function normalizeCropPadding(padding = 8) {
+  if (typeof padding === "number") {
+    const value = Math.max(0, Number(padding) || 0);
+    return { left: value, right: value, top: value, bottom: value };
+  }
+  const horizontal = Math.max(0, Number(padding?.horizontal ?? padding?.x ?? 0) || 0);
+  const vertical = Math.max(0, Number(padding?.vertical ?? padding?.y ?? 0) || 0);
+  return {
+    left: Math.max(0, Number(padding?.left ?? horizontal) || 0),
+    right: Math.max(0, Number(padding?.right ?? horizontal) || 0),
+    top: Math.max(0, Number(padding?.top ?? vertical) || 0),
+    bottom: Math.max(0, Number(padding?.bottom ?? vertical) || 0),
+  };
 }
 
 function setStatus(text, tone) {

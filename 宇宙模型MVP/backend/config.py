@@ -73,6 +73,9 @@ class Settings:
     llm_base_url: str = os.getenv("LLM_BASE_URL", "").rstrip("/")
     llm_api_key: str = os.getenv("LLM_API_KEY", "")
     llm_model: str = os.getenv("LLM_MODEL", "")
+    llm_chat_path: str = os.getenv("LLM_CHAT_PATH", "/chat/completions")
+    llm_models_config_path: str = os.getenv("LLM_MODELS_CONFIG_PATH", os.path.join(ROOT_DIR, "models.yaml"))
+    llm_router_enabled: bool = os.getenv("LLM_ROUTER_ENABLED", "1").strip().lower() not in {"0", "false", "no", "off"}
     model_tester_base_url: str = os.getenv("MODEL_TESTER_BASE_URL", os.getenv("LLM_BASE_URL", "")).rstrip("/")
     model_tester_api_key: str = os.getenv("MODEL_TESTER_API_KEY", os.getenv("LLM_API_KEY", ""))
     model_tester_models_path: str = os.getenv("MODEL_TESTER_MODELS_PATH", "/v1/models")
@@ -139,6 +142,7 @@ class Settings:
             "defaultKbId": self.default_kb_id,
             "uploadTimeoutSeconds": self.upload_timeout_seconds,
             "llmConfigured": bool(self.llm_base_url and self.llm_model),
+            "llmRouterEnabled": self.llm_router_enabled,
             "geminiConfigured": bool(self.gemini_api_keys),
             "yunwuConfigured": bool(self.yunwu_api_base_url and self.yunwu_api_key),
             "mathpixConfigured": bool(self.mathpix_app_id and self.mathpix_app_key),

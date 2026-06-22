@@ -3,10 +3,9 @@ from __future__ import annotations
 import re
 from typing import Any
 
-import requests
-
 from backend.config import SETTINGS
 from backend.services.ephemeris_compare import BODY_IDS, compare_ephemeris, normalize_tolerance_unit
+from backend.services.llm_router import LLM_ROUTER
 from backend.services.rag_client import RAG_CLIENT
 from backend.services.visualization_planner import VISUALIZATION_PLANNER, has_explicit_visualization_intent
 
@@ -205,53 +204,44 @@ def _fallback_answer(question: str) -> str:
     return "这次没有命中需要调用本地知识库或数值模型的专题，我先给出简洁回答：可以继续补充你的问题条件，我会据此细化。"
 
 
-def _generate_direct_answer(question: str, history: list[dict[str, Any]]) -> tuple[str, dict[str, Any] | None]:
-    recent_history = [
+def _recent_history(history: list[dict[str, Any]]) -> list[dict[str, str]]:
+    return [
         {
-            "role": item.get("role", "user"),
+            "role": str(item.get("role", "user")),
             "content": str(item.get("content") or "")[:1200],
         }
         for item in history[-6:]
         if str(item.get("content") or "").strip()
     ]
-    if SETTINGS.llm_base_url and SETTINGS.llm_api_key and SETTINGS.llm_model:
-        try:
-            response = requests.post(
-                f"{SETTINGS.llm_base_url}/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {SETTINGS.llm_api_key}",
-                    "Content-Type": "application/json",
-                },
-                json={
-                    "model": SETTINGS.llm_model,
-                    "temperature": 0.2,
-                    "messages": [
-                        {
-                            "role": "system",
-                            "content": (
-                                "你是一个面向天文学与宇宙模型教学的中文助手。"
-                                "默认直接回答用户问题，不要声称查询了知识库。"
-                                "如果用户要求可视化，请只给简洁文字解释；"
-                                "交互式图形会由 A2UI 组件单独渲染。"
-                            ),
-                        },
-                        *recent_history,
-                        {
-                            "role": "user",
-                            "content": f"{question}\n\n请给出简洁、直接的中文回答。",
-                        },
-                    ],
-                },
-                timeout=SETTINGS.request_timeout_seconds,
-            )
-            response.raise_for_status()
-            payload = response.json()
-            answer = ((((payload.get("choices") or [{}])[0]).get("message") or {}).get("content") or "").strip()
-            if answer:
-                return answer, payload.get("usage")
-        except Exception:
-            pass
-    return _fallback_answer(question), None
+
+
+def _generate_direct_answer(question: str, history: list[dict[str, Any]]) -> tuple[str, dict[str, Any] | None, dict[str, Any] | None]:
+    task = "visual_explanation" if has_explicit_visualization_intent(question) else "direct_qa"
+    llm_result = LLM_ROUTER.generate(
+        task=task,
+        question=question,
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "你是一个面向天文学与宇宙模型教学的中文助手。"
+                    "默认直接回答用户问题，不要声称查询了知识库。"
+                    "如果用户要求可视化，请只给简洁文字解释；"
+                    "交互式图形会由 A2UI 组件单独渲染。"
+                ),
+            },
+            *_recent_history(history),
+            {
+                "role": "user",
+                "content": f"{question}\n\n请给出简洁、直接的中文回答。",
+            },
+        ],
+        temperature=0.2,
+        timeout=SETTINGS.request_timeout_seconds,
+    )
+    if llm_result.get("ok") and str(llm_result.get("answer") or "").strip():
+        return str(llm_result["answer"]).strip(), llm_result.get("usage"), llm_result.get("route")
+    return _fallback_answer(question), None, llm_result.get("route") if isinstance(llm_result, dict) else None
 
 
 def _build_computed_answer(
@@ -272,6 +262,53 @@ def _build_computed_answer(
     return _fallback_answer(question)
 
 
+def _generate_computed_answer(
+    question: str,
+    history: list[dict[str, Any]],
+    ephemeris: dict[str, Any] | None,
+    rag_contexts: list[dict[str, Any]],
+) -> tuple[str, dict[str, Any] | None, dict[str, Any] | None]:
+    fallback = _build_computed_answer(question, ephemeris, rag_contexts)
+    computed_summary = _summarize_ephemeris(ephemeris)
+    if not computed_summary:
+        return fallback, None, None
+
+    joined_context = "\n\n".join(
+        f"[来源 {index + 1}] {context.get('source')}\n{context.get('content')}"
+        for index, context in enumerate(rag_contexts[:3])
+    )
+    llm_result = LLM_ROUTER.generate(
+        task="computed_explanation",
+        question=question,
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "你是一个面向天文学与宇宙模型教学的中文助手。"
+                    "请根据已经完成的 Python 数值计算结果解释问题。"
+                    "不要修改数值，不要编造额外计算结果。"
+                    "如果有知识库上下文，请优先用它补充概念解释。"
+                ),
+            },
+            *_recent_history(history),
+            {
+                "role": "user",
+                "content": (
+                    f"问题：{question}\n\n"
+                    f"计算结果：\n{computed_summary}\n\n"
+                    f"知识库上下文：\n{joined_context or '无'}\n\n"
+                    "请给出简洁、直接的中文解释。"
+                ),
+            },
+        ],
+        temperature=0.2,
+        timeout=SETTINGS.request_timeout_seconds,
+    )
+    if llm_result.get("ok") and str(llm_result.get("answer") or "").strip():
+        return str(llm_result["answer"]).strip(), llm_result.get("usage"), llm_result.get("route")
+    return fallback, None, llm_result.get("route") if isinstance(llm_result, dict) else None
+
+
 def _is_bad_rag_result(rag_result: dict[str, Any]) -> bool:
     answer = str(rag_result.get("answer") or "").strip()
     if not rag_result.get("ok"):
@@ -283,6 +320,35 @@ def _is_bad_rag_result(rag_result: dict[str, Any]) -> bool:
     return False
 
 
+def _generation_detail(
+    *,
+    service: str,
+    has_computed_ephemeris: bool,
+    has_contexts: bool,
+    llm_route: dict[str, Any] | None,
+) -> str:
+    route = llm_route or {}
+    model = str(route.get("actualModel") or route.get("selectedModel") or "").strip()
+    if model:
+        parts: list[str] = []
+        if has_computed_ephemeris:
+            parts.append("Python")
+        parts.append(model)
+        if has_contexts:
+            parts.append("RAG")
+        detail = " + ".join(parts)
+        if route.get("fallbackUsed"):
+            detail = f"{detail} (fallback)"
+        return detail
+    if has_computed_ephemeris and has_contexts:
+        return "Python + RAG + 本地兜底回答"
+    if has_computed_ephemeris:
+        return "Python + 本地兜底回答"
+    if service == "knowledge" and has_contexts:
+        return "RAG + 本地兜底回答"
+    return "本地兜底回答"
+
+
 def _orchestration_steps(
     *,
     question: str,
@@ -290,6 +356,7 @@ def _orchestration_steps(
     visualizations: list[dict[str, Any]],
     service: str,
     computed_ephemeris: dict[str, Any] | None = None,
+    llm_route: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     contexts = rag_result.get("contexts") or []
     visual_component_ids = [
@@ -335,7 +402,12 @@ def _orchestration_steps(
                 "id": "generation",
                 "label": "生成文字解释",
                 "status": "completed",
-                "detail": "Python + DeepSeek + RAG" if computed_ephemeris and contexts else ("DeepSeek + RAG" if service == "knowledge" else ("DeepSeek" if service == "llm" else "本地兜底回答")),
+                "detail": _generation_detail(
+                    service=service,
+                    has_computed_ephemeris=bool(computed_ephemeris),
+                    has_contexts=bool(contexts),
+                    llm_route=llm_route,
+                ),
             },
             {
                 "id": "validation",
@@ -391,15 +463,20 @@ class ChatService:
                 auto_rag_used = not _is_bad_rag_result(rag_result)
 
             if computed_ephemeris:
-                answer = _build_computed_answer(question, computed_ephemeris, rag_result.get("contexts") or [])
-                usage = None
+                answer, usage, llm_route = _generate_computed_answer(
+                    question,
+                    history,
+                    computed_ephemeris,
+                    rag_result.get("contexts") or [],
+                )
                 service = "knowledge" if auto_rag_used else "assistant"
             elif auto_rag_used:
                 answer = rag_result.get("answer") or _build_computed_answer(question, None, rag_result.get("contexts") or [])
                 usage = rag_result.get("tokenUsage")
+                llm_route = rag_result.get("llmRoute")
                 service = "knowledge"
             else:
-                answer, usage = _generate_direct_answer(question, history)
+                answer, usage, llm_route = _generate_direct_answer(question, history)
                 service = "llm"
 
             visualizations = _recommend_visualizations(question, answer)
@@ -414,10 +491,12 @@ class ChatService:
                     visualizations=visualizations,
                     service=service,
                     computed_ephemeris=computed_ephemeris,
+                    llm_route=llm_route,
                 ),
                 "service": service,
                 "strategy": rag_result.get("strategy"),
                 "tokenUsage": usage,
+                "llmRoute": llm_route,
                 "computedEphemeris": computed_ephemeris,
                 "autoRagUsed": auto_rag_used,
                 "raw": rag_result.get("raw"),
@@ -436,12 +515,14 @@ class ChatService:
                     rag_result=rag_result,
                     visualizations=visualizations,
                     service="knowledge",
+                    llm_route=rag_result.get("llmRoute"),
                 ),
                 "service": "knowledge",
                 "strategy": rag_result.get("strategy") or variant,
                 "resolvedStrategy": rag_result.get("resolvedStrategy"),
                 "latencyMs": rag_result.get("latencyMs"),
                 "tokenUsage": rag_result.get("tokenUsage"),
+                "llmRoute": rag_result.get("llmRoute"),
                 "autoRagUsed": False,
                 "raw": rag_result["raw"],
             }
@@ -459,17 +540,19 @@ class ChatService:
                     rag_result=auto_rag_result,
                     visualizations=visualizations,
                     service="knowledge",
+                    llm_route=auto_rag_result.get("llmRoute"),
                 ),
                 "service": "knowledge",
                 "strategy": auto_rag_result.get("strategy") or "hybrid",
                 "resolvedStrategy": auto_rag_result.get("resolvedStrategy"),
                 "latencyMs": auto_rag_result.get("latencyMs"),
                 "tokenUsage": auto_rag_result.get("tokenUsage"),
+                "llmRoute": auto_rag_result.get("llmRoute"),
                 "autoRagUsed": True,
                 "raw": auto_rag_result.get("raw"),
             }
 
-        answer, usage = _generate_direct_answer(question, history)
+        answer, usage, llm_route = _generate_direct_answer(question, history)
         visualizations = _recommend_visualizations(question, answer)
         return {
             "answer": answer,
@@ -481,11 +564,13 @@ class ChatService:
                 rag_result=rag_result,
                 visualizations=visualizations,
                 service="assistant",
+                llm_route=llm_route,
             ),
             "service": "llm",
             "strategy": variant,
             "autoRagUsed": False,
             "tokenUsage": usage,
+            "llmRoute": llm_route,
             "raw": rag_result.get("raw"),
         }
 

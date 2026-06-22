@@ -60,39 +60,31 @@ function runOcrCompareInContext(testContext) {
 
 {
   assert.strictEqual(call("DEFAULT_PDF_IMAGE_ZOOM"), 1.25);
-  assert(ocrCompareCss.includes(".review-block-navigator"));
+  assert(ocrCompareCss.includes(".review-navigation-bar"));
   assert(ocrCompareCss.includes("position: sticky"));
   assert(ocrCompareCss.includes(".control-column-pdf"));
-  assert(ocrCompareCss.includes(".control-column-mineru"));
-  assert(ocrCompareCss.includes(".control-column-review"));
-  assert(ocrCompareCss.includes(".workflow-actions"));
   assert(ocrCompareCss.includes(".upload-button.primary-button"));
   assert(ocrCompareCss.includes(".upload-icon svg"));
   assert(ocrCompareCss.includes(".right-workbench-card"));
   assert(ocrCompareCss.includes("height: calc(100vh - 52px)"));
   assert(ocrCompareCss.includes("grid-template-rows: auto minmax(0, 1fr);"));
   assert(ocrCompareCss.includes(".block-step-button"));
-  assert(ocrCompareCss.includes(".review-block-nav-patch"));
   assert(ocrCompareCss.includes(".preview-panel"));
   assert(ocrCompareCss.includes(".page-list"));
   assert(ocrCompareCss.includes("overflow: visible"));
-  assert(ocrCompareHtml.includes('id="firstPageButton"'));
-  assert(ocrCompareHtml.includes('id="lastPageButton"'));
   assert(ocrCompareHtml.includes('id="contentListInput"'));
   assert(ocrCompareHtml.includes('id="pickContentListButton"'));
   assert(ocrCompareHtml.includes('class="control-column control-column-pdf"'));
-  assert(ocrCompareHtml.includes('class="control-column control-column-mineru"'));
-  assert(ocrCompareHtml.includes('class="control-column control-column-review"'));
-  assert(ocrCompareHtml.includes('class="workflow-actions"'));
   assert(ocrCompareHtml.includes("上传 PDF"));
   assert(ocrCompareHtml.includes("上传 MinerU JSON"));
-  assert(ocrCompareHtml.includes("上传 content_list"));
+  assert(ocrCompareHtml.includes("上传 content_list (可选)"));
   assert(ocrCompareHtml.includes('class="upload-icon"'));
   assert(ocrCompareHtml.includes('viewBox="0 0 24 24"'));
   assert(!ocrCompareHtml.includes("cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"), "MathJax CDN should be lazy-loaded by ocr-compare.js");
-  assert(ocrCompareHtml.includes('aria-label="跳转到首页"'));
-  assert(ocrCompareHtml.includes('aria-label="跳转到尾页"'));
-  assert(ocrCompareHtml.includes('class="control-label">页码</span>'));
+  assert(ocrCompareHtml.includes("<div>校对工作台</div>"));
+  assert(!ocrCompareHtml.includes("导出原始 MinerU"));
+  assert(!ocrCompareHtml.includes("中栏读取已有 MinerU"));
+  assert(!source.includes('document.querySelector(".control-band")'), "upload controls should stay visible when the MinerU preview column is collapsed");
 }
 
 {
@@ -1550,11 +1542,12 @@ function setupPreviewBookExpression(pages) {
     state.currentPage = 2;
     state.pdfPageCount = 4;
     state.riskByPage = new Map([[2, [{ blockIndex: "1", reasons: ["math"] }]]]);
-    return renderReviewWorkbenchPager();
+    return renderReviewNavigationBar([
+      { key: "1", displayIndex: 1, segment: { markdown: "Block source" }, risk: { blockIndex: "1", reasons: ["math"] } }
+    ]);
   })()`);
-  assert(navHtml.includes('data-page-nav="review-workbench"'));
-  assert(navHtml.includes('data-page-jump="prev"'));
-  assert(navHtml.includes('data-page-jump="next"'));
+  assert(!navHtml.includes('data-page-nav="review-workbench"'));
+  assert(navHtml.includes("块 1 / 1"));
   assert(!navHtml.includes("下一高风险页"));
   assert(!navHtml.includes("data-next-risk-page"));
 }
@@ -1563,9 +1556,9 @@ function setupPreviewBookExpression(pages) {
   const navHtml = call(`(() => {
     state.currentPage = 2;
     state.pdfPageCount = 4;
-    return renderReviewBottomPager();
+    return renderPageNavigator("review-workbench");
   })()`);
-  assert(navHtml.includes('data-page-nav="review-bottom"'));
+  assert(navHtml.includes('data-page-nav="review-workbench"'));
   assert(navHtml.includes('data-page-jump="first"'));
   assert(navHtml.includes('data-page-jump="prev"'));
   assert(navHtml.includes('data-page-jump="next"'));
@@ -1625,6 +1618,10 @@ function setupPreviewBookExpression(pages) {
   );
   assert(result.normalHtml.includes('data-image-zoom="in"'));
   assert(result.normalHtml.includes('data-image-zoom="out"'));
+  assert(result.normalHtml.includes('data-page-nav="source-page"'));
+  assert(result.normalHtml.includes('data-page-jump="prev"'));
+  assert(result.normalHtml.includes('data-page-jump="next"'));
+  assert(result.normalHtml.includes("image-zoom-glyph"));
   assert(result.normalHtml.includes("page-image-surface"));
   assert(result.normalHtml.includes("data-page-image-focus"));
   assert(result.normalHtml.includes("100%"));
@@ -1788,15 +1785,14 @@ function setupPreviewBookExpression(pages) {
         newText: "Corrected block 7",
         source: "mathpix"
       });
-      const html = renderReviewBlockNavigator(entries);
+      const html = renderReviewNavigationBar(entries);
       return JSON.stringify({ html });
     })()`),
   );
-  assert(result.html.includes("块导航"));
   assert(result.html.includes("2 / 2"));
-  assert(result.html.includes("review-block-nav-patch"));
-  assert(result.html.includes('data-ocr-patch-status-action="accepted"'));
-  assert(result.html.includes('data-ocr-patch-status-action="rejected"'));
+  assert(!result.html.includes("review-block-nav-patch"));
+  assert(!result.html.includes('data-ocr-patch-status-action="accepted"'));
+  assert(!result.html.includes('data-ocr-patch-status-action="rejected"'));
   assert(result.html.includes('data-review-block-step="prev"'));
   assert(result.html.includes("block-step-button"));
   assert(result.html.includes('data-review-block-select'));
@@ -2760,7 +2756,6 @@ function setupPreviewBookExpression(pages) {
       errors: [],
       warnings: []
     };
-    const panel = renderAcceptedPatchPreviewPanel();
     const bookPanel = renderAcceptedPatchBookPreviewPanel();
     const statusHtml = ["empty", "ready", "warning-only", "blocked"].map((status) =>
       renderAcceptedCorrectedDownloadStatus({
@@ -2773,10 +2768,11 @@ function setupPreviewBookExpression(pages) {
         errorCount: status === "blocked" ? 1 : 0
       })
     ).join("\\n");
-    return JSON.stringify({ emptyHtml: emptyCard.innerHTML, acceptedHtml: acceptedCard.innerHTML, panel, bookPanel, statusHtml });
+    return JSON.stringify({ emptyHtml: emptyCard.innerHTML, acceptedHtml: acceptedCard.innerHTML, bookPanel, statusHtml });
   })()`);
   const parsed = JSON.parse(uiHtml);
-  assert(parsed.emptyHtml.includes("页面校对"));
+  assert(!parsed.emptyHtml.includes("个页面块"));
+  assert(!parsed.emptyHtml.includes("高风险/候选"));
   assert(parsed.emptyHtml.includes("UI source"));
   assert(parsed.emptyHtml.includes("普通段落"));
   assert(parsed.emptyHtml.includes('data-review-item-state="normal"'));
@@ -2784,8 +2780,6 @@ function setupPreviewBookExpression(pages) {
   assert(!parsed.emptyHtml.includes("data-preview-accepted-patches"));
   assert(!parsed.emptyHtml.includes("下载 accepted 校正稿"));
   assert(!parsed.emptyHtml.includes("data-accepted-download-status"));
-  assert(parsed.acceptedHtml.includes("预览 accepted 校正稿"));
-  assert(parsed.acceptedHtml.includes("data-preview-accepted-patches"));
   assert(parsed.acceptedHtml.includes("预览整书 accepted 校正稿"));
   assert(parsed.acceptedHtml.includes("data-preview-accepted-book-patches"));
   assert(parsed.acceptedHtml.includes("下载 accepted 校正稿"));
@@ -2797,11 +2791,10 @@ function setupPreviewBookExpression(pages) {
   assert(parsed.statusHtml.includes('data-accepted-download-status="ready"'));
   assert(parsed.statusHtml.includes('data-accepted-download-status="warning-only"'));
   assert(parsed.statusHtml.includes('data-accepted-download-status="blocked"'));
-  assert(parsed.panel.includes("appliedPatchCount: 1"));
-  assert(parsed.panel.includes("Preview correction text"));
   assert(parsed.bookPanel.includes("acceptedPatchCount: 1"));
   assert(parsed.bookPanel.includes("Book preview correction text"));
-  assert(parsed.bookPanel.includes("pageSummaries"));
+  assert(parsed.bookPanel.includes("data-close-accepted-book-preview"));
+  assert(parsed.bookPanel.includes("ocr-patch-book-render"));
 }
 
 {
@@ -3046,6 +3039,32 @@ assert(inlineImageRenderHtml.includes("markdown-image-reference"), "inline markd
 assert(!inlineImageRenderHtml.includes("![image]"), "inline markdown image token should not render literally");
 assert(inlineImageRenderHtml.includes("See for Fig. 2.2 Caption"), "inline image surrounding text should remain visible");
 
+const mixedAlignedRenderHtml = call(`renderBlockContent(${JSON.stringify(
+  "For weak interactions, the result is\n\\begin{aligned}\nE &= 2.2 \\\\times 10^{-8} \\\\\\\\\ng &= 0.295\n\\end{aligned}\nwhere N=A-Z.",
+)}, { kind: "text", blockIndex: "last" })`);
+assert(mixedAlignedRenderHtml.includes('class="math-display"'), "bare aligned environment inside a text block should render as display math");
+assert(!mixedAlignedRenderHtml.includes("<p>For weak interactions, the result is<br>\\\\begin{aligned}"), "aligned source must not remain inside the prose paragraph");
+
+const numberedAlignedPatch = JSON.parse(
+  call(`(() => {
+    state.ocrPatches = [];
+    const result = createAndStoreDraftOcrPatch({
+      pageNo: 35,
+      blockIndex: "formula",
+      oldText: "Original formula (2.12)",
+      newText: "For weak interactions\\n\\\\begin{aligned}\\nE &= mc^2\\n\\\\end{aligned}",
+      source: "mathpix"
+    });
+    return JSON.stringify(result);
+  })()`),
+);
+assert(numberedAlignedPatch.normalizedText.includes("\\tag{2.12}"), "missing original equation number should be inserted as a LaTeX tag");
+assert(!numberedAlignedPatch.normalizedText.trimEnd().endsWith("(2.12)"), "equation number should not be appended as prose");
+
+const visibleNumberedAlignedPatch = call(`normalizeVisibleEquationNumberAsLatexTag("For weak interactions\\n\\\\begin{aligned}\\nE &= mc^2\\n\\\\end{aligned}\\n(2.12)")`);
+assert(visibleNumberedAlignedPatch.includes("\\tag{2.12}"), "Mathpix visible equation number should be normalized into a LaTeX tag");
+assert(!visibleNumberedAlignedPatch.trimEnd().endsWith("(2.12)"), "normalized visible equation number should be removed from trailing prose");
+
 const preservedFigurePatch = JSON.parse(
   call(`(() => {
     state.ocrPatches = [];
@@ -3062,7 +3081,6 @@ const preservedFigurePatch = JSON.parse(
 );
 assert(preservedFigurePatch.normalizedText.includes("![image](fig-2-2.jpg)"), "human patch should preserve original image reference");
 assert(preservedFigurePatch.normalizedText.includes("Fig. 2.2"), "human patch should preserve original figure label");
-assert(preservedFigurePatch.normalizedText.includes("(2.60)"), "human patch should preserve original equation number");
 assert(preservedFigurePatch.normalizedText.includes("\\tag{2.60}"), "human patch should preserve original latex tag");
 assert.strictEqual((preservedFigurePatch.normalizedText.match(/Fig\. 2\.2/g) || []).length, 1);
 

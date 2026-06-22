@@ -1,5 +1,8 @@
 const { DISPLAY_ENVIRONMENTS, validateMarkdownMathSyntax } = require("../validation/markdownMathSyntaxValidator");
 
+const LOCAL_DISPLAY_ENVIRONMENTS = new Set(["aligned", "aligned*"]);
+const DISPLAY_ENVIRONMENT_PATTERN = "(?:equation\\*?|align\\*?|aligned\\*?|array|matrix|pmatrix|bmatrix|cases|split|gather|multline)";
+
 function normalizeMathDelimiters(input) {
   const blockId = String(input?.blockId || "");
   const blockText = String(input?.blockText || "").replace(/\r\n?/g, "\n");
@@ -70,7 +73,8 @@ function hasMarkdownTable(text) {
 }
 
 function normalizeTextLines(text, warnings) {
-  const prepared = splitInlineDisplayEnvironmentDelimiters(text);
+  const split = splitInlineDisplayEnvironmentDelimiters(text);
+  const prepared = hasDisplayMathDelimiter(split) ? split : isolateBareDisplayEnvironmentLines(split);
   const lines = prepared.split("\n");
   const output = [];
   let index = 0;
@@ -110,10 +114,20 @@ function normalizeTextLines(text, warnings) {
   return output.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
 
+function hasDisplayMathDelimiter(text) {
+  return /\$\$|\\\[|\\\]/.test(String(text || ""));
+}
+
 function splitInlineDisplayEnvironmentDelimiters(text) {
   return String(text || "")
-    .replace(/\$\$\s*(\\begin\s*\{(?:equation\*?|align\*?|array|matrix|pmatrix|bmatrix|cases|split|gather|multline)\})/g, (_match, begin) => `$$\n${begin}`)
-    .replace(/(\\end\s*\{(?:equation\*?|align\*?|array|matrix|pmatrix|bmatrix|cases|split|gather|multline)\})\s*\$\$/g, (_match, end) => `${end}\n$$`);
+    .replace(new RegExp(`\\$\\$\\s*(\\\\begin\\s*\\{${DISPLAY_ENVIRONMENT_PATTERN}\\})`, "g"), (_match, begin) => `$$\n${begin}`)
+    .replace(new RegExp(`(\\\\end\\s*\\{${DISPLAY_ENVIRONMENT_PATTERN}\\})\\s*\\$\\$`, "g"), (_match, end) => `${end}\n$$`);
+}
+
+function isolateBareDisplayEnvironmentLines(text) {
+  return String(text || "")
+    .replace(new RegExp(`([^\\n])[ \\t]*(\\\\begin\\s*\\{${DISPLAY_ENVIRONMENT_PATTERN}\\})`, "g"), (_match, before, begin) => `${before}\n${begin}`)
+    .replace(new RegExp(`(\\\\end\\s*\\{${DISPLAY_ENVIRONMENT_PATTERN}\\})[ \\t]*([^\\n])`, "g"), (_match, end, after) => `${end}\n${after}`);
 }
 
 function collectDisplayBlock(lines, startIndex, warnings) {
@@ -175,6 +189,11 @@ function collectEnvironmentBlock(lines, startIndex) {
     }
     if (env && endEnvironmentPattern(env).test(lines[index])) {
       index += 1;
+      const tagIndex = nextNonEmptyLineIndex(lines, index);
+      if (tagIndex >= 0 && /^\\tag\{[^}]+\}\s*$/.test(lines[tagIndex].trim())) {
+        collected.push(lines[tagIndex]);
+        index = tagIndex + 1;
+      }
       return { complete: true, lines: trimBlankLines(collected), nextIndex: index };
     }
     index += 1;
@@ -194,7 +213,7 @@ function endEnvironmentPattern(env) {
 
 function isDisplayEnvironmentStart(trimmed) {
   const env = environmentName(trimmed);
-  return DISPLAY_ENVIRONMENTS.has(env);
+  return DISPLAY_ENVIRONMENTS.has(env) || LOCAL_DISPLAY_ENVIRONMENTS.has(env);
 }
 
 function isLikelyStandaloneDisplayMath(trimmed) {

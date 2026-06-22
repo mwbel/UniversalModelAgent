@@ -293,21 +293,8 @@ function bindElements() {
     "pickPdfButton",
     "pickMineruButton",
     "pickContentListButton",
-    "nextRiskButton",
-    "mathpixButton",
-    "exportOriginalButton",
-    "exportCorrectedButton",
-    "clearButton",
-    "fileName",
-    "fileMeta",
     "pageList",
     "statusBadge",
-    "firstPageButton",
-    "prevPageButton",
-    "nextPageButton",
-    "lastPageButton",
-    "pageInput",
-    "pageCountLabel",
   ].forEach((id) => {
     els[id] = document.getElementById(id);
   });
@@ -324,16 +311,6 @@ function initialize() {
   els.pdfInput.addEventListener("change", handlePdfChange);
   els.mineruInput.addEventListener("change", handleMineruChange);
   els.contentListInput.addEventListener("change", handleContentListChange);
-  els.nextRiskButton.addEventListener("click", goToNextRiskPage);
-  els.mathpixButton.addEventListener("click", recognizeCurrentPageWithMathpix);
-  els.exportOriginalButton.addEventListener("click", () => exportMineruMarkdown(false));
-  els.exportCorrectedButton.addEventListener("click", () => exportMineruMarkdown(true));
-  els.clearButton.addEventListener("click", resetPage);
-  els.firstPageButton.addEventListener("click", () => goToPagerTarget("first"));
-  els.prevPageButton.addEventListener("click", () => goToPage(state.currentPage - 1));
-  els.nextPageButton.addEventListener("click", () => goToPage(state.currentPage + 1));
-  els.lastPageButton.addEventListener("click", () => goToPagerTarget("last"));
-  els.pageInput.addEventListener("change", () => goToPage(Number(els.pageInput.value || 1)));
   document.addEventListener("pointerdown", handleColumnResizeStart);
   window.addEventListener("resize", schedulePdfFocusSync);
   window.addEventListener("mathjax-ready", () => typesetMath(els.pageList));
@@ -360,8 +337,6 @@ async function handlePdfChange() {
   state.reviewInitializedPages.clear();
   state.pdfImageZoom = DEFAULT_PDF_IMAGE_ZOOM;
   state.currentPage = 1;
-  els.fileName.textContent = "PDF 已加载";
-  els.fileMeta.textContent = `${file.type || "unknown"} · ${formatBytes(file.size)} · 正在读取页数`;
   setStatus("Preparing", "busy");
 
   try {
@@ -372,7 +347,6 @@ async function handlePdfChange() {
       analyzeCurrentMineruRiskPage();
       restoreOcrWorkspaceState();
     }
-    els.fileMeta.textContent = `${file.type || "unknown"} · ${formatBytes(file.size)} · ${state.pdfPageCount} 页`;
     updatePager();
     await renderCurrentPage();
     if (state.mineruInfo) {
@@ -502,8 +476,6 @@ function resetPage() {
   els.pdfInput.value = "";
   els.mineruInput.value = "";
   els.contentListInput.value = "";
-  els.fileName.textContent = "未选择原书 PDF";
-  els.fileMeta.textContent = "中栏读取已有 MinerU 整书识别结果；优先点击高风险块进行 Mathpix 块级校正。";
   els.pageList.innerHTML = '<div class="empty-state">选择原书 PDF，再选择对应的 MinerU `_middle.json`。优先点击高风险块，只对该块调用 Mathpix。</div>';
   updatePager();
   setStatus("Ready", "ok");
@@ -763,8 +735,6 @@ function persistMiddleColumnCollapsed() {
 function applyMiddleColumnCollapsedState() {
   const panel = document.querySelector(".preview-panel");
   panel?.classList.toggle("is-middle-collapsed", Boolean(state.middleColumnCollapsed));
-  const controls = document.querySelector(".control-band");
-  controls?.classList.toggle("is-middle-collapsed", Boolean(state.middleColumnCollapsed));
 }
 
 function restoreColumnWidths() {
@@ -955,12 +925,20 @@ function renderImageCard(page) {
     ? `<div class="page-image-surface"><img src="${page.image}" alt="第 ${page.pageNumber} 页 OCR 截图"><div class="page-image-focus" data-page-image-focus hidden></div></div>`
     : `<div class="empty-inline">尚未选择 PDF。</div>`;
   card.innerHTML = `
-    <div class="card-head">
+    <div class="card-head image-card-head">
       <strong>第 ${state.currentPage} 页</strong>
+      <div class="image-page-navigation">
+        <span class="review-nav-group-label">页面</span>
+        ${renderPageNavigator("source-page")}
+      </div>
       <div class="card-actions">
-        <button class="text-button image-zoom-button" type="button" data-image-zoom="out" ${page.image && !atMinZoom ? "" : "disabled"} aria-label="缩小原文页" title="缩小">−</button>
+        <button class="text-button image-zoom-button" type="button" data-image-zoom="out" ${page.image && !atMinZoom ? "" : "disabled"} aria-label="缩小原文页" title="缩小">
+          <span class="image-zoom-glyph" aria-hidden="true"><span>A</span><span>⌄</span></span>
+        </button>
         <span class="image-zoom-label">${Math.round(zoom * 100)}%</span>
-        <button class="text-button image-zoom-button" type="button" data-image-zoom="in" ${page.image && !atMaxZoom ? "" : "disabled"} aria-label="放大原文页" title="放大">＋</button>
+        <button class="text-button image-zoom-button" type="button" data-image-zoom="in" ${page.image && !atMaxZoom ? "" : "disabled"} aria-label="放大原文页" title="放大">
+          <span class="image-zoom-glyph" aria-hidden="true"><span>A</span><span>⌃</span></span>
+        </button>
         <span>${page.width || "-"} × ${page.height || "-"}</span>
       </div>
     </div>
@@ -971,6 +949,12 @@ function renderImageCard(page) {
       setPdfImageZoom(button.dataset.imageZoom);
       await renderCurrentPage();
     });
+  });
+  card.querySelectorAll("[data-page-jump]").forEach((button) => {
+    button.addEventListener("click", () => goToPagerTarget(button.dataset.pageJump));
+  });
+  card.querySelectorAll("[data-page-input]").forEach((input) => {
+    input.addEventListener("change", () => goToPage(Number(input.value || state.currentPage)));
   });
   return card;
 }
@@ -1204,11 +1188,6 @@ function renderRightWorkbench(page) {
   const card = document.createElement("section");
   card.className = "preview-card right-workbench-card";
   card.innerHTML = `
-      <div class="card-head">
-        <div>
-          <strong>校对工作台</strong>
-        </div>
-      </div>
     <div class="right-workbench-panel is-active" data-workbench-panel="review"></div>
   `;
   card.querySelector('[data-workbench-panel="review"]').append(renderReviewCard());
@@ -1227,14 +1206,7 @@ function renderReviewCard() {
   const showAcceptedPatchTools = hasAcceptedOcrPatches();
   card.innerHTML = `
     <div class="review-sticky-controls">
-      <div class="card-head review-card-head">
-        <div>
-          <strong>页面校对</strong>
-          <span>${reviewEntries.length ? `${reviewEntries.length} 个页面块 · ${risks.length} 个高风险/候选` : "当前页未发现可校对文本块"}</span>
-        </div>
-        ${renderReviewWorkbenchPager()}
-      </div>
-      ${renderReviewBlockNavigator(reviewEntries)}
+      ${renderReviewNavigationBar(reviewEntries)}
     </div>
     <div class="review-list markdown-body">
       ${
@@ -1256,7 +1228,6 @@ function renderReviewCard() {
           : `<div class="empty-inline">当前页未发现可校对文本块。</div>`
       }
     </div>
-    ${renderReviewBottomPager()}
     ${showAcceptedPatchTools ? renderAcceptedPatchExportSection() : ""}
   `;
   card.querySelectorAll("[data-risk-mathpix]").forEach((button) => {
@@ -1284,12 +1255,6 @@ function renderReviewCard() {
   card.querySelectorAll("[data-cross-page-jump-page]").forEach((button) => {
     button.addEventListener("click", () => jumpToCrossPageBlock(button.dataset.crossPageJumpPage, button.dataset.crossPageJumpBlock));
   });
-  card.querySelectorAll("[data-page-jump]").forEach((button) => {
-    button.addEventListener("click", () => goToPagerTarget(button.dataset.pageJump));
-  });
-  card.querySelectorAll("[data-page-input]").forEach((input) => {
-    input.addEventListener("change", () => goToPage(Number(input.value || state.currentPage)));
-  });
   card.querySelector("[data-next-risk-page]")?.addEventListener("click", () => goToNextRiskPage());
   card.querySelectorAll("[data-ocr-patch-status-action]").forEach((button) => {
     button.addEventListener("click", async () => {
@@ -1300,14 +1265,16 @@ function renderReviewCard() {
       await renderCurrentPage();
     });
   });
-  card.querySelector("[data-preview-accepted-patches]")?.addEventListener("click", async () => {
-    state.acceptedPatchPreview = buildAcceptedPatchPreviewForPage(state.currentPage);
-    setStatus(state.acceptedPatchPreview.ok ? "Patch preview" : "Preview warning", state.acceptedPatchPreview.ok ? "ok" : "error");
+  card.querySelector("[data-preview-accepted-book-patches]")?.addEventListener("click", async () => {
+    state.acceptedPatchPreview = null;
+    const nextPreview = state.acceptedPatchBookPreview ? null : buildAcceptedPatchPreviewForBook();
+    state.acceptedPatchBookPreview = nextPreview;
+    setStatus(nextPreview ? (nextPreview.ok ? "Book patch preview" : "Book preview warning") : "Book preview closed", nextPreview ? (nextPreview.ok ? "ok" : "error") : "ok");
     await renderCurrentPage();
   });
-  card.querySelector("[data-preview-accepted-book-patches]")?.addEventListener("click", async () => {
-    state.acceptedPatchBookPreview = buildAcceptedPatchPreviewForBook();
-    setStatus(state.acceptedPatchBookPreview.ok ? "Book patch preview" : "Book preview warning", state.acceptedPatchBookPreview.ok ? "ok" : "error");
+  card.querySelector("[data-close-accepted-book-preview]")?.addEventListener("click", async () => {
+    state.acceptedPatchBookPreview = null;
+    setStatus("Book preview closed", "ok");
     await renderCurrentPage();
   });
   card.querySelector("[data-download-accepted-corrected]")?.addEventListener("click", async () => {
@@ -1327,8 +1294,7 @@ function hasAcceptedOcrPatches() {
 function renderAcceptedPatchToolButtons() {
   return `
     <div class="mathpix-edit-actions" data-accepted-patch-tools>
-      <button class="text-button" type="button" data-preview-accepted-patches>预览 accepted 校正稿</button>
-      <button class="text-button" type="button" data-preview-accepted-book-patches>预览整书 accepted 校正稿</button>
+      <button class="text-button" type="button" data-preview-accepted-book-patches>${state.acceptedPatchBookPreview ? "收起整书 accepted 校正稿" : "预览整书 accepted 校正稿"}</button>
       <button class="text-button" type="button" data-download-accepted-corrected>下载 accepted 校正稿</button>
     </div>
   `;
@@ -1340,33 +1306,7 @@ function renderAcceptedPatchExportSection() {
       <div class="review-pane-title">导出前检查</div>
       ${renderAcceptedPatchToolButtons()}
       ${renderAcceptedCorrectedDownloadStatus()}
-      ${renderAcceptedPatchPreviewPanel()}
       ${renderAcceptedPatchBookPreviewPanel()}
-    </section>
-  `;
-}
-
-function renderAcceptedPatchPreviewPanel() {
-  const preview = state.acceptedPatchPreview;
-  if (!preview || Number(preview.pageNo) !== Number(state.currentPage)) {
-    return "";
-  }
-  const warnings = Array.isArray(preview.warnings) ? preview.warnings : [];
-  const errors = Array.isArray(preview.errors) ? preview.errors : [];
-  const noAccepted = warnings.some((warning) => warning?.type === "no_accepted_patch");
-  const summary = noAccepted
-    ? "当前页没有 accepted patch"
-    : `appliedPatchCount: ${preview.appliedPatchCount} · warnings: ${warnings.length} · errors: ${errors.length}`;
-  return `
-    <section class="ocr-patch-preview" data-accepted-patch-preview>
-      <div class="review-pane-title">Accepted patch dry-run 预览</div>
-      <div class="ocr-patch-preview-summary">${escapeHtml(summary)}</div>
-      ${
-        warnings.length || errors.length
-          ? `<pre class="ocr-patch-preview-issues"><code>${escapeHtml(JSON.stringify({ warnings, errors }, null, 2))}</code></pre>`
-          : ""
-      }
-      <textarea class="mathpix-source-editor" data-accepted-patch-preview-markdown readonly>${escapeHtml(preview.markdown || "")}</textarea>
     </section>
   `;
 }
@@ -1378,18 +1318,24 @@ function renderAcceptedPatchBookPreviewPanel() {
   }
   const warnings = Array.isArray(preview.warnings) ? preview.warnings : [];
   const errors = Array.isArray(preview.errors) ? preview.errors : [];
+  const issuesHtml = warnings.length || errors.length
+    ? `<details class="ocr-patch-preview-issues"><summary>问题与页摘要</summary><pre><code>${escapeHtml(JSON.stringify({
+      pageSummaries: preview.pageSummaries || [],
+      warnings,
+      errors,
+    }, null, 2))}</code></pre></details>`
+    : "";
   return `
     <section class="ocr-patch-preview" data-accepted-patch-book-preview>
-      <div class="review-pane-title">整书 accepted patch dry-run 预览</div>
+      <div class="review-pane-title review-pane-title-with-action">
+        <span>整书 accepted patch dry-run 预览</span>
+        <button class="secondary-button preview-close-button" type="button" data-close-accepted-book-preview>关闭</button>
+      </div>
       <div class="ocr-patch-preview-summary">
         acceptedPatchCount: ${preview.acceptedPatchCount} · appliedPatchCount: ${preview.appliedPatchCount} · skippedPatchCount: ${preview.skippedPatchCount} · warnings: ${warnings.length} · errors: ${errors.length}
       </div>
-      <pre class="ocr-patch-preview-issues"><code>${escapeHtml(JSON.stringify({
-        pageSummaries: preview.pageSummaries || [],
-        warnings,
-        errors,
-      }, null, 2))}</code></pre>
-      <textarea class="mathpix-source-editor" data-accepted-patch-book-preview-markdown readonly>${escapeHtml(preview.markdown || "")}</textarea>
+      ${issuesHtml}
+      <div class="review-pane ocr-patch-book-render markdown-body" data-accepted-patch-book-preview-markdown>${renderMarkdownHtml(normalizeMathMarkdown(preview.markdown || ""))}</div>
     </section>
   `;
 }
@@ -1404,38 +1350,27 @@ function renderAcceptedCorrectedDownloadStatus(status = getAcceptedCorrectedDown
   `;
 }
 
-function renderReviewWorkbenchPager() {
-  return `
-    <div class="review-workbench-pager">
-      ${renderPageNavigator("review-workbench")}
-    </div>
-  `;
-}
-
-function renderReviewBlockNavigator(reviewEntries) {
+function renderReviewNavigationBar(reviewEntries) {
   const entries = Array.isArray(reviewEntries) ? reviewEntries : [];
-  if (!entries.length) {
-    return "";
-  }
-  const activeIndex = Math.max(0, activeReviewEntryIndex(entries));
-  const active = entries[activeIndex];
-  const activePatch = active
-    ? getLatestOcrPatchForBlock(state.currentPage, active.key, active.segment?.markdown || active.risk?.text || "")
-    : null;
-  const activePatchControls = renderOcrPatchStatusControls(activePatch);
+  const activeIndex = entries.length ? Math.max(0, activeReviewEntryIndex(entries)) : -1;
+  const active = activeIndex >= 0 ? entries[activeIndex] : null;
   return `
-    <div class="review-block-navigator" data-review-block-navigator>
-      <div>
-        <strong>块导航</strong>
-        <span>${activeIndex + 1} / ${entries.length}</span>
-      </div>
-      <div class="review-block-nav-patch">${activePatchControls || ""}</div>
-      <div class="review-block-nav-controls">
-        <button class="secondary-button block-step-button" type="button" data-review-block-step="prev" ${activeIndex <= 0 ? "disabled" : ""} aria-label="上一校对块" title="上一校对块">‹</button>
-        <select data-review-block-select aria-label="选择校对块">
-          ${entries.map((entry) => `<option value="${escapeHtml(entry.key)}" ${entry.key === active.key ? "selected" : ""}>${escapeHtml(reviewEntryLabel(entry))}</option>`).join("")}
-        </select>
-        <button class="secondary-button block-step-button" type="button" data-review-block-step="next" ${activeIndex >= entries.length - 1 ? "disabled" : ""} aria-label="下一校对块" title="下一校对块">›</button>
+    <div class="review-navigation-bar" data-review-block-navigator>
+      <div class="review-nav-controls">
+        <div class="review-block-nav-group">
+          <span class="review-nav-group-label">块 ${activeIndex >= 0 ? `${activeIndex + 1} / ${entries.length}` : "0 / 0"}</span>
+          <div class="review-block-nav-controls">
+            <button class="secondary-button block-step-button" type="button" data-review-block-step="prev" ${activeIndex <= 0 ? "disabled" : ""} aria-label="上一校对块" title="上一校对块">‹</button>
+            <select data-review-block-select aria-label="选择校对块" ${entries.length ? "" : "disabled"}>
+              ${
+                entries.length
+                  ? entries.map((entry) => `<option value="${escapeHtml(entry.key)}" ${entry.key === active.key ? "selected" : ""}>${escapeHtml(reviewEntryLabel(entry))}</option>`).join("")
+                  : '<option value="">当前页没有可校对块</option>'
+              }
+            </select>
+            <button class="secondary-button block-step-button" type="button" data-review-block-step="next" ${activeIndex < 0 || activeIndex >= entries.length - 1 ? "disabled" : ""} aria-label="下一校对块" title="下一校对块">›</button>
+          </div>
+        </div>
       </div>
     </div>
   `;
@@ -1459,14 +1394,6 @@ function reviewEntryLabel(entry) {
   const blockLabel = `Block ${entry.displayIndex || ""}`.trim();
   const label = entry.risk?.syntheticLabel || (entry.risk?.crossPageSourcePage ? "跨页候选" : "");
   return label ? `${label} · ${blockLabel}` : blockLabel;
-}
-
-function renderReviewBottomPager() {
-  return `
-    <div class="review-bottom-pager">
-      ${renderPageNavigator("review-bottom")}
-    </div>
-  `;
 }
 
 function renderPageNavigator(scope = "inline") {
@@ -1893,7 +1820,7 @@ function renderBlockContent(markdown, entry) {
   if (entry.kind === "algorithm") {
     return renderAlgorithmBlock(markdownToAlgorithmLines(markdown));
   }
-  const normalizedMarkdown = normalizeMathMarkdown(markdown);
+  const normalizedMarkdown = wrapBareDisplayMathBlocks(normalizeMathMarkdown(markdown));
   const imagePreview = renderBlockImagePreview(normalizedMarkdown, entry);
   const markdownForHtml = imagePreview ? stripMarkdownImageReferences(normalizedMarkdown) : normalizedMarkdown;
   return `${imagePreview}${renderMarkdownHtml(markdownForHtml)}`;
@@ -2019,10 +1946,10 @@ function cropPaddingForImageLikeBlock(pageSize) {
   const pageWidth = pageSizeWidth(pageSize);
   const pageHeight = pageSizeHeight(pageSize);
   return {
-    left: Math.max(120, pageWidth * 0.16, BLOCK_MATHPIX_CROP_PADDING.horizontal),
-    right: Math.max(48, pageWidth * 0.06, BLOCK_MATHPIX_CROP_PADDING.horizontal),
-    top: Math.max(8, pageHeight * 0.015, BLOCK_MATHPIX_CROP_PADDING.vertical),
-    bottom: Math.max(40, pageHeight * 0.05, BLOCK_MATHPIX_CROP_PADDING.vertical),
+    left: Math.max(120, pageWidth * 0.1, BLOCK_MATHPIX_CROP_PADDING.horizontal),
+    right: Math.max(28, pageWidth * 0.035, BLOCK_MATHPIX_CROP_PADDING.horizontal),
+    top: Math.max(8, pageHeight * 0.012, BLOCK_MATHPIX_CROP_PADDING.vertical),
+    bottom: Math.max(40, pageHeight * 0.018, BLOCK_MATHPIX_CROP_PADDING.vertical),
   };
 }
 
@@ -2207,7 +2134,9 @@ async function recognizeCurrentPageWithMathpix() {
     return;
   }
   state.busy = true;
-  els.mathpixButton.disabled = true;
+  if (els.mathpixButton) {
+    els.mathpixButton.disabled = true;
+  }
   setStatus("Mathpix", "busy");
   try {
     const page = await ensureCurrentPagePreview();
@@ -2278,7 +2207,7 @@ async function recognizeRiskBlockWithMathpix(blockIndex) {
     }
     const data = await postJson("/api/model-tester/image-to-markdown", {
       attachmentIds: [upload.id],
-      prompt: "请只将这一个裁剪区域中的内容转为 markdown 格式。不要补充区域外内容。",
+      prompt: "请只将这一个裁剪区域中的内容转为 markdown 格式。完整保留区域内可见的公式编号、图号和表号；公式右侧编号请写成 LaTeX \\tag{编号}。不要补充区域外内容。",
       model: "mathpix:mathpix-text",
       models: ["mathpix:mathpix-text"],
       allowFallback: false,
@@ -2545,7 +2474,7 @@ function createAndStoreDraftOcrPatch({ pageNo, blockIndex, oldText, newText, sou
 }
 
 function preserveEquationNumbersFromOriginal(oldText, newText) {
-  let output = String(newText || "");
+  let output = normalizeVisibleEquationNumberAsLatexTag(newText);
   if (!output.trim()) {
     return output;
   }
@@ -2561,7 +2490,38 @@ function preserveEquationNumbersFromOriginal(oldText, newText) {
   if (!missingNumbers.length) {
     return output;
   }
-  return `${output.trimEnd()} ${missingNumbers.join(" ")}`;
+  return missingNumbers.reduce((current, number) => insertEquationNumberIntoDisplayMath(current, number), output);
+}
+
+function normalizeVisibleEquationNumberAsLatexTag(markdown) {
+  let output = String(markdown || "");
+  if (!hasLatexMathEnvironment(output) || extractLatexTags(output).length) {
+    return output;
+  }
+  const trailingNumberPattern = /(\\end\{(?:equation|align|aligned|array|cases|matrix|pmatrix|bmatrix|gather|split|multline)\*?\})(\s*(?:\$\$|\\\])?)\s*(\(\s*\d+(?:\.\d+)+[a-zA-Z]?\s*\))(?=\s|$)/;
+  const match = output.match(trailingNumberPattern);
+  if (!match) {
+    return output;
+  }
+  const number = match[3].replace(/[()\s]/g, "");
+  return output.replace(trailingNumberPattern, `$1\n\\tag{${number}}$2`);
+}
+
+function insertEquationNumberIntoDisplayMath(markdown, equationNumber) {
+  const output = String(markdown || "");
+  const number = String(equationNumber || "").replace(/[()\s]/g, "");
+  if (!number || output.includes(`\\tag{${number}}`)) {
+    return output;
+  }
+  const endEnvironmentPattern = /\\end\{(?:equation|align|aligned|array|cases|matrix|pmatrix|bmatrix|gather|split|multline)\*?\}/g;
+  const matches = Array.from(output.matchAll(endEnvironmentPattern));
+  const last = matches[matches.length - 1];
+  if (!last || typeof last.index !== "number") {
+    return `${output.trimEnd()} (${number})`;
+  }
+  const environmentEnd = last[0];
+  const afterEnvironment = last.index + environmentEnd.length;
+  return `${output.slice(0, afterEnvironment)}\n\\tag{${number}}${output.slice(afterEnvironment)}`;
 }
 
 function preserveMarkdownImageReferencesFromOriginal(oldText, newText) {
@@ -3984,36 +3944,14 @@ function getMineruPageCount() {
 
 function updatePager() {
   const total = state.pdfPageCount || getMineruPageCount();
-  const hasPages = total > 0;
-  els.pageInput.disabled = !hasPages;
-  els.firstPageButton.disabled = !hasPages || state.currentPage <= 1;
-  els.prevPageButton.disabled = !hasPages || state.currentPage <= 1;
-  els.nextPageButton.disabled = !hasPages || state.currentPage >= total;
-  els.lastPageButton.disabled = !hasPages || state.currentPage >= total;
-  els.nextRiskButton.disabled = !state.riskByPage.size;
-  els.mathpixButton.disabled = !state.pdfDataUrl || state.busy;
-  els.pageInput.max = hasPages ? String(total) : "";
-  els.pageInput.value = String(state.currentPage);
-  els.pageCountLabel.textContent = `/ ${hasPages ? total : "-"}`;
-  els.exportOriginalButton.disabled = !state.mineruInfo;
-  els.exportCorrectedButton.disabled = !state.mineruInfo;
+  if (total && state.currentPage > total) {
+    state.currentPage = total;
+  }
   updateCorrectionSummary();
 }
 
 function updateCorrectionSummary() {
-  if (!state.mineruInfo) {
-    return;
-  }
-  const count = state.mineruOverrides.size;
-  const blockCount = Array.from(state.mineruBlockOverrides.values()).reduce((sum, blocks) => sum + blocks.size, 0);
-  const total = getMineruPageCount();
-  const riskPages = state.riskByPage.size;
-  const riskBlocks = Array.from(state.riskByPage.values()).reduce((sum, items) => sum + items.length, 0);
-  const prefix = state.pdfFile
-    ? `${state.pdfFile.type || "unknown"} · ${formatBytes(state.pdfFile.size)} · ${state.pdfPageCount || total || "-"} 页`
-    : `${total || "-"} 页 MinerU`;
-  const contentListSummary = state.contentListItems.length ? ` · content_list ${state.contentListItems.length} 条` : "";
-  els.fileMeta.textContent = `${prefix}${contentListSummary} · 高风险 ${riskPages} 页 / ${riskBlocks} 块 · 已应用校正 ${count} 页 / ${blockCount} 块`;
+  return Boolean(state.mineruInfo);
 }
 
 async function copyButtonText(button, text) {
@@ -4135,7 +4073,15 @@ function wrapBareDisplayMathBlocks(markdown) {
   const lines = String(markdown || "").replace(/\r\n?/g, "\n").split("\n");
   const output = [];
   let index = 0;
+  let inDisplayMath = false;
   while (index < lines.length) {
+    const trimmed = String(lines[index] || "").trim();
+    if (trimmed === "$$") {
+      inDisplayMath = !inDisplayMath;
+      output.push(lines[index]);
+      index += 1;
+      continue;
+    }
     if (String(lines[index] || "").trim() === "|") {
       const nextIndex = nextNonEmptyLineIndex(lines, index + 1);
       if (nextIndex >= 0 && isBareDisplayMathStart(lines[nextIndex])) {
@@ -4143,7 +4089,7 @@ function wrapBareDisplayMathBlocks(markdown) {
         continue;
       }
     }
-    if (isBareDisplayMathStart(lines[index])) {
+    if (!inDisplayMath && isBareDisplayMathStart(lines[index])) {
       const { blockLines, nextIndex } = collectBareDisplayMathBlock(lines, index);
       output.push("$$", ...blockLines, "$$");
       index = nextIndex;

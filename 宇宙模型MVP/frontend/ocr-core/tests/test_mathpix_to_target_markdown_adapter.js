@@ -117,6 +117,30 @@ function runDirectUnitTests() {
   }
 
   {
+    const actual = adapt([
+      "For SSS fields, Eq. (2.56) is general enough to encompass all metric theories of gravitation.",
+      "\\begin{aligned}",
+      "I_G &= -\\sum_a m_{0a}\\int (-g_{\\mu\\nu} v^\\mu v^\\nu)^{1/2}dt",
+      "&= -\\int L\\,dt",
+      "\\end{aligned}",
+      "where g is the determinant of g_{\\mu\\nu}.",
+    ].join("\n"));
+    assert.strictEqual(
+      actual.targetMarkdown,
+      [
+        "For SSS fields, Eq. (2.56) is general enough to encompass all metric theories of gravitation.",
+        "$$",
+        "\\begin{aligned}",
+        "I_G &= -\\sum_a m_{0a}\\int (-g_{\\mu\\nu} v^\\mu v^\\nu)^{1/2}dt",
+        "&= -\\int L\\,dt",
+        "\\end{aligned}",
+        "$$",
+        "where g is the determinant of g_{\\mu\\nu}.",
+      ].join("\n"),
+    );
+  }
+
+  {
     const actual = adapt("\\[\n\\begin{equation}\nE=h\\nu\n\\tag{2.13}\n\\label{eq:energy}\n\\end{equation}\n\\]");
     assert(actual.targetMarkdown.includes("\\tag{2.13}"));
     assert(actual.targetMarkdown.includes("\\label{eq:energy}"));

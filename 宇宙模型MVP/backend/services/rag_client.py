@@ -14,10 +14,9 @@ from time import perf_counter
 from typing import Any
 from xml.etree import ElementTree
 
-import requests
-
 from backend.config import SETTINGS
 from backend.rag_catalog import DEFAULT_RAG_STRATEGIES, build_strategy_catalog
+from backend.services.llm_router import LLM_ROUTER
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 UNIVMODEL_DIR = ROOT_DIR.parent
@@ -417,9 +416,9 @@ class RagClient:
         question: str,
         contexts: list[dict[str, Any]],
         history: list[dict[str, Any]],
-    ) -> tuple[str, dict[str, Any] | None]:
+    ) -> tuple[str, dict[str, Any] | None, dict[str, Any] | None]:
         if not contexts:
-            return "", None
+            return "", None, None
 
         joined_context = "\n\n".join(
             f"[来源 {index + 1}] {context.get('source')}\n{context.get('content')}"
@@ -434,59 +433,47 @@ class RagClient:
             if str(item.get("content") or "").strip()
         ]
 
-        if SETTINGS.llm_base_url and SETTINGS.llm_api_key and SETTINGS.llm_model:
-            try:
-                response = requests.post(
-                    f"{SETTINGS.llm_base_url}/chat/completions",
-                    headers={
-                        "Authorization": f"Bearer {SETTINGS.llm_api_key}",
-                        "Content-Type": "application/json",
-                    },
-                    json={
-                        "model": SETTINGS.llm_model,
-                        "temperature": 0.2,
-                        "messages": [
-                            {
-                                "role": "system",
-                                "content": (
-                                    "你是一个基于本地知识库回答问题的助手。"
-                                    "请优先依据给定上下文作答，不要编造没有出现的信息。"
-                                    "如果用户要求可视化，请只给简洁文字解释；"
-                                    "不要输出 ASCII 字符画、Markdown 代码块图、Mermaid 或伪图，"
-                                    "交互式图形会由 A2UI 组件单独渲染。"
-                                ),
-                            },
-                            *recent_history,
-                            {
-                                "role": "user",
-                                "content": (
-                                    f"问题：{question}\n\n"
-                                    f"知识库上下文：\n{joined_context}\n\n"
-                                    "请给出简洁、直接的中文回答。"
-                                    "不要用字符画模拟图形。"
-                                ),
-                            },
-                        ],
-                    },
-                    timeout=SETTINGS.request_timeout_seconds,
-                )
-                response.raise_for_status()
-                payload = response.json()
-                answer = (
-                    (((payload.get("choices") or [{}])[0]).get("message") or {}).get("content")
-                    or ""
-                ).strip()
-                if answer:
-                    return answer, payload.get("usage")
-            except Exception:
-                pass
+        llm_result = LLM_ROUTER.generate(
+            task="rag_synthesis",
+            question=question,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "你是一个基于本地知识库回答问题的助手。"
+                        "请优先依据给定上下文作答，不要编造没有出现的信息。"
+                        "如果用户要求可视化，请只给简洁文字解释；"
+                        "不要输出 ASCII 字符画、Markdown 代码块图、Mermaid 或伪图，"
+                        "交互式图形会由 A2UI 组件单独渲染。"
+                    ),
+                },
+                *recent_history,
+                {
+                    "role": "user",
+                    "content": (
+                        f"问题：{question}\n\n"
+                        f"知识库上下文：\n{joined_context}\n\n"
+                        "请给出简洁、直接的中文回答。"
+                        "不要用字符画模拟图形。"
+                    ),
+                },
+            ],
+            temperature=0.2,
+            timeout=SETTINGS.request_timeout_seconds,
+        )
+        if llm_result.get("ok") and str(llm_result.get("answer") or "").strip():
+            return (
+                str(llm_result["answer"]).strip(),
+                llm_result.get("usage"),
+                llm_result.get("route"),
+            )
 
         answer = (
             f"我在本地知识库里找到了 {len(contexts)} 段相关内容。"
             f"最相关的材料来自《{contexts[0].get('source') or '本地文档'}》。\n\n"
             f"{_safe_excerpt(str(contexts[0].get('content') or ''), limit=320)}"
         )
-        return answer, None
+        return answer, None, llm_result.get("route") if isinstance(llm_result, dict) else None
 
     def ask(
         self,
@@ -521,7 +508,7 @@ class RagClient:
         )
         contexts = retrieval["contexts"]
         citations = retrieval["citations"]
-        answer, usage = self._generate_answer(question, contexts, history)
+        answer, usage, llm_route = self._generate_answer(question, contexts, history)
 
         return {
             "ok": bool(answer),
@@ -532,6 +519,7 @@ class RagClient:
             "resolvedStrategy": normalized_strategy,
             "latencyMs": round((perf_counter() - started) * 1000, 2),
             "tokenUsage": usage,
+            "llmRoute": llm_route,
             "raw": retrieval["raw"],
         }
 
@@ -602,7 +590,7 @@ class RagClient:
         all_contexts.sort(key=lambda item: float(item.get("score") or 0), reverse=True)
         contexts = all_contexts[:6]
         citations = self._build_citations(contexts)
-        answer, usage = self._generate_answer(question, contexts, history)
+        answer, usage, llm_route = self._generate_answer(question, contexts, history)
 
         return {
             "ok": bool(answer and contexts),
@@ -613,6 +601,7 @@ class RagClient:
             "resolvedStrategy": "auto_local_first",
             "latencyMs": round((perf_counter() - started) * 1000, 2),
             "tokenUsage": usage,
+            "llmRoute": llm_route,
             "raw": {
                 "kb_ids": kb_ids,
                 "question_terms": question_terms[:20],

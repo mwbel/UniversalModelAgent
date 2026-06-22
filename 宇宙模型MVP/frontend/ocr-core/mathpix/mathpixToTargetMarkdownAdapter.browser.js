@@ -4,6 +4,8 @@
     "equation*",
     "align",
     "align*",
+    "aligned",
+    "aligned*",
     "array",
     "matrix",
     "pmatrix",
@@ -13,6 +15,7 @@
     "gather",
     "multline",
   ]);
+  const DISPLAY_ENVIRONMENT_PATTERN = "(?:equation\\*?|align\\*?|aligned\\*?|array|matrix|pmatrix|bmatrix|cases|split|gather|multline)";
 
   function adaptMathpixToTargetMarkdown(input) {
     const blockId = String((input && input.blockId) || "");
@@ -234,7 +237,8 @@
   }
 
   function normalizeTextLines(text, warnings) {
-    const prepared = splitInlineDisplayEnvironmentDelimiters(text);
+    const split = splitInlineDisplayEnvironmentDelimiters(text);
+    const prepared = hasDisplayMathDelimiter(split) ? split : isolateBareDisplayEnvironmentLines(split);
     const lines = prepared.split("\n");
     const output = [];
     let index = 0;
@@ -274,10 +278,20 @@
     return output.join("\n").replace(/\n{3,}/g, "\n\n").trim();
   }
 
+  function hasDisplayMathDelimiter(text) {
+    return /\$\$|\\\[|\\\]/.test(String(text || ""));
+  }
+
   function splitInlineDisplayEnvironmentDelimiters(text) {
     return String(text || "")
-      .replace(/\$\$\s*(\\begin\s*\{(?:equation\*?|align\*?|array|matrix|pmatrix|bmatrix|cases|split|gather|multline)\})/g, (_match, begin) => `$$\n${begin}`)
-      .replace(/(\\end\s*\{(?:equation\*?|align\*?|array|matrix|pmatrix|bmatrix|cases|split|gather|multline)\})\s*\$\$/g, (_match, end) => `${end}\n$$`);
+      .replace(new RegExp(`\\$\\$\\s*(\\\\begin\\s*\\{${DISPLAY_ENVIRONMENT_PATTERN}\\})`, "g"), (_match, begin) => `$$\n${begin}`)
+      .replace(new RegExp(`(\\\\end\\s*\\{${DISPLAY_ENVIRONMENT_PATTERN}\\})\\s*\\$\\$`, "g"), (_match, end) => `${end}\n$$`);
+  }
+
+  function isolateBareDisplayEnvironmentLines(text) {
+    return String(text || "")
+      .replace(new RegExp(`([^\\n])[ \\t]*(\\\\begin\\s*\\{${DISPLAY_ENVIRONMENT_PATTERN}\\})`, "g"), (_match, before, begin) => `${before}\n${begin}`)
+      .replace(new RegExp(`(\\\\end\\s*\\{${DISPLAY_ENVIRONMENT_PATTERN}\\})[ \\t]*([^\\n])`, "g"), (_match, end, after) => `${end}\n${after}`);
   }
 
   function collectDisplayBlock(lines, startIndex, warnings) {

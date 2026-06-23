@@ -1546,7 +1546,8 @@ function setupPreviewBookExpression(pages) {
       { key: "1", displayIndex: 1, segment: { markdown: "Block source" }, risk: { blockIndex: "1", reasons: ["math"] } }
     ]);
   })()`);
-  assert(!navHtml.includes('data-page-nav="review-workbench"'));
+  assert(navHtml.includes('data-page-nav="review-workbench"'));
+  assert(navHtml.includes("review-page-nav-group"));
   assert(navHtml.includes("块 1 / 1"));
   assert(!navHtml.includes("下一高风险页"));
   assert(!navHtml.includes("data-next-risk-page"));
@@ -1618,14 +1619,14 @@ function setupPreviewBookExpression(pages) {
   );
   assert(result.normalHtml.includes('data-image-zoom="in"'));
   assert(result.normalHtml.includes('data-image-zoom="out"'));
-  assert(result.normalHtml.includes('data-page-nav="source-page"'));
-  assert(result.normalHtml.includes('data-page-jump="prev"'));
-  assert(result.normalHtml.includes('data-page-jump="next"'));
+  assert(!result.normalHtml.includes('data-page-nav="source-page"'));
+  assert(!result.normalHtml.includes('data-page-jump="prev"'));
+  assert(!result.normalHtml.includes('data-page-jump="next"'));
   assert(result.normalHtml.includes("image-zoom-glyph"));
   assert(result.normalHtml.includes("page-image-surface"));
   assert(result.normalHtml.includes("data-page-image-focus"));
-  assert(result.normalHtml.includes("100%"));
-  assert(result.zoomedHtml.includes("175%"));
+  assert(!result.normalHtml.includes("image-zoom-label"));
+  assert(!result.normalHtml.includes("%"));
   assert(result.zoomedHtml.includes("--pdf-image-zoom: 1.75"));
   assert(!result.normalClass.includes("is-zoomed"));
   assert(result.zoomedClass.includes("is-zoomed"));

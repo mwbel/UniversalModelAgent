@@ -927,15 +927,10 @@ function renderImageCard(page) {
   card.innerHTML = `
     <div class="card-head image-card-head">
       <strong>第 ${state.currentPage} 页</strong>
-      <div class="image-page-navigation">
-        <span class="review-nav-group-label">页面</span>
-        ${renderPageNavigator("source-page")}
-      </div>
       <div class="card-actions">
         <button class="text-button image-zoom-button" type="button" data-image-zoom="out" ${page.image && !atMinZoom ? "" : "disabled"} aria-label="缩小原文页" title="缩小">
           <span class="image-zoom-glyph" aria-hidden="true"><span>A</span><span>⌄</span></span>
         </button>
-        <span class="image-zoom-label">${Math.round(zoom * 100)}%</span>
         <button class="text-button image-zoom-button" type="button" data-image-zoom="in" ${page.image && !atMaxZoom ? "" : "disabled"} aria-label="放大原文页" title="放大">
           <span class="image-zoom-glyph" aria-hidden="true"><span>A</span><span>⌃</span></span>
         </button>
@@ -949,12 +944,6 @@ function renderImageCard(page) {
       setPdfImageZoom(button.dataset.imageZoom);
       await renderCurrentPage();
     });
-  });
-  card.querySelectorAll("[data-page-jump]").forEach((button) => {
-    button.addEventListener("click", () => goToPagerTarget(button.dataset.pageJump));
-  });
-  card.querySelectorAll("[data-page-input]").forEach((input) => {
-    input.addEventListener("change", () => goToPage(Number(input.value || state.currentPage)));
   });
   return card;
 }
@@ -1249,6 +1238,12 @@ function renderReviewCard() {
   card.querySelectorAll("[data-review-block-step]").forEach((button) => {
     button.addEventListener("click", () => navigateReviewBlock(button.dataset.reviewBlockStep));
   });
+  card.querySelectorAll("[data-page-jump]").forEach((button) => {
+    button.addEventListener("click", () => goToPagerTarget(button.dataset.pageJump));
+  });
+  card.querySelectorAll("[data-page-input]").forEach((input) => {
+    input.addEventListener("change", () => goToPage(Number(input.value || state.currentPage)));
+  });
   card.querySelector("[data-review-block-select]")?.addEventListener("change", (event) => {
     selectReviewBlock(event.target.value);
   });
@@ -1357,6 +1352,12 @@ function renderReviewNavigationBar(reviewEntries) {
   return `
     <div class="review-navigation-bar" data-review-block-navigator>
       <div class="review-nav-controls">
+        <div class="review-page-nav-group">
+          <span class="review-nav-group-label">页面</span>
+          <div class="review-workbench-pager">
+            ${renderPageNavigator("review-workbench")}
+          </div>
+        </div>
         <div class="review-block-nav-group">
           <span class="review-nav-group-label">块 ${activeIndex >= 0 ? `${activeIndex + 1} / ${entries.length}` : "0 / 0"}</span>
           <div class="review-block-nav-controls">

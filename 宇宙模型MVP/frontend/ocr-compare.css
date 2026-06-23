@@ -510,39 +510,21 @@ textarea {
   flex-wrap: wrap;
 }
 
-.image-page-navigation {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-left: auto;
-}
-
-.image-page-navigation .pager {
-  gap: 4px;
-}
-
-.image-page-navigation .pager-icon {
-  width: 30px;
-  min-width: 30px;
-  min-height: 30px;
-  font-size: 15px;
-}
-
-.image-page-navigation .pager input {
-  width: 52px;
-  min-height: 30px;
-  padding: 4px 6px;
-}
-
-.image-page-navigation .page-count-label {
-  min-width: 30px;
-}
-
 .card-head > div {
   min-width: 0;
   display: grid;
   gap: 2px;
+}
+
+.image-card-head > .card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.image-card-head > .card-actions {
+  margin-left: auto;
+  justify-content: flex-end;
 }
 
 .card-actions {
@@ -577,14 +559,6 @@ textarea {
   color: var(--accent);
   font-size: 12px;
   font-weight: 800;
-}
-
-.image-zoom-label {
-  min-width: 44px;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--muted);
 }
 
 .card-head strong {
@@ -1094,12 +1068,12 @@ textarea {
 }
 
 .review-workbench-pager {
-  min-width: min(100%, 360px);
+  min-width: 0;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 6px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .review-workbench-pager .pager {
@@ -1139,11 +1113,13 @@ textarea {
 
 .review-nav-controls {
   min-width: 0;
-  display: block;
+  display: grid;
+  grid-template-columns: minmax(310px, auto) minmax(260px, 1fr);
   align-items: center;
   gap: 8px;
 }
 
+.review-page-nav-group,
 .review-block-nav-group {
   min-width: 0;
   min-height: 42px;
@@ -1154,6 +1130,11 @@ textarea {
   border: 1px solid #dbe4ef;
   border-radius: 8px;
   background: #ffffff;
+}
+
+.review-page-nav-group {
+  border-color: #c9dcf7;
+  background: #f6f9ff;
 }
 
 .review-block-nav-group {
@@ -1719,7 +1700,7 @@ mjx-container[display="true"] {
   }
 
   .review-nav-controls {
-    display: block;
+    grid-template-columns: 1fr;
   }
 
   .review-block-nav-controls {

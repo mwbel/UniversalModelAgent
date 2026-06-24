@@ -68,6 +68,10 @@ function runOcrCompareInContext(testContext) {
   assert(ocrCompareCss.includes(".right-workbench-card"));
   assert(ocrCompareCss.includes("height: calc(100vh - 52px)"));
   assert(ocrCompareCss.includes("grid-template-rows: auto minmax(0, 1fr);"));
+  assert(ocrCompareCss.includes(".review-page-canvas"));
+  assert(ocrCompareCss.includes(".review-page-block.is-selected"));
+  assert(ocrCompareCss.includes(".page-block-hotspot"));
+  assert(ocrCompareCss.includes(".selected-block-toolbar"));
   assert(ocrCompareCss.includes(".block-step-button"));
   assert(ocrCompareCss.includes(".preview-panel"));
   assert(ocrCompareCss.includes(".page-list"));
@@ -85,6 +89,34 @@ function runOcrCompareInContext(testContext) {
   assert(!ocrCompareHtml.includes("导出原始 MinerU"));
   assert(!ocrCompareHtml.includes("中栏读取已有 MinerU"));
   assert(!source.includes('document.querySelector(".control-band")'), "upload controls should stay visible when the MinerU preview column is collapsed");
+}
+
+{
+  const pickerResult = JSON.parse(
+    call(`(() => {
+      const input = {
+        value: "/tmp/book.pdf",
+        clickCount: 0,
+        click() {
+          this.clickCount += 1;
+        }
+      };
+      return JSON.stringify({
+        opened: openFilePicker(input),
+        value: input.value,
+        clickCount: input.clickCount,
+        missing: openFilePicker(null)
+      });
+    })()`),
+  );
+  assert.strictEqual(pickerResult.opened, true);
+  assert.strictEqual(pickerResult.value, "", "file input must reset so selecting the same file fires change again");
+  assert.strictEqual(pickerResult.clickCount, 1);
+  assert.strictEqual(pickerResult.missing, false);
+  assert(source.includes('setStatus("读取 PDF", "busy", file.name);'));
+  assert(source.includes('setStatus("渲染 PDF", "busy", file.name);'));
+  assert(source.includes('setStatus("读取 MinerU", "busy", file.name);'));
+  assert(source.includes('setStatus("读取 content_list", "busy", file.name);'));
 }
 
 {
@@ -268,11 +300,15 @@ assert(preparedTable.split("\n").every((line) => line.split("|").length === 4));
 
 assert.strictEqual(prepareMathpix("   "), "", "prepareMathpixMarkdown should tolerate empty Mathpix output");
 
-const latexTable = "\\begin{array}{cc}\na & b \\\\ c & d\n\\end{array}";
+const latexTable = "\\begin{tabular}{cc}\na & b \\\\ c & d\n\\end{tabular}";
 const bareTableHtml = call(`renderMarkdownHtml(normalizeMathMarkdown(${JSON.stringify(latexTable)}))`);
 const wrappedTableHtml = call(`renderMarkdownHtml(normalizeMathMarkdown(${JSON.stringify(`$$\n${latexTable}\n$$`)}))`);
 assert(bareTableHtml.includes("latex-table-wrap"), "bare LaTeX table should render as a table");
 assert(wrappedTableHtml.includes("latex-table-wrap"), "display-wrapped LaTeX table should render as a table");
+
+const latexArray = "\\begin{array}{cc}\na & b \\\\ c & d\n\\end{array}";
+const arrayHtml = call(`renderMarkdownHtml(normalizeMathMarkdown(${JSON.stringify(latexArray)}))`);
+assert(arrayHtml.includes('class="math-display"'), "bare array environments should render as display math");
 
 function readFixture(name, kind) {
   return fs
@@ -1604,6 +1640,8 @@ function setupPreviewBookExpression(pages) {
         }
       };
       state.currentPage = 6;
+      state.riskByPage.clear();
+      state.mineruInfo = null;
       state.pdfImageZoom = 1;
       const normal = renderImageCard({ pageNumber: 6, image: "data:image/png;base64,abc", width: 919, height: 1256 });
       state.pdfImageZoom = 1.75;
@@ -1626,7 +1664,7 @@ function setupPreviewBookExpression(pages) {
   assert(result.normalHtml.includes("page-image-surface"));
   assert(result.normalHtml.includes("data-page-image-focus"));
   assert(!result.normalHtml.includes("image-zoom-label"));
-  assert(!result.normalHtml.includes("%"));
+  assert(!result.normalHtml.includes("125%"));
   assert(result.zoomedHtml.includes("--pdf-image-zoom: 1.75"));
   assert(!result.normalClass.includes("is-zoomed"));
   assert(result.zoomedClass.includes("is-zoomed"));
@@ -2775,6 +2813,8 @@ function setupPreviewBookExpression(pages) {
   assert(!parsed.emptyHtml.includes("个页面块"));
   assert(!parsed.emptyHtml.includes("高风险/候选"));
   assert(parsed.emptyHtml.includes("UI source"));
+  assert(parsed.emptyHtml.includes("review-page-canvas"));
+  assert(parsed.emptyHtml.includes("review-page-paper"));
   assert(parsed.emptyHtml.includes("普通段落"));
   assert(parsed.emptyHtml.includes('data-review-item-state="normal"'));
   assert(!parsed.emptyHtml.includes("预览 accepted 校正稿"));
@@ -2787,7 +2827,7 @@ function setupPreviewBookExpression(pages) {
   assert(parsed.acceptedHtml.includes("data-download-accepted-corrected"));
   assert(parsed.acceptedHtml.includes("data-accepted-download-status"));
   assert(parsed.acceptedHtml.includes("下载状态：ready"));
-  assert(parsed.acceptedHtml.indexOf('class="review-list markdown-body"') < parsed.acceptedHtml.indexOf('data-accepted-patch-export-section'), "accepted export tools should be rendered after the review list");
+  assert(parsed.acceptedHtml.indexOf('class="review-list review-page-canvas markdown-body"') < parsed.acceptedHtml.indexOf('data-accepted-patch-export-section'), "accepted export tools should be rendered after the review canvas");
   assert(parsed.statusHtml.includes('data-accepted-download-status="empty"'));
   assert(parsed.statusHtml.includes('data-accepted-download-status="ready"'));
   assert(parsed.statusHtml.includes('data-accepted-download-status="warning-only"'));
@@ -2796,6 +2836,59 @@ function setupPreviewBookExpression(pages) {
   assert(parsed.bookPanel.includes("Book preview correction text"));
   assert(parsed.bookPanel.includes("data-close-accepted-book-preview"));
   assert(parsed.bookPanel.includes("ocr-patch-book-render"));
+}
+
+{
+  const canvasResult = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.reviewExpanded.clear();
+      state.riskByPage.clear();
+      const entries = [
+        {
+          key: "0",
+          displayIndex: 1,
+          segment: { blockIndex: "0", markdown: "Plain paragraph", kind: "text", bbox: [10, 20, 110, 80], pageSize: [200, 300] },
+          risk: { pageNumber: 1, blockIndex: "0", bbox: [10, 20, 110, 80], pageSize: [200, 300], text: "Plain paragraph", reasons: [], reviewOnly: true }
+        },
+        {
+          key: "1",
+          displayIndex: 2,
+          segment: { blockIndex: "1", markdown: "$$\\\\nE=mc^2\\\\n$$", kind: "text", bbox: [20, 90, 160, 140], pageSize: [200, 300] },
+          risk: { pageNumber: 1, blockIndex: "1", bbox: [20, 90, 160, 140], pageSize: [200, 300], text: "$$\\\\nE=mc^2\\\\n$$", reasons: ["display_math_block"] }
+        },
+        {
+          key: "2",
+          displayIndex: 3,
+          segment: { blockIndex: "2", markdown: "![image](fig.jpg)\\\\n\\\\nFig. 1", kind: "image", bbox: null, pageSize: [200, 300] },
+          risk: { pageNumber: 1, blockIndex: "2", bbox: null, pageSize: [200, 300], text: "![image](fig.jpg)\\\\n\\\\nFig. 1", reasons: [], reviewOnly: true }
+        }
+      ];
+      expandOnlyReviewBlock(1, "1");
+      const canvas = renderPageReviewCanvas(entries);
+      const hotspots = renderPdfBlockHotspots(entries);
+      return JSON.stringify({
+        canvas,
+        hotspots,
+        selected: Array.from(state.reviewExpanded)
+      });
+    })()`),
+  );
+  assert(canvasResult.canvas.includes('class="review-list review-page-canvas markdown-body"'), "v2 review should render a page canvas");
+  assert(canvasResult.canvas.includes('data-review-page-block="1:0"'), "plain paragraph block should be present in the full-page canvas");
+  assert(canvasResult.canvas.includes('data-review-page-block="1:1"'), "formula block should be present in the full-page canvas");
+  assert(canvasResult.canvas.includes('data-review-page-block="1:2"'), "image block without bbox should still be present in the full-page canvas");
+  assert(canvasResult.canvas.includes('class="math-display"'), "formula block should render as display math inside the page canvas");
+  assert(canvasResult.canvas.includes("selected-block-toolbar"), "selected block should render the compact correction toolbar");
+  assert(!canvasResult.canvas.includes('data-risk-mathpix="1"'), "selected block toolbar should not show Mathpix correction during block comparison");
+  assert(canvasResult.canvas.includes("查看/编辑 MinerU 源码"), "selected block toolbar should keep source editing available");
+  assert(!canvasResult.canvas.includes("MinerU 渲染"), "selected block toolbar should not show the MinerU render pane by default");
+  assert(!canvasResult.canvas.includes("已接受校正稿"), "selected block toolbar should not show the accepted render pane by default");
+  assert(!canvasResult.canvas.includes("Mathpix 识别稿"), "selected block toolbar should not show the Mathpix render pane by default");
+  assert(canvasResult.hotspots.includes('data-review-left-hotspot="1:0"'), "block with bbox should render a left-column hotspot");
+  assert(canvasResult.hotspots.includes('data-review-left-hotspot="1:1"'), "formula block with bbox should render a left-column hotspot");
+  assert(!canvasResult.hotspots.includes('data-review-left-hotspot="1:2"'), "block without bbox should not render a left-column hotspot");
+  assert.deepStrictEqual(canvasResult.selected, ["1:1"], "selected block should be stored as a single page:block key");
 }
 
 {
@@ -2955,7 +3048,7 @@ call(`
 `);
 assert(call('state.reviewExpanded.has("3:a")'), "first risk block should expand on first page render");
 call(`ensureDefaultReviewExpansion([{ blockIndex: "b" }]);`);
-assert(!call('state.reviewExpanded.has("3:b")'), "default expansion should only initialize once per page");
+assert(call('state.reviewExpanded.has("3:b")'), "default expansion should repair stale active selection when the current page entries change");
 const reviewToggleResult = JSON.parse(
   call(`(() => {
     const originalRenderCurrentPage = renderCurrentPage;

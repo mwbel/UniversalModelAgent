@@ -32,7 +32,9 @@ Codex 修改代码前必须先输出：
 5. 准备运行的测试命令。
 6. 如果涉及前端，必须给出手动前端冒烟测试步骤。
 
-涉及以下内容时，必须等待用户确认后再改代码：
+输出 Preflight Plan 后，除非用户特别说明“需要确认后再执行”或明确要求当前任务先停留在规划阶段，否则无需等待确认，可以直接修改代码。
+
+即使涉及以下内容，也遵循上述默认直接执行规则，但必须在 Preflight Plan 中明确说明：
 
 1. `frontend/ocr-compare.js`
 2. `state.ocrPatches`
@@ -41,6 +43,8 @@ Codex 修改代码前必须先输出：
 5. Mathpix API
 6. browser wrapper
 7. UI buttons / DOM events
+
+只有用户特别说明需要确认时，才必须等待用户明确确认后再改代码。
 
 ## MVP 当前优先级
 

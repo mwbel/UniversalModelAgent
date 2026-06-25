@@ -1475,7 +1475,7 @@ async function downloadAcceptedCorrectedFromTop() {
   try {
     setStatus("Accepted download preparing...", "busy");
     await ensurePdfTextLayersForBook();
-    const result = downloadAcceptedCorrectedMarkdown();
+    const result = await downloadAcceptedCorrectedPackage();
     const statusText = result.status?.message || (result.ok ? "Downloaded accepted" : "Accepted download blocked");
     setStatus(statusText, result.ok ? "ok" : "error");
   } catch (error) {
@@ -4020,16 +4020,530 @@ function downloadAcceptedCorrectedMarkdown() {
   }
 
   const markdown = `${acceptedPatchDownloadHeader()}\n\n${preview.markdown || ""}`;
+  return downloadAcceptedCorrectedPayload(markdown, status, preview);
+}
+
+async function downloadAcceptedCorrectedPackage() {
+  const status = getAcceptedCorrectedDownloadStatus();
+  const preview = status.preview;
+  state.acceptedPatchBookPreview = null;
+  if (!status.canDownload) {
+    return {
+      ok: false,
+      reason: status.status === "empty" ? "no_accepted_patch" : "preview_not_ok",
+      status,
+      preview,
+    };
+  }
+
+  const markdown = `${acceptedPatchDownloadHeader()}\n\n${preview.markdown || ""}`;
+  const imageAssets = await collectAcceptedCorrectedImageAssetsAsync(markdown);
+  return downloadAcceptedCorrectedPayload(markdown, status, preview, { imageAssets });
+}
+
+function downloadAcceptedCorrectedPayload(markdown, status, preview, options = {}) {
+  const imageAssets = collectAcceptedCorrectedImageAssets(markdown, options);
+  if (imageAssets.length) {
+    const packagedMarkdown = rewriteAcceptedCorrectedImageReferences(markdown, imageAssets);
+    const markdownFilename = `${baseExportName()}-accepted-corrected.md`;
+    const zipFilename = `${baseExportName()}-accepted-corrected.zip`;
+    const zipBytes = buildStoredZip([
+      { path: markdownFilename, bytes: stringToUtf8Bytes(packagedMarkdown) },
+      ...imageAssets.map((asset) => ({ path: asset.path, bytes: asset.bytes })),
+    ]);
+    downloadBinaryFile(zipFilename, zipBytes, "application/zip");
+    return {
+      ok: true,
+      reason: "",
+      filename: zipFilename,
+      format: "zip",
+      markdown: packagedMarkdown,
+      originalMarkdown: markdown,
+      imageCount: imageAssets.length,
+      images: imageAssets.map((asset) => ({ src: asset.src, path: asset.path })),
+      status,
+      preview,
+    };
+  }
+
   const filename = `${baseExportName()}-accepted-corrected.md`;
   downloadTextFile(filename, markdown);
   return {
     ok: true,
     reason: "",
     filename,
+    format: "markdown",
     markdown,
+    imageCount: 0,
+    images: [],
     status,
     preview,
   };
+}
+
+async function collectAcceptedCorrectedImageAssetsAsync(markdown) {
+  const directAssets = collectAcceptedCorrectedImageAssets(markdown);
+  const covered = new Set(directAssets.map((asset) => asset.src));
+  const missingRefs = uniqueMarkdownImageReferences(markdown).filter((image) => !covered.has(normalizeImageSource(image.src)));
+  if (!missingRefs.length) {
+    return directAssets;
+  }
+  const croppedAssets = await collectPdfCroppedImageAssetsForReferences(missingRefs);
+  return directAssets.concat(croppedAssets);
+}
+
+function collectAcceptedCorrectedImageAssets(markdown, options = {}) {
+  const providedAssets = normalizeProvidedImageAssets(options.imageAssets);
+  const refs = uniqueMarkdownImageReferences(markdown);
+  const usedPaths = new Set();
+  const assets = [];
+  refs.forEach((image, index) => {
+    const src = normalizeImageSource(image.src);
+    if (!src) {
+      return;
+    }
+    const provided = providedAssets.get(src);
+    const readable = provided || readImageReferenceAsset(src);
+    if (!readable?.bytes?.length) {
+      return;
+    }
+    const mime = readable.mime || imageMimeFromSource(src) || "application/octet-stream";
+    assets.push({
+      src,
+      path: allocateAcceptedImagePath(readable.path || src, mime, usedPaths),
+      bytes: toUint8Array(readable.bytes),
+      mime,
+    });
+  });
+  return assets;
+}
+
+function normalizeProvidedImageAssets(imageAssets) {
+  const bySource = new Map();
+  (Array.isArray(imageAssets) ? imageAssets : []).forEach((asset) => {
+    const src = normalizeImageSource(asset?.src);
+    const bytes = toUint8Array(asset?.bytes);
+    if (!src || !bytes.length) {
+      return;
+    }
+    bySource.set(src, {
+      src,
+      path: asset.path || "",
+      bytes,
+      mime: asset.mime || imageMimeFromSource(asset.path || src),
+    });
+  });
+  return bySource;
+}
+
+function uniqueMarkdownImageReferences(markdown) {
+  const seen = new Set();
+  return extractMarkdownImageReferences(markdown).filter((image) => {
+    const src = normalizeImageSource(image.src);
+    if (!src || seen.has(src)) {
+      return false;
+    }
+    seen.add(src);
+    return true;
+  });
+}
+
+function rewriteAcceptedCorrectedImageReferences(markdown, imageAssets) {
+  const bySource = new Map((Array.isArray(imageAssets) ? imageAssets : []).map((asset) => [normalizeImageSource(asset.src), asset.path]));
+  return String(markdown || "").replace(/!\[([^\]]*)\]\(([^)\n]+)\)/g, (full, alt, rawTarget) => {
+    const src = normalizeImageSource(extractMarkdownImageTarget(rawTarget));
+    const path = bySource.get(src);
+    return path ? `![${alt}](${path})` : full;
+  });
+}
+
+async function collectPdfCroppedImageAssetsForReferences(refs) {
+  if (!state.pdfDataUrl || !Array.isArray(refs) || !refs.length) {
+    return [];
+  }
+  const matches = imageSourceSegmentsForAcceptedDownload(refs.map((item) => item.src));
+  const assets = [];
+  for (const match of matches) {
+    try {
+      const page = await ensurePageImageForAcceptedDownload(match.pageNo);
+      if (!page?.image || !match.segment?.bbox) {
+        continue;
+      }
+      const cropDataUrl = await cropPageImage(
+        page.image,
+        match.segment.bbox,
+        match.segment.pageSize,
+        cropPaddingForMarkdownBlock(match.markdown, match.segment.pageSize),
+      );
+      const parsed = parseDataUrlBytes(cropDataUrl);
+      if (!parsed?.bytes?.length) {
+        continue;
+      }
+      assets.push({
+        src: normalizeImageSource(match.src),
+        bytes: parsed.bytes,
+        mime: parsed.mime || "image/png",
+      });
+    } catch (error) {
+      warnAcceptedImagePackaging(`图片 ${match.src || ""} 无法从 PDF 页面裁剪，已跳过。`, error);
+    }
+  }
+  return assets;
+}
+
+function imageSourceSegmentsForAcceptedDownload(sources) {
+  const wanted = new Set((Array.isArray(sources) ? sources : []).map(normalizeImageSource).filter(Boolean));
+  if (!wanted.size) {
+    return [];
+  }
+  const matches = [];
+  const matchedSources = new Set();
+  const total = getMineruPageCount();
+  for (let pageNo = 1; pageNo <= total; pageNo += 1) {
+    const acceptedByBlock = new Map(
+      acceptedOcrPatchesForPage(pageNo).map((patch) => [ocrPatchBlockIndex(patch), String(patch?.newText || "")]),
+    );
+    reviewSegmentsForPage(pageNo).forEach((segment) => {
+      if (!segment?.bbox) {
+        return;
+      }
+      const text = [segment.markdown || "", acceptedByBlock.get(String(segment.blockIndex)) || ""].join("\n");
+      extractMarkdownImageReferences(text).forEach((image) => {
+        const src = normalizeImageSource(image.src);
+        if (!wanted.has(src) || matchedSources.has(src)) {
+          return;
+        }
+        matchedSources.add(src);
+        matches.push({
+          src,
+          pageNo,
+          segment,
+          markdown: text,
+        });
+      });
+    });
+  }
+  return matches;
+}
+
+async function ensurePageImageForAcceptedDownload(pageNo) {
+  const pageNumber = Number(pageNo) || 0;
+  const cached = state.pageCache.get(pageNumber);
+  if (cached?.image) {
+    return cached;
+  }
+  const preview = await loadPagePreview(pageNumber);
+  cachePreviewPage(pageNumber, preview);
+  return state.pageCache.get(pageNumber) || preview?.pages?.[0] || null;
+}
+
+function readImageReferenceAsset(src) {
+  const source = normalizeImageSource(src);
+  if (!source) {
+    return null;
+  }
+  if (/^data:/i.test(source)) {
+    return parseDataUrlBytes(source);
+  }
+  return readSameOriginImageAsset(source);
+}
+
+function readSameOriginImageAsset(src) {
+  if (typeof XMLHttpRequest !== "function") {
+    return null;
+  }
+  let url = src;
+  try {
+    if (typeof document !== "undefined" && document?.baseURI && !/^(?:https?:|file:|blob:|data:|\/)/i.test(src)) {
+      url = new URL(src, document.baseURI).href;
+    }
+  } catch (error) {
+    url = src;
+  }
+  try {
+    const request = new XMLHttpRequest();
+    request.open("GET", url, false);
+    request.responseType = "arraybuffer";
+    request.send(null);
+    if (!(request.status === 0 || (request.status >= 200 && request.status < 300)) || !request.response) {
+      return null;
+    }
+    const mime = request.getResponseHeader?.("Content-Type") || imageMimeFromSource(src);
+    return {
+      bytes: new Uint8Array(request.response),
+      mime,
+    };
+  } catch (error) {
+    warnAcceptedImagePackaging(`无法读取图片引用 ${src}，将尝试 PDF 裁剪 fallback。`, error);
+    return null;
+  }
+}
+
+function normalizeImageSource(source) {
+  const raw = String(source || "").trim();
+  const match = raw.match(/^<([^>]+)>$/);
+  return match ? match[1].trim() : raw;
+}
+
+function extractMarkdownImageTarget(rawTarget) {
+  const target = String(rawTarget || "").trim();
+  const wrapped = target.match(/^<([^>]+)>$/);
+  if (wrapped) {
+    return wrapped[1].trim();
+  }
+  const unquoted = target.match(/^(\S+)/);
+  return unquoted ? unquoted[1] : target;
+}
+
+function parseDataUrlBytes(dataUrl) {
+  const match = String(dataUrl || "").match(/^data:([^;,]+);base64,(.+)$/i);
+  if (!match) {
+    return null;
+  }
+  const binary = decodeBase64(match[2]);
+  if (!binary) {
+    return null;
+  }
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return {
+    bytes,
+    mime: match[1],
+  };
+}
+
+function decodeBase64(value) {
+  try {
+    if (typeof atob === "function") {
+      return atob(String(value || ""));
+    }
+    if (typeof Buffer !== "undefined") {
+      return Buffer.from(String(value || ""), "base64").toString("binary");
+    }
+    if (typeof require === "function") {
+      return require("buffer").Buffer.from(String(value || ""), "base64").toString("binary");
+    }
+  } catch (error) {
+    warnAcceptedImagePackaging("base64 图片解析失败。", error);
+  }
+  return "";
+}
+
+function allocateAcceptedImagePath(source, mime, usedPaths) {
+  const basename = imageBasename(source) || `image-${(usedPaths?.size || 0) + 1}`;
+  const extension = imageExtensionFromMime(mime) || imageExtensionFromSource(source) || ".bin";
+  const stem = sanitizeZipPathSegment(basename.replace(/\.[a-z0-9]{1,8}$/i, "")) || `image-${(usedPaths?.size || 0) + 1}`;
+  let candidate = `images/${stem}${extension}`;
+  let suffix = 1;
+  while (usedPaths.has(candidate)) {
+    candidate = `images/${stem}-${suffix}${extension}`;
+    suffix += 1;
+  }
+  usedPaths.add(candidate);
+  return candidate;
+}
+
+function imageBasename(source) {
+  const normalized = normalizeImageSource(source).split("#")[0].split("?")[0];
+  if (/^data:/i.test(normalized)) {
+    return "";
+  }
+  const parts = normalized.split(/[\\/]/).filter(Boolean);
+  return parts[parts.length - 1] || "";
+}
+
+function imageMimeFromSource(source) {
+  const extension = imageExtensionFromSource(source).toLowerCase();
+  const map = {
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+    ".svg": "image/svg+xml",
+    ".bmp": "image/bmp",
+    ".tif": "image/tiff",
+    ".tiff": "image/tiff",
+  };
+  return map[extension] || "";
+}
+
+function imageExtensionFromSource(source) {
+  const match = normalizeImageSource(source).split("#")[0].split("?")[0].match(/\.([a-z0-9]{1,8})$/i);
+  return match ? `.${match[1].toLowerCase()}` : "";
+}
+
+function imageExtensionFromMime(mime) {
+  const map = {
+    "image/png": ".png",
+    "image/jpeg": ".jpg",
+    "image/jpg": ".jpg",
+    "image/gif": ".gif",
+    "image/webp": ".webp",
+    "image/svg+xml": ".svg",
+    "image/bmp": ".bmp",
+    "image/tiff": ".tiff",
+  };
+  return map[String(mime || "").toLowerCase().split(";")[0].trim()] || "";
+}
+
+function buildStoredZip(entries) {
+  const normalizedEntries = (Array.isArray(entries) ? entries : [])
+    .map((entry) => ({
+      path: sanitizeZipPath(entry.path),
+      bytes: toUint8Array(entry.bytes),
+    }))
+    .filter((entry) => entry.path && entry.bytes);
+  const localParts = [];
+  const centralParts = [];
+  let offset = 0;
+  const [dosTime, dosDate] = zipDosDateTime(new Date());
+  normalizedEntries.forEach((entry) => {
+    const nameBytes = stringToUtf8Bytes(entry.path);
+    const bytes = entry.bytes;
+    const crc = crc32(bytes);
+    const local = new Uint8Array(30 + nameBytes.length + bytes.length);
+    const localView = new DataView(local.buffer);
+    localView.setUint32(0, 0x04034b50, true);
+    localView.setUint16(4, 20, true);
+    localView.setUint16(6, 0x0800, true);
+    localView.setUint16(8, 0, true);
+    localView.setUint16(10, dosTime, true);
+    localView.setUint16(12, dosDate, true);
+    localView.setUint32(14, crc, true);
+    localView.setUint32(18, bytes.length, true);
+    localView.setUint32(22, bytes.length, true);
+    localView.setUint16(26, nameBytes.length, true);
+    local.set(nameBytes, 30);
+    local.set(bytes, 30 + nameBytes.length);
+    localParts.push(local);
+
+    const central = new Uint8Array(46 + nameBytes.length);
+    const centralView = new DataView(central.buffer);
+    centralView.setUint32(0, 0x02014b50, true);
+    centralView.setUint16(4, 20, true);
+    centralView.setUint16(6, 20, true);
+    centralView.setUint16(8, 0x0800, true);
+    centralView.setUint16(10, 0, true);
+    centralView.setUint16(12, dosTime, true);
+    centralView.setUint16(14, dosDate, true);
+    centralView.setUint32(16, crc, true);
+    centralView.setUint32(20, bytes.length, true);
+    centralView.setUint32(24, bytes.length, true);
+    centralView.setUint16(28, nameBytes.length, true);
+    centralView.setUint32(42, offset, true);
+    central.set(nameBytes, 46);
+    centralParts.push(central);
+    offset += local.length;
+  });
+  const localBytes = concatBytes(localParts);
+  const centralBytes = concatBytes(centralParts);
+  const end = new Uint8Array(22);
+  const endView = new DataView(end.buffer);
+  endView.setUint32(0, 0x06054b50, true);
+  endView.setUint16(8, normalizedEntries.length, true);
+  endView.setUint16(10, normalizedEntries.length, true);
+  endView.setUint32(12, centralBytes.length, true);
+  endView.setUint32(16, localBytes.length, true);
+  return concatBytes([localBytes, centralBytes, end]);
+}
+
+function sanitizeZipPath(path) {
+  return String(path || "")
+    .split("/")
+    .map(sanitizeZipPathSegment)
+    .filter(Boolean)
+    .join("/");
+}
+
+function sanitizeZipPathSegment(segment) {
+  return String(segment || "")
+    .replace(/[\\:*?"<>|]/g, "-")
+    .replace(/^\.+$/, "")
+    .replace(/\s+/g, "-")
+    .trim();
+}
+
+function zipDosDateTime(date) {
+  const year = Math.max(1980, date.getFullYear());
+  const dosTime = (date.getHours() << 11) | (date.getMinutes() << 5) | Math.floor(date.getSeconds() / 2);
+  const dosDate = ((year - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate();
+  return [dosTime, dosDate];
+}
+
+function stringToUtf8Bytes(text) {
+  if (typeof TextEncoder === "function") {
+    return new TextEncoder().encode(String(text || ""));
+  }
+  const encoded = encodeURIComponent(String(text || ""));
+  const bytes = [];
+  for (let index = 0; index < encoded.length; index += 1) {
+    if (encoded[index] === "%") {
+      bytes.push(parseInt(encoded.slice(index + 1, index + 3), 16));
+      index += 2;
+    } else {
+      bytes.push(encoded.charCodeAt(index));
+    }
+  }
+  return new Uint8Array(bytes);
+}
+
+function toUint8Array(value) {
+  if (value instanceof Uint8Array) {
+    return value;
+  }
+  if (value instanceof ArrayBuffer) {
+    return new Uint8Array(value);
+  }
+  if (Array.isArray(value)) {
+    return new Uint8Array(value);
+  }
+  return stringToUtf8Bytes(value || "");
+}
+
+function concatBytes(chunks) {
+  const total = (Array.isArray(chunks) ? chunks : []).reduce((sum, chunk) => sum + (chunk?.length || 0), 0);
+  const output = new Uint8Array(total);
+  let offset = 0;
+  (Array.isArray(chunks) ? chunks : []).forEach((chunk) => {
+    if (!chunk?.length) {
+      return;
+    }
+    output.set(chunk, offset);
+    offset += chunk.length;
+  });
+  return output;
+}
+
+const ZIP_CRC32_TABLE = buildCrc32Table();
+
+function buildCrc32Table() {
+  const table = new Uint32Array(256);
+  for (let index = 0; index < 256; index += 1) {
+    let value = index;
+    for (let bit = 0; bit < 8; bit += 1) {
+      value = value & 1 ? 0xedb88320 ^ (value >>> 1) : value >>> 1;
+    }
+    table[index] = value >>> 0;
+  }
+  return table;
+}
+
+function crc32(bytes) {
+  let crc = 0xffffffff;
+  const data = toUint8Array(bytes);
+  for (let index = 0; index < data.length; index += 1) {
+    crc = ZIP_CRC32_TABLE[(crc ^ data[index]) & 0xff] ^ (crc >>> 8);
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function warnAcceptedImagePackaging(message, error) {
+  if (typeof console !== "undefined" && typeof console.warn === "function") {
+    console.warn(`[Accepted Download] ${message}`, error || "");
+  }
 }
 
 function acceptedPatchDownloadHeader() {
@@ -5373,6 +5887,18 @@ function baseExportName() {
 
 function downloadTextFile(filename, text) {
   const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function downloadBinaryFile(filename, bytes, mimeType) {
+  const blob = new Blob([bytes], { type: mimeType || "application/octet-stream" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;

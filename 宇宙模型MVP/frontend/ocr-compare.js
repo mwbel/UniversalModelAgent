@@ -7,6 +7,7 @@ const API_BASE =
     : "");
 
 const DEFAULT_PDF_IMAGE_ZOOM = 1.25;
+const DEFAULT_REVIEW_FONT_SCALE = 1;
 
 const state = {
   pdfFile: null,
@@ -14,6 +15,7 @@ const state = {
   pdfPageCount: 0,
   currentPage: 1,
   pageCache: new Map(),
+  pdfTextPageCache: new Map(),
   mineruInfo: null,
   mineruFileName: "",
   contentListItems: [],
@@ -27,8 +29,11 @@ const state = {
   riskByPage: new Map(),
   mathpixCache: new Map(),
   reviewExpanded: new Set(),
+  reviewCorrectionOpen: new Set(),
+  reviewNeedsCorrection: new Set(),
   reviewInitializedPages: new Set(),
   pdfImageZoom: DEFAULT_PDF_IMAGE_ZOOM,
+  reviewFontScale: DEFAULT_REVIEW_FONT_SCALE,
   middleColumnCollapsed: false,
   busy: false,
 };
@@ -39,6 +44,7 @@ const COLUMN_WIDTHS_KEY = "uma-ocr-compare-column-ratios-v6";
 const MIDDLE_COLUMN_COLLAPSED_KEY = "uma-ocr-compare-middle-collapsed-v1";
 const OCR_WORKSPACE_STORAGE_PREFIX = "uma-ocr-compare-workspace-v1";
 const PDF_IMAGE_ZOOM_LEVELS = [1, 1.25, 1.5, 1.75, 2, 2.5];
+const REVIEW_FONT_SCALE_LEVELS = [0.9, 1, 1.1, 1.2, 1.35, 1.5];
 const BLOCK_MATHPIX_CROP_PADDING = { horizontal: 4, vertical: 1 };
 const LEGACY_COLUMN_WIDTHS_KEYS = [
   "uma-ocr-compare-column-widths",
@@ -293,6 +299,8 @@ function bindElements() {
     "pickPdfButton",
     "pickMineruButton",
     "pickContentListButton",
+    "previewAcceptedBookButton",
+    "downloadAcceptedCorrectedButton",
     "pageList",
     "statusBadge",
   ].forEach((id) => {
@@ -308,12 +316,15 @@ function initialize() {
   els.pickPdfButton.addEventListener("click", () => openFilePicker(els.pdfInput));
   els.pickMineruButton.addEventListener("click", () => openFilePicker(els.mineruInput));
   els.pickContentListButton.addEventListener("click", () => openFilePicker(els.contentListInput));
+  els.previewAcceptedBookButton?.addEventListener("click", toggleAcceptedBookPreview);
+  els.downloadAcceptedCorrectedButton?.addEventListener("click", downloadAcceptedCorrectedFromTop);
   els.pdfInput.addEventListener("change", handlePdfChange);
   els.mineruInput.addEventListener("change", handleMineruChange);
   els.contentListInput.addEventListener("change", handleContentListChange);
   document.addEventListener("pointerdown", handleColumnResizeStart);
   window.addEventListener("resize", schedulePdfFocusSync);
   window.addEventListener("mathjax-ready", () => typesetMath(els.pageList));
+  updateAcceptedPatchTopControls();
 }
 
 function openFilePicker(input) {
@@ -336,6 +347,7 @@ async function handlePdfChange() {
     state.pdfFile = file;
     state.pdfDataUrl = pdfDataUrl;
     state.pageCache.clear();
+    state.pdfTextPageCache.clear();
     state.mathpixCache.clear();
     state.mathpixBlockDrafts.clear();
     state.mineruOverrides.clear();
@@ -466,6 +478,7 @@ function resetPage() {
   state.pdfPageCount = 0;
   state.currentPage = 1;
   state.pageCache.clear();
+  state.pdfTextPageCache.clear();
   state.mineruInfo = null;
   state.mineruFileName = "";
   state.contentListItems = [];
@@ -529,6 +542,8 @@ function saveOcrWorkspaceState() {
     mathpixBlockDrafts: serializeNestedMap(state.mathpixBlockDrafts),
     mathpixCache: serializePageMap(state.mathpixCache),
     ocrPatches: Array.isArray(state.ocrPatches) ? state.ocrPatches : [],
+    reviewNeedsCorrection: Array.from(state.reviewNeedsCorrection || []),
+    reviewFontScale: state.reviewFontScale,
   };
   try {
     storage.setItem(key, JSON.stringify(payload));
@@ -561,6 +576,8 @@ function restoreOcrWorkspaceState() {
     state.mathpixBlockDrafts = restoreNestedMap(payload.mathpixBlockDrafts);
     state.mathpixCache = restorePageMap(payload.mathpixCache);
     state.ocrPatches = Array.isArray(payload.ocrPatches) ? payload.ocrPatches : [];
+    state.reviewNeedsCorrection = new Set(Array.isArray(payload.reviewNeedsCorrection) ? payload.reviewNeedsCorrection.map(String) : []);
+    state.reviewFontScale = clampReviewFontScale(payload.reviewFontScale);
     state.acceptedPatchPreview = null;
     state.acceptedPatchBookPreview = null;
     return true;
@@ -693,6 +710,7 @@ async function renderCurrentPage() {
   els.pageList.append(row);
   typesetMath(row);
   syncPdfFocusToExpandedReviewBlock();
+  updateAcceptedPatchTopControls();
 }
 
 function createColumnResizer(side) {
@@ -908,6 +926,7 @@ async function loadPagePreview(pageNumber) {
     pageNumber,
     maxPages: 1,
     zoom: 1.8,
+    includeText: true,
   });
   if (!response.ok) {
     throw new Error(response.error || "PDF 页面渲染失败");
@@ -921,6 +940,61 @@ function cachePreviewPage(pageNumber, preview) {
     return false;
   }
   state.pageCache.set(Number(pageNumber) || 1, page);
+  cachePdfTextPage(page);
+  return true;
+}
+
+function cachePdfTextPage(page) {
+  const pageNumber = Number(page?.pageNumber) || 0;
+  if (!pageNumber || !Array.isArray(page?.textBlocks)) {
+    return false;
+  }
+  state.pdfTextPageCache.set(pageNumber, {
+    pageSize: Array.isArray(page.textPageSize) ? page.textPageSize : [page.width, page.height],
+    textBlocks: page.textBlocks,
+  });
+  return true;
+}
+
+function pdfTextBlocksForPage(pageNumber) {
+  return state.pdfTextPageCache.get(Number(pageNumber) || 0)?.textBlocks || [];
+}
+
+function pdfTextPageSizeForPage(pageNumber) {
+  return state.pdfTextPageCache.get(Number(pageNumber) || 0)?.pageSize || null;
+}
+
+async function ensurePdfTextLayersForBook() {
+  if (!state.pdfDataUrl || !state.pdfFile) {
+    return false;
+  }
+  const total = getMineruPageCount() || state.pdfPageCount || 0;
+  if (!total) {
+    return false;
+  }
+  let missing = false;
+  for (let pageNo = 1; pageNo <= total; pageNo += 1) {
+    if (!state.pdfTextPageCache.has(pageNo)) {
+      missing = true;
+      break;
+    }
+  }
+  if (!missing) {
+    return true;
+  }
+  const response = await postJson("/api/ocr/preview-pages", {
+    name: state.pdfFile.name || "book.pdf",
+    mimeType: state.pdfFile.type || "application/pdf",
+    dataUrl: state.pdfDataUrl,
+    maxPages: total,
+    zoom: 1,
+    includeText: true,
+    renderImages: false,
+  });
+  if (!response.ok) {
+    throw new Error(response.error || "PDF 文本层读取失败");
+  }
+  (response.pages || []).forEach(cachePdfTextPage);
   return true;
 }
 
@@ -994,6 +1068,29 @@ function setPdfImageZoom(direction) {
     return;
   }
   state.pdfImageZoom = DEFAULT_PDF_IMAGE_ZOOM;
+}
+
+function currentReviewFontScale() {
+  return clampReviewFontScale(state.reviewFontScale);
+}
+
+function clampReviewFontScale(value) {
+  const numeric = Number(value);
+  return REVIEW_FONT_SCALE_LEVELS.includes(numeric) ? numeric : DEFAULT_REVIEW_FONT_SCALE;
+}
+
+function setReviewFontScale(direction) {
+  const current = currentReviewFontScale();
+  const index = REVIEW_FONT_SCALE_LEVELS.indexOf(current);
+  if (direction === "in") {
+    state.reviewFontScale = REVIEW_FONT_SCALE_LEVELS[Math.min(REVIEW_FONT_SCALE_LEVELS.length - 1, index + 1)];
+    return;
+  }
+  if (direction === "out") {
+    state.reviewFontScale = REVIEW_FONT_SCALE_LEVELS[Math.max(0, index - 1)];
+    return;
+  }
+  state.reviewFontScale = DEFAULT_REVIEW_FONT_SCALE;
 }
 
 function syncPdfFocusToExpandedReviewBlock() {
@@ -1215,6 +1312,7 @@ function renderRightWorkbench(page) {
 function renderReviewCard() {
   const card = document.createElement("section");
   card.className = "review-card";
+  applyAutomaticLocalCorrectionsForPage(state.currentPage);
   const risks = state.riskByPage.get(state.currentPage) || [];
   const segments = reviewSegmentsForPage(state.currentPage);
   const reviewEntries = buildReviewEntriesForPage(risks, segments, state.currentPage);
@@ -1225,7 +1323,7 @@ function renderReviewCard() {
       ${renderReviewNavigationBar(reviewEntries)}
     </div>
     ${renderPageReviewCanvas(reviewEntries)}
-    ${showAcceptedPatchTools ? renderAcceptedPatchExportSection() : ""}
+    ${showAcceptedPatchTools ? renderAcceptedPatchBookPreviewPanel() : ""}
   `;
   card.querySelectorAll("[data-review-page-block]").forEach((block) => {
     block.addEventListener("click", (event) => {
@@ -1248,18 +1346,51 @@ function renderReviewCard() {
   card.querySelectorAll("[data-review-toggle]").forEach((button) => {
     button.addEventListener("click", () => toggleReviewBlock(button.dataset.reviewToggle));
   });
+  card.querySelectorAll("[data-review-correction-toggle]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleReviewCorrectionPanel(button.dataset.reviewCorrectionToggle);
+    });
+  });
+  card.querySelectorAll("[data-review-needs-correction-toggle]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleReviewNeedsCorrection(button.dataset.reviewNeedsCorrectionToggle);
+    });
+  });
   card.querySelectorAll("[data-apply-mathpix-block-edit]").forEach((button) => {
     button.addEventListener("click", () => applyMathpixBlockEdit(button.dataset.applyMathpixBlockEdit, button));
   });
   card.querySelectorAll("[data-apply-mineru-source-edit]").forEach((button) => {
     button.addEventListener("click", () => applyMineruSourceEdit(button.dataset.applyMineruSourceEdit, button));
   });
+  card.querySelectorAll("[data-auto-unwrap-linebreaks]").forEach((button) => {
+    button.addEventListener("click", () => autoUnwrapMineruLineBreaksForBlock(button.dataset.autoUnwrapLinebreaks));
+  });
+  card.querySelectorAll("[data-auto-add-figure-label]").forEach((button) => {
+    button.addEventListener("click", () => autoAddFigureLabelForBlock(button.dataset.autoAddFigureLabel));
+  });
   card.querySelectorAll("[data-mathpix-edit], [data-mineru-source-edit]").forEach((editor) => {
     editor.addEventListener("input", () => updateReviewEditorActionState(editor));
     updateReviewEditorActionState(editor);
   });
+  if (typeof card.addEventListener === "function") {
+    card.addEventListener("input", (event) => {
+      const editor = event.target?.closest?.("[data-mathpix-edit], [data-mineru-source-edit]");
+      if (editor && card.contains(editor)) {
+        updateReviewEditorActionState(editor);
+      }
+    });
+  }
   card.querySelectorAll("[data-review-block-step]").forEach((button) => {
     button.addEventListener("click", () => navigateReviewBlock(button.dataset.reviewBlockStep));
+  });
+  card.querySelectorAll("[data-review-font-scale]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      setReviewFontScale(button.dataset.reviewFontScale);
+      saveOcrWorkspaceState();
+      await renderCurrentPage();
+    });
   });
   card.querySelectorAll("[data-page-jump]").forEach((button) => {
     button.addEventListener("click", () => goToPagerTarget(button.dataset.pageJump));
@@ -1283,22 +1414,9 @@ function renderReviewCard() {
       await renderCurrentPage();
     });
   });
-  card.querySelector("[data-preview-accepted-book-patches]")?.addEventListener("click", async () => {
-    state.acceptedPatchPreview = null;
-    const nextPreview = state.acceptedPatchBookPreview ? null : buildAcceptedPatchPreviewForBook();
-    state.acceptedPatchBookPreview = nextPreview;
-    setStatus(nextPreview ? (nextPreview.ok ? "Book patch preview" : "Book preview warning") : "Book preview closed", nextPreview ? (nextPreview.ok ? "ok" : "error") : "ok");
-    await renderCurrentPage();
-  });
   card.querySelector("[data-close-accepted-book-preview]")?.addEventListener("click", async () => {
     state.acceptedPatchBookPreview = null;
     setStatus("Book preview closed", "ok");
-    await renderCurrentPage();
-  });
-  card.querySelector("[data-download-accepted-corrected]")?.addEventListener("click", async () => {
-    const result = downloadAcceptedCorrectedMarkdown();
-    const statusText = result.status?.message || (result.ok ? "Downloaded accepted" : "Accepted download blocked");
-    setStatus(statusText, result.ok ? "ok" : "error");
     await renderCurrentPage();
   });
   return card;
@@ -1309,72 +1427,92 @@ function hasAcceptedOcrPatches() {
   return patches.some((patch) => patch?.status === "accepted");
 }
 
-function renderAcceptedPatchToolButtons() {
-  return `
-    <div class="mathpix-edit-actions" data-accepted-patch-tools>
-      <button class="text-button" type="button" data-preview-accepted-book-patches>${state.acceptedPatchBookPreview ? "收起整书 accepted 校正稿" : "预览整书 accepted 校正稿"}</button>
-      <button class="text-button" type="button" data-download-accepted-corrected>下载 accepted 校正稿</button>
-    </div>
-  `;
-}
-
-function renderAcceptedPatchExportSection() {
-  return `
-    <section class="accepted-patch-export-section" data-accepted-patch-export-section>
-      <div class="review-pane-title">导出前检查</div>
-      ${renderAcceptedPatchToolButtons()}
-      ${renderAcceptedCorrectedDownloadStatus()}
-      ${renderAcceptedPatchBookPreviewPanel()}
-    </section>
-  `;
-}
-
 function renderAcceptedPatchBookPreviewPanel() {
-  const preview = state.acceptedPatchBookPreview;
-  if (!preview) {
-    return "";
-  }
-  const warnings = Array.isArray(preview.warnings) ? preview.warnings : [];
-  const errors = Array.isArray(preview.errors) ? preview.errors : [];
-  const issuesHtml = warnings.length || errors.length
-    ? `<details class="ocr-patch-preview-issues"><summary>问题与页摘要</summary><pre><code>${escapeHtml(JSON.stringify({
-      pageSummaries: preview.pageSummaries || [],
-      warnings,
-      errors,
-    }, null, 2))}</code></pre></details>`
-    : "";
-  return `
-    <section class="ocr-patch-preview" data-accepted-patch-book-preview>
-      <div class="review-pane-title review-pane-title-with-action">
-        <span>整书 accepted patch dry-run 预览</span>
-        <button class="secondary-button preview-close-button" type="button" data-close-accepted-book-preview>关闭</button>
-      </div>
-      <div class="ocr-patch-preview-summary">
-        acceptedPatchCount: ${preview.acceptedPatchCount} · appliedPatchCount: ${preview.appliedPatchCount} · skippedPatchCount: ${preview.skippedPatchCount} · warnings: ${warnings.length} · errors: ${errors.length}
-      </div>
-      ${issuesHtml}
-      <div class="review-pane ocr-patch-book-render markdown-body" data-accepted-patch-book-preview-markdown>${renderMarkdownHtml(normalizeMathMarkdown(preview.markdown || ""))}</div>
-    </section>
-  `;
+  return "";
 }
 
-function renderAcceptedCorrectedDownloadStatus(status = getAcceptedCorrectedDownloadStatus()) {
-  return `
-    <div class="ocr-patch-preview-summary" data-accepted-download-status="${escapeHtml(status.status)}">
-      <strong>下载状态：${escapeHtml(status.status)}</strong>
-      <span>${escapeHtml(status.message)}</span>
-      <span>accepted: ${status.acceptedPatchCount} · applied: ${status.appliedPatchCount} · warnings: ${status.warningCount} · errors: ${status.errorCount}</span>
-    </div>
-  `;
+function updateAcceptedPatchTopControls() {
+  const hasAccepted = hasAcceptedOcrPatches();
+  if (els.previewAcceptedBookButton) {
+    els.previewAcceptedBookButton.disabled = !hasAccepted;
+    els.previewAcceptedBookButton.textContent = "预览整书 accepted 校正稿";
+  }
+  if (els.downloadAcceptedCorrectedButton) {
+    els.downloadAcceptedCorrectedButton.disabled = !hasAccepted;
+    els.downloadAcceptedCorrectedButton.title = hasAccepted ? "点击后执行 accepted dry-run 检查并下载" : "当前没有 accepted patch";
+  }
+}
+
+async function toggleAcceptedBookPreview() {
+  if (!hasAcceptedOcrPatches()) {
+    setStatus("No accepted patch", "error");
+    updateAcceptedPatchTopControls();
+    return;
+  }
+  state.acceptedPatchPreview = null;
+  state.acceptedPatchBookPreview = null;
+  const button = els.previewAcceptedBookButton;
+  if (button) {
+    button.disabled = true;
+    button.textContent = "预览生成中...";
+  }
+  setStatus("Book preview running...", "busy");
+  await nextFrame();
+  try {
+    await ensurePdfTextLayersForBook();
+    const preview = buildAcceptedPatchPreviewForBook();
+    const warnings = Array.isArray(preview?.warnings) ? preview.warnings.length : 0;
+    const errors = Array.isArray(preview?.errors) ? preview.errors.length : 0;
+    setStatus(preview?.ok ? `Book preview ok · warnings: ${warnings}` : `Book preview warning · errors: ${errors}`, preview?.ok ? "ok" : "error");
+  } catch (error) {
+    setStatus("Book preview failed", "error", error?.message || String(error || ""));
+  } finally {
+    updateAcceptedPatchTopControls();
+  }
+}
+
+async function downloadAcceptedCorrectedFromTop() {
+  try {
+    setStatus("Accepted download preparing...", "busy");
+    await ensurePdfTextLayersForBook();
+    const result = downloadAcceptedCorrectedMarkdown();
+    const statusText = result.status?.message || (result.ok ? "Downloaded accepted" : "Accepted download blocked");
+    setStatus(statusText, result.ok ? "ok" : "error");
+  } catch (error) {
+    setStatus("Accepted download failed", "error", error?.message || String(error || ""));
+  } finally {
+    updateAcceptedPatchTopControls();
+    await renderCurrentPage();
+  }
+}
+
+function nextFrame() {
+  return new Promise((resolve) => {
+    if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(() => resolve());
+      return;
+    }
+    setTimeout(resolve, 0);
+  });
 }
 
 function renderReviewNavigationBar(reviewEntries) {
   const entries = Array.isArray(reviewEntries) ? reviewEntries : [];
   const activeIndex = entries.length ? Math.max(0, activeReviewEntryIndex(entries)) : -1;
   const active = activeIndex >= 0 ? entries[activeIndex] : null;
+  const fontScale = currentReviewFontScale();
+  const fontScaleIndex = REVIEW_FONT_SCALE_LEVELS.indexOf(fontScale);
   return `
     <div class="review-navigation-bar" data-review-block-navigator>
       <div class="review-nav-controls">
+        <div class="review-font-nav-group">
+          <button class="text-button image-zoom-button" type="button" data-review-font-scale="out" ${fontScaleIndex <= 0 ? "disabled" : ""} aria-label="缩小右栏字体" title="缩小右栏字体">
+            <span class="image-zoom-glyph" aria-hidden="true"><span>A</span><span>⌄</span></span>
+          </button>
+          <button class="text-button image-zoom-button" type="button" data-review-font-scale="in" ${fontScaleIndex >= REVIEW_FONT_SCALE_LEVELS.length - 1 ? "disabled" : ""} aria-label="放大右栏字体" title="放大右栏字体">
+            <span class="image-zoom-glyph" aria-hidden="true"><span>A</span><span>⌃</span></span>
+          </button>
+        </div>
         <div class="review-page-nav-group">
           <span class="review-nav-group-label">页面</span>
           <div class="review-workbench-pager">
@@ -1553,10 +1691,10 @@ function reviewPatchMarkdown(patch) {
 function renderPageReviewCanvas(reviewEntries) {
   const entries = Array.isArray(reviewEntries) ? reviewEntries : [];
   if (!entries.length) {
-    return `<div class="review-list review-page-canvas markdown-body"><div class="empty-inline">当前页未发现可校对文本块。</div></div>`;
+    return `<div class="review-list review-page-canvas markdown-body" style="--review-font-scale: ${currentReviewFontScale()};"><div class="empty-inline">当前页未发现可校对文本块。</div></div>`;
   }
   return `
-    <div class="review-list review-page-canvas markdown-body" data-review-page-canvas>
+    <div class="review-list review-page-canvas markdown-body" data-review-page-canvas style="--review-font-scale: ${currentReviewFontScale()};">
       <div class="review-page-paper">
         ${entries.map((entry) => renderPageReviewBlock(entry)).join("")}
       </div>
@@ -1580,18 +1718,29 @@ function renderPageReviewBlock(entry) {
   const corrected = blockOverrides.has(blockKey) || Boolean(ocrPatch?.status === "accepted");
   const hasDraft = Boolean(draftMarkdown || ocrPatch?.status === "draft");
   const itemState = hasDraft ? "mathpix-draft" : corrected ? "corrected" : risk.reviewOnly ? "normal" : "candidate";
-  const stateLabel = hasDraft ? "draft" : corrected ? "accepted" : risk.reviewOnly ? "MinerU" : "候选";
+  const correctionOpen = state.reviewCorrectionOpen.has(fullKey);
+  const needsCorrection = state.reviewNeedsCorrection.has(fullKey);
+  const missingFigureLabel = inferMissingFigureLabelForBlock(state.currentPage, blockKey, segment.markdown || "");
   return `
-    <section class="review-page-block ${selected ? "is-selected" : ""} ${corrected ? "is-corrected" : ""} ${hasDraft ? "has-mathpix-draft" : ""}" tabindex="0" role="button" data-review-page-block="${escapeHtml(fullKey)}" data-source-block-id="${escapeHtml(blockKey)}" data-review-item-state="${escapeHtml(itemState)}">
-      <div class="review-page-block-label">
-        <span>${escapeHtml(reviewEntryLabel(entry))}</span>
-        <strong>${escapeHtml(stateLabel)}</strong>
+    <section class="review-page-block ${selected ? "is-selected" : ""} ${corrected ? "is-corrected" : ""} ${hasDraft ? "has-mathpix-draft" : ""} ${needsCorrection ? "needs-extra-correction" : ""}" tabindex="0" role="button" data-review-page-block="${escapeHtml(fullKey)}" data-source-block-id="${escapeHtml(blockKey)}" data-review-item-state="${escapeHtml(itemState)}">
+      <div class="review-page-block-actions">
+        <button class="review-page-mark-button ${needsCorrection ? "is-active" : ""}" type="button" data-review-needs-correction-toggle="${escapeHtml(fullKey)}" aria-pressed="${needsCorrection ? "true" : "false"}">
+          需要额外校正
+        </button>
+        ${
+          missingFigureLabel
+            ? `<button class="review-page-local-button" type="button" data-auto-add-figure-label="${escapeHtml(blockKey)}">补图号</button>`
+            : ""
+        }
+        <button class="review-page-correct-button" type="button" data-review-correction-toggle="${escapeHtml(fullKey)}" aria-expanded="${correctionOpen ? "true" : "false"}">
+          ${correctionOpen ? "收起校正" : "校正"}
+        </button>
       </div>
       <div class="review-page-block-render">
         ${renderBlockContent(displayMarkdown, segment)}
       </div>
       ${
-        selected
+        correctionOpen
           ? renderSelectedBlockToolbar(
               segment,
               risk,
@@ -1674,8 +1823,8 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
             <summary>编辑 Markdown 源码（保存后进入 accepted 校正稿）</summary>
             <textarea class="mathpix-source-editor" data-mathpix-edit="${escapeHtml(String(segment.blockIndex))}" spellcheck="false">${escapeHtml(editableMarkdown)}</textarea>
             <div class="mathpix-edit-actions">
-              <button class="text-button" type="button" data-apply-mathpix-block-edit="${escapeHtml(String(segment.blockIndex))}" ${mathpixEditorIsSaved ? 'data-disable-when-clean="1" data-clean-label="已保存" disabled' : ""} data-dirty-label="保存修改并接受">
-                ${mathpixEditorIsSaved ? "已保存" : "保存修改并接受"}
+              <button class="text-button" type="button" data-apply-mathpix-block-edit="${escapeHtml(String(segment.blockIndex))}" data-dirty-label="保存修改并接受">
+                保存修改并接受
               </button>
             </div>
           </details>
@@ -1690,20 +1839,21 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
     ? `${correctedPaneHtml}${originalMineruDetailHtml}`
     : `${mineruPaneHtml}${correctedPaneHtml}`;
   if (options.toolbarOnly) {
+    const mathpixActionHtml = isCrossPage
+      ? `<button class="text-button risk-action" type="button" data-cross-page-jump-page="${escapeHtml(String(risk.crossPageSourcePage))}" data-cross-page-jump-block="${escapeHtml(String(risk.sourceBlockIndex))}">跳到第 ${escapeHtml(String(risk.crossPageSourcePage))} 页校对</button>`
+      : `<button class="text-button risk-action" type="button" data-risk-mathpix="${segment.blockIndex}" ${disabled}>
+          ${isCorrected ? "重新校正此块" : risk.bbox ? "Mathpix 校正此块" : "缺少 bbox"}
+        </button>`;
     return `
       <div class="selected-block-toolbar review-item ${isReviewOnly ? "is-normal" : ""} ${isCorrected ? "is-corrected" : ""} ${hasMathpixDraft ? "has-mathpix-draft" : ""} ${isCrossPage ? "is-cross-page" : ""} is-expanded" data-review-item-state="${escapeHtml(itemState)}" data-source-block-id="${escapeHtml(String(segment.blockIndex))}">
         <div class="selected-block-toolbar-head">
           <div>
             <strong>${title}</strong>
-            ${itemStateLabel ? `<span class="review-item-state">${escapeHtml(itemStateLabel)}</span>` : ""}
           </div>
           <div class="review-item-actions">
             ${renderOcrPatchStatusControls(ocrPatch)}
-            ${
-              isCrossPage
-                ? `<button class="text-button risk-action" type="button" data-cross-page-jump-page="${escapeHtml(String(risk.crossPageSourcePage))}" data-cross-page-jump-block="${escapeHtml(String(risk.sourceBlockIndex))}">跳到第 ${escapeHtml(String(risk.crossPageSourcePage))} 页校对</button>`
-                : ""
-            }
+            ${mathpixActionHtml}
+            <button class="text-button review-toolbar-collapse" type="button" data-review-correction-toggle="${escapeHtml(reviewKey)}" aria-label="收起校正面板" title="收起">⌃</button>
           </div>
         </div>
         <div class="selected-block-toolbar-body">
@@ -1722,7 +1872,6 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
       <div class="review-item-head">
         <div>
           <strong>${title}</strong>
-          ${itemStateLabel ? `<span class="review-item-state">${escapeHtml(itemStateLabel)}</span>` : ""}
         </div>
         <div class="review-item-actions">
           ${renderOcrPatchStatusControls(ocrPatch)}
@@ -1756,9 +1905,17 @@ function renderCompactSelectedBlockEditor({ segment, editableMarkdown, hasEditab
   const blockIndex = escapeHtml(String(segment?.blockIndex ?? ""));
   const mineruMarkdown = escapeHtml(String(segment?.markdown || ""));
   const mathpixMarkdown = escapeHtml(String(editableMarkdown || ""));
-  return `
-    <div class="selected-block-compact-actions">
-      <details class="block-source-detail selected-source-detail">
+  const sourceEditorHtml = hasEditableMarkdown
+    ? `<details class="block-source-detail selected-source-detail">
+        <summary>查看/编辑 Mathpix draft / accepted Markdown</summary>
+        <textarea class="mathpix-source-editor" data-mathpix-edit="${blockIndex}" spellcheck="false">${mathpixMarkdown}</textarea>
+        <div class="mathpix-edit-actions">
+          <button class="text-button" type="button" data-apply-mathpix-block-edit="${blockIndex}" data-dirty-label="保存修改并接受">
+            保存修改并接受
+          </button>
+        </div>
+      </details>`
+    : `<details class="block-source-detail selected-source-detail">
         <summary>查看/编辑 MinerU 源码</summary>
         <textarea class="mathpix-source-editor block-source-editor" data-mineru-source-edit="${blockIndex}" spellcheck="false">${mineruMarkdown}</textarea>
         <div class="mathpix-edit-actions">
@@ -1766,20 +1923,10 @@ function renderCompactSelectedBlockEditor({ segment, editableMarkdown, hasEditab
             未修改
           </button>
         </div>
-      </details>
-      ${
-        hasEditableMarkdown
-          ? `<details class="block-source-detail selected-source-detail">
-              <summary>查看/编辑 Mathpix draft / accepted Markdown</summary>
-              <textarea class="mathpix-source-editor" data-mathpix-edit="${blockIndex}" spellcheck="false">${mathpixMarkdown}</textarea>
-              <div class="mathpix-edit-actions">
-                <button class="text-button" type="button" data-apply-mathpix-block-edit="${blockIndex}" ${mathpixEditorIsSaved ? 'data-disable-when-clean="1" data-clean-label="已保存" disabled' : ""} data-dirty-label="保存修改并接受">
-                  ${mathpixEditorIsSaved ? "已保存" : "保存修改并接受"}
-                </button>
-              </div>
-            </details>`
-          : ""
-      }
+      </details>`;
+  return `
+    <div class="selected-block-compact-actions">
+      ${sourceEditorHtml}
     </div>
   `;
 }
@@ -1805,26 +1952,15 @@ function updateReviewEditorActionState(editor) {
 }
 
 function renderOcrPatchStatusControls(patch) {
-  if (!patch) {
+  if (!patch || patch.status !== "draft") {
     return "";
   }
   const status = String(patch.status || "");
   const patchId = String(patch.patchId || "");
-  const labels = {
-    draft: "待确认",
-    accepted: "已接受",
-    rejected: "已拒绝",
-    noop: "无变化",
-  };
-  const actionHtml =
-    status === "draft"
-      ? `<button class="text-button" type="button" data-ocr-patch-id="${escapeHtml(patchId)}" data-ocr-patch-status-action="accepted">接受</button>
-         <button class="text-button" type="button" data-ocr-patch-id="${escapeHtml(patchId)}" data-ocr-patch-status-action="rejected">拒绝</button>`
-      : `<span class="ocr-patch-state-label">${escapeHtml(labels[status] || status)}</span>`;
   return `
     <div class="ocr-patch-status" data-ocr-patch-id="${escapeHtml(patchId)}" data-ocr-patch-status="${escapeHtml(status)}">
-      <span>Patch：${escapeHtml(status)}${labels[status] ? ` · ${escapeHtml(labels[status])}` : ""}</span>
-      ${actionHtml}
+      <button class="text-button" type="button" data-ocr-patch-id="${escapeHtml(patchId)}" data-ocr-patch-status-action="accepted">接受</button>
+      <button class="text-button" type="button" data-ocr-patch-id="${escapeHtml(patchId)}" data-ocr-patch-status-action="rejected">拒绝</button>
     </div>
   `;
 }
@@ -1867,12 +2003,99 @@ async function selectReviewBlock(blockIndex) {
   if (!fullKey) {
     return;
   }
+  const samePage = Number(fullKey.split(":")[0]) === state.currentPage;
   state.reviewExpanded.clear();
   state.reviewExpanded.add(fullKey);
+  if (!state.reviewCorrectionOpen.has(fullKey)) {
+    state.reviewCorrectionOpen.clear();
+  }
   state.reviewInitializedPages.add(Number(fullKey.split(":")[0]) || state.currentPage);
+  if (samePage && refreshRightWorkbenchOnly()) {
+    refreshReviewSelectionInPlace(fullKey);
+    scrollSelectedReviewBlockIntoView();
+    schedulePdfFocusSync();
+    return;
+  }
   await renderCurrentPage();
   scrollSelectedReviewBlockIntoView();
   schedulePdfFocusSync();
+}
+
+async function toggleReviewCorrectionPanel(blockIndex) {
+  const fullKey = normalizeReviewBlockKey(blockIndex);
+  if (!fullKey) {
+    return;
+  }
+  state.reviewExpanded.clear();
+  state.reviewExpanded.add(fullKey);
+  if (state.reviewCorrectionOpen.has(fullKey)) {
+    state.reviewCorrectionOpen.clear();
+  } else {
+    state.reviewCorrectionOpen.clear();
+    state.reviewCorrectionOpen.add(fullKey);
+  }
+  if (refreshRightWorkbenchOnly()) {
+    scrollSelectedReviewBlockIntoView();
+    schedulePdfFocusSync();
+    return;
+  }
+  await renderCurrentPage();
+  scrollSelectedReviewBlockIntoView();
+  schedulePdfFocusSync();
+}
+
+async function toggleReviewNeedsCorrection(blockIndex) {
+  const fullKey = normalizeReviewBlockKey(blockIndex);
+  if (!fullKey) {
+    return;
+  }
+  if (state.reviewNeedsCorrection.has(fullKey)) {
+    state.reviewNeedsCorrection.delete(fullKey);
+  } else {
+    state.reviewNeedsCorrection.add(fullKey);
+  }
+  saveOcrWorkspaceState();
+  if (refreshRightWorkbenchOnly()) {
+    refreshReviewSelectionInPlace(fullKey);
+    schedulePdfFocusSync();
+    return;
+  }
+  await renderCurrentPage();
+}
+
+function refreshRightWorkbenchOnly() {
+  if (typeof document === "undefined" || !els.pageList) {
+    return false;
+  }
+  const current = els.pageList.querySelector(".right-workbench-card");
+  if (!current) {
+    return false;
+  }
+  const next = renderRightWorkbench(state.pageCache.get(state.currentPage) || null);
+  current.replaceWith(next);
+  typesetMath(next);
+  return true;
+}
+
+function refreshReviewSelectionInPlace(fullKey) {
+  if (typeof document === "undefined" || typeof document.querySelectorAll !== "function") {
+    return false;
+  }
+  const pageBlocks = Array.from(document.querySelectorAll("[data-review-page-block]"));
+  if (!pageBlocks.length) {
+    return false;
+  }
+  pageBlocks.forEach((block) => {
+    block.classList.toggle("is-selected", block.dataset.reviewPageBlock === fullKey);
+  });
+  document.querySelectorAll("[data-review-left-hotspot]").forEach((hotspot) => {
+    hotspot.classList.toggle("is-selected", hotspot.dataset.reviewLeftHotspot === fullKey);
+  });
+  const select = document.querySelector("[data-review-block-select]");
+  if (select) {
+    select.value = String(fullKey).includes(":") ? String(fullKey).split(":").slice(1).join(":") : String(fullKey);
+  }
+  return true;
 }
 
 function normalizeReviewBlockKey(blockIndex, pageNumber = state.currentPage) {
@@ -1919,7 +2142,7 @@ async function applyMathpixBlockEdit(blockIndex, trigger) {
   if (!blockKey) {
     return;
   }
-  const editor = trigger?.closest?.(".review-item, .selected-block-toolbar")?.querySelector?.("[data-mathpix-edit]");
+  const editor = findReviewEditorForTrigger(trigger, "[data-mathpix-edit]");
   if (!editor) {
     return;
   }
@@ -1932,11 +2155,568 @@ async function applyMineruSourceEdit(blockIndex, trigger) {
   if (!blockKey) {
     return;
   }
-  const editor = trigger?.closest?.(".review-item, .selected-block-toolbar")?.querySelector?.("[data-mineru-source-edit]");
+  const editor = findReviewEditorForTrigger(trigger, "[data-mineru-source-edit]");
   if (!editor) {
     return;
   }
   await saveHumanAcceptedBlockEdit(blockKey, editor.value || "");
+}
+
+function findReviewEditorForTrigger(trigger, selector) {
+  const detail = trigger?.closest?.(".block-source-detail");
+  const detailEditor = detail?.querySelector?.(selector);
+  if (detailEditor) {
+    return detailEditor;
+  }
+  return trigger?.closest?.(".review-item, .selected-block-toolbar, .selected-block-compact-actions")?.querySelector?.(selector) || null;
+}
+
+async function autoUnwrapMineruLineBreaksForBlock(blockIndex) {
+  const blockKey = String(blockIndex || "");
+  if (!blockKey) {
+    return;
+  }
+  const segment = reviewSegmentsForPage(state.currentPage).find((item) => String(item.blockIndex) === blockKey);
+  const sourceMarkdown = segment?.markdown || "";
+  if (!canAutoUnwrapMineruLineBreaks(sourceMarkdown)) {
+    setStatus("该块不适合自动整理换行", "error");
+    return;
+  }
+  const unwrapped = autoUnwrapMineruLineBreaks(sourceMarkdown);
+  if (!unwrapped.trim() || unwrapped === String(sourceMarkdown || "").replace(/\r\n?/g, "\n").trim()) {
+    setStatus("No linebreak changes", "ok");
+    return;
+  }
+  await saveHumanAcceptedBlockEdit(blockKey, unwrapped);
+}
+
+async function autoAddFigureLabelForBlock(blockIndex) {
+  const blockKey = String(blockIndex || "");
+  if (!blockKey) {
+    return;
+  }
+  const segment = reviewSegmentsForPage(state.currentPage).find((item) => String(item.blockIndex) === blockKey);
+  const sourceMarkdown = segment?.markdown || "";
+  const label = inferMissingFigureLabelForBlock(state.currentPage, blockKey, sourceMarkdown);
+  if (!label) {
+    setStatus("没有可推断的图号", "error");
+    return;
+  }
+  await saveHumanAcceptedBlockEdit(blockKey, `${label} ${String(sourceMarkdown || "").trim()}`);
+}
+
+function applyAutomaticLocalCorrectionsForPage(pageNumber) {
+  const pageNo = Number(pageNumber) || 0;
+  if (!pageNo || !state.mineruInfo) {
+    return 0;
+  }
+  const blockOverrides = getBlockOverrides(pageNo, false);
+  const mathpixDrafts = getMathpixBlockDrafts(pageNo, false);
+  let changedCount = 0;
+  reviewSegmentsForPage(pageNo).forEach((segment) => {
+    const blockKey = String(segment.blockIndex || "");
+    const sourceMarkdown = String(segment.markdown || "");
+    if (!blockKey) {
+      return;
+    }
+    const existingPatch = getLatestOcrPatchForBlock(pageNo, blockKey, sourceMarkdown);
+    const activeMarkdown = mathpixDrafts.get(blockKey) || blockOverrides.get(blockKey) || reviewPatchMarkdown(existingPatch) || sourceMarkdown;
+    const numberedMarkdown = autoCorrectMathEquationNumberMarkdown(pageNo, blockKey, activeMarkdown, segment);
+    if (numberedMarkdown && numberedMarkdown !== activeMarkdown.replace(/\r\n?/g, "\n").trim()) {
+      if (saveAutomaticAcceptedBlockPatch(pageNo, blockKey, sourceMarkdown, numberedMarkdown, "equation_number_preservation")) {
+        changedCount += 1;
+      }
+      return;
+    }
+    if (mathpixDrafts.has(blockKey) || existingPatch?.status === "draft") {
+      return;
+    }
+    const existingAutoCorrection = String(existingPatch?.metadata?.autoCorrection || "");
+    const canRefreshPlainCleanup =
+      !existingPatch ||
+      existingPatch.status !== "accepted" ||
+      existingAutoCorrection === "plain_text_cleanup";
+    if (!canRefreshPlainCleanup) {
+      return;
+    }
+    const plainSourceMarkdown = existingAutoCorrection === "plain_text_cleanup" ? activeMarkdown : sourceMarkdown;
+    const correctedMarkdown = autoCorrectPlainMineruMarkdown(plainSourceMarkdown);
+    if (!correctedMarkdown || correctedMarkdown === plainSourceMarkdown.replace(/\r\n?/g, "\n").trim()) {
+      return;
+    }
+    if (saveAutomaticAcceptedBlockPatch(pageNo, blockKey, sourceMarkdown, correctedMarkdown, "plain_text_cleanup")) {
+      changedCount += 1;
+    }
+  });
+  if (changedCount) {
+    state.acceptedPatchPreview = null;
+    state.acceptedPatchBookPreview = null;
+    updateCorrectionSummary();
+  }
+  return changedCount;
+}
+
+function saveAutomaticAcceptedBlockPatch(pageNo, blockKey, oldMarkdown, newMarkdown, autoCorrection = "plain_text_cleanup") {
+  const patchResult = createAndStoreDraftOcrPatch({
+    pageNo,
+    blockIndex: blockKey,
+    oldText: oldMarkdown,
+    newText: newMarkdown,
+    source: "human",
+  });
+  const patch = patchResult.patch;
+  if (!patch) {
+    return false;
+  }
+  patch.metadata = {
+    ...(patch.metadata || {}),
+    autoCorrection,
+  };
+  if (patch.status === "draft") {
+    rejectPriorOcrPatchesForBlock(patch.blockId, patch.patchId);
+    updateOcrPatchStatus(patch.patchId, "accepted");
+  }
+  getMathpixBlockDrafts(pageNo).delete(String(blockKey));
+  getBlockOverrides(pageNo).set(String(blockKey), patchResult.normalizedText);
+  saveOcrWorkspaceState();
+  return true;
+}
+
+function autoCorrectMathEquationNumberMarkdown(pageNo, blockKey, sourceMarkdown, segment = null) {
+  const source = String(sourceMarkdown || "").replace(/\r\n?/g, "\n").trim();
+  if (!source) {
+    return "";
+  }
+  if (!hasDisplayMathBlock(source) && !hasLatexMathEnvironment(source)) {
+    return "";
+  }
+  const risk = reviewRiskForBlock(pageNo, blockKey) || reviewRiskFromSegment(segment, pageNo);
+  const nearbyNumbers = nearbyEquationNumberTextForBlock(pageNo, blockKey, segment, risk);
+  if (!nearbyNumbers.trim()) {
+    return "";
+  }
+  const taggedSource = replaceGeneratedEquationTagsWithOriginal(source, nearbyNumbers);
+  if (taggedSource !== source) {
+    return taggedSource;
+  }
+  if (extractLatexTags(source).length) {
+    return "";
+  }
+  const corrected = preserveEquationNumbersFromOriginal(nearbyNumbers, source);
+  return corrected !== source ? corrected : "";
+}
+
+function hasEquationNumberAutoCorrection(oldMarkdown, newMarkdown) {
+  return !extractLatexTags(oldMarkdown).length && extractLatexTags(newMarkdown).length;
+}
+
+function preservationTextForBlock(pageNumber, blockIndex, segment = null, risk = null) {
+  const pageNo = Number(pageNumber) || state.currentPage;
+  const blockKey = String(blockIndex || "");
+  const sourceSegment = segment || reviewSegmentsForPage(pageNo).find((item) => String(item.blockIndex) === blockKey) || null;
+  const sourceRisk = risk || reviewRiskForBlock(pageNo, blockKey) || null;
+  const latestPatch = getLatestOcrPatchForBlock(pageNo, blockKey, sourceSegment?.markdown || sourceRisk?.text || "");
+  const blockOverrides = getBlockOverrides(pageNo, false);
+  const parts = [
+    sourceSegment?.markdown || "",
+    sourceRisk?.text || "",
+    blockOverrides.get(blockKey) || "",
+    reviewPatchMarkdown(latestPatch),
+    nearbyEquationNumberTextForBlock(pageNo, blockKey, sourceSegment, sourceRisk),
+  ];
+  return Array.from(new Set(parts.map((part) => String(part || "").trim()).filter(Boolean))).join("\n\n");
+}
+
+function nearbyEquationNumberTextForBlock(pageNumber, blockIndex, segment = null, risk = null) {
+  const blockKey = String(blockIndex || "");
+  const currentIndex = Number(blockKey);
+  const currentSegment = segment || reviewSegmentsForPage(pageNumber).find((item) => String(item.blockIndex) === blockKey) || null;
+  if (!Number.isFinite(currentIndex) && !currentSegment?.bbox) {
+    return "";
+  }
+  const sourceText = `${segment?.markdown || ""}\n${risk?.text || ""}`;
+  const looksFormulaLike =
+    hasLatexMathEnvironment(sourceText) ||
+    /(?:\$\$|\\\[|\\\])/.test(sourceText) ||
+    (Array.isArray(risk?.reasons) && risk.reasons.some((reason) => /math|formula|equation/i.test(reason)));
+  if (!looksFormulaLike) {
+    return "";
+  }
+  const segments = reviewSegmentsForPage(pageNumber);
+  const pageSize = currentSegment?.pageSize || risk?.pageSize;
+  const numberSourceSegments = segments.concat(
+    contentListEquationNumberSegmentsForPage(pageNumber, pageSize),
+    pdfTextEquationNumberSegmentsForPage(pageNumber, pageSize),
+  );
+  const nearbyByIndex = segments
+    .filter((item) => {
+      const index = Number(item.blockIndex);
+      if (String(item.blockIndex) === blockKey) {
+        return false;
+      }
+      return Number.isFinite(index) && Number.isFinite(currentIndex) && Math.abs(index - currentIndex) <= 4;
+    })
+    .map((item) => String(item.markdown || "").trim())
+    .filter((text) => isEquationNumberOnlyText(text) || /^\\tag\{[^}]+\}$/.test(text));
+  const bboxMatched = nearestEquationNumberSegmentsByBBox(
+    numberSourceSegments,
+    currentSegment?.bbox || risk?.bbox,
+    currentSegment?.pageSize || risk?.pageSize,
+    blockKey,
+  ).map((item) => String(item.markdown || "").trim());
+  return Array.from(new Set([...nearbyByIndex, ...bboxMatched])).join("\n");
+}
+
+function contentListEquationNumberSegmentsForPage(pageNumber, fallbackPageSize = null) {
+  const items = contentListItemsForPage(pageNumber);
+  if (!items.length) {
+    return [];
+  }
+  const pageSize = inferContentListPageSize(pageNumber, items) || fallbackPageSize;
+  return items
+    .map((item) => {
+      const text = contentListItemText(item);
+      if (!isEquationNumberOnlyText(text) && !/^\\tag\{[^}]+\}$/.test(String(text || "").trim())) {
+        return null;
+      }
+      const bbox = normalizedBBox(item.bbox);
+      if (!bbox) {
+        return null;
+      }
+      return {
+        blockIndex: `content-list-equation-number-${item.__contentListIndex ?? ""}`,
+        markdown: text,
+        bbox,
+        pageSize,
+      };
+    })
+    .filter(Boolean);
+}
+
+function pdfTextEquationNumberSegmentsForPage(pageNumber, targetPageSize = null) {
+  const textBlocks = pdfTextBlocksForPage(pageNumber);
+  if (!textBlocks.length) {
+    return [];
+  }
+  const sourcePageSize = pdfTextPageSizeForPage(pageNumber);
+  const pageWidth = pageSizeWidth(targetPageSize) || pageSizeWidth(sourcePageSize) || 1;
+  return textBlocks.flatMap((block, index) => {
+    const numbers = extractEquationNumbers(block?.text);
+    if (!numbers.length) {
+      return [];
+    }
+    const sourceBBox = normalizedBBox(block?.bbox);
+    if (!sourceBBox) {
+      return [];
+    }
+    const scaledBBox = scaleBBoxBetweenPageSizes(sourceBBox, sourcePageSize, targetPageSize);
+    const rightWidth = Math.max(34, Math.min(scaledBBox[2] - scaledBBox[0], pageWidth * 0.16));
+    const numberBBox = [
+      Math.max(scaledBBox[0], scaledBBox[2] - rightWidth),
+      scaledBBox[1],
+      scaledBBox[2],
+      scaledBBox[3],
+    ];
+    return numbers.map((number, numberIndex) => ({
+      blockIndex: `pdf-text-equation-number-${pageNumber}-${index}-${numberIndex}`,
+      markdown: number,
+      bbox: numberBBox,
+      pageSize: targetPageSize || sourcePageSize,
+      source: "pdf_text",
+    }));
+  });
+}
+
+function scaleBBoxBetweenPageSizes(bbox, sourcePageSize = null, targetPageSize = null) {
+  const normalized = normalizedBBox(bbox);
+  if (!normalized) {
+    return null;
+  }
+  const sourceWidth = pageSizeWidth(sourcePageSize);
+  const sourceHeight = pageSizeHeight(sourcePageSize);
+  const targetWidth = pageSizeWidth(targetPageSize);
+  const targetHeight = pageSizeHeight(targetPageSize);
+  if (!sourceWidth || !sourceHeight || !targetWidth || !targetHeight) {
+    return normalized;
+  }
+  const scaleX = targetWidth / sourceWidth;
+  const scaleY = targetHeight / sourceHeight;
+  return [normalized[0] * scaleX, normalized[1] * scaleY, normalized[2] * scaleX, normalized[3] * scaleY];
+}
+
+function isEquationNumberOnlyText(text) {
+  return /^\(?\s*\d+(?:\s*\.\s*\d+)+[a-zA-Z]?\s*\)?$/.test(String(text || "").trim());
+}
+
+function bboxesLikelyShareEquationRow(leftBBox, rightBBox, pageSize) {
+  const left = normalizedBBox(leftBBox);
+  const right = normalizedBBox(rightBBox);
+  if (!left || !right) {
+    return false;
+  }
+  const pageHeight = pageSizeHeight(pageSize) || Math.max(left[3], right[3], 1);
+  const leftCenterY = (left[1] + left[3]) / 2;
+  const rightCenterY = (right[1] + right[3]) / 2;
+  const verticalDistance = Math.abs(leftCenterY - rightCenterY);
+  const verticalTolerance = Math.max(18, pageHeight * 0.018, Math.min(left[3] - left[1], right[3] - right[1]) * 0.75);
+  const isRightSideNumber = right[0] >= left[0] && right[2] >= left[2] - 8;
+  return isRightSideNumber && verticalDistance <= verticalTolerance;
+}
+
+function nearestEquationNumberSegmentsByBBox(segments, formulaBBox, pageSize, blockKey = "") {
+  const formula = normalizedBBox(formulaBBox);
+  if (!formula) {
+    return [];
+  }
+  const pageWidth = pageSizeWidth(pageSize) || Math.max(formula[2], 1);
+  const pageHeight = pageSizeHeight(pageSize) || Math.max(formula[3], 1);
+  const formulaCenterY = (formula[1] + formula[3]) / 2;
+  const formulaHeight = Math.max(1, formula[3] - formula[1]);
+  return segments
+    .map((item) => {
+      if (String(item.blockIndex) === String(blockKey)) {
+        return null;
+      }
+      const text = String(item.markdown || "").trim();
+      if (!isEquationNumberOnlyText(text) && !/^\\tag\{[^}]+\}$/.test(text)) {
+        return null;
+      }
+      const bbox = normalizedBBox(item.bbox);
+      if (!bbox) {
+        return null;
+      }
+      const centerY = (bbox[1] + bbox[3]) / 2;
+      const verticalDistance = Math.abs(centerY - formulaCenterY);
+      const rightGap = bbox[0] - formula[2];
+      const overlapsRightSide = bbox[0] >= formula[0] && bbox[2] >= formula[2] - Math.max(12, pageWidth * 0.015);
+      const verticalTolerance = Math.max(28, pageHeight * 0.045, formulaHeight * 1.4);
+      if (!overlapsRightSide || verticalDistance > verticalTolerance) {
+        return null;
+      }
+      return {
+        item,
+        score: verticalDistance + Math.max(0, rightGap) * 0.15,
+      };
+    })
+    .filter(Boolean)
+    .sort((left, right) => left.score - right.score)
+    .slice(0, 1)
+    .map((entry) => entry.item);
+}
+
+function autoCorrectPlainMineruMarkdown(markdown) {
+  if (!canAutoCorrectPlainMineruMarkdown(markdown)) {
+    return String(markdown || "").replace(/\r\n?/g, "\n").trim();
+  }
+  const source = String(markdown || "").replace(/\r\n?/g, "\n");
+  const lineAdjusted = source.includes("\n") ? autoUnwrapMineruLineBreaks(source) : source.trim();
+  return normalizeInlineMathSpacing(lineAdjusted).trim();
+}
+
+function canAutoCorrectPlainMineruMarkdown(markdown) {
+  const text = String(markdown || "").replace(/\r\n?/g, "\n");
+  if (!text.trim()) {
+    return false;
+  }
+  if (
+    hasMarkdownImageReference(text) ||
+    hasLatexMathEnvironment(text) ||
+    /(^|\n)\s*(?:\$\$|\\\[|\\\])\s*(?:\n|$)/.test(text) ||
+    /(^|\n)\s*```/.test(text) ||
+    /<\s*(?:table|tr|td|th)\b/i.test(text)
+  ) {
+    return false;
+  }
+  const lines = text.split("\n");
+  return !lines.some((line) => isLikelyMarkdownTableLine(line) || /^#{1,6}\s+/.test(line.trim()) || /^\s*[-*+]\s+/.test(line));
+}
+
+function normalizeInlineMathSpacing(markdown) {
+  const text = String(markdown || "");
+  let output = "";
+  let inInlineMath = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    const next = text[index + 1] || "";
+    if (char !== "$" || isEscapedDollar(text, index)) {
+      output += char;
+      continue;
+    }
+    if (next === "$") {
+      output += "$$";
+      index += 1;
+      continue;
+    }
+    if (!inInlineMath && output && !/\s/.test(output[output.length - 1])) {
+      output += " ";
+    }
+    output += "$";
+    inInlineMath = !inInlineMath;
+    if (!inInlineMath && next && shouldAddSpaceAfterInlineMath(next)) {
+      output += " ";
+    }
+  }
+  return output.replace(/[ \t]{2,}/g, " ");
+}
+
+function isEscapedDollar(text, index) {
+  let backslashCount = 0;
+  for (let cursor = index - 1; cursor >= 0 && text[cursor] === "\\"; cursor -= 1) {
+    backslashCount += 1;
+  }
+  return backslashCount % 2 === 1;
+}
+
+function shouldAddSpaceAfterInlineMath(nextChar) {
+  return Boolean(nextChar) && !/\s|[,.;:!?，。；：！？)\]\}]/.test(nextChar);
+}
+
+function inferMissingFigureLabelForBlock(pageNumber, blockIndex, markdown) {
+  const text = String(markdown || "").replace(/\s+/g, " ").trim();
+  if (!text || extractReferenceLabels(text).some((label) => /^fig(?:\.|ure)?/i.test(label))) {
+    return "";
+  }
+  const contentListLabel = inferMissingFigureLabelFromContentList(pageNumber, text);
+  if (contentListLabel) {
+    return contentListLabel;
+  }
+  if (!looksLikeFigureCaptionText(text)) {
+    return "";
+  }
+  const nearbyText = nearbyBlockTextForReferenceInference(pageNumber, blockIndex);
+  const labels = extractReferenceLabels(nearbyText).filter((label) => /^fig(?:\.|ure)?/i.test(label));
+  const label = labels[0] || "";
+  if (!label) {
+    return "";
+  }
+  return label.replace(/^Figure\b/i, "Fig.").replace(/^Fig\b(?!\.)/i, "Fig.");
+}
+
+function looksLikeFigureCaptionText(text) {
+  const value = String(text || "");
+  if (value.length < 24 || value.length > 1200) {
+    return false;
+  }
+  if (/^(the|this|these|those)\b/i.test(value)) {
+    return false;
+  }
+  const strongSignals = [
+    /\b(?:showing|shows|shown|plotted|illustrates|selected)\b/i,
+    /\b(?:figure|diagram|plot|curve|graph|panel)\b/i,
+    /\b(?:grey|gray|light|dark|shaded)\s+(?:region|band|area)\b/i,
+    /\b(?:bounds?|limits?)\s+on\b/i,
+    /\b(?:x-axis|y-axis|axis|axes|horizontal|vertical)\b/i,
+  ];
+  const signalCount = strongSignals.filter((pattern) => pattern.test(value)).length;
+  if (signalCount >= 2) {
+    return true;
+  }
+  return signalCount >= 1 && /\b(?:ratio|experiment|experiments|measurement|measurements|data)\b/i.test(value);
+}
+
+function inferMissingFigureLabelFromContentList(pageNumber, markdownText) {
+  const target = stripReferenceLabelsFromText(markdownText);
+  const targetCanon = canonicalTextForOverlap(target);
+  if (!targetCanon || targetCanon.length < 24) {
+    return "";
+  }
+  const candidates = contentListItemsForPage(pageNumber)
+    .filter((item) => Array.isArray(item.img_caption) || String(item.type || "").toLowerCase().includes("image"))
+    .map((item) => contentListItemText(item))
+    .filter(Boolean);
+  for (const caption of candidates) {
+    const labels = extractReferenceLabels(caption).filter((label) => /^fig(?:\.|ure)?/i.test(label));
+    if (!labels.length) {
+      continue;
+    }
+    const captionCanon = canonicalTextForOverlap(stripReferenceLabelsFromText(caption));
+    if (!captionCanon) {
+      continue;
+    }
+    if (captionCanon.includes(targetCanon) || targetCanon.includes(captionCanon) || textOverlapRatio(targetCanon, captionCanon) >= 0.62) {
+      return labels[0].replace(/^Figure\b/i, "Fig.").replace(/^Fig\b(?!\.)/i, "Fig.");
+    }
+  }
+  return "";
+}
+
+function stripReferenceLabelsFromText(text) {
+  return String(text || "").replace(/\b(?:Fig\.?|Figure|Table|Eq\.?|Equation)\s*\(?\d+(?:\.\d+)*[a-zA-Z]?\)?/gi, " ");
+}
+
+function textOverlapRatio(left, right) {
+  const leftWords = new Set(String(left || "").split(/\s+/).filter((word) => word.length >= 3));
+  const rightWords = new Set(String(right || "").split(/\s+/).filter((word) => word.length >= 3));
+  if (!leftWords.size || !rightWords.size) {
+    return 0;
+  }
+  let overlap = 0;
+  leftWords.forEach((word) => {
+    if (rightWords.has(word)) {
+      overlap += 1;
+    }
+  });
+  return overlap / Math.min(leftWords.size, rightWords.size);
+}
+
+function nearbyBlockTextForReferenceInference(pageNumber, blockIndex) {
+  const currentIndex = Number(blockIndex);
+  if (!Number.isFinite(currentIndex)) {
+    return "";
+  }
+  return reviewSegmentsForPage(pageNumber)
+    .filter((segment) => {
+      const index = Number(segment.blockIndex);
+      return Number.isFinite(index) && index !== currentIndex && Math.abs(index - currentIndex) <= 3;
+    })
+    .map((segment) => segment.markdown || "")
+    .join("\n\n");
+}
+
+function canAutoUnwrapMineruLineBreaks(markdown) {
+  const text = String(markdown || "").replace(/\r\n?/g, "\n");
+  if (!text.trim() || !text.includes("\n")) {
+    return false;
+  }
+  if (!canAutoCorrectPlainMineruMarkdown(text)) {
+    return false;
+  }
+  return autoUnwrapMineruLineBreaks(text) !== text.trim();
+}
+
+function autoUnwrapMineruLineBreaks(markdown) {
+  return String(markdown || "")
+    .replace(/\r\n?/g, "\n")
+    .split(/\n{2,}/)
+    .map((paragraph) => unwrapPlainTextParagraph(paragraph))
+    .filter(Boolean)
+    .join("\n\n")
+    .trim();
+}
+
+function unwrapPlainTextParagraph(paragraph) {
+  const lines = String(paragraph || "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (!lines.length) {
+    return "";
+  }
+  return lines
+    .reduce((output, line) => {
+      if (!output) {
+        return line;
+      }
+      if (/-$/.test(output) && /^[a-z]/.test(line)) {
+        return `${output.slice(0, -1)}${line}`;
+      }
+      return `${output} ${line}`;
+    }, "")
+    .replace(/\s+([,.;:!?，。；：！？])/g, "$1")
+    .replace(/\(\s+/g, "(")
+    .replace(/\s+\)/g, ")")
+    .replace(/\s{2,}/g, " ")
+    .trim();
 }
 
 async function saveHumanAcceptedBlockEdit(blockKey, newMarkdown) {
@@ -1977,10 +2757,15 @@ function rejectPriorOcrPatchesForBlock(blockId, currentPatchId) {
   if (!targetBlockId || !Array.isArray(state.ocrPatches)) {
     return 0;
   }
+  const targetPrefix = targetBlockId.match(/^(p\d+_b[^_]+)_/)?.[1] || targetBlockId.match(/^(p\d+_b[^_]+)$/)?.[1] || "";
   const updatedAt = new Date().toISOString();
   let count = 0;
   state.ocrPatches.forEach((patch) => {
-    if (patch?.blockId !== targetBlockId || patch?.patchId === keepPatchId) {
+    const patchBlockId = String(patch?.blockId || "");
+    const sameBlock =
+      patchBlockId === targetBlockId ||
+      (targetPrefix && (patchBlockId.startsWith(`${targetPrefix}_`) || patchBlockId === targetPrefix));
+    if (!sameBlock || patch?.patchId === keepPatchId) {
       return;
     }
     if (!["draft", "accepted"].includes(patch.status)) {
@@ -2004,13 +2789,55 @@ function expandOnlyReviewBlock(pageNumber, blockIndex) {
 }
 
 function renderBlockContent(markdown, entry) {
-  if (entry.kind === "algorithm") {
+  if (shouldRenderAsAlgorithmBlock(markdown, entry)) {
     return renderAlgorithmBlock(markdownToAlgorithmLines(markdown));
   }
-  const normalizedMarkdown = wrapBareDisplayMathBlocks(normalizeMathMarkdown(markdown));
+  const normalizedMarkdown = normalizeDisplayMathForRender(markdown);
   const imagePreview = renderBlockImagePreview(normalizedMarkdown, entry);
   const markdownForHtml = imagePreview ? stripMarkdownImageReferences(normalizedMarkdown) : normalizedMarkdown;
   return `${imagePreview}${renderMarkdownHtml(markdownForHtml)}`;
+}
+
+function shouldRenderAsAlgorithmBlock(markdown, entry) {
+  if (entry?.kind !== "algorithm") {
+    return false;
+  }
+  return !hasLatexMathEnvironment(markdown);
+}
+
+function hasLatexMathEnvironment(markdown) {
+  return /\\begin\s*\{(?:aligned|align|array|matrix|pmatrix|bmatrix|cases|split|gather|equation)\*?\}/.test(String(markdown || ""));
+}
+
+function normalizeDisplayMathForRender(markdown) {
+  const normalized = removeDanglingSingleDollarLines(normalizeEscapedDisplayMathNewlines(markdown));
+  const repaired = repairBrokenDisplayMathDelimiters(normalized);
+  const mathNormalized = restoreDroppedDisplayMathDelimiters(repaired, normalizeMathMarkdown(repaired));
+  const wrapped = wrapBareDisplayMathBlocks(mathNormalized);
+  return removeDanglingSingleDollarLines(wrapped);
+}
+
+function restoreDroppedDisplayMathDelimiters(originalMarkdown, normalizedMarkdown) {
+  const original = String(originalMarkdown || "").trim();
+  const normalized = String(normalizedMarkdown || "").trim();
+  if (!normalized || hasDisplayMathBlock(normalized) || !hasDisplayMathBlock(original)) {
+    return String(normalizedMarkdown || "");
+  }
+  if (!/^\$\$[\s\S]*\$\$$/.test(original)) {
+    return String(normalizedMarkdown || "");
+  }
+  if (!hasStandaloneEquationLine(normalized) && !/\\tag\{[^}]+\}/.test(normalized)) {
+    return String(normalizedMarkdown || "");
+  }
+  return `$$\n${normalized}\n$$`;
+}
+
+function normalizeEscapedDisplayMathNewlines(markdown) {
+  return String(markdown || "")
+    .replace(/\$\$\\+n/g, () => "$$\n")
+    .replace(/\\+n\$\$/g, () => "\n$$")
+    .replace(/\\+n(\\tag\{[^}]+\})/g, "\n$1")
+    .replace(/(\\tag\{[^}]+\})\\+n/g, "$1\n");
 }
 
 function renderBlockImagePreview(markdown, entry) {
@@ -2407,12 +3234,14 @@ async function recognizeRiskBlockWithMathpix(blockIndex) {
     if (!preparedMarkdown.trim()) {
       throw new Error("Mathpix 块级响应为空");
     }
+    const segment = reviewSegmentsForPage(state.currentPage).find((item) => String(item.blockIndex) === blockKey);
     const patchResult = createAndStoreDraftOcrPatch({
       pageNo: state.currentPage,
       blockIndex: blockKey,
-      oldText: risk.text || "",
+      oldText: segment?.markdown || risk.text || "",
       newText: preparedMarkdown,
       source: "mathpix",
+      preserveText: preservationTextForBlock(state.currentPage, blockKey, segment, risk),
     });
     const markdown = patchResult.normalizedText;
     // TODO: next step will switch display/export to accepted patches.
@@ -2628,10 +3457,12 @@ function createLegacyBlockPatchContext(pageNo, blockIndex, oldText) {
   };
 }
 
-function createAndStoreDraftOcrPatch({ pageNo, blockIndex, oldText, newText, source }) {
+function createAndStoreDraftOcrPatch({ pageNo, blockIndex, oldText, newText, source, preserveText = "" }) {
   const context = createLegacyBlockPatchContext(pageNo, blockIndex, oldText);
   const createOcrPatch = getOcrCoreCreateOcrPatch();
-  const preservedNewText = preserveEquationNumbersFromOriginal(oldText, newText);
+  const preservationSource = [oldText, preserveText].filter(Boolean).join("\n\n");
+  const completeNewText = preserveMathpixPlainTextCompleteness(oldText, newText, source);
+  const preservedNewText = preserveEquationNumbersFromOriginal(preservationSource, completeNewText);
   if (!context || !createOcrPatch) {
     warnOcrCorePatch("createOcrPatch 不可用，已跳过 OCR draft patch 记录。");
     return {
@@ -2677,7 +3508,38 @@ function preserveEquationNumbersFromOriginal(oldText, newText) {
   if (!missingNumbers.length) {
     return output;
   }
+  output = stripGeneratedSequentialEquationNumbers(output);
   return missingNumbers.reduce((current, number) => insertEquationNumberIntoDisplayMath(current, number), output);
+}
+
+function replaceGeneratedEquationTagsWithOriginal(markdown, originalText) {
+  const originalNumbers = extractEquationNumbers(originalText);
+  if (!originalNumbers.length) {
+    return String(markdown || "");
+  }
+  let output = String(markdown || "");
+  const generatedTagPattern = /\\tag\{\s*\d+\s*\}/g;
+  if (generatedTagPattern.test(output)) {
+    let index = 0;
+    output = output.replace(generatedTagPattern, (match) => {
+      const next = originalNumbers[index] || originalNumbers[originalNumbers.length - 1];
+      index += 1;
+      const number = String(next || "").replace(/[()\s]/g, "");
+      return number ? `\\tag{${number}}` : match;
+    });
+  }
+  const withoutGeneratedVisibleNumbers = stripGeneratedSequentialEquationNumbers(output);
+  if (withoutGeneratedVisibleNumbers !== output) {
+    output = withoutGeneratedVisibleNumbers;
+  }
+  return originalNumbers.reduce((current, number) => insertEquationNumberIntoDisplayMath(current, number), output);
+}
+
+function stripGeneratedSequentialEquationNumbers(markdown) {
+  let output = String(markdown || "");
+  output = output.replace(/(\\end\{(?:equation|align|aligned|array|cases|matrix|pmatrix|bmatrix|gather|split|multline)\*?\})(\s*(?:\$\$|\\\])?)\s*\(\s*\d+\s*\)(?=\s|$)/g, "$1$2");
+  output = output.replace(/(\$\$|\\\])\s*\(\s*\d+\s*\)(?=\s|$)/g, "$1");
+  return output;
 }
 
 function normalizeVisibleEquationNumberAsLatexTag(markdown) {
@@ -2685,7 +3547,7 @@ function normalizeVisibleEquationNumberAsLatexTag(markdown) {
   if (!hasLatexMathEnvironment(output) || extractLatexTags(output).length) {
     return output;
   }
-  const trailingNumberPattern = /(\\end\{(?:equation|align|aligned|array|cases|matrix|pmatrix|bmatrix|gather|split|multline)\*?\})(\s*(?:\$\$|\\\])?)\s*(\(\s*\d+(?:\.\d+)+[a-zA-Z]?\s*\))(?=\s|$)/;
+  const trailingNumberPattern = /(\\end\{(?:equation|align|aligned|array|cases|matrix|pmatrix|bmatrix|gather|split|multline)\*?\})(\s*(?:\$\$|\\\])?)\s*(\(\s*\d+(?:\s*\.\s*\d+)+[a-zA-Z]?\s*\))(?=\s|$)/;
   const match = output.match(trailingNumberPattern);
   if (!match) {
     return output;
@@ -2703,12 +3565,96 @@ function insertEquationNumberIntoDisplayMath(markdown, equationNumber) {
   const endEnvironmentPattern = /\\end\{(?:equation|align|aligned|array|cases|matrix|pmatrix|bmatrix|gather|split|multline)\*?\}/g;
   const matches = Array.from(output.matchAll(endEnvironmentPattern));
   const last = matches[matches.length - 1];
-  if (!last || typeof last.index !== "number") {
-    return `${output.trimEnd()} (${number})`;
+  if (last && typeof last.index === "number") {
+    const environmentEnd = last[0];
+    const afterEnvironment = last.index + environmentEnd.length;
+    return `${output.slice(0, afterEnvironment)}\n\\tag{${number}}${output.slice(afterEnvironment)}`;
   }
-  const environmentEnd = last[0];
-  const afterEnvironment = last.index + environmentEnd.length;
-  return `${output.slice(0, afterEnvironment)}\n\\tag{${number}}${output.slice(afterEnvironment)}`;
+  const displayClose = findLastDisplayMathClose(output);
+  if (displayClose) {
+    return `${output.slice(0, displayClose.index).trimEnd()}\n\\tag{${number}}\n${output.slice(displayClose.index)}`;
+  }
+  return `${output.trimEnd()} (${number})`;
+}
+
+function findLastDisplayMathClose(markdown) {
+  const text = String(markdown || "");
+  const dollarIndex = text.lastIndexOf("$$");
+  const bracketIndex = text.lastIndexOf("\\]");
+  if (dollarIndex < 0 && bracketIndex < 0) {
+    return null;
+  }
+  if (dollarIndex > bracketIndex) {
+    return { index: dollarIndex, token: "$$" };
+  }
+  return { index: bracketIndex, token: "\\]" };
+}
+
+function preserveMathpixPlainTextCompleteness(oldText, newText, source) {
+  if (source !== "mathpix") {
+    return String(newText || "");
+  }
+  const oldValue = String(oldText || "").replace(/\r\n?/g, "\n").trim();
+  const newValue = String(newText || "").replace(/\r\n?/g, "\n").trim();
+  if (!oldValue || !newValue || !isPlainProseForCompletenessGuard(oldValue) || !isPlainProseForCompletenessGuard(newValue)) {
+    return String(newText || "");
+  }
+  const oldWords = proseWordsForCompleteness(oldValue);
+  const newWords = proseWordsForCompleteness(newValue);
+  if (oldWords.length < 10 || newWords.length >= Math.floor(oldWords.length * 0.78)) {
+    return String(newText || "");
+  }
+  const appended = appendMissingPlainTextTail(oldValue, newValue, oldWords, newWords);
+  return appended || oldValue;
+}
+
+function isPlainProseForCompletenessGuard(markdown) {
+  const text = String(markdown || "");
+  return (
+    !hasMarkdownImageReference(text) &&
+    !hasLatexMathEnvironment(text) &&
+    !hasDisplayMathBlock(text) &&
+    !/(^|\n)\s*```/.test(text) &&
+    !/<\s*(?:table|tr|td|th)\b/i.test(text)
+  );
+}
+
+function proseWordsForCompleteness(text) {
+  return String(text || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word.toLowerCase());
+}
+
+function appendMissingPlainTextTail(oldText, newText, oldWords, newWords) {
+  if (!oldWords.length || !newWords.length) {
+    return "";
+  }
+  let bestEnd = -1;
+  const maxStart = Math.min(oldWords.length - 1, newWords.length + 3);
+  for (let oldIndex = 0; oldIndex <= maxStart; oldIndex += 1) {
+    let matched = 0;
+    while (oldWords[oldIndex + matched] && newWords[matched] && oldWords[oldIndex + matched] === newWords[matched]) {
+      matched += 1;
+    }
+    if (matched >= Math.min(5, newWords.length)) {
+      bestEnd = oldIndex + newWords.length;
+      break;
+    }
+  }
+  if (bestEnd <= 0 || bestEnd >= oldWords.length) {
+    return "";
+  }
+  const oldTokens = String(oldText || "").replace(/\s+/g, " ").trim().split(/\s+/);
+  const missingTail = oldTokens.slice(bestEnd).join(" ").trim();
+  if (!missingTail) {
+    return "";
+  }
+  return `${String(newText || "").trim()} ${missingTail}`.trim();
 }
 
 function preserveMarkdownImageReferencesFromOriginal(oldText, newText) {
@@ -2778,7 +3724,7 @@ function insertAfterLeadingMarkdownImages(markdown, insertedText) {
 }
 
 function extractEquationNumbers(text) {
-  const matches = String(text || "").match(/\(\s*\d+(?:\.\d+)+[a-zA-Z]?\s*\)/g) || [];
+  const matches = String(text || "").match(/\(\s*\d+(?:\s*\.\s*\d+)+[a-zA-Z]?\s*\)/g) || [];
   return Array.from(new Set(matches.map((number) => number.replace(/\s+/g, ""))));
 }
 
@@ -2843,6 +3789,7 @@ function buildAcceptedPatchPreviewForPage(pageNo) {
   const hashBlockText = getOcrCoreHashBlockText();
   const acceptedPatches = acceptedOcrPatchesForPage(pageNumber);
   const sourceSegments = reviewSegmentsForPage(pageNumber);
+  const previewPatches = acceptedPatchesWithEquationNumberFallback(pageNumber, acceptedPatches, sourceSegments);
   const fallbackMarkdown = sourceSegments.map((segment) => String(segment.markdown || "").replace(/\r\n?/g, "\n")).filter(Boolean).join("\n\n");
 
   if (!mergeAcceptedPatches || !hashBlockText) {
@@ -2866,16 +3813,17 @@ function buildAcceptedPatchPreviewForPage(pageNo) {
     .concat(sourceSegments)
     .sort((left, right) => acceptedPreviewSegmentOrder(left, orderByKey) - acceptedPreviewSegmentOrder(right, orderByKey));
   const blocks = previewSegments.map((segment) => {
-    const text = String(segment.markdown || "").replace(/\r\n?/g, "\n");
-    const oldHash = hashBlockText(text);
+    const rawText = String(segment.markdown || "").replace(/\r\n?/g, "\n");
+    const oldHash = hashBlockText(rawText);
     return {
       blockId: `p${pageNumber}_b${segment.blockIndex}_${oldHash.slice(0, 8)}`,
-      text,
+      text: rawText,
+      segment,
     };
   });
   const result = mergeAcceptedPatches({
     blocks,
-    patches: acceptedPatches,
+    patches: previewPatches,
   });
   const errors = Array.isArray(result?.errors) ? result.errors : [];
   const warnings = Array.isArray(result?.warnings) ? result.warnings.slice() : [];
@@ -2885,15 +3833,50 @@ function buildAcceptedPatchPreviewForPage(pageNo) {
       message: "当前页没有 accepted patch。",
     });
   }
-  const mergedBlocks = Array.isArray(result?.mergedBlocks) ? result.mergedBlocks : blocks;
+  const segmentByBlockId = new Map(blocks.map((block) => [block.blockId, block.segment]));
+  const mergedBlocks = (Array.isArray(result?.mergedBlocks) ? result.mergedBlocks : blocks).map((block) => {
+    const rawText = String(block?.text || "");
+    const segment = segmentByBlockId.get(String(block?.blockId || ""));
+    const text = autoCorrectMathEquationNumberMarkdown(pageNumber, segment?.blockIndex, rawText, segment) || rawText;
+    return {
+      ...block,
+      text,
+    };
+  });
   return {
     ok: errors.length === 0,
     pageNo: pageNumber,
     markdown: mergedBlocks.map((block) => String(block?.text || "")).filter(Boolean).join("\n\n"),
-    appliedPatchCount: countAppliedAcceptedPatches(acceptedPatches, blocks, errors, warnings),
+    appliedPatchCount: countAppliedAcceptedPatches(previewPatches, blocks, errors, warnings),
     errors,
     warnings,
   };
+}
+
+function acceptedPatchesWithEquationNumberFallback(pageNo, acceptedPatches, sourceSegments) {
+  const segmentByBlock = new Map((Array.isArray(sourceSegments) ? sourceSegments : []).map((segment) => [String(segment.blockIndex), segment]));
+  return (Array.isArray(acceptedPatches) ? acceptedPatches : []).map((patch) => {
+    const blockIndex = ocrPatchBlockIndex(patch);
+    const segment = segmentByBlock.get(blockIndex) || null;
+    const patchedMarkdown = autoCorrectMathEquationNumberMarkdown(pageNo, blockIndex, patch?.newText || "", segment);
+    if (!patchedMarkdown) {
+      return patch;
+    }
+    return {
+      ...patch,
+      newText: patchedMarkdown,
+      metadata: {
+        ...(patch.metadata || {}),
+        previewEquationNumberFallback: true,
+      },
+    };
+  });
+}
+
+function ocrPatchBlockIndex(patch) {
+  const blockId = String(patch?.blockId || "");
+  const match = blockId.match(/^p\d+_b([^_]+)_/);
+  return match ? match[1] : "";
 }
 
 function acceptedPreviewSegmentOrder(segment, orderByKey) {
@@ -3026,7 +4009,7 @@ function getAcceptedCorrectedDownloadStatus() {
 function downloadAcceptedCorrectedMarkdown() {
   const status = getAcceptedCorrectedDownloadStatus();
   const preview = status.preview;
-  state.acceptedPatchBookPreview = preview;
+  state.acceptedPatchBookPreview = null;
   if (!status.canDownload) {
     return {
       ok: false,
@@ -3066,7 +4049,21 @@ function withIssuePageNo(issues, pageNo) {
 
 function acceptedOcrPatchesForPage(pageNo) {
   const patches = Array.isArray(state.ocrPatches) ? state.ocrPatches : [];
-  return patches.filter((patch) => patch?.status === "accepted" && ocrPatchBelongsToPage(patch, pageNo));
+  const latestByBlock = new Map();
+  patches.forEach((patch) => {
+    if (patch?.status !== "accepted" || !ocrPatchBelongsToPage(patch, pageNo)) {
+      return;
+    }
+    const key = ocrPatchStableBlockKey(patch);
+    latestByBlock.set(key, patch);
+  });
+  return Array.from(latestByBlock.values());
+}
+
+function ocrPatchStableBlockKey(patch) {
+  const blockId = String(patch?.blockId || "");
+  const match = blockId.match(/^(p\d+_b[^_]+)_/);
+  return match ? match[1] : blockId;
 }
 
 function ocrPatchBelongsToPage(patch, pageNo) {
@@ -4211,7 +5208,7 @@ function removeDanglingSingleDollarLines(markdown) {
   return String(markdown || "")
     .replace(/\r\n?/g, "\n")
     .split("\n")
-    .filter((line) => String(line || "").trim() !== "$")
+    .filter((line) => !/^\\?\$\s*,?\s*$/.test(String(line || "").trim()))
     .join("\n");
 }
 
@@ -4666,7 +5663,27 @@ function collectDisplayMathBlock(lines, startIndex) {
 }
 
 function renderDisplayMathBlock(lines) {
-  return `<div class="math-display">$$\n${escapeHtml(lines.join("\n").trim())}\n$$</div>`;
+  const raw = lines.join("\n").trim();
+  const labels = displayMathTagLabels(raw);
+  const mathSource = stripDisplayMathTags(raw);
+  const labelHtml = labels.length
+    ? `<span class="math-display-equation-tag" aria-label="公式编号">${labels.map((label) => `(${escapeHtml(label)})`).join(" ")}</span>`
+    : "";
+  return `<div class="math-display"><div class="math-display-formula">$$\n${escapeHtml(mathSource)}\n$$</div>${labelHtml}</div>`;
+}
+
+function displayMathTagLabels(markdown) {
+  return Array.from(String(markdown || "").matchAll(/\\tag\{([^}]+)\}/g))
+    .map((match) => String(match[1] || "").trim())
+    .filter(Boolean);
+}
+
+function stripDisplayMathTags(markdown) {
+  return String(markdown || "")
+    .replace(/^[ \t]*\\tag\{[^}]+\}[ \t]*$/gm, "")
+    .replace(/[ \t]*\\tag\{[^}]+\}/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 function renderCodeBlock(lines) {
@@ -5002,6 +6019,13 @@ function renderMarkdownHtml(markdown) {
       }
     }
 
+    if (isOrphanDisplayMathBodyStart(lines, index)) {
+      const { blockLines, nextIndex } = collectOrphanDisplayMathBlock(lines, index);
+      parts.push(renderDisplayMathBlock(blockLines));
+      index = nextIndex;
+      continue;
+    }
+
     if (isDisplayMathStart(lines[index]) && !isLatexTableAt(lines, index)) {
       const { blockLines, nextIndex } = collectDisplayMathBlock(lines, index);
       parts.push(renderDisplayMathBlock(blockLines));
@@ -5055,6 +6079,7 @@ function renderMarkdownHtml(markdown) {
       !/^\s*[-*+]\s+/.test(lines[index]) &&
       !/^\s*>\s?/.test(lines[index]) &&
       !isDisplayMathStart(lines[index]) &&
+      !isBareDisplayMathStart(lines[index]) &&
       !isLatexTableAt(lines, index) &&
       !isMarkdownTableStart(lines, index) &&
       !isCodeFenceStart(lines[index])
@@ -5066,6 +6091,46 @@ function renderMarkdownHtml(markdown) {
   }
 
   return parts.join("");
+}
+
+function isOrphanDisplayMathBodyStart(lines, startIndex) {
+  const first = String(lines[startIndex] || "").trim();
+  if (!first || isDisplayMathStart(first) || isCodeFenceStart(first)) {
+    return false;
+  }
+  const closeIndex = findNextStandaloneDisplayMathDelimiter(lines, startIndex + 1);
+  if (closeIndex < 0) {
+    return false;
+  }
+  const blockText = lines.slice(startIndex, closeIndex).join("\n");
+  return /\\tag\{[^}]+\}/.test(blockText) || hasLatexMathEnvironment(blockText) || hasStandaloneEquationLine(blockText);
+}
+
+function findNextStandaloneDisplayMathDelimiter(lines, startIndex) {
+  for (let index = startIndex; index < lines.length; index += 1) {
+    const trimmed = String(lines[index] || "").trim();
+    if (!trimmed) {
+      return -1;
+    }
+    if (trimmed === "$$") {
+      return index;
+    }
+    if (isCodeFenceStart(trimmed) || /^(#{1,6})\s+/.test(trimmed) || /^\s*[-*+]\s+/.test(lines[index])) {
+      return -1;
+    }
+  }
+  return -1;
+}
+
+function collectOrphanDisplayMathBlock(lines, startIndex) {
+  const closeIndex = findNextStandaloneDisplayMathDelimiter(lines, startIndex + 1);
+  if (closeIndex < 0) {
+    return { blockLines: [lines[startIndex]], nextIndex: startIndex + 1 };
+  }
+  return {
+    blockLines: lines.slice(startIndex, closeIndex),
+    nextIndex: closeIndex + 1,
+  };
 }
 
 function typesetMath(root) {

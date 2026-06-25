@@ -61,14 +61,19 @@ function runOcrCompareInContext(testContext) {
 {
   assert.strictEqual(call("DEFAULT_PDF_IMAGE_ZOOM"), 1.25);
   assert(ocrCompareCss.includes(".review-navigation-bar"));
+  assert(ocrCompareCss.includes(".review-font-nav-group"));
   assert(ocrCompareCss.includes("position: sticky"));
   assert(ocrCompareCss.includes(".control-column-pdf"));
   assert(ocrCompareCss.includes(".upload-button.primary-button"));
+  assert(ocrCompareCss.includes(".accepted-top-actions"));
+  assert(ocrCompareCss.includes(".accepted-action-button"));
   assert(ocrCompareCss.includes(".upload-icon svg"));
   assert(ocrCompareCss.includes(".right-workbench-card"));
   assert(ocrCompareCss.includes("height: calc(100vh - 52px)"));
   assert(ocrCompareCss.includes("grid-template-rows: auto minmax(0, 1fr);"));
   assert(ocrCompareCss.includes(".review-page-canvas"));
+  assert(ocrCompareCss.includes("--review-font-scale"));
+  assert(ocrCompareCss.includes(".math-display-equation-tag"));
   assert(ocrCompareCss.includes(".review-page-block.is-selected"));
   assert(ocrCompareCss.includes(".page-block-hotspot"));
   assert(ocrCompareCss.includes(".selected-block-toolbar"));
@@ -82,6 +87,10 @@ function runOcrCompareInContext(testContext) {
   assert(ocrCompareHtml.includes("上传 PDF"));
   assert(ocrCompareHtml.includes("上传 MinerU JSON"));
   assert(ocrCompareHtml.includes("上传 content_list (可选)"));
+  assert(ocrCompareHtml.includes('id="previewAcceptedBookButton"'));
+  assert(ocrCompareHtml.includes('id="downloadAcceptedCorrectedButton"'));
+  assert(ocrCompareHtml.includes("预览整书 accepted 校正稿"));
+  assert(ocrCompareHtml.includes("下载 accepted 校正稿"));
   assert(ocrCompareHtml.includes('class="upload-icon"'));
   assert(ocrCompareHtml.includes('viewBox="0 0 24 24"'));
   assert(!ocrCompareHtml.includes("cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"), "MathJax CDN should be lazy-loaded by ocr-compare.js");
@@ -309,6 +318,11 @@ assert(wrappedTableHtml.includes("latex-table-wrap"), "display-wrapped LaTeX tab
 const latexArray = "\\begin{array}{cc}\na & b \\\\ c & d\n\\end{array}";
 const arrayHtml = call(`renderMarkdownHtml(normalizeMathMarkdown(${JSON.stringify(latexArray)}))`);
 assert(arrayHtml.includes('class="math-display"'), "bare array environments should render as display math");
+const wrappedArrayHtml = call(`renderMarkdownHtml(normalizeMathMarkdown(${JSON.stringify(`$$\\n${latexArray}\\n$$`)}))`);
+assert(wrappedArrayHtml.includes('class="math-display"'), "explicitly wrapped array should render as display math");
+
+const explicitArrayFromBlock = call(`renderBlockContent(${JSON.stringify(`$$\\n\\begin{array}{cc}\\n a & b \\\\ c & d \\n\\end{array}\\n$$`)}, { blockIndex: "0", kind: "text" })`);
+assert(explicitArrayFromBlock.includes('class="math-display"'), "array blocks from block content should render in page canvas");
 
 function readFixture(name, kind) {
   return fs
@@ -651,25 +665,24 @@ function assertOcrPatchShape(patch) {
     });
   })()`);
   const parsed = JSON.parse(statusHtml);
-  assert(parsed.draftHtml.includes("Patch：draft"));
+  assert(!parsed.draftHtml.includes("Patch：draft"));
   assert(parsed.draftHtml.includes("data-ocr-patch-status-action=\"accepted\""));
   assert(parsed.draftHtml.includes(">接受<"));
   assert(parsed.draftHtml.includes(">拒绝<"));
   assert(!parsed.draftHtml.includes("确认 MinerU 有误后"));
-  assert(parsed.acceptedHtml.includes("Patch：accepted"));
-  assert(parsed.acceptedHtml.includes("已接受"));
+  assert(!parsed.acceptedHtml.includes("Patch：accepted"));
+  assert(!parsed.acceptedHtml.includes("已接受 patch"));
   assert(parsed.acceptedHtml.includes("已接受校正稿"));
   assert(parsed.acceptedHtml.includes("data-mathpix-edit=\"3\""));
-  assert(parsed.acceptedHtml.includes("已保存"));
-  assert(parsed.acceptedHtml.includes("data-disable-when-clean=\"1\""));
+  assert(parsed.acceptedHtml.includes("保存修改并接受"));
+  assert(/data-apply-mathpix-block-edit="3"[^>]*>\s*保存修改并接受/.test(parsed.acceptedHtml));
+  assert(!/data-apply-mathpix-block-edit="3"[^>]*data-disable-when-clean="1"/.test(parsed.acceptedHtml));
   assert(parsed.acceptedHtml.includes("F=\\sigma T^4"));
   assert(!parsed.acceptedHtml.includes("确认 MinerU 有误后"));
   assert(!parsed.acceptedHtml.includes("data-ocr-patch-status-action=\"accepted\""));
-  assert(parsed.rejectedHtml.includes("Patch：rejected"));
-  assert(parsed.rejectedHtml.includes("已拒绝"));
+  assert.strictEqual(parsed.rejectedHtml, "");
   assert(!parsed.rejectedHtml.includes("data-ocr-patch-status-action=\"accepted\""));
-  assert(parsed.noopHtml.includes("Patch：noop"));
-  assert(parsed.noopHtml.includes("无变化"));
+  assert.strictEqual(parsed.noopHtml, "");
   assert(!parsed.noopHtml.includes("data-ocr-patch-status-action=\"accepted\""));
 }
 
@@ -789,6 +802,675 @@ function assertOcrPatchShape(patch) {
   assert.strictEqual(result.override, "Manual MinerU source edit");
   assert.strictEqual(result.preview.appliedPatchCount, 1);
   assert(result.preview.markdown.includes("Manual MinerU source edit"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      state.contentListItems = [];
+      state.contentListFileName = "";
+      state.reviewExpanded.clear();
+      state.reviewCorrectionOpen.clear();
+      state.reviewNeedsCorrection.clear();
+      state.riskByPage.clear();
+      state.mineruOverrides.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              {
+                type: "text",
+                lines: [
+                  { spans: [{ content: "The wavefunctions are" }] },
+                  { spans: [{ content: "recombined, and compares that with the acceleration of a nearby" }] },
+                  { spans: [{ content: "macroscopic object of" }] },
+                  { spans: [{ content: "different composition." }] }
+                ]
+              }
+            ]
+          }
+        ]
+      };
+      els.statusBadge = { textContent: "", className: "" };
+      renderCurrentPage = async function noopRenderCurrentPage() {};
+      const segment = reviewSegmentsForPage(1).find((item) => String(item.blockIndex) === "0");
+      const sourceMarkdown = segment?.markdown || "";
+      const unwrapped = autoUnwrapMineruLineBreaks(sourceMarkdown);
+      const automaticCount = applyAutomaticLocalCorrectionsForPage(1);
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify({
+        canAuto: canAutoUnwrapMineruLineBreaks(sourceMarkdown),
+        mathBlocked: canAutoUnwrapMineruLineBreaks("Text\\n\\\\begin{aligned}\\nE &= mc^2\\n\\\\end{aligned}"),
+        unwrapped,
+        automaticCount,
+        patches: state.ocrPatches.map((patch) => ({
+          source: patch.source,
+          status: patch.status,
+          newText: patch.newText,
+          autoCorrection: patch.metadata?.autoCorrection || ""
+        })),
+        override: getBlockOverrides(1, false).get("0"),
+        preview
+      });
+    })()`),
+  );
+  assert.strictEqual(result.canAuto, true, "plain prose with hard line breaks should be eligible for local unwrap");
+  assert.strictEqual(result.mathBlocked, false, "blocks with LaTeX environments should not be auto-unwrapped");
+  assert.strictEqual(
+    result.unwrapped,
+    "The wavefunctions are recombined, and compares that with the acceleration of a nearby macroscopic object of different composition.",
+    "local unwrap should merge MinerU artificial prose line breaks",
+  );
+  const humanAccepted = result.patches.find((patch) => patch.source === "human" && patch.status === "accepted");
+  assert.strictEqual(result.automaticCount, 1, "automatic local cleanup should patch one eligible prose block");
+  assert(humanAccepted, "automatic local cleanup should create an accepted human patch");
+  assert.strictEqual(humanAccepted.autoCorrection, "plain_text_cleanup");
+  assert.strictEqual(result.override, result.unwrapped);
+  assert.strictEqual(result.preview.appliedPatchCount, 1);
+  assert(result.preview.markdown.includes(result.unwrapped));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression(["where$Z$and$A$are the atomic number and mass number, respectively, parameters$\\\\eta^A$by the best tests, where$\\\\delta=1$if$(Z,A)=(odd, even)."])}
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.mineruBlockOverrides.clear();
+      const automaticCount = applyAutomaticLocalCorrectionsForPage(1);
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify({
+        automaticCount,
+        corrected: getBlockOverrides(1, false).get("0"),
+        displayBlocked: canAutoCorrectPlainMineruMarkdown("Text\\n$$\\nE=mc^2\\n$$")
+      });
+    })()`),
+  );
+  assert.strictEqual(result.automaticCount, 1, "automatic cleanup should patch cramped inline math spacing");
+  assert(result.corrected.includes("where $Z$ and $A$ are"), "inline math should have surrounding spaces");
+  assert(result.corrected.includes("parameters $\\\\eta^A$ by the best tests"), "inline math should be spaced before and after adjacent prose");
+  assert(result.corrected.includes("where $\\\\delta=1$ if $(Z,A)=(odd, even)."), "multiple inline math spans should be spaced without changing content");
+  assert.strictEqual(result.displayBlocked, false, "display math blocks should not be auto-cleaned");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression(["Assuming the$1\\\\sigma$bound of$\\\\eta$<2\\nfrom parameters$\\\\eta^A$by Table 2.1."])}
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.mineruBlockOverrides.clear();
+      const oldText = reviewSegmentsForPage(1)[0].markdown;
+      const oldContext = createLegacyBlockPatchContext(1, "0", oldText);
+      const oldCleanup = {
+        patchId: "old-auto-cleanup-spacing",
+        blockId: oldContext.blockId,
+        oldText,
+        newText: "Assuming the$1\\\\sigma$bound of$\\\\eta$<2 from parameters$\\\\eta^A$by Table 2.1.",
+        source: "human",
+        status: "accepted",
+        metadata: { pageNo: 1, autoCorrection: "plain_text_cleanup" }
+      };
+      state.ocrPatches.push(oldCleanup);
+      getBlockOverrides(1).set("0", "Assuming the$1\\\\sigma$bound of$\\\\eta$<2 from parameters$\\\\eta^A$by Table 2.1.");
+      const automaticCount = applyAutomaticLocalCorrectionsForPage(1);
+      return JSON.stringify({
+        automaticCount,
+        corrected: getBlockOverrides(1, false).get("0"),
+        oldPatchStatus: state.ocrPatches.find((patch) => patch.patchId === oldCleanup.patchId)?.status || ""
+      });
+    })()`),
+  );
+  assert.strictEqual(result.automaticCount, 1, "old automatic plain cleanup patches should be refreshable by newer spacing rules");
+  assert.strictEqual(result.oldPatchStatus, "rejected", "refreshed automatic cleanup should replace the old accepted patch");
+  assert(/the \$1\\sigma\$ bound/.test(result.corrected), "refreshed cleanup should add space around sigma inline math");
+  assert(/of \$\\eta\$ <2/.test(result.corrected), "refreshed cleanup should add space before inline eta math");
+  assert(/parameters \$\\eta\^A\$ by Table/.test(result.corrected), "refreshed cleanup should add space around eta superscript inline math");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      state.contentListItems = [];
+      state.contentListFileName = "";
+      state.mineruOverrides.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              {
+                type: "interline_equation",
+                bbox: [100, 240, 410, 280],
+                lines: [{ spans: [{ content: "$$\\\\nE^S=-15.75A+17.8A^{2/3}\\\\n$$" }] }]
+              },
+              {
+                type: "text",
+                bbox: [500, 245, 545, 268],
+                lines: [{ spans: [{ content: "(2.8)" }] }]
+              }
+            ],
+            page_size: [600, 800]
+          }
+        ]
+      };
+      const automaticCount = applyAutomaticLocalCorrectionsForPage(1);
+      const patch = state.ocrPatches.find((item) => item.metadata?.autoCorrection === "equation_number_preservation");
+      return JSON.stringify({
+        automaticCount,
+        corrected: getBlockOverrides(1, false).get("0"),
+        patchText: patch?.newText || "",
+        preview: buildAcceptedPatchPreviewForPage(1)
+      });
+    })()`),
+  );
+  assert.strictEqual(result.automaticCount, 1, "display formula should get an automatic equation-number patch when a nearby number block exists");
+  assert(/\\+tag\{2\.8\}/.test(result.corrected), "nearby equation number should be converted to a LaTeX tag");
+  assert(/\\+tag\{2\.8\}/.test(result.patchText), "equation-number patch should store the tag");
+  assert(/\\+tag\{2\.8\}/.test(result.preview.markdown), "accepted preview should include the preserved equation number tag");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      state.contentListItems = [];
+      state.contentListFileName = "";
+      state.mineruOverrides.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              {
+                type: "interline_equation",
+                bbox: [150, 300, 405, 340],
+                lines: [{ spans: [{ content: "$$\\\\n\\\\frac{E^G}{mc^2} \\\\sim 10^{-39}A^{2/3}.\\\\n$$" }] }]
+              },
+              {
+                type: "text",
+                bbox: [40, 100, 200, 120],
+                lines: [{ spans: [{ content: "Other prose" }] }]
+              },
+              {
+                type: "text",
+                bbox: [520, 307, 555, 330],
+                lines: [{ spans: [{ content: "(2.10)" }] }]
+              }
+            ],
+            page_size: [600, 800]
+          }
+        ]
+      };
+      const automaticCount = applyAutomaticLocalCorrectionsForPage(1);
+      const html = renderPageReviewCanvas(reviewEntriesForCurrentPage());
+      return JSON.stringify({
+        automaticCount,
+        corrected: getBlockOverrides(1, false).get("0"),
+        html
+      });
+    })()`),
+  );
+  assert.strictEqual(result.automaticCount, 1, "display formula should get equation number from same-row bbox even when block index is not adjacent");
+  assert(/\\+tag\{2\.10\}/.test(result.corrected), "same-row bbox equation number should be inserted as a LaTeX tag");
+  assert(result.html.includes("(2.10)"), "same-row bbox equation number should render visibly");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      state.contentListItems = [];
+      state.contentListFileName = "";
+      state.mineruOverrides.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              {
+                type: "interline_equation",
+                bbox: [140, 260, 420, 300],
+                lines: [{ spans: [{ content: "$$\\\\nE^{HF}=2.1\\\\times10^{-5}\\\\n$$" }] }]
+              },
+              {
+                type: "text",
+                bbox: [525, 267, 565, 290],
+                lines: [{ spans: [{ content: "(2.11)" }] }]
+              }
+            ],
+            page_size: [600, 800]
+          }
+        ]
+      };
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: reviewSegmentsForPage(1)[0].markdown,
+        newText: "$$\\\\nE^{HF}=2.1\\\\times10^{-5}\\\\n$$",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify({
+        storedPatchText: patch.newText,
+        preview
+      });
+    })()`),
+  );
+  assert(!/\\+tag\{2\.11\}/.test(result.storedPatchText), "stored legacy accepted patch should remain unchanged");
+  assert(/\\+tag\{2\.11\}/.test(result.preview.markdown), "accepted preview/download should preserve nearby equation numbers for legacy accepted patches");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      state.contentListItems = [];
+      state.contentListFileName = "";
+      state.mineruOverrides.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              {
+                type: "text",
+                bbox: [80, 120, 420, 160],
+                lines: [{ spans: [{ content: "Accepted prose source" }] }]
+              },
+              {
+                type: "interline_equation",
+                bbox: [120, 260, 420, 310],
+                lines: [{ spans: [{ content: "$$\\\\nE^S=-15.75A+17.8A^{2/3}\\\\n$$" }] }]
+              },
+              {
+                type: "text",
+                bbox: [525, 270, 565, 292],
+                lines: [{ spans: [{ content: "(2.8)" }] }]
+              }
+            ],
+            page_size: [600, 800]
+          }
+        ]
+      };
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Accepted prose source",
+        newText: "Accepted prose correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify(preview);
+    })()`),
+  );
+  assert.strictEqual(result.ok, true);
+  assert.strictEqual(result.appliedPatchCount, 1);
+  assert(result.markdown.includes("Accepted prose correction"), "accepted patch should still apply when base formula blocks get numbering fallback");
+  assert(/\\+tag\{2\.8\}/.test(result.markdown), "unpatched base formula blocks should preserve nearby original equation numbers in accepted preview/download");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      state.contentListItems = [
+        { page_idx: 0, text: "(2.8)", bbox: [525, 270, 565, 292], page_size: [600, 800], __contentListIndex: 0 }
+      ];
+      state.contentListFileName = "content_list.json";
+      state.mineruOverrides.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              {
+                type: "text",
+                bbox: [80, 120, 420, 160],
+                lines: [{ spans: [{ content: "Accepted prose source" }] }]
+              },
+              {
+                type: "interline_equation",
+                bbox: [120, 260, 420, 310],
+                lines: [{ spans: [{ content: "$$\\\\nE^S=-15.75A+17.8A^{2/3}\\\\n$$" }] }]
+              }
+            ],
+            page_size: [600, 800]
+          }
+        ]
+      };
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Accepted prose source",
+        newText: "Accepted prose correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify(preview);
+    })()`),
+  );
+  assert.strictEqual(result.ok, true);
+  assert(result.markdown.includes("Accepted prose correction"));
+  assert(/\\+tag\{2\.8\}/.test(result.markdown), "accepted preview/download should use content_list bbox-only equation numbers");
+  assert(!/\\+tag\{1\}/.test(result.markdown), "accepted preview/download should not preserve generated sequential equation numbers");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      state.contentListItems = [];
+      state.contentListFileName = "";
+      state.pdfFile = { name: "book.pdf", type: "application/pdf" };
+      state.pdfDataUrl = "data:application/pdf;base64,FAKE";
+      state.pdfTextPageCache.clear();
+      state.pdfTextPageCache.set(1, {
+        pageSize: [600, 800],
+        textBlocks: [
+          { text: "E ^ { \\\\mathrm { S } } = -15.75A + 11.18 \\\\delta / A^{1/2}, (2.8)", bbox: [310, 268, 565, 292] }
+        ]
+      });
+      state.mineruOverrides.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              {
+                type: "text",
+                bbox: [80, 120, 420, 160],
+                lines: [{ spans: [{ content: "Accepted prose source" }] }]
+              },
+              {
+                type: "interline_equation",
+                bbox: [120, 260, 420, 310],
+                lines: [{ spans: [{ content: "$$\\\\nE^S=-15.75A+17.8A^{2/3}\\\\n$$" }] }]
+              }
+            ],
+            page_size: [600, 800]
+          }
+        ]
+      };
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Accepted prose source",
+        newText: "Accepted prose correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      const downloads = [];
+      const originalDownloadTextFile = downloadTextFile;
+      downloadTextFile = function captureDownload(filename, text) {
+        downloads.push({ filename, text });
+      };
+      let downloadResult;
+      try {
+        downloadResult = downloadAcceptedCorrectedMarkdown();
+      } finally {
+        downloadTextFile = originalDownloadTextFile;
+      }
+      return JSON.stringify({
+        preview: buildAcceptedPatchPreviewForPage(1),
+        downloadResult,
+        downloads
+      });
+    })()`),
+  );
+  assert.strictEqual(result.downloadResult.ok, true);
+  assert.strictEqual(result.downloads.length, 1);
+  assert(/\\+tag\{2\.8\}/.test(result.preview.markdown), "accepted preview should preserve equation numbers from the PDF text layer");
+  assert(/\\+tag\{2\.8\}/.test(result.downloads[0].text), "downloaded accepted markdown should preserve equation numbers from the PDF text layer");
+  assert(!/\\+tag\{1\}/.test(result.downloads[0].text), "downloaded accepted markdown should not keep generated sequential tags");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      state.contentListItems = [];
+      state.contentListFileName = "";
+      state.pdfTextPageCache.clear();
+      state.pdfTextPageCache.set(1, {
+        pageSize: [600, 800],
+        textBlocks: [
+          { text: "\\\\delta ^ A \\\\sim w^\\\\ell \\\\delta_0^A. (2.16)", bbox: [300, 245, 565, 282] }
+        ]
+      });
+      state.mineruOverrides.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              {
+                type: "interline_equation",
+                bbox: [100, 240, 410, 280],
+                lines: [{ spans: [{ content: "$$\\\\n\\\\delta^A \\\\sim w^\\\\ell \\\\delta^A_0.\\\\n$$" }] }]
+              }
+            ],
+            page_size: [600, 800]
+          }
+        ]
+      };
+      const accepted = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: reviewSegmentsForPage(1)[0].markdown,
+        newText: "$$\\\\n\\\\delta^A \\\\sim w^\\\\ell \\\\delta^A_0.\\\\n\\\\tag{1}\\\\n$$",
+        source: "mathpix"
+      }).patch;
+      updateOcrPatchStatus(accepted.patchId, "accepted");
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify(preview);
+    })()`),
+  );
+  assert(/\\+tag\{2\.16\}/.test(result.markdown), "generated sequential tags should be replaced by original PDF equation numbers");
+  assert(!/\\+tag\{1\}/.test(result.markdown), "generated sequential tags should not remain in accepted preview/download");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      state.contentListItems = [];
+      state.contentListFileName = "";
+      state.pdfTextPageCache.clear();
+      state.pdfTextPageCache.set(1, {
+        pageSize: [600, 800],
+        textBlocks: [
+          { text: "\\\\delta ^ A \\\\sim w^\\\\ell \\\\delta_0^A. (2.16)", bbox: [300, 245, 565, 282] }
+        ]
+      });
+      state.mineruOverrides.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              {
+                type: "interline_equation",
+                bbox: [100, 240, 410, 280],
+                lines: [{ spans: [{ content: "$$\\\\n\\\\delta^A \\\\sim w^\\\\ell \\\\delta^A_0.\\\\n$$" }] }]
+              }
+            ],
+            page_size: [600, 800]
+          }
+        ]
+      };
+      const accepted = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: reviewSegmentsForPage(1)[0].markdown,
+        newText: "$$\\\\n\\\\delta^A \\\\sim w^\\\\ell \\\\delta^A_0.\\\\n$$",
+        source: "mathpix"
+      }).patch;
+      updateOcrPatchStatus(accepted.patchId, "accepted");
+      const preview = buildAcceptedPatchPreviewForPage(1);
+      return JSON.stringify(preview);
+    })()`),
+  );
+  assert.strictEqual(result.ok, true, "formula accepted patch should not fail dry-run after equation-number fallback");
+  assert(!result.errors.some((error) => error.type === "old_hash_mismatch"), "equation-number fallback must run after oldHash merge validation");
+  assert(/\\+tag\{2\.16\}/.test(result.markdown), "accepted formula patches should still receive original PDF equation numbers after merge");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      state.contentListItems = [];
+      state.contentListFileName = "";
+      state.mineruOverrides.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              {
+                type: "interline_equation",
+                bbox: [100, 240, 410, 280],
+                lines: [{ spans: [{ content: "$$\\\\n\\\\delta^A \\\\sim w^\\\\ell \\\\delta^A_0.\\\\n$$" }] }]
+              },
+              {
+                type: "text",
+                bbox: [500, 245, 545, 268],
+                lines: [{ spans: [{ content: "(2.16)" }] }]
+              }
+            ],
+            page_size: [600, 800]
+          }
+        ]
+      };
+      const accepted = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: reviewSegmentsForPage(1)[0].markdown,
+        newText: "$$\\\\n\\\\delta^A \\\\sim w^\\\\ell \\\\delta^A_0.\\\\n$$",
+        source: "mathpix"
+      }).patch;
+      updateOcrPatchStatus(accepted.patchId, "accepted");
+      getBlockOverrides(1).set("0", "$$\\\\n\\\\delta^A \\\\sim w^\\\\ell \\\\delta^A_0.\\\\n$$");
+      const automaticCount = applyAutomaticLocalCorrectionsForPage(1);
+      const latestPatch = getLatestOcrPatchForBlock(1, "0", reviewSegmentsForPage(1)[0].markdown);
+      return JSON.stringify({
+        automaticCount,
+        override: getBlockOverrides(1, false).get("0"),
+        oldPatchStatus: state.ocrPatches.find((patch) => patch.patchId === accepted.patchId)?.status,
+        latestPatchText: latestPatch?.newText || "",
+        latestPatchSource: latestPatch?.source || "",
+        latestPatchAutoCorrection: latestPatch?.metadata?.autoCorrection || "",
+        preview: buildAcceptedPatchPreviewForPage(1)
+      });
+    })()`),
+  );
+  assert.strictEqual(result.automaticCount, 1, "existing accepted formula patches missing a number should receive a replacement numbering patch");
+  assert.strictEqual(result.oldPatchStatus, "rejected", "old accepted formula patch should be rejected when a numbering patch replaces it");
+  assert.strictEqual(result.latestPatchSource, "human");
+  assert.strictEqual(result.latestPatchAutoCorrection, "equation_number_preservation");
+  assert(/\\+tag\{2\.16\}/.test(result.override), "override should include the preserved equation number tag");
+  assert(/\\+tag\{2\.16\}/.test(result.latestPatchText), "latest patch should include the preserved equation number tag");
+  assert(/\\+tag\{2\.16\}/.test(result.preview.markdown), "accepted preview should include replacement equation number tag");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+      state.contentListItems = [];
+      state.contentListFileName = "";
+      state.mineruOverrides.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              {
+                type: "interline_equation",
+                bbox: [100, 240, 410, 280],
+                lines: [{ spans: [{ content: "$$\\\\nE^S=-15.75A+17.8A^{2/3}\\\\n$$" }] }]
+              },
+              {
+                type: "text",
+                bbox: [500, 245, 545, 268],
+                lines: [{ spans: [{ content: "(2.8)" }] }]
+              }
+            ],
+            page_size: [600, 800]
+          }
+        ]
+      };
+      getMathpixBlockDrafts(1).set("0", "$$\\\\nE^S=-15.75A+17.8A^{2/3}\\\\n$$");
+      const automaticCount = applyAutomaticLocalCorrectionsForPage(1);
+      const latestPatch = getLatestOcrPatchForBlock(1, "0", reviewSegmentsForPage(1)[0].markdown);
+      const html = renderPageReviewCanvas(reviewEntriesForCurrentPage());
+      return JSON.stringify({
+        automaticCount,
+        draftStillPresent: getMathpixBlockDrafts(1, false).has("0"),
+        override: getBlockOverrides(1, false).get("0"),
+        latestPatchStatus: latestPatch?.status || "",
+        latestPatchAutoCorrection: latestPatch?.metadata?.autoCorrection || "",
+        html
+      });
+    })()`),
+  );
+  assert.strictEqual(result.automaticCount, 1, "mathpix drafts missing an equation number should still receive a numbering patch");
+  assert.strictEqual(result.latestPatchStatus, "accepted");
+  assert.strictEqual(result.latestPatchAutoCorrection, "equation_number_preservation");
+  assert(/\\+tag\{2\.8\}/.test(result.override), "mathpix draft numbering patch should include the missing equation number tag");
+  assert(result.html.includes("math-display-equation-tag"), "mathpix draft numbering patch should render a visible equation number");
+  assert(result.html.includes("(2.8)"), "mathpix draft numbering patch should show the equation number");
 }
 
 {
@@ -1577,16 +2259,37 @@ function setupPreviewBookExpression(pages) {
   const navHtml = call(`(() => {
     state.currentPage = 2;
     state.pdfPageCount = 4;
+    state.reviewFontScale = 1.2;
     state.riskByPage = new Map([[2, [{ blockIndex: "1", reasons: ["math"] }]]]);
     return renderReviewNavigationBar([
       { key: "1", displayIndex: 1, segment: { markdown: "Block source" }, risk: { blockIndex: "1", reasons: ["math"] } }
     ]);
   })()`);
   assert(navHtml.includes('data-page-nav="review-workbench"'));
+  assert(navHtml.includes("review-font-nav-group"));
+  assert(navHtml.includes('data-review-font-scale="out"'));
+  assert(navHtml.includes('data-review-font-scale="in"'));
   assert(navHtml.includes("review-page-nav-group"));
   assert(navHtml.includes("块 1 / 1"));
   assert(!navHtml.includes("下一高风险页"));
   assert(!navHtml.includes("data-next-risk-page"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.reviewFontScale = 1;
+      setReviewFontScale("in");
+      const scaledHtml = renderPageReviewCanvas([
+        { key: "0", displayIndex: 1, segment: { blockIndex: "0", markdown: "Scaled source", kind: "text" }, risk: { blockIndex: "0", reviewOnly: true } }
+      ]);
+      setReviewFontScale("out");
+      const resetScale = currentReviewFontScale();
+      return JSON.stringify({ scaledHtml, resetScale });
+    })()`),
+  );
+  assert(result.scaledHtml.includes("--review-font-scale: 1.1"), "review page canvas should carry the current font scale");
+  assert.strictEqual(result.resetScale, 1, "review font scale controls should step back down");
 }
 
 {
@@ -2015,6 +2718,42 @@ function setupPreviewBookExpression(pages) {
 {
   const result = JSON.parse(
     call(`(() => {
+      ${setupPreviewBookExpression([["Current source text"]])}
+      state.ocrPatches = [];
+      const stale = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Old source text",
+        newText: "Stale accepted correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(stale.patchId, "accepted");
+      const current = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Current source text",
+        newText: "Current accepted correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(current.patchId, "accepted");
+      const preview = buildAcceptedPatchPreviewForBook();
+      return JSON.stringify({
+        preview,
+        staleStatus: state.ocrPatches.find((patch) => patch.patchId === stale.patchId)?.status || ""
+      });
+    })()`),
+  );
+  assert.strictEqual(result.staleStatus, "accepted", "legacy workspaces may still contain stale accepted patches");
+  assert.strictEqual(result.preview.ok, true);
+  assert.strictEqual(result.preview.appliedPatchCount, 1);
+  assert(!result.preview.errors.some((error) => error.type === "old_hash_mismatch"), "book preview should ignore stale same-block accepted patches");
+  assert(result.preview.markdown.includes("Current accepted correction"));
+  assert(!result.preview.markdown.includes("Stale accepted correction"));
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
       ${setupPreviewPageExpression(["Only existing block"])}
       const patch = createAndStoreDraftOcrPatch({
         pageNo: 1,
@@ -2336,6 +3075,45 @@ function setupPreviewBookExpression(pages) {
 }
 
 {
+  const result = JSON.parse(
+    call(`(() => {
+      ${setupPreviewBookExpression([["Top controls source"]])}
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Top controls source",
+        newText: "Top controls correction",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      let statusCalled = 0;
+      const originalGetStatus = getAcceptedCorrectedDownloadStatus;
+      getAcceptedCorrectedDownloadStatus = function getAcceptedCorrectedDownloadStatusProbe() {
+        statusCalled += 1;
+        return originalGetStatus();
+      };
+      els.previewAcceptedBookButton = { disabled: true, textContent: "" };
+      els.downloadAcceptedCorrectedButton = { disabled: true, title: "" };
+      try {
+        updateAcceptedPatchTopControls();
+      } finally {
+        getAcceptedCorrectedDownloadStatus = originalGetStatus;
+      }
+      return JSON.stringify({
+        statusCalled,
+        previewDisabled: els.previewAcceptedBookButton.disabled,
+        downloadDisabled: els.downloadAcceptedCorrectedButton.disabled,
+        downloadTitle: els.downloadAcceptedCorrectedButton.title
+      });
+    })()`),
+  );
+  assert.strictEqual(result.statusCalled, 0, "top control refresh should not run the expensive accepted book preview");
+  assert.strictEqual(result.previewDisabled, false);
+  assert.strictEqual(result.downloadDisabled, false);
+  assert(result.downloadTitle.includes("dry-run"));
+}
+
+{
   const status = JSON.parse(
     call(`(() => {
       ${setupPreviewBookExpression([["Empty status source"]])}
@@ -2495,7 +3273,7 @@ function setupPreviewBookExpression(pages) {
   assert.strictEqual(result.downloadResult.status.canDownload, false);
   assert.strictEqual(result.downloads.length, 0);
   assert(result.downloadResult.preview.warnings.some((warning) => warning.type === "no_accepted_patch"));
-  assert(result.preview.warnings.some((warning) => warning.message.includes("accepted patch")));
+  assert.strictEqual(result.preview, null, "download should not leave a raw accepted preview panel in UI state");
 }
 
 {
@@ -2796,18 +3574,7 @@ function setupPreviewBookExpression(pages) {
       warnings: []
     };
     const bookPanel = renderAcceptedPatchBookPreviewPanel();
-    const statusHtml = ["empty", "ready", "warning-only", "blocked"].map((status) =>
-      renderAcceptedCorrectedDownloadStatus({
-        status,
-        canDownload: status === "ready" || status === "warning-only",
-        message: status,
-        acceptedPatchCount: status === "empty" ? 0 : 1,
-        appliedPatchCount: status === "empty" || status === "blocked" ? 0 : 1,
-        warningCount: status === "warning-only" ? 1 : 0,
-        errorCount: status === "blocked" ? 1 : 0
-      })
-    ).join("\\n");
-    return JSON.stringify({ emptyHtml: emptyCard.innerHTML, acceptedHtml: acceptedCard.innerHTML, bookPanel, statusHtml });
+    return JSON.stringify({ emptyHtml: emptyCard.innerHTML, acceptedHtml: acceptedCard.innerHTML, bookPanel });
   })()`);
   const parsed = JSON.parse(uiHtml);
   assert(!parsed.emptyHtml.includes("个页面块"));
@@ -2815,27 +3582,20 @@ function setupPreviewBookExpression(pages) {
   assert(parsed.emptyHtml.includes("UI source"));
   assert(parsed.emptyHtml.includes("review-page-canvas"));
   assert(parsed.emptyHtml.includes("review-page-paper"));
-  assert(parsed.emptyHtml.includes("普通段落"));
   assert(parsed.emptyHtml.includes('data-review-item-state="normal"'));
+  assert(!parsed.emptyHtml.includes("普通段落"));
   assert(!parsed.emptyHtml.includes("预览 accepted 校正稿"));
   assert(!parsed.emptyHtml.includes("data-preview-accepted-patches"));
   assert(!parsed.emptyHtml.includes("下载 accepted 校正稿"));
   assert(!parsed.emptyHtml.includes("data-accepted-download-status"));
-  assert(parsed.acceptedHtml.includes("预览整书 accepted 校正稿"));
-  assert(parsed.acceptedHtml.includes("data-preview-accepted-book-patches"));
-  assert(parsed.acceptedHtml.includes("下载 accepted 校正稿"));
-  assert(parsed.acceptedHtml.includes("data-download-accepted-corrected"));
-  assert(parsed.acceptedHtml.includes("data-accepted-download-status"));
-  assert(parsed.acceptedHtml.includes("下载状态：ready"));
-  assert(parsed.acceptedHtml.indexOf('class="review-list review-page-canvas markdown-body"') < parsed.acceptedHtml.indexOf('data-accepted-patch-export-section'), "accepted export tools should be rendered after the review canvas");
-  assert(parsed.statusHtml.includes('data-accepted-download-status="empty"'));
-  assert(parsed.statusHtml.includes('data-accepted-download-status="ready"'));
-  assert(parsed.statusHtml.includes('data-accepted-download-status="warning-only"'));
-  assert(parsed.statusHtml.includes('data-accepted-download-status="blocked"'));
-  assert(parsed.bookPanel.includes("acceptedPatchCount: 1"));
-  assert(parsed.bookPanel.includes("Book preview correction text"));
-  assert(parsed.bookPanel.includes("data-close-accepted-book-preview"));
-  assert(parsed.bookPanel.includes("ocr-patch-book-render"));
+  assert(!parsed.acceptedHtml.includes("导出前检查"));
+  assert(!parsed.acceptedHtml.includes("下载状态："));
+  assert(!parsed.acceptedHtml.includes("data-accepted-download-status"));
+  assert(!parsed.acceptedHtml.includes("data-accepted-patch-export-section"));
+  assert.strictEqual(parsed.bookPanel, "", "accepted book preview should not render raw markdown below the workbench");
+  assert(!parsed.acceptedHtml.includes("Book preview correction text"));
+  assert(!parsed.acceptedHtml.includes("data-close-accepted-book-preview"));
+  assert(!parsed.acceptedHtml.includes("ocr-patch-book-render"));
 }
 
 {
@@ -2844,6 +3604,9 @@ function setupPreviewBookExpression(pages) {
       state.currentPage = 1;
       state.reviewExpanded.clear();
       state.riskByPage.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.ocrPatches = [];
       const entries = [
         {
           key: "0",
@@ -2866,9 +3629,17 @@ function setupPreviewBookExpression(pages) {
       ];
       expandOnlyReviewBlock(1, "1");
       const canvas = renderPageReviewCanvas(entries);
+      state.reviewNeedsCorrection.clear();
+      state.reviewNeedsCorrection.add("1:1");
+      const markedCanvas = renderPageReviewCanvas(entries);
+      state.reviewCorrectionOpen.clear();
+      state.reviewCorrectionOpen.add("1:1");
+      const correctionCanvas = renderPageReviewCanvas(entries);
       const hotspots = renderPdfBlockHotspots(entries);
       return JSON.stringify({
         canvas,
+        markedCanvas,
+        correctionCanvas,
         hotspots,
         selected: Array.from(state.reviewExpanded)
       });
@@ -2879,16 +3650,111 @@ function setupPreviewBookExpression(pages) {
   assert(canvasResult.canvas.includes('data-review-page-block="1:1"'), "formula block should be present in the full-page canvas");
   assert(canvasResult.canvas.includes('data-review-page-block="1:2"'), "image block without bbox should still be present in the full-page canvas");
   assert(canvasResult.canvas.includes('class="math-display"'), "formula block should render as display math inside the page canvas");
-  assert(canvasResult.canvas.includes("selected-block-toolbar"), "selected block should render the compact correction toolbar");
-  assert(!canvasResult.canvas.includes('data-risk-mathpix="1"'), "selected block toolbar should not show Mathpix correction during block comparison");
-  assert(canvasResult.canvas.includes("查看/编辑 MinerU 源码"), "selected block toolbar should keep source editing available");
-  assert(!canvasResult.canvas.includes("MinerU 渲染"), "selected block toolbar should not show the MinerU render pane by default");
-  assert(!canvasResult.canvas.includes("已接受校正稿"), "selected block toolbar should not show the accepted render pane by default");
-  assert(!canvasResult.canvas.includes("Mathpix 识别稿"), "selected block toolbar should not show the Mathpix render pane by default");
+  assert(canvasResult.canvas.includes("is-selected"), "selected block should keep a visible selection state");
+  assert(!canvasResult.canvas.includes("selected-block-toolbar"), "selected block should not render the old correction toolbar in page-comparison mode");
+  assert(!canvasResult.canvas.includes('data-risk-mathpix="1"'), "selected block should not show Mathpix correction during block comparison");
+  assert(!canvasResult.canvas.includes("查看/编辑 MinerU 源码"), "selected block should not show source editing by default");
+  assert(!canvasResult.canvas.includes("MinerU 渲染"), "selected block should not show the MinerU render pane by default");
+  assert(!canvasResult.canvas.includes("已接受校正稿"), "selected block should not show the accepted render pane by default");
+  assert(!canvasResult.canvas.includes("Mathpix 识别稿"), "selected block should not show the Mathpix render pane by default");
+  assert(canvasResult.canvas.includes('data-review-needs-correction-toggle="1:1"'), "review block should expose a needs-extra-correction marker");
+  assert(canvasResult.markedCanvas.includes("needs-extra-correction"), "marked review block should have a visible marker class");
+  assert(canvasResult.markedCanvas.includes('aria-pressed="true"'), "marked review block button should expose pressed state");
+  assert(canvasResult.correctionCanvas.includes("selected-block-toolbar"), "correction panel should restore the original block correction UI on demand");
+  assert(canvasResult.correctionCanvas.includes('data-risk-mathpix="1"'), "correction panel should expose the Mathpix block action");
+  assert(canvasResult.correctionCanvas.includes("查看/编辑 MinerU 源码"), "correction panel should expose source editing");
+  assert(canvasResult.correctionCanvas.includes('aria-label="收起校正面板"'), "correction panel should expose an explicit collapse action");
   assert(canvasResult.hotspots.includes('data-review-left-hotspot="1:0"'), "block with bbox should render a left-column hotspot");
   assert(canvasResult.hotspots.includes('data-review-left-hotspot="1:1"'), "formula block with bbox should render a left-column hotspot");
   assert(!canvasResult.hotspots.includes('data-review-left-hotspot="1:2"'), "block without bbox should not render a left-column hotspot");
   assert.deepStrictEqual(canvasResult.selected, ["1:1"], "selected block should be stored as a single page:block key");
+}
+
+{
+  const sourceChoice = JSON.parse(
+    call(`(() => {
+      ${setupPreviewPageExpression(["Original paragraph text"])}
+      state.currentPage = 1;
+      state.reviewExpanded.clear();
+      state.reviewCorrectionOpen.clear();
+      state.ocrPatches = [];
+      state.mathpixBlockDrafts.clear();
+      const patch = createAndStoreDraftOcrPatch({
+        pageNo: 1,
+        blockIndex: "0",
+        oldText: "Original paragraph text",
+        newText: "Accepted corrected paragraph",
+        source: "human"
+      }).patch;
+      updateOcrPatchStatus(patch.patchId, "accepted");
+      expandOnlyReviewBlock(1, "0");
+      state.reviewCorrectionOpen.add("1:0");
+      const acceptedCanvas = renderPageReviewCanvas(reviewEntriesForCurrentPage());
+      state.ocrPatches = [];
+      state.reviewExpanded.clear();
+      state.reviewCorrectionOpen.clear();
+      expandOnlyReviewBlock(1, "0");
+      state.reviewCorrectionOpen.add("1:0");
+      const mineruCanvas = renderPageReviewCanvas(reviewEntriesForCurrentPage());
+      return JSON.stringify({ acceptedCanvas, mineruCanvas });
+    })()`),
+  );
+  assert(sourceChoice.acceptedCanvas.includes("查看/编辑 Mathpix draft / accepted Markdown"), "accepted blocks should expose the corrected markdown editor");
+  assert(!sourceChoice.acceptedCanvas.includes("查看/编辑 MinerU 源码"), "accepted blocks should not show a second MinerU source editor");
+  assert(sourceChoice.mineruCanvas.includes("查看/编辑 MinerU 源码"), "uncorrected blocks should still expose the MinerU source editor");
+  assert(!sourceChoice.mineruCanvas.includes("查看/编辑 Mathpix draft / accepted Markdown"), "uncorrected blocks should not show an empty corrected markdown editor");
+}
+
+{
+  const localActions = JSON.parse(
+    call(`(() => {
+      state.currentPage = 1;
+      state.ocrPatches = [];
+      state.reviewExpanded.clear();
+      state.reviewCorrectionOpen.clear();
+      state.reviewNeedsCorrection.clear();
+      state.riskByPage.clear();
+      state.mineruOverrides.clear();
+      state.mineruBlockOverrides.clear();
+      state.mathpixBlockDrafts.clear();
+      state.mineruInfo = {
+        pdf_info: [
+          {
+            para_blocks: [
+              {
+                type: "text",
+                lines: [{ spans: [{ content: "Selected tests of the Weak Equivalence Principle, showing bounds on the Eotvos ratio eta. The light grey region represents many experiments." }] }]
+              },
+              {
+                type: "text",
+                lines: [{ spans: [{ content: "The current upper limits on eta are summarized in Figure 2.2." }] }]
+              },
+              {
+                type: "text",
+                lines: [
+                  { spans: [{ content: "an atom such as Cesium by studying the interference pattern when" }] },
+                  { spans: [{ content: "the wavefunctions are" }] },
+                  { spans: [{ content: "recombined, and compares that with the acceleration of a nearby" }] }
+                ]
+              }
+            ]
+          }
+        ]
+      };
+      const entries = reviewEntriesForCurrentPage();
+      const html = renderPageReviewCanvas(entries);
+      const label = inferMissingFigureLabelForBlock(1, "0", reviewSegmentsForPage(1)[0].markdown);
+      const labeled = label ? \`\${label} \${reviewSegmentsForPage(1)[0].markdown}\` : "";
+      const falsePositiveLabel = inferMissingFigureLabelForBlock(1, "2", reviewSegmentsForPage(1)[2].markdown);
+      return JSON.stringify({ html, label, labeled, falsePositiveLabel });
+    })()`),
+  );
+  assert.strictEqual(localActions.label, "Fig. 2.2", "figure captions should infer a missing nearby figure label");
+  assert(localActions.labeled.startsWith("Fig. 2.2 Selected tests"), "inferred figure label should be prepended to the caption");
+  assert(localActions.html.includes('data-auto-add-figure-label="0"'), "caption block should expose a local figure-label action");
+  assert.strictEqual(localActions.falsePositiveLabel, "", "ordinary prose near a Figure reference should not infer a missing figure label");
+  assert(!localActions.html.includes('data-auto-add-figure-label="2"'), "ordinary prose should not expose the figure-label action");
+  assert(!localActions.html.includes('data-auto-unwrap-linebreaks="2"'), "plain prose cleanup should be automatic rather than exposed as a manual button");
 }
 
 {
@@ -3115,7 +3981,7 @@ const reviewHtml = call(`
   )
 `);
 assert(reviewHtml.includes('data-review-item-state="mathpix-draft"'), "new Mathpix draft should be marked as the active state");
-assert(reviewHtml.includes("Mathpix draft"), "new Mathpix draft should be shown as pending even when an older correction exists");
+assert(!reviewHtml.includes('class="review-item-state"'), "new Mathpix draft should not add noisy state badges in the toolbar");
 assert(!reviewHtml.includes("待核查"), "review item title should avoid noisy pending copy");
 assert(!reviewHtml.includes("公式被拆散"), "review item title should avoid long risk reason chains");
 assert(reviewHtml.includes("保存修改并接受"), "editing Mathpix Markdown should use the streamlined save-and-accept action");
@@ -3139,6 +4005,25 @@ const mixedAlignedRenderHtml = call(`renderBlockContent(${JSON.stringify(
 assert(mixedAlignedRenderHtml.includes('class="math-display"'), "bare aligned environment inside a text block should render as display math");
 assert(!mixedAlignedRenderHtml.includes("<p>For weak interactions, the result is<br>\\\\begin{aligned}"), "aligned source must not remain inside the prose paragraph");
 
+const algorithmTaggedMathRenderHtml = call(`renderBlockContent(${JSON.stringify(
+  "For weak interactions, while the parity nonconserving part is negligible\n\\begin{aligned}\n\\frac{E^{\\mathrm{W}}}{mc^2} &= 2.2 \\times 10^{-8} g(N,Z) \\\\\\\\\ng(N,Z) &= 0.295 \\left[ \\frac{(N-Z)^2}{2NZ} \\right]\n\\end{aligned}\nwhere N=A-Z.",
+)}, { kind: "algorithm", blockIndex: "weak" })`);
+assert(algorithmTaggedMathRenderHtml.includes('class="math-display"'), "algorithm-tagged OCR blocks containing LaTeX environments should still render as math");
+assert(!algorithmTaggedMathRenderHtml.includes("algorithm-block"), "algorithm-tagged math prose should not render as an algorithm code block");
+
+const danglingDollarMathRenderHtml = call(`renderBlockContent(${JSON.stringify(
+  "For weak interactions, the result is\n$\n\\begin{aligned}\nE &= mc^2\n\\end{aligned}\nwhere N=A-Z.",
+)}, { kind: "text", blockIndex: "dangling-dollar" })`);
+assert(danglingDollarMathRenderHtml.includes('class="math-display"'), "formula blocks with a dangling single-dollar line should still render as math");
+assert(!danglingDollarMathRenderHtml.includes("<p>$</p>"), "dangling single-dollar lines should not render before display math");
+assert(!/>\\s*\\$\\s*</.test(danglingDollarMathRenderHtml), "dangling dollar delimiters should not remain as visible text nodes");
+
+const escapedDanglingDollarMathRenderHtml = call(`renderBlockContent(${JSON.stringify(
+  "For weak interactions, the result is\n\\$\n$$\n\\begin{aligned}\nE &= mc^2\n\\end{aligned}\n$$\nwhere N=A-Z.",
+)}, { kind: "text", blockIndex: "escaped-dangling-dollar" })`);
+assert(escapedDanglingDollarMathRenderHtml.includes('class="math-display"'), "escaped dangling dollar lines before display math should still render as math");
+assert(!/>\\s*\\$\\s*</.test(escapedDanglingDollarMathRenderHtml), "escaped dangling dollar delimiters should not remain as visible text nodes");
+
 const numberedAlignedPatch = JSON.parse(
   call(`(() => {
     state.ocrPatches = [];
@@ -3158,6 +4043,60 @@ assert(!numberedAlignedPatch.normalizedText.trimEnd().endsWith("(2.12)"), "equat
 const visibleNumberedAlignedPatch = call(`normalizeVisibleEquationNumberAsLatexTag("For weak interactions\\n\\\\begin{aligned}\\nE &= mc^2\\n\\\\end{aligned}\\n(2.12)")`);
 assert(visibleNumberedAlignedPatch.includes("\\tag{2.12}"), "Mathpix visible equation number should be normalized into a LaTeX tag");
 assert(!visibleNumberedAlignedPatch.trimEnd().endsWith("(2.12)"), "normalized visible equation number should be removed from trailing prose");
+
+const numberedDollarDisplayPatch = call(`insertEquationNumberIntoDisplayMath("$$\\nE^S=-15.75A\\n$$", "(2.8)")`);
+assert(numberedDollarDisplayPatch.includes("\\tag{2.8}"), "display math without an explicit environment should receive a LaTeX tag");
+assert(!numberedDollarDisplayPatch.trimEnd().endsWith("(2.8)"), "display math numbers should not be appended as prose");
+
+const renderedNumberedDollarDisplay = call(`renderBlockContent("$$\\nE^S=-15.75A\\n\\\\tag{2.8}\\n$$", { kind: "interline_equation", blockIndex: "0" })`);
+assert(renderedNumberedDollarDisplay.includes("math-display-equation-tag"), "rendered display math should expose a visible equation-number tag");
+assert(renderedNumberedDollarDisplay.includes("(2.8)"), "rendered display math should show the equation number");
+assert(!renderedNumberedDollarDisplay.includes("\\\\tag{2.8}"), "rendered display math should not rely on raw LaTeX tag visibility");
+
+const renderedNumberedAlignedDisplay = call(`renderBlockContent("\\\\begin{aligned}\\nE &= mc^2\\n\\\\tag{2.12}\\n\\\\end{aligned}", { kind: "text", blockIndex: "aligned-numbered" })`);
+assert(renderedNumberedAlignedDisplay.includes("math-display-equation-tag"), "rendered aligned math should expose a visible equation-number tag");
+assert(renderedNumberedAlignedDisplay.includes("(2.12)"), "rendered aligned math should show the equation number");
+
+const preservedFromPriorPatch = JSON.parse(
+  call(`(() => {
+    state.ocrPatches = [];
+    const figure = createAndStoreDraftOcrPatch({
+      pageNo: 21,
+      blockIndex: "caption",
+      oldText: "Selected tests of the Weak Equivalence Principle.",
+      preserveText: "Fig. 2.2 Selected tests of the Weak Equivalence Principle.",
+      newText: "Selected tests of the Weak Equivalence Principle.",
+      source: "mathpix"
+    });
+    const formula = createAndStoreDraftOcrPatch({
+      pageNo: 35,
+      blockIndex: "formula",
+      oldText: "\\\\begin{aligned}\\nE &= mc^2\\n\\\\end{aligned}",
+      preserveText: "Previously accepted formula (2.12)",
+      newText: "\\\\begin{aligned}\\nE &= mc^2\\n\\\\end{aligned}",
+      source: "mathpix"
+    });
+    return JSON.stringify({ figure: figure.normalizedText, formula: formula.normalizedText });
+  })()`),
+);
+assert(preservedFromPriorPatch.figure.includes("Fig. 2.2"), "Mathpix patch should preserve figure labels from prior accepted/context text");
+assert(preservedFromPriorPatch.formula.includes("\\tag{2.12}"), "Mathpix patch should preserve equation numbers from prior accepted/context text");
+
+const preservedCompleteProse = JSON.parse(
+  call(`(() => {
+    state.ocrPatches = [];
+    const result = createAndStoreDraftOcrPatch({
+      pageNo: 42,
+      blockIndex: "footnote",
+      oldText: "The claim by Muller et al. (2010) that these experiments test the gravitational redshift was subsequently shown to be incorrect (Wolf et al., 2011).",
+      newText: "The claim by Müller et al. (2010) that these experiments test the gravitational redshift was subsequently shown",
+      source: "mathpix"
+    });
+    return JSON.stringify(result);
+  })()`),
+);
+assert(preservedCompleteProse.normalizedText.includes("Müller"), "Mathpix prose correction should keep useful corrected text");
+assert(preservedCompleteProse.normalizedText.includes("incorrect (Wolf et al., 2011)."), "Mathpix prose correction should preserve missing original tail text");
 
 const preservedFigurePatch = JSON.parse(
   call(`(() => {

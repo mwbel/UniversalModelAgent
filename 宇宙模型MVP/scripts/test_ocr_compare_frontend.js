@@ -88,6 +88,9 @@ function runOcrCompareInContext(testContext) {
   assert(ocrCompareCss.includes(".accepted-top-actions"));
   assert(ocrCompareCss.includes(".accepted-action-button"));
   assert(ocrCompareCss.includes(".upload-icon svg"));
+  assert(!ocrCompareCss.includes(".hidden-input {\n  display: none;"), "file inputs must stay rendered so upload buttons can open native pickers");
+  assert(ocrCompareCss.includes(".status-detail"));
+  assert(ocrCompareCss.includes(".status-detail[hidden]"));
   assert(ocrCompareCss.includes(".right-workbench-card"));
   assert(ocrCompareCss.includes("height: calc(100vh - 52px)"));
   assert(ocrCompareCss.includes("grid-template-rows: auto minmax(0, 1fr);"));
@@ -130,10 +133,50 @@ function runOcrCompareInContext(testContext) {
           this.clickCount += 1;
         }
       };
+      const showPickerInput = {
+        value: "/tmp/book.json",
+        clickCount: 0,
+        showPickerCount: 0,
+        click() {
+          this.clickCount += 1;
+        },
+        showPicker() {
+          this.showPickerCount += 1;
+        }
+      };
+      const fallbackInput = {
+        value: "/tmp/content_list.json",
+        clickCount: 0,
+        showPickerCount: 0,
+        click() {
+          this.clickCount += 1;
+        },
+        showPicker() {
+          this.showPickerCount += 1;
+          throw new Error("showPicker blocked");
+        }
+      };
+      const blockedInput = {
+        value: "/tmp/workspace.json",
+        click() {
+          throw new Error("click blocked");
+        },
+        showPicker() {
+          throw new Error("showPicker blocked");
+        }
+      };
       return JSON.stringify({
         opened: openFilePicker(input),
         value: input.value,
         clickCount: input.clickCount,
+        showPickerOpened: openFilePicker(showPickerInput),
+        showPickerValue: showPickerInput.value,
+        showPickerCount: showPickerInput.showPickerCount,
+        showPickerClickCount: showPickerInput.clickCount,
+        fallbackOpened: openFilePicker(fallbackInput),
+        fallbackClickCount: fallbackInput.clickCount,
+        fallbackShowPickerCount: fallbackInput.showPickerCount,
+        blockedOpened: openFilePicker(blockedInput),
         missing: openFilePicker(null)
       });
     })()`),
@@ -141,7 +184,17 @@ function runOcrCompareInContext(testContext) {
   assert.strictEqual(pickerResult.opened, true);
   assert.strictEqual(pickerResult.value, "", "file input must reset so selecting the same file fires change again");
   assert.strictEqual(pickerResult.clickCount, 1);
+  assert.strictEqual(pickerResult.showPickerOpened, true);
+  assert.strictEqual(pickerResult.showPickerValue, "", "showPicker path should also reset the file input");
+  assert.strictEqual(pickerResult.showPickerCount, 1);
+  assert.strictEqual(pickerResult.showPickerClickCount, 0);
+  assert.strictEqual(pickerResult.fallbackOpened, true);
+  assert.strictEqual(pickerResult.fallbackShowPickerCount, 1);
+  assert.strictEqual(pickerResult.fallbackClickCount, 1);
+  assert.strictEqual(pickerResult.blockedOpened, false);
   assert.strictEqual(pickerResult.missing, false);
+  assert(source.includes("后端 API 连接失败"));
+  assert(source.includes("showStatusDetail(tone, detailText);"));
   assert(source.includes('setStatus("读取 PDF", "busy", file.name);'));
   assert(source.includes('setStatus("渲染 PDF", "busy", file.name);'));
   assert(source.includes('setStatus("读取 MinerU", "busy", file.name);'));
@@ -3733,6 +3786,8 @@ function setupPreviewBookExpression(pages) {
   assert(canvasResult.correctionCanvas.includes("selected-block-toolbar"), "correction panel should restore the original block correction UI on demand");
   assert(canvasResult.correctionCanvas.includes('data-risk-mathpix="1"'), "correction panel should expose the Mathpix block action");
   assert(canvasResult.correctionCanvas.includes("查看/编辑 MinerU 源码"), "correction panel should expose source editing");
+  assert(canvasResult.correctionCanvas.includes('class="block-source-detail selected-source-detail" open'), "source editor should be expanded by default in the correction panel");
+  assert(canvasResult.correctionCanvas.includes("修改后可保存"), "clean source editor action should clearly explain how to enable saving");
   assert(canvasResult.correctionCanvas.includes('aria-label="收起校正面板"'), "correction panel should expose an explicit collapse action");
   assert(canvasResult.hotspots.includes('data-review-left-hotspot="1:0"'), "block with bbox should render a left-column hotspot");
   assert(canvasResult.hotspots.includes('data-review-left-hotspot="1:1"'), "formula block with bbox should render a left-column hotspot");

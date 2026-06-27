@@ -296,9 +296,12 @@ function bindElements() {
     "pdfInput",
     "mineruInput",
     "contentListInput",
+    "workspaceInput",
     "pickPdfButton",
     "pickMineruButton",
     "pickContentListButton",
+    "exportWorkspaceButton",
+    "importWorkspaceButton",
     "previewAcceptedBookButton",
     "downloadAcceptedCorrectedButton",
     "pageList",
@@ -316,11 +319,14 @@ function initialize() {
   els.pickPdfButton.addEventListener("click", () => openFilePicker(els.pdfInput));
   els.pickMineruButton.addEventListener("click", () => openFilePicker(els.mineruInput));
   els.pickContentListButton.addEventListener("click", () => openFilePicker(els.contentListInput));
+  els.exportWorkspaceButton?.addEventListener("click", exportOcrWorkspaceSnapshot);
+  els.importWorkspaceButton?.addEventListener("click", () => openFilePicker(els.workspaceInput));
   els.previewAcceptedBookButton?.addEventListener("click", toggleAcceptedBookPreview);
   els.downloadAcceptedCorrectedButton?.addEventListener("click", downloadAcceptedCorrectedFromTop);
   els.pdfInput.addEventListener("change", handlePdfChange);
   els.mineruInput.addEventListener("change", handleMineruChange);
   els.contentListInput.addEventListener("change", handleContentListChange);
+  els.workspaceInput?.addEventListener("change", handleWorkspaceImportChange);
   document.addEventListener("pointerdown", handleColumnResizeStart);
   window.addEventListener("resize", schedulePdfFocusSync);
   window.addEventListener("mathjax-ready", () => typesetMath(els.pageList));
@@ -332,8 +338,25 @@ function openFilePicker(input) {
     return false;
   }
   input.value = "";
-  input.click();
-  return true;
+  try {
+    if (typeof input.showPicker === "function") {
+      input.showPicker();
+    } else {
+      input.click();
+    }
+    return true;
+  } catch (error) {
+    try {
+      input.click();
+      return true;
+    } catch (fallbackError) {
+      console.warn("[OCR] File picker could not be opened.", fallbackError || error);
+      if (els.statusBadge) {
+        setStatus("无法打开文件选择器", "error", "请直接使用浏览器打开页面后重试上传按钮。");
+      }
+      return false;
+    }
+  }
 }
 
 async function handlePdfChange() {
@@ -532,19 +555,7 @@ function saveOcrWorkspaceState() {
   if (!storage || !key) {
     return false;
   }
-  const payload = {
-    version: 1,
-    savedAt: new Date().toISOString(),
-    mineruFileName: state.mineruFileName,
-    pageCount: getMineruPageCount() || 0,
-    mineruOverrides: serializePageMap(state.mineruOverrides),
-    mineruBlockOverrides: serializeNestedMap(state.mineruBlockOverrides),
-    mathpixBlockDrafts: serializeNestedMap(state.mathpixBlockDrafts),
-    mathpixCache: serializePageMap(state.mathpixCache),
-    ocrPatches: Array.isArray(state.ocrPatches) ? state.ocrPatches : [],
-    reviewNeedsCorrection: Array.from(state.reviewNeedsCorrection || []),
-    reviewFontScale: state.reviewFontScale,
-  };
+  const payload = buildOcrWorkspacePayload();
   try {
     storage.setItem(key, JSON.stringify(payload));
     return true;
@@ -571,22 +582,114 @@ function restoreOcrWorkspaceState() {
     if (!payload || payload.version !== 1) {
       return false;
     }
-    state.mineruOverrides = restorePageMap(payload.mineruOverrides);
-    state.mineruBlockOverrides = restoreNestedMap(payload.mineruBlockOverrides);
-    state.mathpixBlockDrafts = restoreNestedMap(payload.mathpixBlockDrafts);
-    state.mathpixCache = restorePageMap(payload.mathpixCache);
-    state.ocrPatches = Array.isArray(payload.ocrPatches) ? payload.ocrPatches : [];
-    state.reviewNeedsCorrection = new Set(Array.isArray(payload.reviewNeedsCorrection) ? payload.reviewNeedsCorrection.map(String) : []);
-    state.reviewFontScale = clampReviewFontScale(payload.reviewFontScale);
-    state.acceptedPatchPreview = null;
-    state.acceptedPatchBookPreview = null;
-    return true;
+    return applyOcrWorkspacePayload(payload);
   } catch (error) {
     storage.removeItem(key);
     if (typeof console !== "undefined" && typeof console.warn === "function") {
       console.warn("[OCR Workspace] 已忽略损坏的 Mathpix 校正中间稿缓存。", error);
     }
     return false;
+  }
+}
+
+function buildOcrWorkspacePayload() {
+  return {
+    version: 1,
+    savedAt: new Date().toISOString(),
+    mineruFileName: state.mineruFileName,
+    pageCount: getMineruPageCount() || 0,
+    mineruOverrides: serializePageMap(state.mineruOverrides),
+    mineruBlockOverrides: serializeNestedMap(state.mineruBlockOverrides),
+    mathpixBlockDrafts: serializeNestedMap(state.mathpixBlockDrafts),
+    mathpixCache: serializePageMap(state.mathpixCache),
+    ocrPatches: Array.isArray(state.ocrPatches) ? state.ocrPatches : [],
+    reviewNeedsCorrection: Array.from(state.reviewNeedsCorrection || []),
+    reviewFontScale: state.reviewFontScale,
+  };
+}
+
+function unwrapOcrWorkspacePayload(payload) {
+  if (payload?.workspace?.version === 1) {
+    return payload.workspace;
+  }
+  return payload?.version === 1 ? payload : null;
+}
+
+function applyOcrWorkspacePayload(payload) {
+  const workspace = unwrapOcrWorkspacePayload(payload);
+  if (!workspace) {
+    return false;
+  }
+  state.mineruOverrides = restorePageMap(workspace.mineruOverrides);
+  state.mineruBlockOverrides = restoreNestedMap(workspace.mineruBlockOverrides);
+  state.mathpixBlockDrafts = restoreNestedMap(workspace.mathpixBlockDrafts);
+  state.mathpixCache = restorePageMap(workspace.mathpixCache);
+  state.ocrPatches = Array.isArray(workspace.ocrPatches) ? workspace.ocrPatches : [];
+  state.reviewNeedsCorrection = new Set(Array.isArray(workspace.reviewNeedsCorrection) ? workspace.reviewNeedsCorrection.map(String) : []);
+  state.reviewFontScale = clampReviewFontScale(workspace.reviewFontScale);
+  state.acceptedPatchPreview = null;
+  state.acceptedPatchBookPreview = null;
+  return true;
+}
+
+function exportOcrWorkspaceSnapshot() {
+  if (!state.mineruInfo || !state.mineruFileName) {
+    setStatus("先上传 MinerU JSON", "error");
+    return;
+  }
+  saveOcrWorkspaceState();
+  const payload = {
+    kind: "ocr-review-workbench-workspace",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    sourceUrl: typeof window !== "undefined" ? window.location.href : "",
+    workspace: buildOcrWorkspacePayload(),
+  };
+  const filename = `${safeDownloadBaseName()}-ocr-workspace.json`;
+  downloadJsonFile(filename, payload);
+  setStatus("工作区已导出", "ok", filename);
+}
+
+async function handleWorkspaceImportChange() {
+  const file = els.workspaceInput?.files?.[0] || null;
+  if (!file) {
+    return;
+  }
+  if (!state.mineruInfo || !state.mineruFileName) {
+    setStatus("请先上传同一本 MinerU JSON，再导入工作区", "error");
+    els.workspaceInput.value = "";
+    return;
+  }
+  setStatus("导入工作区", "busy", file.name);
+  try {
+    const text = await readFileAsText(file);
+    const payload = JSON.parse(text);
+    const workspace = unwrapOcrWorkspacePayload(payload);
+    if (!workspace) {
+      throw new Error("不是有效的 OCR 工作区 JSON。");
+    }
+    const importedName = String(workspace.mineruFileName || "");
+    if (importedName && importedName !== state.mineruFileName) {
+      const accepted = typeof window === "undefined" || window.confirm(`工作区来自 ${importedName}，当前 MinerU 是 ${state.mineruFileName}。仍要导入吗？`);
+      if (!accepted) {
+        setStatus("已取消导入", "ok");
+        return;
+      }
+    }
+    if (!applyOcrWorkspacePayload(workspace)) {
+      throw new Error("工作区状态恢复失败。");
+    }
+    saveOcrWorkspaceState();
+    updateCorrectionSummary();
+    updateAcceptedPatchTopControls();
+    await renderCurrentPage();
+    setStatus("工作区已导入", "ok", file.name);
+  } catch (error) {
+    setStatus("导入失败", "error", error.message);
+  } finally {
+    if (els.workspaceInput) {
+      els.workspaceInput.value = "";
+    }
   }
 }
 
@@ -1371,7 +1474,12 @@ function renderReviewCard() {
     button.addEventListener("click", () => autoAddFigureLabelForBlock(button.dataset.autoAddFigureLabel));
   });
   card.querySelectorAll("[data-mathpix-edit], [data-mineru-source-edit]").forEach((editor) => {
-    editor.addEventListener("input", () => updateReviewEditorActionState(editor));
+    const updateEditorState = () => updateReviewEditorActionState(editor);
+    editor.addEventListener("input", updateEditorState);
+    editor.addEventListener("change", updateEditorState);
+    editor.addEventListener("keyup", updateEditorState);
+    editor.addEventListener("compositionend", updateEditorState);
+    editor.addEventListener("paste", () => window.setTimeout(updateEditorState, 0));
     updateReviewEditorActionState(editor);
   });
   if (typeof card.addEventListener === "function") {
@@ -1433,6 +1541,11 @@ function renderAcceptedPatchBookPreviewPanel() {
 
 function updateAcceptedPatchTopControls() {
   const hasAccepted = hasAcceptedOcrPatches();
+  const canExportWorkspace = Boolean(state.mineruInfo && state.mineruFileName);
+  if (els.exportWorkspaceButton) {
+    els.exportWorkspaceButton.disabled = !canExportWorkspace;
+    els.exportWorkspaceButton.title = canExportWorkspace ? "导出当前书的 OCR 校对工作区状态" : "先上传 MinerU JSON";
+  }
   if (els.previewAcceptedBookButton) {
     els.previewAcceptedBookButton.disabled = !hasAccepted;
     els.previewAcceptedBookButton.textContent = "预览整书 accepted 校正稿";
@@ -1802,12 +1915,12 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
           <div class="review-render">
             ${renderBlockContent(segment.markdown, segment)}
           </div>
-          <details class="block-source-detail">
+          <details class="block-source-detail" open>
             <summary>编辑当前块 MinerU Markdown 源码</summary>
-            <textarea class="mathpix-source-editor block-source-editor" data-mineru-source-edit="${escapeHtml(String(segment.blockIndex))}" spellcheck="false">${escapeHtml(segment.markdown)}</textarea>
+            <textarea class="mathpix-source-editor block-source-editor" data-mineru-source-edit="${escapeHtml(String(segment.blockIndex))}" spellcheck="false" aria-label="编辑当前块 MinerU Markdown 源码">${escapeHtml(segment.markdown)}</textarea>
             <div class="mathpix-edit-actions">
-              <button class="text-button" type="button" data-apply-mineru-source-edit="${escapeHtml(String(segment.blockIndex))}" data-disable-when-clean="1" data-clean-label="未修改" data-dirty-label="保存修改并接受" disabled>
-                未修改
+              <button class="text-button" type="button" data-apply-mineru-source-edit="${escapeHtml(String(segment.blockIndex))}" data-disable-when-clean="1" data-clean-label="修改后可保存" data-dirty-label="保存修改并接受" disabled>
+                修改后可保存
               </button>
             </div>
           </details>
@@ -1819,9 +1932,9 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
           <div class="review-render">
             ${renderBlockContent(previewMarkdown, segment)}
           </div>
-          <details class="block-source-detail">
+          <details class="block-source-detail" open>
             <summary>编辑 Markdown 源码（保存后进入 accepted 校正稿）</summary>
-            <textarea class="mathpix-source-editor" data-mathpix-edit="${escapeHtml(String(segment.blockIndex))}" spellcheck="false">${escapeHtml(editableMarkdown)}</textarea>
+            <textarea class="mathpix-source-editor" data-mathpix-edit="${escapeHtml(String(segment.blockIndex))}" spellcheck="false" aria-label="编辑 Mathpix draft 或 accepted Markdown 源码">${escapeHtml(editableMarkdown)}</textarea>
             <div class="mathpix-edit-actions">
               <button class="text-button" type="button" data-apply-mathpix-block-edit="${escapeHtml(String(segment.blockIndex))}" data-dirty-label="保存修改并接受">
                 保存修改并接受
@@ -1906,21 +2019,21 @@ function renderCompactSelectedBlockEditor({ segment, editableMarkdown, hasEditab
   const mineruMarkdown = escapeHtml(String(segment?.markdown || ""));
   const mathpixMarkdown = escapeHtml(String(editableMarkdown || ""));
   const sourceEditorHtml = hasEditableMarkdown
-    ? `<details class="block-source-detail selected-source-detail">
+    ? `<details class="block-source-detail selected-source-detail" open>
         <summary>查看/编辑 Mathpix draft / accepted Markdown</summary>
-        <textarea class="mathpix-source-editor" data-mathpix-edit="${blockIndex}" spellcheck="false">${mathpixMarkdown}</textarea>
+        <textarea class="mathpix-source-editor" data-mathpix-edit="${blockIndex}" spellcheck="false" aria-label="编辑 Mathpix draft 或 accepted Markdown 源码">${mathpixMarkdown}</textarea>
         <div class="mathpix-edit-actions">
           <button class="text-button" type="button" data-apply-mathpix-block-edit="${blockIndex}" data-dirty-label="保存修改并接受">
             保存修改并接受
           </button>
         </div>
       </details>`
-    : `<details class="block-source-detail selected-source-detail">
+    : `<details class="block-source-detail selected-source-detail" open>
         <summary>查看/编辑 MinerU 源码</summary>
-        <textarea class="mathpix-source-editor block-source-editor" data-mineru-source-edit="${blockIndex}" spellcheck="false">${mineruMarkdown}</textarea>
+        <textarea class="mathpix-source-editor block-source-editor" data-mineru-source-edit="${blockIndex}" spellcheck="false" aria-label="编辑 MinerU Markdown 源码">${mineruMarkdown}</textarea>
         <div class="mathpix-edit-actions">
-          <button class="text-button" type="button" data-apply-mineru-source-edit="${blockIndex}" data-disable-when-clean="1" data-clean-label="未修改" data-dirty-label="保存修改并接受" disabled>
-            未修改
+          <button class="text-button" type="button" data-apply-mineru-source-edit="${blockIndex}" data-disable-when-clean="1" data-clean-label="修改后可保存" data-dirty-label="保存修改并接受" disabled>
+            修改后可保存
           </button>
         </div>
       </details>`;
@@ -5897,6 +6010,18 @@ function downloadTextFile(filename, text) {
   URL.revokeObjectURL(url);
 }
 
+function downloadJsonFile(filename, payload) {
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
 function downloadBinaryFile(filename, bytes, mimeType) {
   const blob = new Blob([bytes], { type: mimeType || "application/octet-stream" });
   const url = URL.createObjectURL(blob);
@@ -5910,12 +6035,22 @@ function downloadBinaryFile(filename, bytes, mimeType) {
 }
 
 async function postJson(path, body) {
-  const response = await fetch(apiUrl(path), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  return response.json();
+  const url = apiUrl(path);
+  let response;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch (error) {
+    throw new Error(`后端 API 连接失败：${url}。请确认后端服务已启动，并且 frontend/runtime-config.js 指向的是同一个端口。${error.message || ""}`);
+  }
+  try {
+    return await response.json();
+  } catch (error) {
+    throw new Error(`后端 API 返回内容不是 JSON：${url}。${error.message || ""}`);
+  }
 }
 
 function readFileAsDataUrl(file) {
@@ -6036,9 +6171,33 @@ function normalizeCropPadding(padding = 8) {
 }
 
 function setStatus(text, tone, detail = "") {
-  els.statusBadge.textContent = text;
+  const detailText = String(detail || "");
+  els.statusBadge.textContent = tone === "error" && detailText ? `${text}: ${truncateText(detailText, 42)}` : text;
   els.statusBadge.className = `status-badge ${tone === "busy" ? "is-busy" : tone === "error" ? "is-error" : ""}`;
-  els.statusBadge.title = String(detail || "");
+  els.statusBadge.title = detailText;
+  showStatusDetail(tone, detailText);
+}
+
+function showStatusDetail(tone, detail) {
+  if (typeof document.getElementById !== "function" || typeof document.createElement !== "function") {
+    return;
+  }
+  let panel = document.getElementById("statusDetail");
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "statusDetail";
+    panel.className = "status-detail";
+    panel.setAttribute("role", "status");
+    panel.setAttribute("aria-live", "polite");
+    els.pickPdfButton?.closest?.(".control-band")?.after(panel);
+  }
+  if (tone === "error" && detail) {
+    panel.textContent = detail;
+    panel.hidden = false;
+    return;
+  }
+  panel.textContent = "";
+  panel.hidden = true;
 }
 
 function stripMarkdownFence(text) {

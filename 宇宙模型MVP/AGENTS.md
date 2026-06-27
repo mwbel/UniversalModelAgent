@@ -91,6 +91,31 @@ MVP 规则：
 4. accepted patches 暂时不能静默替换原正式导出。
 5. rejected / noop / conflict patches 不进入 accepted corrected Markdown download。
 
+## 右栏 Markdown / LaTeX 渲染排错备忘
+
+遇到“人工输入的 LaTeX 源码看起来正确，但右栏预览仍然渲染错误”的问题时，先检查右栏 renderer 的 Markdown 结构判定，不要默认认为是 Mathpix 或人工 LaTeX 源码错误。
+
+已踩坑案例：
+
+```markdown
+where $\mathcal{G} = 1 - \zeta + \zeta \left( 1 -2 s_{1} \right) \left( 1 -2 s_{2} \right)$ [see Eq. (10.65)], and
+```
+
+这类行本质是普通段落，内部含 inline math `$...$`。此前右栏 renderer 的 “orphan display math” 修复逻辑把它误判为 display math block，导致 MathJax 在 display math 环境里解析 `where`、`see Eq.` 等普通文本，表现为：
+
+1. 空格被吞掉，例如 `where$...$[seeEq...]`。
+2. 普通英文被数学斜体化。
+3. 人工 textarea 源码正确，但预览仍错。
+4. Mathpix 重校正、人工校正反复保存后仍错。
+
+正确修复方向：
+
+1. 不要通过改 Mathpix API、改人工源码、改 accepted patch 流程来解决此类问题。
+2. 在 `renderMarkdownHtml()` / display math 识别逻辑中，任何候选 orphan display math body 如果包含 inline math delimiter `$...$`，都不能当作 display math body。
+3. 优先添加回归测试，断言该行渲染为 `<p>where $\mathcal{G}` 这种普通段落，而不是 `<div class="math-display-formula">`。
+4. 同时断言不会出现 `where$`、`$[seeEq.`、`)],and` 等被 MathJax display mode 吞空格后的症状。
+5. 仍然保持校正稿经过 `OcrPatch` / `draft` / `accepted`，renderer 只负责正确展示，不负责静默改最终稿。
+
 ## 每次修改后必须运行
 
 ```bash

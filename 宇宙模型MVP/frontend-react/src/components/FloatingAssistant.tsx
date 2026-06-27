@@ -11,6 +11,7 @@ export type FloatingAssistantProps = {
   subtitle?: string
   placeholder?: string
   initialMessage?: string
+  avatarSrc?: string
   disabled?: boolean
   onAsk: (question: string, history: FloatingAssistantMessage[]) => Promise<string>
 }
@@ -24,6 +25,7 @@ export function FloatingAssistant({
   subtitle = '随时问我',
   placeholder = '输入问题...',
   initialMessage = '你好，我在这里。你可以直接问一个问题，或让我解释当前页面里的内容。',
+  avatarSrc = '/floating-assistant-avatar.webp',
   disabled = false,
   onAsk,
 }: FloatingAssistantProps) {
@@ -96,7 +98,7 @@ export function FloatingAssistant({
               title="收起助手"
               aria-label="收起助手"
             >
-              <span />
+              <img src={avatarSrc} alt="" aria-hidden="true" />
             </button>
             <div>
               <strong>{title}</strong>
@@ -146,7 +148,7 @@ export function FloatingAssistant({
           title={title}
           aria-label={title}
         >
-          <span className="floating-assistant-orb" />
+          <img className="floating-assistant-orb" src={avatarSrc} alt="" aria-hidden="true" />
         </button>
       )}
     </div>

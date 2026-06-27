@@ -1,0 +1,49 @@
+# LLM routing model registry for question answering.
+# Keep credentials in .env. This file only names env vars and model capabilities.
+models:
+  - id: local:qwen3.6-27b
+    provider: openai-compatible
+    base_url_env: MODEL_TESTER_BASE_URL
+    api_key_env: MODEL_TESTER_API_KEY
+    chat_path_env: MODEL_TESTER_CHAT_PATH
+    model: qwen3.6-27b:latest
+    capabilities: [chat, chinese, math, reasoning, rag_synthesis]
+    privacy: local
+    cost: free_local
+    latency: medium
+    priority: 82
+
+  - id: local:qwen2.5-14b
+    provider: openai-compatible
+    base_url_env: MODEL_TESTER_BASE_URL
+    api_key_env: MODEL_TESTER_API_KEY
+    chat_path_env: MODEL_TESTER_CHAT_PATH
+    model: qwen2.5:14b
+    capabilities: [chat, chinese, math, rag_synthesis]
+    privacy: local
+    cost: free_local
+    latency: medium
+    priority: 72
+
+  - id: yunwu:gpt-5.5
+    provider: openai-compatible
+    base_url_env: YUNWU_API_BASE_URL
+    api_key_env: YUNWU_API_KEY
+    chat_path_env: YUNWU_CHAT_PATH
+    model_env: YUNWU_GPT55_MODEL
+    capabilities: [chat, chinese, math, reasoning, rag_synthesis, long_context]
+    privacy: remote
+    cost: paid
+    latency: medium
+    priority: 90
+
+  - id: gemini:flash
+    provider: gemini
+    base_url_env: GEMINI_BASE_URL
+    api_keys_env: GEMINI_API_KEYS
+    model: gemini-2.5-flash
+    capabilities: [chat, chinese, math, reasoning, rag_synthesis, long_context]
+    privacy: remote
+    cost: paid
+    latency: fast
+    priority: 76

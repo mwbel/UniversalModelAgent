@@ -46,6 +46,7 @@ const OCR_WORKSPACE_STORAGE_PREFIX = "uma-ocr-compare-workspace-v1";
 const PDF_IMAGE_ZOOM_LEVELS = [1, 1.25, 1.5, 1.75, 2, 2.5];
 const REVIEW_FONT_SCALE_LEVELS = [0.9, 1, 1.1, 1.2, 1.35, 1.5];
 const BLOCK_MATHPIX_CROP_PADDING = { horizontal: 4, vertical: 1 };
+const PDF_FOCUS_BOX_PADDING = { horizontal: 10, vertical: 7 };
 const LEGACY_COLUMN_WIDTHS_KEYS = [
   "uma-ocr-compare-column-widths",
   "uma-ocr-compare-column-fractions-v2",
@@ -1300,11 +1301,15 @@ function pdfFocusMetricsForRisk(risk, imageWidth, imageHeight) {
   const top = clamp(bbox[1] * scaleY, 0, height);
   const right = clamp(bbox[2] * scaleX, left, width);
   const bottom = clamp(bbox[3] * scaleY, top, height);
+  const paddedLeft = clamp(left - PDF_FOCUS_BOX_PADDING.horizontal, 0, width);
+  const paddedTop = clamp(top - PDF_FOCUS_BOX_PADDING.vertical, 0, height);
+  const paddedRight = clamp(right + PDF_FOCUS_BOX_PADDING.horizontal, paddedLeft, width);
+  const paddedBottom = clamp(bottom + PDF_FOCUS_BOX_PADDING.vertical, paddedTop, height);
   return {
-    left: Math.round(left),
-    top: Math.round(top),
-    width: Math.max(10, Math.round(right - left)),
-    height: Math.max(10, Math.round(bottom - top)),
+    left: Math.round(paddedLeft),
+    top: Math.round(paddedTop),
+    width: Math.max(10, Math.round(paddedRight - paddedLeft)),
+    height: Math.max(10, Math.round(paddedBottom - paddedTop)),
   };
 }
 

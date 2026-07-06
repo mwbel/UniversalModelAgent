@@ -699,7 +699,7 @@ textarea {
   pointer-events: none;
   border: 2px solid rgba(37, 99, 235, 0.9);
   border-radius: 4px;
-  background: rgba(37, 99, 235, 0.12);
+  background: rgba(37, 99, 235, 0.04);
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 

@@ -46,7 +46,7 @@ const OCR_WORKSPACE_STORAGE_PREFIX = "uma-ocr-compare-workspace-v1";
 const PDF_IMAGE_ZOOM_LEVELS = [1, 1.25, 1.5, 1.75, 2, 2.5];
 const REVIEW_FONT_SCALE_LEVELS = [0.9, 1, 1.1, 1.2, 1.35, 1.5];
 const BLOCK_MATHPIX_CROP_PADDING = { horizontal: 4, vertical: 1 };
-const PDF_FOCUS_BOX_PADDING = { horizontal: 10, vertical: 7 };
+const PDF_FOCUS_BOX_PADDING = { horizontal: 24, vertical: 14 };
 const LEGACY_COLUMN_WIDTHS_KEYS = [
   "uma-ocr-compare-column-widths",
   "uma-ocr-compare-column-fractions-v2",

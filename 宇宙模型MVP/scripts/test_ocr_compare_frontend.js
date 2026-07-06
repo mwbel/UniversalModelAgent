@@ -2466,7 +2466,7 @@ function setupPreviewBookExpression(pages) {
     })()`),
   );
   assert.deepStrictEqual(result.percent, { left: 20, top: 20, width: 40, height: 6 });
-  assert.deepStrictEqual(result.metrics, { left: 176, top: 386, width: 448, height: 148 });
+  assert.deepStrictEqual(result.metrics, { left: 156, top: 376, width: 488, height: 168 });
   assert.strictEqual(result.missing, null);
 }
 
@@ -2490,10 +2490,10 @@ function setupPreviewBookExpression(pages) {
   );
   assert.strictEqual(result.ok, true);
   assert.strictEqual(result.hidden, false);
-  assert.strictEqual(result.style.left, "226px");
-  assert.strictEqual(result.style.top, "326px");
-  assert.strictEqual(result.style.width, "548px");
-  assert.strictEqual(result.style.height, "130px");
+  assert.strictEqual(result.style.left, "206px");
+  assert.strictEqual(result.style.top, "316px");
+  assert.strictEqual(result.style.width, "588px");
+  assert.strictEqual(result.style.height, "150px");
   assert.strictEqual(result.scrolled.top, 191);
   assert.strictEqual(result.scrolled.left, 200);
 }

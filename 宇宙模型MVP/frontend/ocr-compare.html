@@ -21,6 +21,7 @@
       <input id="pdfInput" class="hidden-input" type="file" accept=".pdf,application/pdf,image/*">
       <input id="mineruInput" class="hidden-input" type="file" accept=".json,application/json">
       <input id="contentListInput" class="hidden-input" type="file" accept=".json,application/json">
+      <input id="chunksDirectoryInput" class="hidden-input" type="file" webkitdirectory directory multiple>
       <input id="workspaceInput" class="hidden-input" type="file" accept=".json,application/json">
       <div class="control-column control-column-pdf" aria-label="上传 OCR 输入文件">
         <button id="pickPdfButton" class="primary-button upload-button" type="button">
@@ -52,6 +53,16 @@
             </svg>
           </span>
           <span>上传 content_list (可选)</span>
+        </button>
+        <button id="pickChunksDirectoryButton" class="secondary-button upload-button" type="button">
+          <span class="upload-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 3v12"></path>
+              <path d="m7 8 5-5 5 5"></path>
+              <path d="M5 15v4h14v-4"></path>
+            </svg>
+          </span>
+          <span>补传 chunks 目录</span>
         </button>
         <div class="workspace-transfer-actions" aria-label="OCR 工作区迁移">
           <button id="exportWorkspaceButton" class="secondary-button workspace-transfer-button" type="button" disabled>

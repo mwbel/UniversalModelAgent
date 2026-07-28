@@ -18,8 +18,10 @@ const state = {
   pdfTextPageCache: new Map(),
   mineruInfo: null,
   mineruFileName: "",
+  mineruRawText: "",
   contentListItems: [],
   contentListFileName: "",
+  contentListRawText: "",
   mineruOverrides: new Map(),
   mineruBlockOverrides: new Map(),
   mathpixBlockDrafts: new Map(),
@@ -35,6 +37,12 @@ const state = {
   pdfImageZoom: DEFAULT_PDF_IMAGE_ZOOM,
   reviewFontScale: DEFAULT_REVIEW_FONT_SCALE,
   middleColumnCollapsed: false,
+  remoteBookId: "",
+  remoteOwnerUserId: "",
+  remoteWorkbenchRole: "",
+  remoteBook: null,
+  remoteStateLoaded: false,
+  remoteSyncBusy: false,
   busy: false,
 };
 state.ocrPatches = state.ocrPatches || [];
@@ -43,6 +51,9 @@ const els = {};
 const COLUMN_WIDTHS_KEY = "uma-ocr-compare-column-ratios-v6";
 const MIDDLE_COLUMN_COLLAPSED_KEY = "uma-ocr-compare-middle-collapsed-v1";
 const OCR_WORKSPACE_STORAGE_PREFIX = "uma-ocr-compare-workspace-v1";
+const OCR_WORKBENCH_BOOK_ID_PREFIX = "uma-ocr-workbench-book-id-v1";
+const OCR_WORKBENCH_OWNER_KEY = "uma-ocr-workbench-owner-id-v1";
+const OCR_WORKBENCH_ROLE_KEY = "uma-ocr-workbench-role-v1";
 const PDF_IMAGE_ZOOM_LEVELS = [1, 1.25, 1.5, 1.75, 2, 2.5];
 const REVIEW_FONT_SCALE_LEVELS = [0.9, 1, 1.1, 1.2, 1.35, 1.5];
 const BLOCK_MATHPIX_CROP_PADDING = { horizontal: 4, vertical: 1 };
@@ -292,15 +303,375 @@ function apiUrl(path) {
   return `${API_BASE}${path}`;
 }
 
+function initializeRemoteWorkbenchState() {
+  const ownerFromConfig = String(RUNTIME_CONFIG.ocrWorkbenchOwnerId || RUNTIME_CONFIG.ownerUserId || "").trim();
+  const ownerFromUrl = queryParam("owner_user_id") || queryParam("ownerUserId");
+  const storedOwner = safeLocalStorageGet(OCR_WORKBENCH_OWNER_KEY);
+  const owner = ownerFromConfig || ownerFromUrl || storedOwner || "local-owner";
+  state.remoteOwnerUserId = owner;
+  safeLocalStorageSet(OCR_WORKBENCH_OWNER_KEY, owner);
+  const storedRole = safeLocalStorageGet(OCR_WORKBENCH_ROLE_KEY);
+  const roleFromUrl = queryParam("role") || queryParam("collaborationRole");
+  state.remoteWorkbenchRole = normalizeWorkbenchRole(roleFromUrl || storedRole || "marker");
+  safeLocalStorageSet(OCR_WORKBENCH_ROLE_KEY, state.remoteWorkbenchRole);
+  state.remoteBookId = queryParam("book_id") || queryParam("bookId") || "";
+  state.remoteBook = null;
+}
+
+function restoreRemoteBookIdForCurrentWorkspace() {
+  if (state.remoteBookId) {
+    return state.remoteBookId;
+  }
+  const key = remoteBookStorageKey();
+  if (!key) {
+    return "";
+  }
+  state.remoteBookId = safeLocalStorageGet(key);
+  return state.remoteBookId;
+}
+
+function remoteBookStorageKey() {
+  const workspaceKey = ocrWorkspaceStorageKey();
+  return workspaceKey ? `${OCR_WORKBENCH_BOOK_ID_PREFIX}:${workspaceKey}` : "";
+}
+
+function normalizeWorkbenchRole(role) {
+  const normalized = String(role || "").trim().toLowerCase();
+  if (["owner", "marker", "editor"].includes(normalized)) {
+    return normalized;
+  }
+  return "viewer";
+}
+
+function isRemoteWorkbenchActive() {
+  return Boolean(state.remoteBookId || state.remoteBook || state.remoteStateLoaded);
+}
+
+function canCurrentUserCreateDraftPatch() {
+  if (!isRemoteWorkbenchActive()) {
+    return true;
+  }
+  return ["owner", "marker", "editor"].includes(state.remoteWorkbenchRole || "viewer");
+}
+
+function canCurrentUserResolveDraftPatch() {
+  if (!isRemoteWorkbenchActive()) {
+    return true;
+  }
+  return ["owner", "editor"].includes(state.remoteWorkbenchRole || "viewer");
+}
+
+function applyRemoteWorkbenchPermission(responseBook) {
+  const ownerId = String(responseBook?.ownerUserId || "").trim();
+  if (state.remoteOwnerUserId && state.remoteOwnerUserId === ownerId) {
+    state.remoteWorkbenchRole = "owner";
+    return;
+  }
+  const participants = Array.isArray(responseBook?.participants) ? responseBook.participants : [];
+  const participant = participants.find((item) => String(item?.userId || "").trim() === state.remoteOwnerUserId);
+  state.remoteWorkbenchRole = normalizeWorkbenchRole(participant?.role);
+}
+
+function patchActionLabelForCurrentRole() {
+  if (canCurrentUserResolveDraftPatch()) {
+    return "保存修改并接受";
+  }
+  if (canCurrentUserCreateDraftPatch()) {
+    return "保存修改";
+  }
+  return "无编辑权限";
+}
+
+function queryParam(name) {
+  try {
+    if (typeof URLSearchParams === "undefined" || typeof window === "undefined" || !window.location?.search) {
+      return "";
+    }
+    return String(new URLSearchParams(window.location.search).get(name) || "").trim();
+  } catch (error) {
+    return "";
+  }
+}
+
+function safeLocalStorageGet(key) {
+  try {
+    return String(globalThis.localStorage?.getItem(key) || "");
+  } catch (error) {
+    return "";
+  }
+}
+
+function safeLocalStorageSet(key, value) {
+  try {
+    globalThis.localStorage?.setItem(key, String(value || ""));
+  } catch (error) {
+    // localStorage is a convenience cache only; service state remains authoritative.
+  }
+}
+
+async function ensureRemoteWorkbenchBook() {
+  if (state.remoteBookId || state.remoteSyncBusy || !state.pdfDataUrl || !state.mineruInfo || !state.mineruFileName) {
+    return false;
+  }
+  state.remoteSyncBusy = true;
+  try {
+    const files = [
+      {
+        fileType: "original_pdf",
+        name: state.pdfFile?.name || "original.pdf",
+        mimeType: state.pdfFile?.type || "application/pdf",
+        dataUrl: state.pdfDataUrl,
+      },
+      {
+        fileType: "middle_json",
+        name: state.mineruFileName,
+        mimeType: "application/json",
+        text: state.mineruRawText || JSON.stringify(state.mineruInfo),
+      },
+    ];
+    if (state.contentListRawText && state.contentListFileName) {
+      files.push({
+        fileType: "content_list",
+        name: state.contentListFileName,
+        mimeType: "application/json",
+        text: state.contentListRawText,
+      });
+    }
+    const response = await postJson("/api/ocr-workbench/books", {
+      title: safeDownloadBaseName(),
+      ownerUserId: state.remoteOwnerUserId || "local-owner",
+      ownerName: state.remoteOwnerUserId || "local-owner",
+      pageCount: getMineruPageCount() || state.pdfPageCount || 0,
+      files,
+    });
+    if (!response.ok || !response.book?.id) {
+      throw new Error(response.error || "创建远程 OCR 工作区失败");
+    }
+    state.remoteBookId = response.book.id;
+    state.remoteBook = response.book || null;
+    state.remoteWorkbenchRole = "owner";
+    state.remoteStateLoaded = true;
+    safeLocalStorageSet(remoteBookStorageKey(), state.remoteBookId);
+    setStatus("远程工作区已创建", "ok", state.remoteBookId);
+    return true;
+  } catch (error) {
+    warnRemoteWorkbench("远程工作区创建失败，继续使用本地工作区缓存。", error);
+    return false;
+  } finally {
+    state.remoteSyncBusy = false;
+  }
+}
+
+async function restoreRemoteOcrWorkbenchState() {
+  if (!state.remoteBookId || state.remoteStateLoaded) {
+    return false;
+  }
+  try {
+    const response = await getJson(`/api/ocr-workbench/books/${encodeURIComponent(state.remoteBookId)}/state`);
+    if (!response.ok) {
+      throw new Error(response.error || "远程 OCR 工作区不存在");
+    }
+    state.remoteBook = response.book || null;
+    applyRemoteWorkbenchPermission(response.book || null);
+    if (Array.isArray(response.ocrPatches)) {
+      state.ocrPatches = response.ocrPatches.map(remotePatchToLocalPatch);
+      state.acceptedPatchPreview = null;
+      state.acceptedPatchBookPreview = null;
+    }
+    state.remoteStateLoaded = true;
+    return true;
+  } catch (error) {
+    warnRemoteWorkbench("远程 OCR 工作区恢复失败，继续使用本地缓存。", error);
+    return false;
+  }
+}
+
+async function uploadRemoteWorkbenchFiles(files) {
+  if (!state.remoteBookId || !Array.isArray(files) || !files.length) {
+    return false;
+  }
+  try {
+    const response = await postJson(
+      `/api/ocr-workbench/books/${encodeURIComponent(state.remoteBookId)}/files`,
+      {
+        createdBy: state.remoteOwnerUserId || "local-owner",
+        files,
+      },
+    );
+    if (!response.ok) {
+      throw new Error(response.error || "远程文件保存失败");
+    }
+    return true;
+  } catch (error) {
+    warnRemoteWorkbench("远程文件保存失败，继续使用本地文件。", error);
+    return false;
+  }
+}
+
+function buildRemoteChunksFilePayloads(files) {
+  return Array.from(files || [])
+    .filter((file) => file && !String(file.name || "").startsWith("."))
+    .map((file) => {
+      const rawPath = String(file.webkitRelativePath || file.relativePath || file.name || "");
+      const relativePath = normalizeChunksRelativePath(rawPath);
+      return {
+        fileType: "mineru_chunk",
+        name: String(file.name || relativePath.split("/").pop() || "chunk-file"),
+        relativePath,
+        mimeType: String(file.type || guessMimeTypeForPath(relativePath)),
+        file,
+      };
+    })
+    .filter((file) => file.relativePath && !file.relativePath.split("/").some((part) => part.startsWith(".")));
+}
+
+function normalizeChunksRelativePath(value) {
+  const parts = String(value || "")
+    .replace(/\\/g, "/")
+    .split("/")
+    .filter((part) => part && part !== "." && part !== "..");
+  if (!parts.length) {
+    return "";
+  }
+  if (parts[0] !== "chunks") {
+    parts.unshift("chunks");
+  }
+  return parts.join("/");
+}
+
+function guessMimeTypeForPath(path) {
+  const lowered = String(path || "").toLowerCase();
+  if (lowered.endsWith(".json")) {
+    return "application/json";
+  }
+  if (lowered.endsWith(".md") || lowered.endsWith(".markdown")) {
+    return "text/markdown";
+  }
+  if (lowered.endsWith(".txt")) {
+    return "text/plain";
+  }
+  return "application/octet-stream";
+}
+
+function remotePatchToLocalPatch(patch) {
+  return {
+    patchId: String(patch?.patchId || patch?.id || ""),
+    blockId: String(patch?.blockId || patch?.blockKey || ""),
+    oldHash: String(patch?.oldHash || ""),
+    newText: String(patch?.newText || ""),
+    source: String(patch?.source || "human"),
+    status: String(patch?.status || "draft"),
+    createdAt: String(patch?.createdAt || ""),
+    updatedAt: String(patch?.updatedAt || ""),
+    metadata: patch?.metadata && typeof patch.metadata === "object" ? { ...patch.metadata } : {},
+  };
+}
+
+function localPatchToRemotePatch(patch, status = "") {
+  return {
+    patchId: patch?.patchId,
+    blockKey: patch?.blockId,
+    blockId: patch?.blockId,
+    pageNo: Number(patch?.metadata?.pageNo) || null,
+    status: status || patch?.status || "draft",
+    source: patch?.source || "human",
+    oldHash: patch?.oldHash || "",
+    newText: patch?.newText || "",
+    metadata: patch?.metadata || {},
+    createdBy: state.remoteOwnerUserId || "local-owner",
+    updatedBy: state.remoteOwnerUserId || "local-owner",
+  };
+}
+
+async function persistRemoteOcrPatch(patch) {
+  if (!state.remoteBookId || !patch?.patchId) {
+    return false;
+  }
+  if (!canCurrentUserCreateDraftPatch() && patch.status === "draft") {
+    warnRemoteWorkbench(`当前角色 ${state.remoteWorkbenchRole || "viewer"} 无权记录 draft patch`);
+    return false;
+  }
+  try {
+    const response = await postJson(
+      `/api/ocr-workbench/books/${encodeURIComponent(state.remoteBookId)}/patches`,
+      localPatchToRemotePatch(patch),
+    );
+    if (!response.ok) {
+      throw new Error(response.error || "远程 patch 保存失败");
+    }
+    return true;
+  } catch (error) {
+    warnRemoteWorkbench("远程 patch 保存失败，本地缓存仍已保存。", error);
+    return false;
+  }
+}
+
+async function persistRemoteOcrPatchStatus(patch, status) {
+  if (!state.remoteBookId || !patch?.patchId) {
+    return { ok: true, reason: "" };
+  }
+  try {
+    const response = await postJson(
+      `/api/ocr-workbench/books/${encodeURIComponent(state.remoteBookId)}/patches/${encodeURIComponent(patch.patchId)}/status`,
+      {
+        status,
+        updatedBy: state.remoteOwnerUserId || "local-owner",
+      },
+    );
+    if (!response.ok) {
+      throw new Error(response.error || "远程 patch 状态保存失败");
+    }
+    return { ok: true, reason: "" };
+  } catch (error) {
+    warnRemoteWorkbench("远程 patch 状态保存失败，本地状态未变更。", error);
+    return { ok: false, reason: error?.message || "remote_status_save_failed" };
+  }
+}
+
+async function persistRemoteAcceptedExport(markdown, status, preview) {
+  if (!state.remoteBookId || !markdown) {
+    return false;
+  }
+  try {
+    const response = await postJson(
+      `/api/ocr-workbench/books/${encodeURIComponent(state.remoteBookId)}/exports/accepted/markdown`,
+      {
+        createdBy: state.remoteOwnerUserId || "local-owner",
+        markdown,
+        metadata: {
+          downloadStatus: status?.status || "",
+          acceptedPatchCount: preview?.acceptedPatchCount || 0,
+          appliedPatchCount: preview?.appliedPatchCount || 0,
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error(response.error || "远程 accepted 导出保存失败");
+    }
+    return true;
+  } catch (error) {
+    warnRemoteWorkbench("远程 accepted 导出保存失败，本地下载仍已执行。", error);
+    return false;
+  }
+}
+
+function warnRemoteWorkbench(message, error) {
+  if (typeof console !== "undefined" && typeof console.warn === "function") {
+    console.warn(`[OCR Workbench] ${message}`, error || "");
+  }
+}
+
 function bindElements() {
   [
     "pdfInput",
     "mineruInput",
     "contentListInput",
+    "chunksDirectoryInput",
     "workspaceInput",
     "pickPdfButton",
     "pickMineruButton",
     "pickContentListButton",
+    "pickChunksDirectoryButton",
     "exportWorkspaceButton",
     "importWorkspaceButton",
     "previewAcceptedBookButton",
@@ -314,12 +685,14 @@ function bindElements() {
 
 function initialize() {
   bindElements();
+  initializeRemoteWorkbenchState();
   restoreColumnWidths();
   restoreMiddleColumnCollapsed();
   applyMiddleColumnCollapsedState();
   els.pickPdfButton.addEventListener("click", () => openFilePicker(els.pdfInput));
   els.pickMineruButton.addEventListener("click", () => openFilePicker(els.mineruInput));
   els.pickContentListButton.addEventListener("click", () => openFilePicker(els.contentListInput));
+  els.pickChunksDirectoryButton?.addEventListener("click", () => openFilePicker(els.chunksDirectoryInput));
   els.exportWorkspaceButton?.addEventListener("click", exportOcrWorkspaceSnapshot);
   els.importWorkspaceButton?.addEventListener("click", () => openFilePicker(els.workspaceInput));
   els.previewAcceptedBookButton?.addEventListener("click", toggleAcceptedBookPreview);
@@ -327,6 +700,7 @@ function initialize() {
   els.pdfInput.addEventListener("change", handlePdfChange);
   els.mineruInput.addEventListener("change", handleMineruChange);
   els.contentListInput.addEventListener("change", handleContentListChange);
+  els.chunksDirectoryInput?.addEventListener("change", handleChunksDirectoryChange);
   els.workspaceInput?.addEventListener("change", handleWorkspaceImportChange);
   document.addEventListener("pointerdown", handleColumnResizeStart);
   window.addEventListener("resize", schedulePdfFocusSync);
@@ -392,7 +766,10 @@ async function handlePdfChange() {
     if (state.mineruInfo) {
       analyzeCurrentMineruRiskPage();
       restoreOcrWorkspaceState();
+      restoreRemoteBookIdForCurrentWorkspace();
+      await restoreRemoteOcrWorkbenchState();
     }
+    await ensureRemoteWorkbenchBook();
     updatePager();
     await renderCurrentPage();
     if (state.mineruInfo) {
@@ -420,6 +797,9 @@ async function handleMineruChange() {
     }
     state.mineruInfo = data;
     state.mineruFileName = file.name;
+    state.mineruRawText = text;
+    state.remoteBookId = queryParam("book_id") || queryParam("bookId") || "";
+    state.remoteStateLoaded = false;
     state.mineruOverrides.clear();
     state.mineruBlockOverrides.clear();
     state.mathpixBlockDrafts.clear();
@@ -435,6 +815,9 @@ async function handleMineruChange() {
       state.pdfPageCount = pdfInfo.length;
     }
     restoreOcrWorkspaceState();
+    restoreRemoteBookIdForCurrentWorkspace();
+    await restoreRemoteOcrWorkbenchState();
+    await ensureRemoteWorkbenchBook();
     updatePager();
     await renderCurrentPage();
     scheduleMineruRiskAnalysis();
@@ -442,6 +825,7 @@ async function handleMineruChange() {
   } catch (error) {
     setStatus("Error", "error", error.message);
     state.mineruInfo = null;
+    state.mineruRawText = "";
     state.mineruOverrides.clear();
     state.mineruBlockOverrides.clear();
     state.mathpixBlockDrafts.clear();
@@ -471,11 +855,23 @@ async function handleContentListChange() {
     }
     state.contentListItems = items;
     state.contentListFileName = file.name;
+    state.contentListRawText = text;
     state.riskByPage.clear();
     cancelScheduledRiskAnalysis();
     state.reviewExpanded.clear();
     state.reviewInitializedPages.clear();
     analyzeCurrentMineruRiskPage();
+    const createdRemoteBook = await ensureRemoteWorkbenchBook();
+    if (!createdRemoteBook && state.remoteBookId) {
+      uploadRemoteWorkbenchFiles([
+        {
+          fileType: "content_list",
+          name: state.contentListFileName,
+          mimeType: "application/json",
+          text: state.contentListRawText,
+        },
+      ]);
+    }
     updatePager();
     updateCorrectionSummary();
     await renderCurrentPage();
@@ -485,6 +881,7 @@ async function handleContentListChange() {
     setStatus("Error", "error", error.message);
     state.contentListItems = [];
     state.contentListFileName = "";
+    state.contentListRawText = "";
     state.riskByPage.clear();
     cancelScheduledRiskAnalysis();
     analyzeCurrentMineruRiskPage();
@@ -492,6 +889,42 @@ async function handleContentListChange() {
     updateCorrectionSummary();
     await renderCurrentPage();
     scheduleMineruRiskAnalysis();
+  }
+}
+
+async function handleChunksDirectoryChange() {
+  const files = buildRemoteChunksFilePayloads(els.chunksDirectoryInput?.files || []);
+  if (!files.length) {
+    setStatus("未发现 chunks 文件", "error", "请选择包含 part_* 子目录的 chunks 文件夹。");
+    return;
+  }
+  setStatus("补传 chunks 目录", "busy", `${files.length} 个文件`);
+  try {
+    const createdRemoteBook = await ensureRemoteWorkbenchBook();
+    if (!createdRemoteBook && !state.remoteBookId) {
+      throw new Error("请先上传 PDF 和 MinerU JSON，或打开已有远程 book_id。");
+    }
+    const payloads = [];
+    for (const file of files) {
+      payloads.push({
+        fileType: file.fileType,
+        name: file.name,
+        relativePath: file.relativePath,
+        mimeType: file.mimeType,
+        dataUrl: await readFileAsDataUrl(file.file),
+      });
+    }
+    const uploaded = await uploadRemoteWorkbenchFiles(payloads);
+    if (!uploaded) {
+      throw new Error("远程文件保存失败");
+    }
+    setStatus("chunks 目录已补传", "ok", `${payloads.length} 个文件`);
+  } catch (error) {
+    setStatus("chunks 补传失败", "error", error.message);
+  } finally {
+    if (els.chunksDirectoryInput) {
+      els.chunksDirectoryInput.value = "";
+    }
   }
 }
 
@@ -505,8 +938,10 @@ function resetPage() {
   state.pdfTextPageCache.clear();
   state.mineruInfo = null;
   state.mineruFileName = "";
+  state.mineruRawText = "";
   state.contentListItems = [];
   state.contentListFileName = "";
+  state.contentListRawText = "";
   state.mineruOverrides.clear();
   state.mineruBlockOverrides.clear();
   state.mathpixBlockDrafts.clear();
@@ -519,10 +954,14 @@ function resetPage() {
   state.reviewExpanded.clear();
   state.reviewInitializedPages.clear();
   state.pdfImageZoom = DEFAULT_PDF_IMAGE_ZOOM;
+  state.remoteStateLoaded = false;
   state.busy = false;
   els.pdfInput.value = "";
   els.mineruInput.value = "";
   els.contentListInput.value = "";
+  if (els.chunksDirectoryInput) {
+    els.chunksDirectoryInput.value = "";
+  }
   els.pageList.innerHTML = '<div class="empty-state">选择原书 PDF，再选择对应的 MinerU `_middle.json`。优先点击高风险块，只对该块调用 Mathpix。</div>';
   updatePager();
   setStatus("Ready", "ok");
@@ -1520,10 +1959,13 @@ function renderReviewCard() {
   card.querySelector("[data-next-risk-page]")?.addEventListener("click", () => goToNextRiskPage());
   card.querySelectorAll("[data-ocr-patch-status-action]").forEach((button) => {
     button.addEventListener("click", async () => {
-      const result = updateOcrPatchStatus(button.dataset.ocrPatchId, button.dataset.ocrPatchStatusAction);
+      const result = await updateOcrPatchStatus(button.dataset.ocrPatchId, button.dataset.ocrPatchStatusAction);
       state.acceptedPatchPreview = null;
       state.acceptedPatchBookPreview = null;
-      setStatus(result.ok ? `Patch ${result.patch.status}` : "Patch unchanged", result.ok ? "ok" : "error");
+      setStatus(
+        result.ok ? `Patch ${result.patch?.status || "updated"}` : `Patch unchanged: ${result.reason || "unknown"}`,
+        result.ok ? "ok" : "error",
+      );
       await renderCurrentPage();
     });
   });
@@ -1914,6 +2356,8 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
     : isCrossPage
       ? `跨页候选 · ${displayBlockLabel}`
       : displayBlockLabel;
+  const patchActionLabel = patchActionLabelForCurrentRole();
+  const canCreateDraftPatch = canCurrentUserCreateDraftPatch();
   const mineruPaneHtml = `
         <section class="review-pane mineru-review-pane">
           <div class="review-pane-title">MinerU 渲染</div>
@@ -1924,7 +2368,7 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
             <summary>编辑当前块 MinerU Markdown 源码</summary>
             <textarea class="mathpix-source-editor block-source-editor" data-mineru-source-edit="${escapeHtml(String(segment.blockIndex))}" spellcheck="false" aria-label="编辑当前块 MinerU Markdown 源码">${escapeHtml(segment.markdown)}</textarea>
             <div class="mathpix-edit-actions">
-              <button class="text-button" type="button" data-apply-mineru-source-edit="${escapeHtml(String(segment.blockIndex))}" data-disable-when-clean="1" data-clean-label="修改后可保存" data-dirty-label="保存修改并接受" disabled>
+              <button class="text-button" type="button" data-apply-mineru-source-edit="${escapeHtml(String(segment.blockIndex))}" data-disable-when-clean="1" data-clean-label="修改后可保存" data-dirty-label="${escapeHtml(patchActionLabel)}" ${canCreateDraftPatch ? "" : "disabled"}>
                 修改后可保存
               </button>
             </div>
@@ -1941,8 +2385,8 @@ function renderReviewItem(segment, risk, correctedMarkdown, corrected, mathpixDr
             <summary>编辑 Markdown 源码（保存后进入 accepted 校正稿）</summary>
             <textarea class="mathpix-source-editor" data-mathpix-edit="${escapeHtml(String(segment.blockIndex))}" spellcheck="false" aria-label="编辑 Mathpix draft 或 accepted Markdown 源码">${escapeHtml(editableMarkdown)}</textarea>
             <div class="mathpix-edit-actions">
-              <button class="text-button" type="button" data-apply-mathpix-block-edit="${escapeHtml(String(segment.blockIndex))}" data-dirty-label="保存修改并接受">
-                保存修改并接受
+              <button class="text-button" type="button" data-apply-mathpix-block-edit="${escapeHtml(String(segment.blockIndex))}" data-dirty-label="${escapeHtml(patchActionLabel)}">
+                ${escapeHtml(patchActionLabel)}
               </button>
             </div>
           </details>
@@ -2023,13 +2467,15 @@ function renderCompactSelectedBlockEditor({ segment, editableMarkdown, hasEditab
   const blockIndex = escapeHtml(String(segment?.blockIndex ?? ""));
   const mineruMarkdown = escapeHtml(String(segment?.markdown || ""));
   const mathpixMarkdown = escapeHtml(String(editableMarkdown || ""));
+  const patchActionLabel = patchActionLabelForCurrentRole();
+  const canCreateDraftPatch = canCurrentUserCreateDraftPatch();
   const sourceEditorHtml = hasEditableMarkdown
     ? `<details class="block-source-detail selected-source-detail" open>
         <summary>查看/编辑 Mathpix draft / accepted Markdown</summary>
         <textarea class="mathpix-source-editor" data-mathpix-edit="${blockIndex}" spellcheck="false" aria-label="编辑 Mathpix draft 或 accepted Markdown 源码">${mathpixMarkdown}</textarea>
         <div class="mathpix-edit-actions">
-          <button class="text-button" type="button" data-apply-mathpix-block-edit="${blockIndex}" data-dirty-label="保存修改并接受">
-            保存修改并接受
+          <button class="text-button" type="button" data-apply-mathpix-block-edit="${blockIndex}" data-dirty-label="${escapeHtml(patchActionLabel)}" ${canCreateDraftPatch ? "" : "disabled"}>
+            ${escapeHtml(patchActionLabel)}
           </button>
         </div>
       </details>`
@@ -2037,7 +2483,7 @@ function renderCompactSelectedBlockEditor({ segment, editableMarkdown, hasEditab
         <summary>查看/编辑 MinerU 源码</summary>
         <textarea class="mathpix-source-editor block-source-editor" data-mineru-source-edit="${blockIndex}" spellcheck="false" aria-label="编辑 MinerU Markdown 源码">${mineruMarkdown}</textarea>
         <div class="mathpix-edit-actions">
-          <button class="text-button" type="button" data-apply-mineru-source-edit="${blockIndex}" data-disable-when-clean="1" data-clean-label="修改后可保存" data-dirty-label="保存修改并接受" disabled>
+          <button class="text-button" type="button" data-apply-mineru-source-edit="${blockIndex}" data-disable-when-clean="1" data-clean-label="修改后可保存" data-dirty-label="${escapeHtml(patchActionLabel)}" ${canCreateDraftPatch ? "" : "disabled"}>
             修改后可保存
           </button>
         </div>
@@ -2055,16 +2501,26 @@ function updateReviewEditorActionState(editor) {
   if (!button) {
     return false;
   }
+  if (!canCurrentUserCreateDraftPatch()) {
+    button.disabled = true;
+    button.textContent = button.dataset?.dirtyLabel || patchActionLabelForCurrentRole() || "无编辑权限";
+    return false;
+  }
   const currentValue = String(editor.value || "");
   const initialValue = String(editor.defaultValue ?? "");
   const isDirty = currentValue !== initialValue;
   if (button.dataset?.disableWhenClean === "1") {
     button.disabled = !isDirty;
-    button.textContent = isDirty ? button.dataset.dirtyLabel || "保存修改并接受" : button.dataset.cleanLabel || "未修改";
+    button.textContent = isDirty ? button.dataset.dirtyLabel || patchActionLabelForCurrentRole() || "保存修改" : button.dataset.cleanLabel || "未修改";
+    if (button.dataset?.cleanLabel) {
+      button.disabled = !isDirty;
+    }
     return isDirty;
   }
   if (button.dataset?.dirtyLabel && isDirty) {
     button.textContent = button.dataset.dirtyLabel;
+  } else {
+    button.textContent = patchActionLabelForCurrentRole();
   }
   return isDirty;
 }
@@ -2072,6 +2528,13 @@ function updateReviewEditorActionState(editor) {
 function renderOcrPatchStatusControls(patch) {
   if (!patch || patch.status !== "draft") {
     return "";
+  }
+  if (!canCurrentUserResolveDraftPatch()) {
+    return `
+      <div class="ocr-patch-status" data-ocr-patch-id="${escapeHtml(String(patch.patchId || ""))}" data-ocr-patch-status="${escapeHtml(String(patch.status || ""))}">
+        待主审处理
+      </div>
+    `;
   }
   const status = String(patch.status || "");
   const patchId = String(patch.patchId || "");
@@ -2256,6 +2719,10 @@ async function jumpToCrossPageBlock(pageNumber, blockIndex) {
 }
 
 async function applyMathpixBlockEdit(blockIndex, trigger) {
+  if (!canCurrentUserCreateDraftPatch()) {
+    setStatus("当前角色无权保存校对稿", "error");
+    return;
+  }
   const blockKey = String(blockIndex || "");
   if (!blockKey) {
     return;
@@ -2269,6 +2736,10 @@ async function applyMathpixBlockEdit(blockIndex, trigger) {
 }
 
 async function applyMineruSourceEdit(blockIndex, trigger) {
+  if (!canCurrentUserCreateDraftPatch()) {
+    setStatus("当前角色无权保存校对稿", "error");
+    return;
+  }
   const blockKey = String(blockIndex || "");
   if (!blockKey) {
     return;
@@ -2375,6 +2846,9 @@ function applyAutomaticLocalCorrectionsForPage(pageNumber) {
 }
 
 function saveAutomaticAcceptedBlockPatch(pageNo, blockKey, oldMarkdown, newMarkdown, autoCorrection = "plain_text_cleanup") {
+  if (!canCurrentUserCreateDraftPatch()) {
+    return false;
+  }
   const patchResult = createAndStoreDraftOcrPatch({
     pageNo,
     blockIndex: blockKey,
@@ -2390,9 +2864,15 @@ function saveAutomaticAcceptedBlockPatch(pageNo, blockKey, oldMarkdown, newMarkd
     ...(patch.metadata || {}),
     autoCorrection,
   };
-  if (patch.status === "draft") {
-    rejectPriorOcrPatchesForBlock(patch.blockId, patch.patchId);
-    updateOcrPatchStatus(patch.patchId, "accepted");
+  if (patch.status === "draft" && canCurrentUserResolveDraftPatch()) {
+    const statusResult = updateOcrPatchStatus(patch.patchId, "accepted");
+    if (statusResult?.then) {
+      statusResult.then((result) => {
+        if (!result.ok) {
+          setStatus(`Patch save failed: ${result.reason}`, "error");
+        }
+      });
+    }
   }
   getMathpixBlockDrafts(pageNo).delete(String(blockKey));
   getBlockOverrides(pageNo).set(String(blockKey), patchResult.normalizedText);
@@ -2843,6 +3323,10 @@ async function saveHumanAcceptedBlockEdit(blockKey, newMarkdown) {
     setStatus("Empty block", "error");
     return;
   }
+  if (!canCurrentUserCreateDraftPatch()) {
+    setStatus("当前角色无权保存校对稿", "error");
+    return;
+  }
   const segment = reviewSegmentsForPage(state.currentPage).find((item) => String(item.blockIndex) === blockKey);
   const risk = reviewRiskForBlock(state.currentPage, blockKey);
   const patchResult = createAndStoreDraftOcrPatch({
@@ -2853,9 +3337,16 @@ async function saveHumanAcceptedBlockEdit(blockKey, newMarkdown) {
     source: "human",
   });
   const markdown = patchResult.normalizedText;
-  if (patchResult.patch?.status === "draft") {
-    rejectPriorOcrPatchesForBlock(patchResult.patch.blockId, patchResult.patch.patchId);
-    updateOcrPatchStatus(patchResult.patch.patchId, "accepted");
+  let patch = patchResult.patch;
+  if (patch?.status === "draft" && canCurrentUserResolveDraftPatch()) {
+    const statusResult = updateOcrPatchStatus(patch.patchId, "accepted");
+    const updateResult = statusResult?.then ? await statusResult : statusResult;
+    if (!updateResult.ok) {
+      setStatus(`Patch save failed: ${updateResult.reason}`, "error");
+      saveOcrWorkspaceState();
+      return;
+    }
+    patch = updateResult.patch;
   }
   getMathpixBlockDrafts(state.currentPage).delete(blockKey);
   // TODO: next step will switch display/export to accepted patches.
@@ -2865,7 +3356,7 @@ async function saveHumanAcceptedBlockEdit(blockKey, newMarkdown) {
   updateCorrectionSummary();
   state.acceptedPatchPreview = null;
   state.acceptedPatchBookPreview = null;
-  setStatus(patchResult.patch?.status === "accepted" ? "Saved and accepted" : "Ready", "ok");
+  setStatus(patch?.status === "accepted" ? "Saved and accepted" : "Saved", "ok");
   await renderCurrentPage();
 }
 
@@ -2875,6 +3366,8 @@ function rejectPriorOcrPatchesForBlock(blockId, currentPatchId) {
   if (!targetBlockId || !Array.isArray(state.ocrPatches)) {
     return 0;
   }
+  const currentPatch = state.ocrPatches.find((patch) => patch?.patchId === keepPatchId);
+  const currentOldHash = String(currentPatch?.oldHash || "");
   const targetPrefix = targetBlockId.match(/^(p\d+_b[^_]+)_/)?.[1] || targetBlockId.match(/^(p\d+_b[^_]+)$/)?.[1] || "";
   const updatedAt = new Date().toISOString();
   let count = 0;
@@ -2884,6 +3377,9 @@ function rejectPriorOcrPatchesForBlock(blockId, currentPatchId) {
       patchBlockId === targetBlockId ||
       (targetPrefix && (patchBlockId.startsWith(`${targetPrefix}_`) || patchBlockId === targetPrefix));
     if (!sameBlock || patch?.patchId === keepPatchId) {
+      return;
+    }
+    if (currentOldHash && String(patch?.oldHash || "") && String(patch.oldHash) !== currentOldHash) {
       return;
     }
     if (!["draft", "accepted"].includes(patch.status)) {
@@ -3576,6 +4072,17 @@ function createLegacyBlockPatchContext(pageNo, blockIndex, oldText) {
 }
 
 function createAndStoreDraftOcrPatch({ pageNo, blockIndex, oldText, newText, source, preserveText = "" }) {
+  if (!canCurrentUserCreateDraftPatch()) {
+    const preservationSource = [oldText, preserveText].filter(Boolean).join("\n\n");
+    const completeNewText = preserveMathpixPlainTextCompleteness(oldText, newText, source);
+    const preservedNewText = preserveEquationNumbersFromOriginal(preservationSource, completeNewText);
+    const normalizedText = normalizeDraftPatchMarkdown(createLegacyBlockPatchContext(pageNo, blockIndex, oldText)?.blockId || "", preservedNewText);
+    return {
+      patch: null,
+      normalizedText,
+      renderValidation: { severity: "warning" },
+    };
+  }
   const context = createLegacyBlockPatchContext(pageNo, blockIndex, oldText);
   const createOcrPatch = getOcrCoreCreateOcrPatch();
   const preservationSource = [oldText, preserveText].filter(Boolean).join("\n\n");
@@ -3604,8 +4111,14 @@ function createAndStoreDraftOcrPatch({ pageNo, blockIndex, oldText, newText, sou
     },
   });
   state.ocrPatches = state.ocrPatches || [];
-  state.ocrPatches.push(patch);
+  const existingPatchIndex = state.ocrPatches.findIndex((item) => item?.patchId === patch.patchId);
+  if (existingPatchIndex >= 0) {
+    state.ocrPatches.splice(existingPatchIndex, 1, patch);
+  } else {
+    state.ocrPatches.push(patch);
+  }
   saveOcrWorkspaceState();
+  persistRemoteOcrPatch(patch);
   return { patch, normalizedText, renderValidation };
 }
 
@@ -3888,10 +4401,31 @@ function updateOcrPatchStatus(patchId, nextStatus) {
     return { ok: false, reason, patch };
   }
 
-  patch.status = targetStatus;
-  patch.updatedAt = new Date().toISOString();
-  saveOcrWorkspaceState();
-  return { ok: true, reason: "", patch };
+  if (!canCurrentUserResolveDraftPatch()) {
+    warnOcrPatchStatus(`当前角色 ${state.remoteWorkbenchRole || "viewer"} 无权处理 draft patch。`);
+    return { ok: false, reason: "permission_denied", patch };
+  }
+
+  const applyLocalStatusChange = () => {
+    if (targetStatus === "accepted") {
+      rejectPriorOcrPatchesForBlock(patch.blockId, patch.patchId);
+    }
+    patch.status = targetStatus;
+    patch.updatedAt = new Date().toISOString();
+    saveOcrWorkspaceState();
+    return { ok: true, reason: "", patch };
+  };
+
+  if (!state.remoteBookId) {
+    return applyLocalStatusChange();
+  }
+
+  return persistRemoteOcrPatchStatus(patch, targetStatus).then((remoteResult) => {
+    if (!remoteResult.ok) {
+      return { ok: false, reason: remoteResult.reason || "remote_status_save_failed", patch };
+    }
+    return applyLocalStatusChange();
+  });
 }
 
 function warnOcrPatchStatus(message) {
@@ -4170,6 +4704,7 @@ function downloadAcceptedCorrectedPayload(markdown, status, preview, options = {
       ...imageAssets.map((asset) => ({ path: asset.path, bytes: asset.bytes })),
     ]);
     downloadBinaryFile(zipFilename, zipBytes, "application/zip");
+    persistRemoteAcceptedExport(packagedMarkdown, status, preview);
     return {
       ok: true,
       reason: "",
@@ -4186,6 +4721,7 @@ function downloadAcceptedCorrectedPayload(markdown, status, preview, options = {
 
   const filename = `${baseExportName()}-accepted-corrected.md`;
   downloadTextFile(filename, markdown);
+  persistRemoteAcceptedExport(markdown, status, preview);
   return {
     ok: true,
     reason: "",
@@ -6048,6 +6584,21 @@ async function postJson(path, body) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
+  } catch (error) {
+    throw new Error(`后端 API 连接失败：${url}。请确认后端服务已启动，并且 frontend/runtime-config.js 指向的是同一个端口。${error.message || ""}`);
+  }
+  try {
+    return await response.json();
+  } catch (error) {
+    throw new Error(`后端 API 返回内容不是 JSON：${url}。${error.message || ""}`);
+  }
+}
+
+async function getJson(path) {
+  const url = apiUrl(path);
+  let response;
+  try {
+    response = await fetch(url, { method: "GET" });
   } catch (error) {
     throw new Error(`后端 API 连接失败：${url}。请确认后端服务已启动，并且 frontend/runtime-config.js 指向的是同一个端口。${error.message || ""}`);
   }

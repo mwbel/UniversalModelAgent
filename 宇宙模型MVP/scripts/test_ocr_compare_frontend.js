@@ -106,10 +106,13 @@ function runOcrCompareInContext(testContext) {
   assert(ocrCompareCss.includes("overflow: visible"));
   assert(ocrCompareHtml.includes('id="contentListInput"'));
   assert(ocrCompareHtml.includes('id="pickContentListButton"'));
+  assert(ocrCompareHtml.includes('id="chunksDirectoryInput"'));
+  assert(ocrCompareHtml.includes('id="pickChunksDirectoryButton"'));
   assert(ocrCompareHtml.includes('class="control-column control-column-pdf"'));
   assert(ocrCompareHtml.includes("上传 PDF"));
   assert(ocrCompareHtml.includes("上传 MinerU JSON"));
   assert(ocrCompareHtml.includes("上传 content_list (可选)"));
+  assert(ocrCompareHtml.includes("补传 chunks 目录"));
   assert(ocrCompareHtml.includes('id="previewAcceptedBookButton"'));
   assert(ocrCompareHtml.includes('id="downloadAcceptedCorrectedButton"'));
   assert(ocrCompareHtml.includes("预览整书 accepted 校正稿"));
@@ -121,6 +124,53 @@ function runOcrCompareInContext(testContext) {
   assert(!ocrCompareHtml.includes("导出原始 MinerU"));
   assert(!ocrCompareHtml.includes("中栏读取已有 MinerU"));
   assert(!source.includes('document.querySelector(".control-band")'), "upload controls should stay visible when the MinerU preview column is collapsed");
+}
+
+{
+  const chunkPayloadResult = JSON.parse(
+    call(`(() => {
+      const files = [
+        {
+          name: "part_0001.md",
+          webkitRelativePath: "chunks/part_0001_pages_0001-0070/auto/part_0001.md",
+          type: "text/markdown",
+          size: 12,
+        },
+        {
+          name: "middle.json",
+          webkitRelativePath: "chunks/part_0001_pages_0001-0070/middle.json",
+          type: "application/json",
+          size: 24,
+        },
+        {
+          name: ".DS_Store",
+          webkitRelativePath: "chunks/.DS_Store",
+          type: "",
+          size: 1,
+        },
+      ];
+      return JSON.stringify(buildRemoteChunksFilePayloads(files).map((file) => ({
+        fileType: file.fileType,
+        name: file.name,
+        relativePath: file.relativePath,
+        mimeType: file.mimeType,
+      })));
+    })()`),
+  );
+  assert.deepStrictEqual(chunkPayloadResult, [
+    {
+      fileType: "mineru_chunk",
+      name: "part_0001.md",
+      relativePath: "chunks/part_0001_pages_0001-0070/auto/part_0001.md",
+      mimeType: "text/markdown",
+    },
+    {
+      fileType: "mineru_chunk",
+      name: "middle.json",
+      relativePath: "chunks/part_0001_pages_0001-0070/middle.json",
+      mimeType: "application/json",
+    },
+  ]);
 }
 
 {
@@ -686,6 +736,35 @@ function assertOcrPatchShape(patch) {
   assert.strictEqual(result.beforeExport, result.afterExport);
   assert(!result.afterExport.includes("Accepted Patch Line"), "accepted patch should not alter corrected export yet");
   assert.strictEqual(result.patches[0].status, "accepted");
+}
+
+{
+  const result = JSON.parse(
+    call(`(() => {
+      state.ocrPatches = [];
+      const input = {
+        pageNo: 14,
+        blockIndex: "3",
+        oldText: "Original glossary block",
+        newText: "Corrected glossary block",
+        source: "human"
+      };
+      const first = createAndStoreDraftOcrPatch(input).patch;
+      updateOcrPatchStatus(first.patchId, "accepted");
+      const repeated = createAndStoreDraftOcrPatch(input).patch;
+      const repeatedStatus = updateOcrPatchStatus(repeated.patchId, "accepted");
+      return JSON.stringify({
+        ok: repeatedStatus.ok,
+        reason: repeatedStatus.reason,
+        patchCount: state.ocrPatches.length,
+        statuses: state.ocrPatches.map((patch) => patch.status)
+      });
+    })()`),
+  );
+  assert.strictEqual(result.ok, true, "re-saving identical accepted text should remain transitionable");
+  assert.strictEqual(result.reason, "");
+  assert.strictEqual(result.patchCount, 1, "stable patch IDs should be upserted instead of duplicated locally");
+  assert.deepStrictEqual(result.statuses, ["accepted"]);
 }
 
 {

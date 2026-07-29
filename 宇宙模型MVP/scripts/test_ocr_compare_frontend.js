@@ -407,6 +407,20 @@ const inlineOnly = prepareMathpix("The period is \\(P=2\\pi\\sqrt{a^3/GM}\\).");
 assert.strictEqual(inlineOnly, "The period is $P=2\\pi\\sqrt{a^3/GM}$.");
 assert(!inlineOnly.includes("$$"), "prepareMathpixMarkdown should not upgrade inline math to display math");
 
+const bareMathpixFormulaLines = "G \\rho_{m} = \\frac{\\omega^{2}}{2 \\pi} + \\frac{1}{4 \\pi \\nu}\\n\\int_{s} g d s_\\circ";
+const bareMathpixFormulaHtml = call(`renderBlockContent(${JSON.stringify(bareMathpixFormulaLines)}, { kind: "text" })`);
+assert(
+  bareMathpixFormulaHtml.includes('class="math-display"'),
+  "block Mathpix draft formula lines should render as display math",
+);
+assert(!bareMathpixFormulaHtml.includes("<p>G \\\\rho"), "block Mathpix draft formula lines should not render as a raw paragraph");
+
+const lowercaseVariableFormulaHtml = call(`renderBlockContent(${JSON.stringify("v_p = \\frac{1}{4\\pi} \\int_v \\frac{\\partial}{\\partial n} \\left( \\frac{1}{r} \\right) ds")}, { kind: "text" })`);
+assert(
+  lowercaseVariableFormulaHtml.includes('class="math-display"'),
+  "standalone lowercase-variable formula lines should render as display math",
+);
+
 assert.strictEqual(
   prepareMathpix("The replacement CCD cost $100."),
   "The replacement CCD cost $100.",

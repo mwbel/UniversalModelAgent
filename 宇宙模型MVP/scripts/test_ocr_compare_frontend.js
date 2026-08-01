@@ -79,6 +79,26 @@ function runOcrCompareInContext(testContext) {
 }
 
 {
+  const result = JSON.parse(
+    call(`(() => {
+      state.mineruInfo = {
+        pdf_info: [{
+          page_size: [1000, 1400],
+          para_blocks: [
+            { type: "text", bbox: [560, 100, 940, 180], lines: [{ spans: [{ content: "right top" }] }] },
+            { type: "text", bbox: [80, 100, 460, 180], lines: [{ spans: [{ content: "left top" }] }] },
+            { type: "text", bbox: [560, 260, 940, 340], lines: [{ spans: [{ content: "right lower" }] }] },
+            { type: "text", bbox: [80, 260, 460, 340], lines: [{ spans: [{ content: "left lower" }] }] }
+          ]
+        }]
+      };
+      return JSON.stringify(reviewSegmentsForPage(1).map((segment) => segment.markdown));
+    })()`),
+  );
+  assert.deepStrictEqual(result, ["left top", "left lower", "right top", "right lower"], "two-column pages must read down the left column before the right column");
+}
+
+{
   assert.strictEqual(call("DEFAULT_PDF_IMAGE_ZOOM"), 1.25);
   assert(ocrCompareCss.includes(".review-navigation-bar"));
   assert(ocrCompareCss.includes(".review-font-nav-group"));

@@ -3909,7 +3909,7 @@ function originalBlockMarkdownsForPage(pageNumber) {
 
 function pageSegmentsForPage(pageNumber) {
   const entries = originalBlockMarkdownsForPage(pageNumber);
-  return segmentEntries(entries);
+  return segmentEntries(orderPageEntries(entries));
 }
 
 function reviewBlockMarkdownsForPage(pageNumber) {
@@ -3931,7 +3931,37 @@ function reviewBlockMarkdownsForPage(pageNumber) {
 }
 
 function reviewSegmentsForPage(pageNumber) {
-  return segmentEntries(reviewBlockMarkdownsForPage(pageNumber));
+  return segmentEntries(orderPageEntries(reviewBlockMarkdownsForPage(pageNumber)));
+}
+
+function orderPageEntries(entries) {
+  const source = Array.isArray(entries) ? entries : [];
+  if (source.length < 2 || source.some((entry) => !validBBox(entry?.bbox))) {
+    return source;
+  }
+  const pageWidth = Number(source.find((entry) => Array.isArray(entry.pageSize) && entry.pageSize.length >= 2)?.pageSize?.[0]);
+  if (!Number.isFinite(pageWidth) || pageWidth <= 0) {
+    return source;
+  }
+  const midline = pageWidth / 2;
+  const left = source.filter((entry) => bboxCenterX(entry.bbox) < midline);
+  const right = source.filter((entry) => bboxCenterX(entry.bbox) >= midline);
+  if (!left.length || !right.length) {
+    return source;
+  }
+  const sortDownColumn = (column) => column
+    .map((entry, index) => ({ entry, index }))
+    .sort((a, b) => (a.entry.bbox[1] - b.entry.bbox[1]) || (a.entry.bbox[0] - b.entry.bbox[0]) || (a.index - b.index))
+    .map(({ entry }) => entry);
+  return sortDownColumn(left).concat(sortDownColumn(right));
+}
+
+function validBBox(bbox) {
+  return Array.isArray(bbox) && bbox.length >= 4 && bbox.slice(0, 4).every(Number.isFinite);
+}
+
+function bboxCenterX(bbox) {
+  return (Number(bbox[0]) + Number(bbox[2])) / 2;
 }
 
 function segmentEntries(entries) {

@@ -92,10 +92,17 @@ function runOcrCompareInContext(testContext) {
           ]
         }]
       };
-      return JSON.stringify(reviewSegmentsForPage(1).map((segment) => segment.markdown));
+      state.currentPage = 1;
+      const entries = reviewEntriesForCurrentPage();
+      return JSON.stringify({
+        entries: entries.map((entry) => entry.key),
+        html: renderPageReviewCanvas(entries)
+      });
     })()`),
   );
-  assert.deepStrictEqual(result, ["left top", "left lower", "right top", "right lower"], "two-column pages must read down the left column before the right column");
+  assert.deepStrictEqual(result.entries, ["unsupported-two-column-layout"], "two-column pages should be excluded from the single-column review flow");
+  assert(result.html.includes("当前线上版暂只支持单栏校对"), "two-column pages should show a clear single-column-only message");
+  assert(!result.html.includes("data-review-page-block="), "two-column pages should not render editable review blocks");
 }
 
 {

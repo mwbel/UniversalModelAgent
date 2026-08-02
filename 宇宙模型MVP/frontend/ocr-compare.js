@@ -2250,6 +2250,18 @@ function reviewPatchMarkdown(patch) {
 
 function renderPageReviewCanvas(reviewEntries) {
   const entries = Array.isArray(reviewEntries) ? reviewEntries : [];
+  if (entries.length === 1 && entries[0]?.unsupportedLayout === "two_column") {
+    return `
+      <div class="review-list review-page-canvas markdown-body" style="--review-font-scale: ${currentReviewFontScale()};">
+        <div class="review-page-paper">
+          <div class="review-layout-notice">
+            <strong>当前线上版暂只支持单栏校对。</strong>
+            <span>该页疑似双栏排版，block 阅读顺序需要后续专门处理；请先校对单栏页面。</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
   if (!entries.length) {
     return `<div class="review-list review-page-canvas markdown-body" style="--review-font-scale: ${currentReviewFontScale()};"><div class="empty-inline">当前页未发现可校对文本块。</div></div>`;
   }
@@ -2689,7 +2701,43 @@ function normalizeReviewBlockKey(blockIndex, pageNumber = state.currentPage) {
 
 function reviewEntriesForCurrentPage() {
   const risks = state.riskByPage.get(state.currentPage) || [];
-  return buildReviewEntriesForPage(risks, reviewSegmentsForPage(state.currentPage), state.currentPage);
+  const reviewEntries = reviewBlockMarkdownsForPage(state.currentPage);
+  if (isLikelyTwoColumnPageEntries(reviewEntries)) {
+    return [{
+      key: "unsupported-two-column-layout",
+      unsupportedLayout: "two_column",
+      pageNumber: state.currentPage,
+    }];
+  }
+  return buildReviewEntriesForPage(risks, segmentEntries(orderPageEntries(reviewEntries)), state.currentPage);
+}
+
+function isLikelyTwoColumnPageEntries(entries) {
+  const source = (Array.isArray(entries) ? entries : []).filter((entry) => validBBox(entry?.bbox));
+  if (source.length < 4) {
+    return false;
+  }
+  const pageWidth = Number(source.find((entry) => Array.isArray(entry.pageSize) && entry.pageSize.length >= 2)?.pageSize?.[0]);
+  if (!Number.isFinite(pageWidth) || pageWidth <= 0) {
+    return false;
+  }
+  const midline = pageWidth / 2;
+  const left = source.filter((entry) => bboxCenterX(entry.bbox) < midline);
+  const right = source.filter((entry) => bboxCenterX(entry.bbox) >= midline);
+  if (left.length < 2 || right.length < 2) {
+    return false;
+  }
+  const leftBox = mergeBBoxes(left.map((entry) => entry.bbox));
+  const rightBox = mergeBBoxes(right.map((entry) => entry.bbox));
+  if (!validBBox(leftBox) || !validBBox(rightBox)) {
+    return false;
+  }
+  const horizontalGap = Number(rightBox[0]) - Number(leftBox[2]);
+  const verticalOverlap = Math.min(Number(leftBox[3]), Number(rightBox[3])) - Math.max(Number(leftBox[1]), Number(rightBox[1]));
+  const leftHeight = Math.max(1, Number(leftBox[3]) - Number(leftBox[1]));
+  const rightHeight = Math.max(1, Number(rightBox[3]) - Number(rightBox[1]));
+  const overlapRatio = verticalOverlap / Math.min(leftHeight, rightHeight);
+  return horizontalGap >= pageWidth * 0.04 && overlapRatio >= 0.25;
 }
 
 function scrollSelectedReviewBlockIntoView() {
